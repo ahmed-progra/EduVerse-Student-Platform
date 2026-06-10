@@ -24,7 +24,13 @@ const allowedOrigins = process.env.FRONTEND_URL
   : ["http://localhost:3000", "http://localhost:3001", "http://localhost:3002", "http://localhost:3003"];
 
 app.use(cors({ origin: allowedOrigins, credentials: true }));
-app.use(express.json({ limit: "10mb" }));
+app.use((_req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("Referrer-Policy", "no-referrer");
+  next();
+});
+app.use(express.json({ limit: "4mb" }));
 app.use(apiLimiter);
 
 app.use("/api/auth", authRoutes);

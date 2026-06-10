@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import { prisma } from "../lib/prisma";
 import { signToken } from "../lib/jwt";
+import { validEmail, validUsername, validPassword } from "../lib/validate";
 import { authLimiter } from "../middleware/rate-limit";
 import { requireAuth } from "../middleware/auth";
 
@@ -12,6 +13,18 @@ router.post("/register", authLimiter, async (req: Request, res: Response) => {
     const { email, username, password } = req.body;
     if (!email || !username || !password) {
       res.status(400).json({ success: false, error: "Missing required fields" });
+      return;
+    }
+    if (!validEmail(email)) {
+      res.status(400).json({ success: false, error: "Invalid email address" });
+      return;
+    }
+    if (!validUsername(username)) {
+      res.status(400).json({ success: false, error: "Username must be 3-20 characters (letters, numbers, underscore)" });
+      return;
+    }
+    if (!validPassword(password)) {
+      res.status(400).json({ success: false, error: "Password must be 6-128 characters" });
       return;
     }
 
@@ -98,6 +111,13 @@ router.post("/login", authLimiter, async (req: Request, res: Response) => {
 
 router.post("/google", authLimiter, async (req: Request, res: Response) => {
   try {
+    // This endpoint trusts client-supplied identity, which is only safe once
+    // real Google ID-token verification is wired up. Until GOOGLE_CLIENT_ID
+    // is configured, it stays disabled to prevent account takeover by email.
+    if (!process.env.GOOGLE_CLIENT_ID) {
+      res.status(501).json({ success: false, error: "Google sign-in is not configured" });
+      return;
+    }
     const { email, username, googleId } = req.body;
     if (!email || !googleId) {
       res.status(400).json({ success: false, error: "Missing Google auth data" });
