@@ -4,10 +4,11 @@ import { motion } from "framer-motion";
 import { GlassCard } from "@/components/ui/glass-card";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { XpBar } from "@/components/ui/xp-bar";
+import { EmptyState } from "@/components/ui/empty-state";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/stores/auth-store";
 import { useEffect, useState } from "react";
-import { ShoppingBag, Zap, Check, Image, Frame, Sparkles, Type, Monitor, Wand2 } from "lucide-react";
+import { ShoppingBag, Zap, Check, Image, Frame, Sparkles, Type, Monitor, Wand2, WifiOff } from "lucide-react";
 
 interface ShopItem {
   id: string;
@@ -37,6 +38,7 @@ export default function ShopPage() {
   const [items, setItems] = useState<ShopItem[]>([]);
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [offline, setOffline] = useState(false);
   const [buyingId, setBuyingId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>("all");
 
@@ -48,7 +50,10 @@ export default function ShopPage() {
       ]);
       setItems(itemsRes.data);
       setInventory(invRes.data);
-    } catch {}
+      setOffline(false);
+    } catch {
+      setOffline(true);
+    }
     setLoading(false);
   };
 
@@ -83,8 +88,12 @@ export default function ShopPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-2 border-eduverse-accent border-t-transparent rounded-full animate-spin" />
+      <div className="space-y-6 animate-pulse" aria-hidden="true">
+        <div className="h-8 w-44 rounded-lg bg-eduverse-surface" />
+        <div className="h-24 rounded-2xl bg-eduverse-surface" />
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => <div key={i} className="h-56 rounded-2xl bg-eduverse-surface" />)}
+        </div>
       </div>
     );
   }
@@ -119,9 +128,8 @@ export default function ShopPage() {
           <button
             key={type}
             onClick={() => setActiveTab(type)}
-            className={`px-4 py-2 rounded-xl text-sm font-semibold capitalize transition-all ${
-              activeTab === type ? "bg-eduverse-accent text-white" : "bg-white/5 text-eduverse-text-muted hover:bg-white/10"
-            }`}
+            aria-pressed={activeTab === type}
+            className={`seg-btn ${activeTab === type ? "active" : ""}`}
           >
             {type}
           </button>
@@ -129,6 +137,11 @@ export default function ShopPage() {
       </div>
 
       {/* Items Grid */}
+      {offline ? (
+        <EmptyState icon={WifiOff} title="Can't reach the server" message="The EduVerse API isn't responding, so the shop can't be loaded." />
+      ) : filtered.length === 0 ? (
+        <EmptyState icon={ShoppingBag} title="Nothing here yet" message="No items in this category. Check another tab or come back later." />
+      ) : (
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {filtered.map((item, i) => {
           const owned = ownedIds.has(item.id);
@@ -182,6 +195,7 @@ export default function ShopPage() {
           );
         })}
       </div>
+      )}
     </div>
   );
 }

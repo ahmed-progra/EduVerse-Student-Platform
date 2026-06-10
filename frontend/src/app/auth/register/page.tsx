@@ -36,47 +36,57 @@ export default function RegisterPage() {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
         <GlassCard className="p-8">
           <div className="text-center mb-8">
-            <Link href="/" className="text-3xl font-bold gradient-text">EduVerse</Link>
+            <Link href="/" className="text-3xl font-bold" style={{ fontFamily: "var(--font-display)", color: "var(--color-eduverse-text)", letterSpacing: "-0.02em" }}>
+              Edu<span className="text-eduverse-accent">Verse</span>
+            </Link>
             <p className="text-eduverse-text-muted mt-2">Begin your coding adventure</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="form-error" role="alert">
                 {error}
               </motion.div>
             )}
 
             <div>
-              <label className="block text-sm font-medium text-eduverse-text-muted mb-1">Email</label>
+              <label htmlFor="reg-email" className="block text-sm font-medium text-eduverse-text-muted mb-1">Email</label>
               <input
+                id="reg-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-eduverse-accent outline-none text-eduverse-text transition-colors"
+                className="app-input"
                 placeholder="your@email.com"
+                autoComplete="email"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-eduverse-text-muted mb-1">Username</label>
+              <label htmlFor="reg-username" className="block text-sm font-medium text-eduverse-text-muted mb-1">Username</label>
               <input
+                id="reg-username"
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-eduverse-accent outline-none text-eduverse-text transition-colors"
+                className="app-input"
                 placeholder="Choose a username"
+                autoComplete="username"
+                minLength={3}
+                maxLength={20}
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-eduverse-text-muted mb-1">Password</label>
+              <label htmlFor="reg-password" className="block text-sm font-medium text-eduverse-text-muted mb-1">Password</label>
               <input
+                id="reg-password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-eduverse-accent outline-none text-eduverse-text transition-colors"
-                placeholder="Create a strong password"
+                className="app-input"
+                placeholder="At least 6 characters"
+                autoComplete="new-password"
                 required
                 minLength={6}
               />

@@ -5,6 +5,7 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { XpBar } from "@/components/ui/xp-bar";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { api } from "@/lib/api";
+import { getStreak } from "@/lib/streak";
 import { useAuthStore } from "@/stores/auth-store";
 import { useEffect, useState, useRef, useMemo } from "react";
 import {
@@ -43,13 +44,12 @@ const tierBadgeColors: Record<string, string> = {
   advanced: "bg-eduverse-warning/20 text-eduverse-warning",
 };
 
-function getAchievements(profile: ProfileData, streak: number) {
-  const lessonsDone = profile.progress?.filter(p => p.completed).length || 0;
-  const skillsUnlocked = profile.skills?.filter(s => s.unlocked).length || 0;
-  const itemsOwned = profile.inventory?.length || 0;
-  const battlesWon = 0; // Not in profile yet, default 0
-  const level = profile.level;
-  const xp = profile.xp;
+function getAchievements(profile: ProfileData | null, streak: number, battlesWon: number) {
+  const lessonsDone = profile?.progress?.filter(p => p.completed).length || 0;
+  const skillsUnlocked = profile?.skills?.filter(s => s.unlocked).length || 0;
+  const itemsOwned = profile?.inventory?.length || 0;
+  const level = profile?.level || 0;
+  const xp = profile?.xp || 0;
 
   return [
     { id: "first_lesson", label: "First Steps", desc: "Complete your first lesson", earned: lessonsDone >= 1, icon: BookOpen },
@@ -64,16 +64,6 @@ function getAchievements(profile: ProfileData, streak: number) {
     { id: "streak_30", label: "Unstoppable", desc: "30-day streak", earned: streak >= 30, icon: Flame },
     { id: "battle_5", label: "Warrior", desc: "Win 5 battles", earned: battlesWon >= 5, icon: Swords },
   ];
-}
-
-function getStreak(): number {
-  if (typeof window === "undefined") return 0;
-  try {
-    const raw = localStorage.getItem("eduverse_streak");
-    if (!raw) return 0;
-    const { count } = JSON.parse(raw);
-    return count || 0;
-  } catch { return 0; }
 }
 
 function getActivityData(xpLogs: { createdAt: string; amount: number }[]): Record<string, number> {
@@ -118,6 +108,9 @@ function getCourseProgress(progress: { completed: boolean; lesson: { courseId: s
 export default function ProfilePage() {
   const { user, updateXp, setUser } = useAuthStore();
   const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [battlesWon, setBattlesWon] = useState(0);
+  const [battlesPlayed, setBattlesPlayed] = useState(0);
+  const [avatarError, setAvatarError] = useState("");
   const [loading, setLoading] = useState(true);
 
   // Edit state
@@ -136,7 +129,7 @@ export default function ProfilePage() {
   const maxActivity = Math.max(...Object.values(activityData), 1);
   const xpBreakdown = useMemo(() => getXpBreakdown(profile?.xpLogs || []), [profile]);
   const courseProgress = useMemo(() => getCourseProgress(profile?.progress || []), [profile]);
-  const achievements = useMemo(() => getAchievements(profile as ProfileData, streak), [profile, streak]);
+  const achievements = useMemo(() => getAchievements(profile, streak, battlesWon), [profile, streak, battlesWon]);
   const totalXpEarned = useMemo(() => profile?.xpLogs?.reduce((s, l) => s + l.amount, 0) || 0, [profile]);
 
   const earnedAchievements = achievements.filter(a => a.earned);
@@ -148,6 +141,12 @@ export default function ProfilePage() {
       setEditBio(res.data.bio || "");
       setLoading(false);
     }).catch(() => setLoading(false));
+    api.getBattleHistory().then((res) => {
+      const battles = res.data || [];
+      const userId = useAuthStore.getState().user?.id;
+      setBattlesPlayed(battles.length);
+      setBattlesWon(battles.filter((b: { winnerId: string | null }) => b.winnerId && b.winnerId === userId).length);
+    }).catch(() => {});
   }, []);
 
   const handleAvatarClick = () => fileInputRef.current?.click();
@@ -155,6 +154,12 @@ export default function ProfilePage() {
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (file.size > 1.5 * 1024 * 1024) {
+      setAvatarError("Image too large — please pick one under 1.5 MB.");
+      setTimeout(() => setAvatarError(""), 4000);
+      return;
+    }
+    setAvatarError("");
     const reader = new FileReader();
     reader.onload = async (ev) => {
       const dataUrl = ev.target?.result as string;
@@ -244,7 +249,7 @@ export default function ProfilePage() {
           <div className="relative flex flex-col sm:flex-row items-start gap-6">
             {/* Avatar */}
             <div className="relative group cursor-pointer" onClick={handleAvatarClick}>
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-eduverse-accent to-purple-600 flex items-center justify-center text-4xl font-bold overflow-hidden ring-2 ring-white/10 group-hover:ring-eduverse-accent/50 transition-all duration-300">
+              <div className="w-24 h-24 rounded-full flex items-center justify-center text-4xl font-bold overflow-hidden ring-2 ring-white/10 group-hover:ring-eduverse-accent/50 transition-all duration-300" style={{ background: "linear-gradient(135deg, oklch(58% 0.21 293), oklch(70% 0.16 295))", color: "oklch(98% 0.005 295)" }}>
                 {avatarPreview || profile.avatar?.startsWith("data:") ? (
                   <img src={avatarPreview || profile.avatar} alt="" className="w-full h-full object-cover" />
                 ) : (
@@ -255,6 +260,11 @@ export default function ProfilePage() {
                 <Upload className="w-5 h-5 text-white" />
               </div>
               <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
+              {avatarError && (
+                <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 whitespace-nowrap form-error !py-1.5 !px-3 text-xs z-10">
+                  {avatarError}
+                </div>
+              )}
             </div>
 
             {/* Info */}
@@ -334,7 +344,7 @@ export default function ProfilePage() {
           { label: "Items Owned", value: profile.inventory?.length || 0, icon: ShoppingBag, color: "text-pink-400" },
           { label: "Rank", value: `#${profile.rank || "—"}`, icon: Medal, color: "text-eduverse-gold" },
           { label: "Streak", value: `${streak} days`, icon: Flame, color: streak >= 7 ? "text-orange-400" : "text-eduverse-text-muted" },
-          { label: "Battles", value: "—", icon: Swords, color: "text-eduverse-danger" },
+          { label: "Battles Won", value: battlesPlayed ? `${battlesWon}/${battlesPlayed}` : "0", icon: Swords, color: "text-eduverse-danger" },
         ].map((stat, i) => (
           <motion.div
             key={stat.label}

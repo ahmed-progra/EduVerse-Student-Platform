@@ -7,7 +7,7 @@ import { GradientButton } from "@/components/ui/gradient-button";
 import { api } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ChevronLeft, ChevronRight, Zap } from "lucide-react";
+import { ChevronLeft, ChevronRight, Zap, Trophy, Star, Sprout } from "lucide-react";
 
 interface QuestionData {
   id: string;
@@ -107,12 +107,19 @@ function PlacementTestContent() {
     return (
       <div className="min-h-screen gradient-bg flex items-center justify-center p-4">
         <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
-          <GlassCard className="text-center p-12 max-w-md">
-            <div className="text-6xl mb-6">
-              {result.level === "advanced" ? "🏆" : result.level === "intermediate" ? "⭐" : "🌱"}
+          <GlassCard className="text-center p-12 max-w-md" hover={false}>
+            <div
+              className="w-20 h-20 rounded-2xl mx-auto mb-6 flex items-center justify-center"
+              style={{
+                background: "var(--color-eduverse-accent-soft)",
+                border: "1px solid var(--color-eduverse-border-mid)",
+                color: result.level === "advanced" ? "var(--color-eduverse-accent)" : result.level === "intermediate" ? "var(--color-eduverse-warning)" : "var(--color-eduverse-success)",
+              }}
+            >
+              {result.level === "advanced" ? <Trophy size={36} aria-hidden="true" /> : result.level === "intermediate" ? <Star size={36} aria-hidden="true" /> : <Sprout size={36} aria-hidden="true" />}
             </div>
             <h2 className="text-3xl font-bold mb-4">
-              You are <span className="gradient-text capitalize">{result.level}</span>!
+              You are <span className="capitalize text-eduverse-accent">{result.level}</span>!
             </h2>
             <div className="text-5xl font-bold mb-2">{result.score}/{result.total}</div>
             <p className="text-eduverse-text-muted mb-2">questions correct</p>
