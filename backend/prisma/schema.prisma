@@ -1,0 +1,194 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String   @id @default(uuid())
+  email          String   @unique
+  username       String   @unique
+  passwordHash   String
+  avatar         String   @default("default")
+  bio            String?
+  level          Int      @default(1)
+  xp             Int      @default(0)
+  rank           Int      @default(0)
+  placementLevel String   @default("beginner")
+  googleId       String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  progress       UserProgress[]
+  xpLogs         XpLog[]
+  skills         UserSkill[]
+  battlesAs1     Battle[]       @relation("Player1")
+  battlesAs2     Battle[]       @relation("Player2")
+  battlesWon     Battle[]       @relation("Winner")
+  battleSubmissions BattleSubmission[]
+  leaderboard    LeaderboardEntry[]
+  inventory      UserInventory[]
+  placements     CoursePlacement[]
+}
+
+model Course {
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique
+  description String
+  icon        String
+  order       Int
+  createdAt   DateTime @default(now())
+
+  lessons     Lesson[]
+  placements  CoursePlacement[]
+}
+
+model Lesson {
+  id           String   @id @default(uuid())
+  courseId     String
+  title        String
+  content      String
+  codeTemplate String
+  language     String
+  order        Int
+  xpReward     Int      @default(50)
+  createdAt    DateTime @default(now())
+
+  course       Course          @relation(fields: [courseId], references: [id])
+  progress     UserProgress[]
+}
+
+model CoursePlacement {
+  userId   String
+  courseId String
+  level    String   @default("beginner")
+  score    Int      @default(0)
+  total    Int      @default(0)
+  takenAt  DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
+
+  @@id([userId, courseId])
+}
+
+model UserProgress {
+  userId    String
+  lessonId  String
+  completed Boolean  @default(false)
+  score     Int?
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  lesson Lesson @relation(fields: [lessonId], references: [id])
+
+  @@id([userId, lessonId])
+}
+
+model XpLog {
+  id        String   @id @default(uuid())
+  userId    String
+  amount    Int
+  source    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model SkillTreeNode {
+  id             String   @id @default(uuid())
+  name           String
+  description    String
+  branch         String
+  positionX      Float
+  positionY      Float
+  prerequisites  String   @default("[]")
+  xpCost         Int
+  levelRequired  Int      @default(1)
+  effectType     String
+  effectValue    Float
+  effectDesc     String
+  createdAt      DateTime @default(now())
+
+  userSkills     UserSkill[]
+}
+
+model UserSkill {
+  userId   String
+  skillId  String
+  unlocked Boolean @default(false)
+
+  user  User           @relation(fields: [userId], references: [id])
+  skill SkillTreeNode  @relation(fields: [skillId], references: [id])
+
+  @@id([userId, skillId])
+}
+
+model Battle {
+  id         String    @id @default(uuid())
+  player1Id  String
+  player2Id  String?
+  challenge  String
+  difficulty String
+  timeLimit  Int
+  status     String    @default("waiting")
+  winnerId   String?
+  xpReward   Int       @default(0)
+  createdAt  DateTime  @default(now())
+
+  player1    User              @relation("Player1", fields: [player1Id], references: [id])
+  player2    User?             @relation("Player2", fields: [player2Id], references: [id])
+  winner     User?             @relation("Winner", fields: [winnerId], references: [id])
+  submissions BattleSubmission[]
+}
+
+model BattleSubmission {
+  id        String   @id @default(uuid())
+  battleId  String
+  userId    String
+  code      String
+  score     Int      @default(0)
+  submittedAt DateTime @default(now())
+
+  battle Battle @relation(fields: [battleId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model LeaderboardEntry {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  score     Int      @default(0)
+  weekStart String?
+  rank      Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model ShopItem {
+  id             String   @id @default(uuid())
+  name           String
+  type           String
+  description    String
+  price          Int
+  levelRequired  Int      @default(1)
+  imageUrl       String
+  createdAt      DateTime @default(now())
+
+  inventory      UserInventory[]
+}
+
+model UserInventory {
+  userId   String
+  itemId   String
+  equipped Boolean @default(false)
+
+  user User     @relation(fields: [userId], references: [id])
+  item ShopItem @relation(fields: [itemId], references: [id])
+
+  @@id([userId, itemId])
+}

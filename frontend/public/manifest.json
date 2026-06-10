@@ -1,0 +1,9 @@
+{
+  "name": "EduVerse",
+  "short_name": "EduVerse",
+  "description": "Learn Programming Through RPG Adventure",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#faf9ff",
+  "theme_color": "#7c3aed"
+}

@@ -1,0 +1,272 @@
+"use client";
+
+import { motion } from "framer-motion";
+import { GlassCard } from "@/components/ui/glass-card";
+import { XpBar } from "@/components/ui/xp-bar";
+import { AnimatedNumber } from "@/components/ui/animated-number";
+import { EmptyState } from "@/components/ui/empty-state";
+import { useAuthStore } from "@/stores/auth-store";
+import { api } from "@/lib/api";
+import { updateStreak } from "@/lib/streak";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import {
+  BookOpen, Swords, GitBranch, ShoppingBag, TrendingUp,
+  Zap, Code2, Flame, Trophy, Star, ArrowRight, Clock, Target, Flag, WifiOff, Sparkles,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+
+interface XpLogEntry {
+  id: string;
+  source: string;
+  amount: number;
+  createdAt: string;
+}
+
+interface ProfileData {
+  xp: number;
+  level: number;
+  progress?: { completed: boolean }[];
+  skills?: { unlocked: boolean }[];
+}
+
+interface BattleEntry {
+  id: string;
+  winnerId: string | null;
+}
+
+const sourceIcons: Record<string, LucideIcon> = {
+  lesson: BookOpen,
+  battle: Swords,
+  challenge: Target,
+  placement: Flag,
+};
+
+export default function DashboardPage() {
+  const { user } = useAuthStore();
+  const [stats, setStats] = useState({ lessonsDone: 0, battlesWon: 0, skillsUnlocked: 0, totalXp: 0 });
+  const [recentActivity, setRecentActivity] = useState<XpLogEntry[]>([]);
+  const [loaded, setLoaded] = useState(false);
+  const [offline, setOffline] = useState(false);
+  const [streak, setStreak] = useState(0);
+
+  useEffect(() => {
+    setStreak(updateStreak());
+    async function load() {
+      try {
+        const [profileRes, logsRes, battlesRes] = await Promise.all([
+          api.getProfile(),
+          api.getXpLogs(),
+          api.getBattleHistory().catch(() => ({ data: [] as BattleEntry[] })),
+        ]);
+        const profile = profileRes.data as ProfileData;
+        const battles = (battlesRes.data as BattleEntry[]) || [];
+        const userId = useAuthStore.getState().user?.id;
+        setStats({
+          lessonsDone: profile.progress?.filter((p) => p.completed).length || 0,
+          battlesWon: battles.filter((b) => b.winnerId && b.winnerId === userId).length,
+          skillsUnlocked: profile.skills?.filter((s) => s.unlocked).length || 0,
+          totalXp: profile.xp,
+        });
+        setRecentActivity(logsRes.data || []);
+      } catch {
+        setOffline(true);
+      }
+      setLoaded(true);
+    }
+    load();
+  }, []);
+
+  const quickActions = [
+    { label: "Continue Learning", icon: BookOpen, href: "/courses", tint: "oklch(75% 0.11 250)" },
+    { label: "Enter Battle", icon: Swords, href: "/battle", tint: "oklch(70% 0.16 25)" },
+    { label: "Skill Tree", icon: GitBranch, href: "/skill-tree", tint: "oklch(76% 0.14 165)" },
+    { label: "Visit Shop", icon: ShoppingBag, href: "/shop", tint: "oklch(80% 0.13 85)" },
+  ];
+
+  const statCards = [
+    { label: "Lessons Done", value: stats.lessonsDone, icon: Code2, tint: "oklch(75% 0.11 250)" },
+    { label: "Battles Won", value: stats.battlesWon, icon: Trophy, tint: "oklch(80% 0.13 85)" },
+    { label: "Skills Unlocked", value: stats.skillsUnlocked, icon: Star, tint: "oklch(70% 0.16 295)" },
+    { label: "Total XP", value: stats.totalXp, icon: Zap, tint: "oklch(76% 0.14 165)" },
+  ];
+
+  return (
+    <div className="space-y-8">
+
+      {/* ── Welcome Header ── */}
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <h1 className="text-3xl font-bold mb-1">
+              Welcome back, <span className="text-eduverse-accent">{user?.username}</span>
+            </h1>
+            <p className="text-eduverse-text-muted">Continue your quest to become a code master.</p>
+          </div>
+          {streak > 0 && (
+            <div
+              className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold"
+              style={{
+                background: "oklch(80% 0.13 85 / 0.1)",
+                border: "1px solid oklch(80% 0.13 85 / 0.3)",
+                color: "var(--color-eduverse-warning)",
+              }}
+            >
+              <Flame className="w-4 h-4" aria-hidden="true" />
+              <span>{streak} day streak{streak >= 7 ? " · On fire!" : ""}</span>
+            </div>
+          )}
+        </div>
+      </motion.div>
+
+      {/* ── XP Bar ── */}
+      {user && (
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
+          <GlassCard glow hover={false}>
+            <XpBar xp={user.xp} size="lg" />
+          </GlassCard>
+        </motion.div>
+      )}
+
+      {/* ── Quick Actions ── */}
+      <div>
+        <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+          <ArrowRight className="w-4 h-4 text-eduverse-accent" aria-hidden="true" />
+          Quick Actions
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {quickActions.map((action, i) => (
+            <motion.div
+              key={action.label}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 + 0.07 * i, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <Link href={action.href} className="block">
+                <motion.div
+                  whileHover={{ y: -3 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="app-card app-card-hover text-center p-6 cursor-pointer"
+                >
+                  <div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3"
+                    style={{ background: `color-mix(in oklch, ${action.tint} 14%, transparent)`, border: `1px solid color-mix(in oklch, ${action.tint} 30%, transparent)` }}
+                  >
+                    <action.icon className="w-6 h-6" style={{ color: action.tint }} aria-hidden="true" />
+                  </div>
+                  <h3 className="font-semibold text-sm text-eduverse-text" style={{ fontFamily: "var(--font-sans)" }}>{action.label}</h3>
+                </motion.div>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Stats Grid ── */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {statCards.map((stat, i) => (
+          <motion.div
+            key={stat.label}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 + 0.07 * i, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div className="app-card p-5">
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center mb-3"
+                style={{ background: `color-mix(in oklch, ${stat.tint} 13%, transparent)`, border: `1px solid color-mix(in oklch, ${stat.tint} 28%, transparent)` }}
+              >
+                <stat.icon className="w-5 h-5" style={{ color: stat.tint }} aria-hidden="true" />
+              </div>
+              <div className="text-2xl font-bold mb-0.5" style={{ color: stat.tint, fontFamily: "var(--font-display)" }}>
+                {loaded && !offline ? <AnimatedNumber value={stat.value} delay={i * 90} /> : "—"}
+              </div>
+              <div className="text-xs text-eduverse-text-muted">{stat.label}</div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* ── Recent Activity ── */}
+      <GlassCard hover={false}>
+        <h2 className="text-lg font-bold mb-5 flex items-center gap-2">
+          <TrendingUp className="w-5 h-5 text-eduverse-accent" aria-hidden="true" />
+          Recent Activity
+        </h2>
+        {!loaded ? (
+          <div className="space-y-3 animate-pulse" aria-hidden="true">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="flex items-center justify-between py-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-eduverse-raised" />
+                  <div>
+                    <div className="h-3.5 w-28 bg-eduverse-raised rounded mb-1.5" />
+                    <div className="h-2.5 w-20 bg-eduverse-raised rounded" />
+                  </div>
+                </div>
+                <div className="h-3.5 w-16 bg-eduverse-raised rounded" />
+              </div>
+            ))}
+          </div>
+        ) : offline ? (
+          <EmptyState
+            icon={WifiOff}
+            title="Can't reach the server"
+            message="The EduVerse API isn't responding. Start the backend, then refresh this page."
+          />
+        ) : recentActivity.length === 0 ? (
+          <EmptyState
+            icon={Sparkles}
+            title="No activity yet"
+            message="Complete a lesson or win a battle to start your journey. Every action earns XP."
+          >
+            <Link href="/courses" className="px-4 py-2 rounded-lg text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]">
+              Start a course
+            </Link>
+          </EmptyState>
+        ) : (
+          <div className="space-y-1">
+            {recentActivity.slice(0, 10).map((log, i) => {
+              const Icon = sourceIcons[log.source] || Zap;
+              return (
+                <motion.div
+                  key={log.id}
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.04, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                  className="flex items-center justify-between py-3 px-3 rounded-xl border border-transparent hover:border-eduverse-border hover:bg-eduverse-accent-soft/40 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-9 h-9 rounded-full flex items-center justify-center"
+                      style={{ background: "var(--color-eduverse-accent-soft)", border: "1px solid var(--color-eduverse-border-mid)" }}
+                    >
+                      <Icon className="w-4 h-4 text-eduverse-accent" aria-hidden="true" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-eduverse-text capitalize">{log.source}</div>
+                      <div className="text-xs text-eduverse-text-muted flex items-center gap-1 mt-0.5">
+                        <Clock className="w-2.5 h-2.5" aria-hidden="true" />
+                        {new Date(log.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    className="text-sm font-bold px-2.5 py-0.5 rounded-full"
+                    style={{
+                      background: "oklch(76% 0.14 165 / 0.12)",
+                      border: "1px solid oklch(76% 0.14 165 / 0.25)",
+                      color: "var(--color-eduverse-success)",
+                    }}
+                  >
+                    +{log.amount} XP
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        )}
+      </GlassCard>
+    </div>
+  );
+}

@@ -1,0 +1,35 @@
+"use client";
+
+import type { LucideIcon } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+
+export function AIPanelShell({
+  title,
+  subtitle,
+  icon: Icon,
+  onClose,
+  children,
+}: {
+  title: string;
+  subtitle: string;
+  icon: LucideIcon;
+  onClose: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="ai-panel">
+      <div className="ai-panel-header">
+        <button className="ai-panel-back" onClick={onClose} title="Back to page">
+          <ArrowLeft size={18} />
+        </button>
+        <div className="ai-panel-header-info">
+          <div className="ai-panel-title">
+            <Icon size={16} className="ai-panel-title-icon" /> {title}
+          </div>
+          <div className="ai-panel-subtitle">{subtitle}</div>
+        </div>
+      </div>
+      <div className="ai-panel-body">{children}</div>
+    </div>
+  );
+}

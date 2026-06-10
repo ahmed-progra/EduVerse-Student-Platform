@@ -1,25 +1,25 @@
-# TODO — EduVerse Anti-Gravity Visual Upgrade
+# TODO — EduVerse Frontend
 
-- [x] Step 1: Update `frontend/src/app/globals.css`
-  - [x] Add float keyframes + glow pulse
-  - [x] Add shadow depth variables
-  - [x] Apply float animations to feature cards, hero badge, hero CTA buttons, integration pills, dashboard preview (if present), navbar logo only
-  - [x] Ensure float pause on hover and reduced-motion handling
-  - [x] Update shadows/hover shadows using the new 3-layer formula
-  - [x] IMPORTANT exclusions: nav links/buttons, paragraphs, code editor content, aurora blobs, canvas background
+## Done: landing page "calm premium" rebuild (2026-06-10)
+Supersedes the earlier anti-gravity float/tilt work, which was removed.
+Design direction is recorded in PRODUCT.md and DESIGN.md.
 
-- [x] Step 2: Update `frontend/src/hooks/use-card-tilt.ts`
-  - [x] Replace current landing-only tilt with reusable initTilt(selector, options)
-  - [x] Disable tilt on mobile/hover:none
-  - [x] Add glare overlay when enabled
-  - [x] Ensure hover pauses float via CSS (animation-play-state paused on hover)
-  - [x] Add subtle scroll parallax that stacks with tilt transforms (via CSS vars + combined transform output)
-  - [x] Apply tilt to: `.feature-card`, `.skill-node`, `.dashboard-preview`, `.btn-primary`, `.integration-pill` (and map `.pill-tag` to `.integration-pill` via CSS only if needed)
-  - [x] Do NOT apply tilt to: navbar, code editor, text blocks, input fields, canvas
+- [x] Replace 8 competing ambient animation systems (particle canvas, aurora blobs,
+      floats, glow pulses, tilt/glare, parallax, shimmer) with one static hero glow
+- [x] Hero: split layout with auto-playing visualizer demo (`hero-demo.tsx`),
+      pauses off-screen, static final frame under prefers-reduced-motion
+- [x] Entrance choreography (.intro stagger) + working scroll reveals (.rv)
+- [x] Fonts via next/font (Bricolage Grotesque / Work Sans / Geist Mono), Inter removed
+- [x] OKLCH token palette in globals.css @theme (all token names preserved)
+- [x] Honest copy (no fake 300M+ stats), no gradient text on landing
+- [x] Deleted dead code: visual-effects.tsx, background-effect(.wrapper).tsx,
+      use-card-tilt.ts, Typewriter/CountUp components
+- [x] Targeted prefers-reduced-motion handling (animations resolve to final frame)
+- [x] TypeScript check passes; verified in preview at 1440px and 375px
 
-- [ ] Step 3: TypeScript check
-  - [ ] Run TypeScript check (npm scripts blocked by PowerShell execution policy in this environment)
-
-- [ ] Step 4: Quick sanity verify by running build/lint if possible
-
-
+## Next
+- [ ] Propagate the calm-premium system to app pages (dashboard, courses, codelab,
+      lessons, auth) — replace glassmorphism cards, align fonts/tokens, audit
+      remaining continuous animations there
+- [ ] Backend offline: /courses renders an empty list without the API; consider
+      a designed empty state
