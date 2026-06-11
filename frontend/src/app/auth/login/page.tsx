@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { GlassCard } from "@/components/ui/glass-card";
+import { AuthShell } from "@/components/auth/auth-shell";
 import { useAuthStore } from "@/stores/auth-store";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -31,9 +32,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen gradient-bg flex items-center justify-center p-4">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
-        <GlassCard className="p-8">
+    <AuthShell>
+      <GlassCard className="p-8">
           <div className="text-center mb-8">
             <Link href="/" className="text-3xl font-bold" style={{ fontFamily: "var(--font-display)", color: "var(--color-eduverse-text)", letterSpacing: "-0.02em" }}>
               Edu<span className="text-eduverse-accent">Verse</span>
@@ -86,8 +86,7 @@ export default function LoginPage() {
               Register
             </Link>
           </p>
-        </GlassCard>
-      </motion.div>
-    </div>
+      </GlassCard>
+    </AuthShell>
   );
 }
