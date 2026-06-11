@@ -116,7 +116,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen">
-      <div className="app-ambient" aria-hidden="true" />
+      {/* Ambient background lives in root layout.tsx */}
 
       {/* Mobile top bar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 px-4 py-3 flex items-center justify-between"

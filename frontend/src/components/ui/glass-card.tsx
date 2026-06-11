@@ -12,15 +12,13 @@ interface GlassCardProps {
   onClick?: () => void;
 }
 
-/* Historically a glassmorphism card; now a solid raised surface
+/* Historically a glassmorphism card; now a flat container
    per the design system. Name kept to avoid touching every import. */
-export const GlassCard = memo(function GlassCard({ children, className, hover = true, glow = false, onClick }: GlassCardProps) {
+export const GlassCard = memo(function GlassCard({ children, className, glow = false, onClick }: GlassCardProps) {
   return (
     <motion.div
-      whileHover={hover ? { y: -2, transition: { duration: 0.18 } } : undefined}
       className={classNames(
         "app-card p-6",
-        hover && "app-card-hover",
         glow && "app-card-glow",
         onClick && "cursor-pointer",
         className

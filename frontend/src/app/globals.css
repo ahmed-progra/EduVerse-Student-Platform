@@ -7,8 +7,8 @@
   --color-eduverse-raised: oklch(21% 0.03 295);
   --color-eduverse-editor: oklch(12% 0.02 295);
   --color-eduverse-glass: oklch(17.5% 0.026 295 / 0.78);
-  --color-eduverse-border: oklch(70% 0.06 295 / 0.14);
-  --color-eduverse-border-mid: oklch(72% 0.08 295 / 0.24);
+  --color-eduverse-border: oklch(70% 0.06 295 / 0.08);
+  --color-eduverse-border-mid: oklch(72% 0.08 295 / 0.14);
   --color-eduverse-accent: oklch(70% 0.16 295);
   --color-eduverse-accent-strong: oklch(58% 0.21 293);
   --color-eduverse-accent-light: oklch(78% 0.12 295);
@@ -24,9 +24,9 @@
   --color-eduverse-silver: oklch(85% 0.01 270);
   --color-eduverse-bronze: oklch(70% 0.1 60);
 
-  --shadow-eduverse-sm: 0 1px 2px oklch(0% 0 0 / 0.3);
-  --shadow-eduverse-md: 0 4px 16px oklch(0% 0 0 / 0.35);
-  --shadow-eduverse-lg: 0 16px 48px oklch(0% 0 0 / 0.45);
+  --shadow-eduverse-sm: 0 1px 3px oklch(0% 0 0 / 0.2);
+  --shadow-eduverse-md: 0 4px 24px oklch(0% 0 0 / 0.25);
+  --shadow-eduverse-lg: 0 12px 48px oklch(0% 0 0 / 0.3);
 
   --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
 
@@ -2750,49 +2750,22 @@ h1, h2, h3 {
   color: var(--color-eduverse-text);
 }
 
-/* Ambient background: one fixed layer, two ultra-slow drifting glows.
-   GPU-composited transforms only; resolves to a static frame under
-   prefers-reduced-motion via the global rule. */
+/* Ambient — static vignette only. No aurora, no particles.
+   Keeps readability on large screens without decorative animation. */
 .app-ambient {
   position: fixed;
   inset: 0;
-  z-index: -1;
+  z-index: 0;
   pointer-events: none;
-  overflow: hidden;
 }
 
-.app-ambient::before,
 .app-ambient::after {
   content: '';
-  position: absolute;
-  width: 55vmax;
-  height: 55vmax;
-  border-radius: 50%;
-  will-change: transform;
-}
-
-.app-ambient::before {
-  top: -22vmax;
-  left: -12vmax;
-  background: radial-gradient(circle, oklch(58% 0.21 293 / 0.07) 0%, transparent 65%);
-  animation: ambient-a 90s ease-in-out infinite alternate;
-}
-
-.app-ambient::after {
-  bottom: -25vmax;
-  right: -15vmax;
-  background: radial-gradient(circle, oklch(70% 0.1 200 / 0.045) 0%, transparent 65%);
-  animation: ambient-b 70s ease-in-out infinite alternate;
-}
-
-@keyframes ambient-a {
-  from { transform: translate3d(0, 0, 0) scale(1); }
-  to   { transform: translate3d(8vmax, 6vmax, 0) scale(1.15); }
-}
-
-@keyframes ambient-b {
-  from { transform: translate3d(0, 0, 0) scale(1.1); }
-  to   { transform: translate3d(-7vmax, -5vmax, 0) scale(0.95); }
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(ellipse at center, transparent 40%, rgb(0 0 0 / 0.35) 100%);
+  pointer-events: none;
 }
 
 /* Route entrance */
@@ -2805,21 +2778,12 @@ h1, h2, h3 {
   animation: page-rise 0.45s var(--ease-out-expo) both;
 }
 
-/* Solid raised card (replaces decorative glass) */
+/* Card — flat container, no shadows, no hover lift.
+   Border-radius matches IDE-tab conventions (4px). */
 .app-card {
-  background: var(--color-eduverse-surface);
-  border: 1px solid var(--color-eduverse-border);
-  border-radius: 16px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.app-card-hover:hover {
-  border-color: var(--color-eduverse-border-mid);
-  box-shadow: var(--shadow-eduverse-md);
-}
-
-.app-card-glow {
-  box-shadow: 0 0 0 1px oklch(70% 0.16 295 / 0.06), 0 8px 40px oklch(58% 0.21 293 / 0.1);
+  background: var(--color-eduverse-editor);
+  border: 0.5px solid var(--color-eduverse-border);
+  border-radius: 4px;
 }
 
 /* Sidebar nav items */

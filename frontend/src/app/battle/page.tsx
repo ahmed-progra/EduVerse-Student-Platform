@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { GlassCard } from "@/components/ui/glass-card";
 import { GradientButton } from "@/components/ui/gradient-button";
+import { EmptyState } from "@/components/ui/empty-state";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/stores/auth-store";
 import { useEffect, useState, useRef } from "react";
@@ -186,14 +187,14 @@ export default function BattlePage() {
           </GlassCard>
 
           {/* History */}
-          {history.length > 0 && (
-            <GlassCard className="mt-6">
-              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-                <History className="w-5 h-5" /> Battle History
-              </h2>
+          <GlassCard className="mt-6">
+            <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+              <History className="w-5 h-5" /> Battle History
+            </h2>
+            {history.length > 0 ? (
               <div className="space-y-2">
                 {history.map((b) => (
-                  <div key={b.id} className="flex items-center justify-between py-2 border-b border-white/5 text-sm">
+                  <div key={b.id} className="flex items-center justify-between py-2 border-b border-eduverse-border text-sm">
                     <div>
                       <span className="capitalize">{b.difficulty}</span>
                       <span className="text-eduverse-text-muted ml-2">{b.timeLimit}s</span>
@@ -204,8 +205,10 @@ export default function BattlePage() {
                   </div>
                 ))}
               </div>
-            </GlassCard>
-          )}
+            ) : (
+              <EmptyState icon={Swords} title="No battles yet" message="Win or lose your first battle to see it here." />
+            )}
+          </GlassCard>
         </motion.div>
       )}
 

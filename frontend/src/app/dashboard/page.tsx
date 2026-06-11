@@ -11,8 +11,8 @@ import { updateStreak } from "@/lib/streak";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
-  BookOpen, Swords, GitBranch, ShoppingBag, TrendingUp,
-  Zap, Code2, Flame, Trophy, Star, ArrowRight, Clock, Target, Flag, WifiOff, Sparkles,
+  BookOpen, Swords, GitBranch, ShoppingBag,
+  Zap, Code2, Flame, Trophy, Star, Clock, Target, Flag, WifiOff, Sparkles,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -78,17 +78,17 @@ export default function DashboardPage() {
   }, []);
 
   const quickActions = [
-    { label: "Continue Learning", icon: BookOpen, href: "/courses", tint: "oklch(75% 0.11 250)" },
-    { label: "Enter Battle", icon: Swords, href: "/battle", tint: "oklch(70% 0.16 25)" },
-    { label: "Skill Tree", icon: GitBranch, href: "/skill-tree", tint: "oklch(76% 0.14 165)" },
-    { label: "Visit Shop", icon: ShoppingBag, href: "/shop", tint: "oklch(80% 0.13 85)" },
+    { label: "Continue Learning", icon: BookOpen, href: "/courses" },
+    { label: "Enter Battle", icon: Swords, href: "/battle" },
+    { label: "Skill Tree", icon: GitBranch, href: "/skill-tree" },
+    { label: "Visit Shop", icon: ShoppingBag, href: "/shop" },
   ];
 
   const statCards = [
-    { label: "Lessons Done", value: stats.lessonsDone, icon: Code2, tint: "oklch(75% 0.11 250)" },
-    { label: "Battles Won", value: stats.battlesWon, icon: Trophy, tint: "oklch(80% 0.13 85)" },
-    { label: "Skills Unlocked", value: stats.skillsUnlocked, icon: Star, tint: "oklch(70% 0.16 295)" },
-    { label: "Total XP", value: stats.totalXp, icon: Zap, tint: "oklch(76% 0.14 165)" },
+    { label: "Lessons Done", value: stats.lessonsDone, icon: Code2 },
+    { label: "Battles Won", value: stats.battlesWon, icon: Trophy },
+    { label: "Skills Unlocked", value: stats.skillsUnlocked, icon: Star },
+    { label: "Total XP", value: stats.totalXp, icon: Zap },
   ];
 
   return (
@@ -122,7 +122,7 @@ export default function DashboardPage() {
       {/* ── XP Bar ── */}
       {user && (
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
-          <GlassCard glow hover={false}>
+          <GlassCard glow>
             <XpBar xp={user.xp} size="lg" />
           </GlassCard>
         </motion.div>
@@ -130,9 +130,8 @@ export default function DashboardPage() {
 
       {/* ── Quick Actions ── */}
       <div>
-        <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-          <ArrowRight className="w-4 h-4 text-eduverse-accent" aria-hidden="true" />
-          Quick Actions
+        <h2 className="flex items-center gap-2 text-sm font-mono text-eduverse-text-muted mb-4">
+          <span className="text-eduverse-accent">//</span> Quick Actions
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {quickActions.map((action, i) => (
@@ -144,17 +143,11 @@ export default function DashboardPage() {
             >
               <Link href={action.href} className="block">
                 <motion.div
-                  whileHover={{ y: -3 }}
                   whileTap={{ scale: 0.98 }}
-                  className="app-card app-card-hover text-center p-6 cursor-pointer"
+                  className="app-card text-center p-6 cursor-pointer"
                 >
-                  <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3"
-                    style={{ background: `color-mix(in oklch, ${action.tint} 14%, transparent)`, border: `1px solid color-mix(in oklch, ${action.tint} 30%, transparent)` }}
-                  >
-                    <action.icon className="w-6 h-6" style={{ color: action.tint }} aria-hidden="true" />
-                  </div>
-                  <h3 className="font-semibold text-sm text-eduverse-text" style={{ fontFamily: "var(--font-sans)" }}>{action.label}</h3>
+                  <action.icon className="w-6 h-6 text-eduverse-accent mx-auto mb-3" aria-hidden="true" />
+                  <h3 className="font-semibold text-sm text-eduverse-text">{action.label}</h3>
                 </motion.div>
               </Link>
             </motion.div>
@@ -172,13 +165,8 @@ export default function DashboardPage() {
             transition={{ delay: 0.2 + 0.07 * i, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="app-card p-5">
-              <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center mb-3"
-                style={{ background: `color-mix(in oklch, ${stat.tint} 13%, transparent)`, border: `1px solid color-mix(in oklch, ${stat.tint} 28%, transparent)` }}
-              >
-                <stat.icon className="w-5 h-5" style={{ color: stat.tint }} aria-hidden="true" />
-              </div>
-              <div className="text-2xl font-bold mb-0.5" style={{ color: stat.tint, fontFamily: "var(--font-display)" }}>
+              <stat.icon className="w-5 h-5 text-eduverse-text-muted mb-3" aria-hidden="true" />
+              <div className="text-2xl font-bold mb-0.5 text-eduverse-text font-mono">
                 {loaded && !offline ? <AnimatedNumber value={stat.value} delay={i * 90} /> : "—"}
               </div>
               <div className="text-xs text-eduverse-text-muted">{stat.label}</div>
@@ -188,10 +176,9 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Recent Activity ── */}
-      <GlassCard hover={false}>
-        <h2 className="text-lg font-bold mb-5 flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-eduverse-accent" aria-hidden="true" />
-          Recent Activity
+      <GlassCard>
+        <h2 className="flex items-center gap-2 text-sm font-mono text-eduverse-text-muted mb-5">
+          <span className="text-eduverse-accent">//</span> Recent Activity
         </h2>
         {!loaded ? (
           <div className="space-y-3 animate-pulse" aria-hidden="true">
@@ -237,12 +224,7 @@ export default function DashboardPage() {
                   className="flex items-center justify-between py-3 px-3 rounded-xl border border-transparent hover:border-eduverse-border hover:bg-eduverse-accent-soft/40 transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <div
-                      className="w-9 h-9 rounded-full flex items-center justify-center"
-                      style={{ background: "var(--color-eduverse-accent-soft)", border: "1px solid var(--color-eduverse-border-mid)" }}
-                    >
-                      <Icon className="w-4 h-4 text-eduverse-accent" aria-hidden="true" />
-                    </div>
+                    <Icon className="w-4 h-4 text-eduverse-text-muted shrink-0" aria-hidden="true" />
                     <div>
                       <div className="text-sm font-medium text-eduverse-text capitalize">{log.source}</div>
                       <div className="text-xs text-eduverse-text-muted flex items-center gap-1 mt-0.5">
@@ -251,16 +233,9 @@ export default function DashboardPage() {
                       </div>
                     </div>
                   </div>
-                  <div
-                    className="text-sm font-bold px-2.5 py-0.5 rounded-full"
-                    style={{
-                      background: "oklch(76% 0.14 165 / 0.12)",
-                      border: "1px solid oklch(76% 0.14 165 / 0.25)",
-                      color: "var(--color-eduverse-success)",
-                    }}
-                  >
+                  <span className="text-sm font-bold font-mono text-eduverse-success">
                     +{log.amount} XP
-                  </div>
+                  </span>
                 </motion.div>
               );
             })}

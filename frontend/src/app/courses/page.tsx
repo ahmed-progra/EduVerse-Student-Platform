@@ -67,11 +67,7 @@ export default function CoursesPage() {
               <Link href={`/courses/${course.id}`} className="block h-full group">
                 <GlassCard className="h-full">
                   <div className="flex items-start gap-4">
-                    <div
-                      className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shrink-0"
-                      style={{ background: "var(--color-eduverse-accent-soft)", border: "1px solid var(--color-eduverse-border-mid)" }}
-                      aria-hidden="true"
-                    >
+                    <div className="text-2xl shrink-0 leading-none" aria-hidden="true">
                       {course.icon || <BookOpen className="w-6 h-6 text-eduverse-accent" />}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -79,7 +75,7 @@ export default function CoursesPage() {
                       <p className="text-sm text-eduverse-text-muted mb-4 leading-relaxed">{course.description}</p>
                       <div className="flex items-center gap-2 text-sm text-eduverse-accent">
                         <BookOpen className="w-4 h-4" aria-hidden="true" />
-                        <span>{course.lessons?.length || 0} lessons</span>
+                        <span className="font-mono">{course.lessons?.length || 0}</span><span> lessons</span>
                         <ChevronRight className="w-4 h-4 ml-auto transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" />
                       </div>
                     </div>
