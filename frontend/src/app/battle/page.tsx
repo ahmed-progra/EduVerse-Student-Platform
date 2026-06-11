@@ -1,14 +1,14 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { GlassCard } from "@/components/ui/glass-card";
 import { GradientButton } from "@/components/ui/gradient-button";
-import { EmptyState } from "@/components/ui/empty-state";
+import { AnimatedNumber } from "@/components/ui/animated-number";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/stores/auth-store";
 import { useEffect, useState, useRef } from "react";
 import dynamic from "next/dynamic";
-import { Swords, Clock, Play, Trophy, History } from "lucide-react";
+import { Swords, Clock, Play, Trophy, History, ShieldAlert, Scale } from "lucide-react";
 
 const Editor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
@@ -36,11 +36,12 @@ interface BattleEntry {
 
 export default function BattlePage() {
   const { user, updateXp } = useAuthStore();
-  const [view, setView] = useState<"lobby" | "arena" | "history">("lobby");
+  const [view, setView] = useState<"lobby" | "staging" | "arena">("lobby");
   const [difficulty, setDifficulty] = useState("easy");
   const [timeLimit, setTimeLimit] = useState(180);
   const [battle, setBattle] = useState<BattleEntry | null>(null);
   const [challenge, setChallenge] = useState<BattleChallenge | null>(null);
+  const [countdown, setCountdown] = useState(3);
   const [code, setCode] = useState("");
   const codeRef = useRef(code);
   const [output, setOutput] = useState("");
@@ -50,11 +51,20 @@ export default function BattlePage() {
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState<BattleEntry[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const countdownRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef(0);
 
   useEffect(() => {
     api.getBattleHistory().then((res) => setHistory(res.data)).catch(() => {});
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+      if (countdownRef.current) clearInterval(countdownRef.current);
+    };
   }, []);
+
+  useEffect(() => {
+    codeRef.current = code;
+  }, [code]);
 
   const handleCreateBattle = async () => {
     setLoading(true);
@@ -70,26 +80,42 @@ export default function BattlePage() {
       setSubmitted(false);
       setResult(null);
       setOutput("");
-      setView("arena");
-      startTimeRef.current = Date.now();
-
-      timerRef.current = setInterval(() => {
-        setTimeLeft((prev) => {
+      // staging: reveal the challenge, count down, then the clock starts
+      setCountdown(3);
+      setView("staging");
+      countdownRef.current = setInterval(() => {
+        setCountdown((prev) => {
           if (prev <= 1) {
-            clearInterval(timerRef.current!);
-            handleSubmit(b.id, codeRef.current);
+            clearInterval(countdownRef.current!);
+            enterArena(b);
             return 0;
           }
           return prev - 1;
         });
-      }, 1000);
+      }, 900);
     } catch {}
     setLoading(false);
   };
 
-  useEffect(() => {
-    codeRef.current = code;
-  }, [code]);
+  const enterArena = (b: BattleEntry) => {
+    setView("arena");
+    startTimeRef.current = Date.now();
+    timerRef.current = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timerRef.current!);
+          handleSubmit(b.id, codeRef.current);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const skipCountdown = () => {
+    if (countdownRef.current) clearInterval(countdownRef.current);
+    if (battle) enterArena(battle);
+  };
 
   const handleRun = async () => {
     setOutput("Running...");
@@ -122,6 +148,7 @@ export default function BattlePage() {
         const profile = await api.getProfile();
         updateXp(profile.data.xp, profile.data.level);
       }
+      api.getBattleHistory().then((r) => setHistory(r.data)).catch(() => {});
     } catch {}
   };
 
@@ -131,24 +158,31 @@ export default function BattlePage() {
     return `${m}:${sec.toString().padStart(2, "0")}`;
   };
 
+  const timeFraction = timeLimit > 0 ? timeLeft / timeLimit : 0;
+  const verdict = result
+    ? result.winnerId === user?.id ? "victory" : result.winnerId ? "defeat" : "draw"
+    : null;
+
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
-          <Swords className="w-8 h-8 text-eduverse-accent-light" />
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
+        <h1 className="text-3xl font-bold mb-2 font-display flex items-center gap-3">
+          <Swords className="w-7 h-7 text-eduverse-accent" aria-hidden="true" />
           Battle Arena
         </h1>
-        <p className="text-eduverse-text-muted">Test your skills against coding challenges.</p>
+        <p className="text-eduverse-text-muted">You against the clock. Solve it before the sand runs out.</p>
       </motion.div>
 
       {view === "lobby" && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <GlassCard>
-            <h2 className="text-xl font-bold mb-6">Configure Battle</h2>
+            <h2 className="flex items-center gap-2 text-sm font-mono text-eduverse-text-muted mb-6">
+              <span className="text-eduverse-accent">{"//"}</span> Configure Battle
+            </h2>
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-medium mb-3">Difficulty</label>
-                <div className="flex gap-3">
+                <div className="flex gap-3 flex-wrap">
                   {["easy", "medium", "hard"].map((d) => (
                     <button
                       key={d}
@@ -163,7 +197,7 @@ export default function BattlePage() {
               </div>
               <div>
                 <label className="block text-sm font-medium mb-3">Time Limit</label>
-                <div className="flex gap-3">
+                <div className="flex gap-3 flex-wrap">
                   {[
                     { label: "3 min", value: 180 },
                     { label: "5 min", value: 300 },
@@ -181,66 +215,94 @@ export default function BattlePage() {
                 </div>
               </div>
               <GradientButton onClick={handleCreateBattle} loading={loading} className="w-full">
-                <Play className="w-4 h-4" /> Start Battle
+                <Play className="w-4 h-4" aria-hidden="true" /> Start Battle
               </GradientButton>
             </div>
           </GlassCard>
 
-          {/* History */}
-          <GlassCard className="mt-6">
-            <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-              <History className="w-5 h-5" /> Battle History
-            </h2>
-            {history.length > 0 ? (
+          {history.length > 0 && (
+            <GlassCard className="mt-6">
+              <h2 className="flex items-center gap-2 text-sm font-mono text-eduverse-text-muted mb-4">
+                <History className="w-4 h-4" aria-hidden="true" /> Battle History
+              </h2>
               <div className="space-y-2">
                 {history.map((b) => (
-                  <div key={b.id} className="flex items-center justify-between py-2 border-b border-eduverse-border text-sm">
-                    <div>
-                      <span className="capitalize">{b.difficulty}</span>
+                  <div key={b.id} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0 text-sm">
+                    <div className="font-mono text-xs">
+                      <span className="capitalize text-eduverse-text-body">{b.difficulty}</span>
                       <span className="text-eduverse-text-muted ml-2">{b.timeLimit}s</span>
                     </div>
-                    <div className={b.winnerId === user?.id ? "text-eduverse-success font-semibold" : b.winnerId ? "text-eduverse-danger font-semibold" : "text-eduverse-text-muted font-semibold"}>
+                    <div className={`font-semibold ${b.winnerId === user?.id ? "text-eduverse-success" : b.winnerId ? "text-eduverse-danger" : "text-eduverse-text-muted"}`}>
                       {b.winnerId === user?.id ? "Won" : b.winnerId ? "Lost" : "Draw"}
                     </div>
                   </div>
                 ))}
               </div>
-            ) : (
-              <EmptyState icon={Swords} title="No battles yet" message="Win or lose your first battle to see it here." />
-            )}
-          </GlassCard>
+            </GlassCard>
+          )}
+        </motion.div>
+      )}
+
+      {/* ── Staging: the summoning ── */}
+      {view === "staging" && challenge && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          <div className="battle-staging">
+            <div className="bt-meta font-mono">
+              <span className="capitalize">{difficulty}</span> · {formatTime(timeLimit)} · {challenge.type.replace("_", " ")}
+            </div>
+            <h2 className="bt-title font-display">{challenge.title}</h2>
+            <p className="bt-desc">{challenge.description}</p>
+            <div className="bt-vs font-mono" aria-hidden="true">
+              <span>{user?.username || "you"}</span>
+              <Swords className="w-4 h-4 text-eduverse-accent" />
+              <span>the clock</span>
+            </div>
+            <div key={countdown} className="bt-count font-mono" role="timer" aria-label={`Battle starts in ${countdown}`}>
+              {countdown}
+            </div>
+            <button className="bt-skip font-mono" onClick={skipCountdown}>
+              skip →
+            </button>
+          </div>
         </motion.div>
       )}
 
       {view === "arena" && challenge && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-          {/* Timer & Status */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className={`text-2xl font-bold font-mono ${timeLeft < 30 ? "text-eduverse-danger animate-pulse" : "text-eduverse-accent-light"}`}>
-                <Clock className="w-5 h-5 inline mr-2" />
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }} className="space-y-4">
+          {/* Timer & status */}
+          <div className="bt-timer-row">
+            <div className="flex items-center gap-4 min-w-0">
+              <div className={`bt-clock font-mono ${timeLeft < 30 && !submitted ? "danger" : ""}`}>
+                <Clock className="w-5 h-5 inline mr-2 -mt-1" aria-hidden="true" />
                 {formatTime(timeLeft)}
               </div>
-              <span className="text-sm capitalize text-eduverse-text-muted">{challenge.type.replace("_", " ")}</span>
+              <span className="text-sm capitalize text-eduverse-text-muted truncate">{challenge.type.replace("_", " ")}</span>
             </div>
             <GradientButton
               onClick={() => battle && handleSubmit(battle.id, code)}
               disabled={submitted}
-              variant="danger"
             >
               Submit
             </GradientButton>
           </div>
+          <div className="bt-timebar" aria-hidden="true">
+            <div
+              className={`bt-timebar-fill ${timeLeft < 30 && !submitted ? "danger" : ""}`}
+              style={{ transform: `scaleX(${timeFraction})` }}
+            />
+          </div>
 
-          {/* Challenge Description */}
+          {/* Challenge */}
           <GlassCard>
-            <h2 className="font-bold mb-2">{challenge.title}</h2>
-            <p className="text-sm text-eduverse-text-muted">{challenge.description}</p>
+            <h2 className="font-bold mb-2 font-display">{challenge.title}</h2>
+            <p className="text-sm text-eduverse-text-muted leading-relaxed">{challenge.description}</p>
           </GlassCard>
 
           {/* Editor */}
-          <GlassCard className="p-0 overflow-hidden">
-            <div className="p-3 border-b border-white/10 text-sm font-semibold">Code Editor</div>
+          <GlassCard className="!p-0 overflow-hidden">
+            <div className="px-4 py-2.5 border-b border-white/10 text-xs font-mono text-eduverse-text-muted">
+              <span className="text-eduverse-accent">{"//"}</span> solution.py
+            </div>
             <Editor
               height="350px"
               language="python"
@@ -250,43 +312,60 @@ export default function BattlePage() {
               options={{
                 minimap: { enabled: false },
                 fontSize: 14,
-                fontFamily: "'JetBrains Mono', monospace",
+                fontFamily: "'IBM Plex Mono', monospace",
                 readOnly: submitted,
               }}
             />
           </GlassCard>
 
-          {/* Run & Output */}
           {!submitted && (
-            <GradientButton onClick={handleRun} className="flex items-center gap-2">
-              <Play className="w-4 h-4" /> Run
+            <GradientButton onClick={handleRun} variant="ghost">
+              <Play className="w-4 h-4" aria-hidden="true" /> Run
             </GradientButton>
           )}
 
           {output && (
             <GlassCard>
-              <h3 className="font-semibold mb-2">Output</h3>
+              <h3 className="text-xs font-mono text-eduverse-text-muted mb-2"><span className="text-eduverse-accent">{"//"}</span> Output</h3>
               <pre className="bg-black/30 rounded p-4 text-sm font-mono overflow-auto">{output}</pre>
             </GlassCard>
           )}
 
-          {/* Result */}
-          {result && (
-            <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }}>
-              <GlassCard className="text-center py-8">
-                <Trophy className={`w-16 h-16 mx-auto mb-4 ${result.winnerId === user?.id ? "text-eduverse-gold" : "text-eduverse-text-muted"}`} />
-                <h2 className="text-2xl font-bold mb-2">
-                  {result.winnerId === user?.id ? "Victory!" : result.winnerId ? "Defeat" : "Draw"}
-                </h2>
-                {result.xpReward > 0 && (
-                  <p className="text-eduverse-success font-bold">+{result.xpReward} XP</p>
-                )}
-                <GradientButton onClick={() => setView("lobby")} className="mt-4">
-                  Back to Lobby
-                </GradientButton>
-              </GlassCard>
-            </motion.div>
-          )}
+          {/* ── Verdict ── */}
+          <AnimatePresence>
+            {result && verdict && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ type: "spring", duration: 0.55, bounce: 0.25 }}
+              >
+                <GlassCard className="text-center py-10 relative overflow-hidden">
+                  <div className="bt-verdict-icon" data-verdict={verdict}>
+                    <span className="bt-verdict-burst" aria-hidden="true" />
+                    {verdict === "victory" ? (
+                      <Trophy className="w-10 h-10" aria-hidden="true" />
+                    ) : verdict === "defeat" ? (
+                      <ShieldAlert className="w-10 h-10" aria-hidden="true" />
+                    ) : (
+                      <Scale className="w-10 h-10" aria-hidden="true" />
+                    )}
+                  </div>
+                  <h2 className="text-4xl font-bold mb-1 font-display capitalize">{verdict}</h2>
+                  <p className="text-sm text-eduverse-text-muted font-mono mb-3">
+                    {verdict === "victory" ? "the clock yields" : verdict === "defeat" ? "the clock claims this one" : "honors are even"}
+                  </p>
+                  {result.xpReward > 0 && (
+                    <p className="text-eduverse-success font-bold font-mono text-lg">
+                      +<AnimatedNumber value={result.xpReward} /> XP
+                    </p>
+                  )}
+                  <GradientButton onClick={() => { setView("lobby"); setResult(null); }} className="mt-5">
+                    Back to Lobby
+                  </GradientButton>
+                </GlassCard>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
       )}
     </div>
