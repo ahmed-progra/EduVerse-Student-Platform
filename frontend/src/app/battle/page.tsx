@@ -6,8 +6,13 @@ import { GradientButton } from "@/components/ui/gradient-button";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/stores/auth-store";
 import { useEffect, useState, useRef } from "react";
-import Editor from "@monaco-editor/react";
+import dynamic from "next/dynamic";
 import { Swords, Clock, Play, Trophy, History } from "lucide-react";
+
+const Editor = dynamic(() => import("@monaco-editor/react"), {
+  ssr: false,
+  loading: () => <div className="h-[350px] bg-eduverse-editor animate-pulse" aria-label="Loading code editor" />,
+});
 
 interface BattleChallenge {
   title: string;

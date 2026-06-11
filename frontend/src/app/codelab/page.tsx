@@ -2,9 +2,18 @@
 
 import { motion } from "framer-motion";
 import { GlassCard } from "@/components/ui/glass-card";
-import { Visualizer } from "@/components/visualizer/visualizer";
+import dynamic from "next/dynamic";
 import { useState, useCallback, useEffect } from "react";
 import { FlaskConical, RotateCcw, BookOpen, Bug } from "lucide-react";
+
+// Skulpt (the in-browser Python runtime) is ~0.9 MB — load it after first paint
+const Visualizer = dynamic(
+  () => import("@/components/visualizer/visualizer").then((m) => ({ default: m.Visualizer })),
+  {
+    ssr: false,
+    loading: () => <div className="h-[420px] rounded-xl bg-eduverse-editor animate-pulse" aria-label="Loading editor" />,
+  }
+);
 
 const HANDOFF_KEY = "eduverse_codelab_code";
 

@@ -292,8 +292,8 @@ export default function LandingPage() {
           {filteredChallenges.map((c, i) => (
             <div
               key={c.title}
-              className={`challenge-card rv ${expandedChallenge === c.title ? "open" : ""}`}
-              style={{ "--reveal-delay": `${(i % 3) * 0.06}s` } as React.CSSProperties}
+              className={`challenge-card intro ${expandedChallenge === c.title ? "open" : ""}`}
+              style={{ "--d": `${(i % 3) * 0.05}s` } as React.CSSProperties}
               onClick={() => toggleChallenge(c.title)}
             >
               <h3 className="challenge-title">{c.title}</h3>

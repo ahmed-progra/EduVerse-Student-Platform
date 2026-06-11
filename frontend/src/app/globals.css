@@ -895,7 +895,7 @@ body {
   color: var(--color-eduverse-text-muted);
   cursor: pointer;
   font-family: var(--font-sans);
-  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease, transform 0.16s var(--ease-out-expo);
 }
 
 .challenge-filter-btn:hover {
@@ -1244,7 +1244,6 @@ body {
 .ai-panel {
   max-width: 700px;
   margin: 0 auto;
-  animation: panelIn 0.35s ease both;
 }
 
 @keyframes panelIn {
@@ -1272,7 +1271,7 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.16s var(--ease-out-expo);
   flex-shrink: 0;
 }
 
@@ -1373,7 +1372,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.16s var(--ease-out-expo);
 }
 
 .ai-panel-copy:hover {
@@ -1541,7 +1540,7 @@ body {
   background: var(--color-eduverse-surface);
   color: var(--color-eduverse-text);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.16s var(--ease-out-expo);
   font-family: var(--font-sans);
   text-align: center;
 }
@@ -1664,7 +1663,7 @@ body {
   font-weight: 500;
   cursor: pointer;
   font-family: var(--font-sans);
-  transition: all 0.2s;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.16s var(--ease-out-expo);
 }
 
 .ai-panel-save-btn:hover:not(:disabled) {
@@ -1928,7 +1927,7 @@ kbd {
   background: var(--color-eduverse-surface);
   color: var(--color-eduverse-text-muted);
   cursor: pointer;
-  transition: all 0.15s;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.16s var(--ease-out-expo);
 }
 
 .visualizer-btn:hover:not(:disabled) {
@@ -2533,7 +2532,7 @@ kbd {
   color: var(--color-eduverse-accent);
   font-size: 0.72rem;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.16s var(--ease-out-expo);
   justify-content: center;
 }
 
@@ -2692,7 +2691,7 @@ kbd {
 }
 
 .dashboard-stat-card {
-  transition: all 0.25s ease;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s var(--ease-out-expo);
 }
 
 /* ── Streak badge ── */
@@ -2833,7 +2832,7 @@ h1, h2, h3 {
   font-size: 0.875rem;
   color: var(--color-eduverse-text-muted);
   border: 1px solid transparent;
-  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease, transform 0.16s var(--ease-out-expo);
   cursor: pointer;
   text-decoration: none;
   width: 100%;
@@ -2977,12 +2976,6 @@ h1, h2, h3 {
   border-radius: 14px;
   padding: 12px 18px;
   box-shadow: var(--shadow-eduverse-lg), 0 0 40px oklch(80% 0.13 85 / 0.15);
-  animation: xp-toast-in 0.5s var(--ease-out-expo) both;
-}
-
-@keyframes xp-toast-in {
-  from { opacity: 0; transform: translateY(-12px) scale(0.96); }
-  to   { opacity: 1; transform: none; }
 }
 
 /* Inputs */
@@ -3029,7 +3022,7 @@ h1, h2, h3 {
   color: var(--color-eduverse-text-muted);
   border: 1px solid var(--color-eduverse-border);
   cursor: pointer;
-  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease, transform 0.16s var(--ease-out-expo);
   font-family: inherit;
   text-transform: capitalize;
 }
@@ -3054,4 +3047,22 @@ h1, h2, h3 {
 
 .unlock-pop {
   animation: unlock-pop 1.2s var(--ease-out-expo);
+}
+
+/* Press feedback on remaining small controls (emil: buttons must feel responsive) */
+.seg-btn:active,
+.challenge-filter-btn:active,
+.visualizer-btn:active:not(:disabled),
+.error-diagnose-btn:active:not(:disabled),
+.nav-menu-btn:active,
+.side-item:active,
+.mobile-nav-link:active {
+  transform: scale(0.97);
+}
+
+/* Hover-driven motion only on devices that actually hover */
+@media (hover: none) {
+  .challenge-card:hover {
+    transform: none;
+  }
 }

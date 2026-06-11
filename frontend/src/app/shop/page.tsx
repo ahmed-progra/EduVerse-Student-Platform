@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { GlassCard } from "@/components/ui/glass-card";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { XpBar } from "@/components/ui/xp-bar";
@@ -143,6 +143,7 @@ export default function ShopPage() {
         <EmptyState icon={ShoppingBag} title="Nothing here yet" message="No items in this category. Check another tab or come back later." />
       ) : (
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <AnimatePresence mode="popLayout">
         {filtered.map((item, i) => {
           const owned = ownedIds.has(item.id);
           const equipped = equippedIds.has(item.id);
@@ -152,9 +153,11 @@ export default function ShopPage() {
           return (
             <motion.div
               key={item.id}
-              initial={{ opacity: 0, y: 20 }}
+              layout
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
+              exit={{ opacity: 0, scale: 0.97, transition: { duration: 0.15, ease: "easeOut" } }}
+              transition={{ delay: Math.min(i * 0.04, 0.3), duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             >
               <GlassCard className={`text-center ${equipped ? "border-eduverse-accent/50 shadow-[0_0_10px_rgba(108,92,231,0.3)]" : ""}`}>
                 <div className="w-16 h-16 rounded-2xl bg-eduverse-accent/20 flex items-center justify-center mx-auto mb-4">
@@ -194,6 +197,7 @@ export default function ShopPage() {
             </motion.div>
           );
         })}
+        </AnimatePresence>
       </div>
       )}
     </div>
