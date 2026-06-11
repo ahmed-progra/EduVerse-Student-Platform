@@ -11,7 +11,7 @@ const Visualizer = dynamic(
   () => import("@/components/visualizer/visualizer").then((m) => ({ default: m.Visualizer })),
   {
     ssr: false,
-    loading: () => <div className="h-[420px] rounded-xl bg-eduverse-editor animate-pulse" aria-label="Loading editor" />,
+    loading: () => <div className="h-[420px] rounded bg-eduverse-editor animate-pulse" aria-label="Loading editor" />,
   }
 );
 
@@ -124,7 +124,7 @@ export default function CodeLabPage() {
       </GlassCard>
 
       {/* Shortcuts */}
-      <div className="text-xs text-eduverse-text-muted space-y-1 border border-eduverse-border rounded-xl p-4">
+      <div className="text-xs text-eduverse-text-muted space-y-1 border border-eduverse-border rounded p-4">
         <div className="font-semibold text-eduverse-text mb-1">Keyboard Shortcuts</div>
         <div className="flex gap-4 flex-wrap">
           <span><kbd className="shortcut-kbd">Ctrl+Enter</kbd> Next Step</span>

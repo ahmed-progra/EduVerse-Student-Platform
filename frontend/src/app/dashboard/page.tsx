@@ -98,17 +98,17 @@ export default function DashboardPage() {
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
-            <h1 className="text-3xl font-bold mb-1">
+            <h1 className="text-3xl font-bold mb-1 font-display">
               Welcome back, <span className="text-eduverse-accent">{user?.username}</span>
             </h1>
             <p className="text-eduverse-text-muted">Continue your quest to become a code master.</p>
           </div>
           {streak > 0 && (
             <div
-              className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold"
+              className="flex items-center gap-2 px-4 py-2 rounded text-sm font-bold"
               style={{
-                background: "oklch(80% 0.13 85 / 0.1)",
-                border: "1px solid oklch(80% 0.13 85 / 0.3)",
+                background: "var(--color-eduverse-accent-soft)",
+                border: "1px solid var(--color-eduverse-accent-soft)",
                 color: "var(--color-eduverse-warning)",
               }}
             >
@@ -122,7 +122,7 @@ export default function DashboardPage() {
       {/* ── XP Bar ── */}
       {user && (
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
-          <GlassCard glow>
+          <GlassCard>
             <XpBar xp={user.xp} size="lg" />
           </GlassCard>
         </motion.div>
@@ -147,7 +147,7 @@ export default function DashboardPage() {
                   className="app-card text-center p-6 cursor-pointer"
                 >
                   <action.icon className="w-6 h-6 text-eduverse-accent mx-auto mb-3" aria-hidden="true" />
-                  <h3 className="font-semibold text-sm text-eduverse-text">{action.label}</h3>
+                  <h3 className="font-semibold text-sm text-eduverse-text font-display">{action.label}</h3>
                 </motion.div>
               </Link>
             </motion.div>
@@ -164,9 +164,9 @@ export default function DashboardPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 + 0.07 * i, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="app-card p-5">
+            <div className="app-card p-6">
               <stat.icon className="w-5 h-5 text-eduverse-text-muted mb-3" aria-hidden="true" />
-              <div className="text-2xl font-bold mb-0.5 text-eduverse-text font-mono">
+              <div className="text-2xl font-bold mb-1 text-eduverse-text font-mono">
                 {loaded && !offline ? <AnimatedNumber value={stat.value} delay={i * 90} /> : "—"}
               </div>
               <div className="text-xs text-eduverse-text-muted">{stat.label}</div>
@@ -185,7 +185,7 @@ export default function DashboardPage() {
             {[1, 2, 3].map((i) => (
               <div key={i} className="flex items-center justify-between py-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-eduverse-raised" />
+                  <div className="w-9 h-9 rounded bg-eduverse-raised" />
                   <div>
                     <div className="h-3.5 w-28 bg-eduverse-raised rounded mb-1.5" />
                     <div className="h-2.5 w-20 bg-eduverse-raised rounded" />
@@ -207,7 +207,7 @@ export default function DashboardPage() {
             title="No activity yet"
             message="Complete a lesson or win a battle to start your journey. Every action earns XP."
           >
-            <Link href="/courses" className="px-4 py-2 rounded-lg text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]">
+            <Link href="/courses" className="px-4 py-3 rounded text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]">
               Start a course
             </Link>
           </EmptyState>
@@ -221,7 +221,7 @@ export default function DashboardPage() {
                   initial={{ opacity: 0, x: -8 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.04, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                  className="flex items-center justify-between py-3 px-3 rounded-xl border border-transparent hover:border-eduverse-border hover:bg-eduverse-accent-soft/40 transition-colors"
+                  className="flex items-center justify-between py-3 px-3 rounded border border-transparent hover:border-eduverse-border hover:bg-eduverse-accent-soft/40 transition-colors"
                 >
                   <div className="flex items-center gap-3">
                     <Icon className="w-4 h-4 text-eduverse-text-muted shrink-0" aria-hidden="true" />

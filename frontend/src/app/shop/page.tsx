@@ -89,10 +89,10 @@ export default function ShopPage() {
   if (loading) {
     return (
       <div className="space-y-6 animate-pulse" aria-hidden="true">
-        <div className="h-8 w-44 rounded-lg bg-eduverse-surface" />
-        <div className="h-24 rounded-2xl bg-eduverse-surface" />
+        <div className="h-8 w-44 rounded bg-eduverse-surface" />
+        <div className="h-24 rounded bg-eduverse-surface" />
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => <div key={i} className="h-56 rounded-2xl bg-eduverse-surface" />)}
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => <div key={i} className="h-56 rounded bg-eduverse-surface" />)}
         </div>
       </div>
     );
@@ -159,8 +159,8 @@ export default function ShopPage() {
               exit={{ opacity: 0, scale: 0.97, transition: { duration: 0.15, ease: "easeOut" } }}
               transition={{ delay: Math.min(i * 0.04, 0.3), duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             >
-              <GlassCard className={`text-center ${equipped ? "border-eduverse-accent/50 shadow-[0_0_10px_rgba(108,92,231,0.3)]" : ""}`}>
-                <div className="w-16 h-16 rounded-2xl bg-eduverse-accent/20 flex items-center justify-center mx-auto mb-4">
+              <GlassCard className={`text-center ${equipped ? "border-eduverse-accent/50" : ""}`}>
+                <div className="w-16 h-16 rounded bg-eduverse-accent/20 flex items-center justify-center mx-auto mb-4">
                   <Icon className="w-8 h-8 text-eduverse-accent-light" />
                 </div>
                 <h3 className="font-bold text-sm mb-1">{item.name}</h3>

@@ -70,12 +70,12 @@ export default function LeaderboardPage() {
   return (
     <div className="space-y-8 max-w-4xl mx-auto">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
-          <Trophy className="w-8 h-8 text-eduverse-gold" />
-          Leaderboard
-        </h1>
+        <h1 className="text-3xl font-bold mb-2 font-display">Leaderboard</h1>
         <p className="text-eduverse-text-muted">Top programmers ranked by XP.</p>
       </motion.div>
+      <h2 className="flex items-center gap-2 text-sm font-mono text-eduverse-text-muted">
+        <span className="text-eduverse-accent">//</span> Hall of Fame
+      </h2>
 
       {/* Filters */}
       <div className="flex gap-4 flex-wrap">
@@ -99,7 +99,7 @@ export default function LeaderboardPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             aria-label="Search by username"
-            className="app-input !pl-10 !py-2 text-sm"
+            className="app-input pl-8 py-2 text-sm"
           />
         </div>
       </div>
@@ -138,7 +138,7 @@ export default function LeaderboardPage() {
                 <Trophy className={`w-8 h-8 ${medals[i]}`} />
                 <div className="text-sm font-bold mb-1">{e.username}</div>
                 <div className="text-xs text-eduverse-text-muted mb-2">{e.xp} XP</div>
-                <div className={`w-20 ${heights[i]} glass rounded-t-xl flex items-center justify-center`}>
+                <div className={`w-20 ${heights[i]} rounded-t flex items-center justify-center app-card`}>
                   <span className="text-2xl font-bold">#{e.rank}</span>
                 </div>
               </motion.div>
@@ -151,7 +151,7 @@ export default function LeaderboardPage() {
       <GlassCard className="p-0 overflow-hidden">
         {loading ? (
           <div className="p-4 space-y-3 animate-pulse" aria-hidden="true">
-            {[1, 2, 3, 4, 5, 6].map((i) => <div key={i} className="h-12 rounded-xl bg-eduverse-raised" />)}
+            {[1, 2, 3, 4, 5, 6].map((i) => <div key={i} className="h-12 rounded bg-eduverse-raised" />)}
           </div>
         ) : offline ? (
           <div className="p-6">
@@ -183,12 +183,12 @@ export default function LeaderboardPage() {
                   #{entry.rank}
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-eduverse-accent/30 flex items-center justify-center text-sm font-bold">
+                  <span className="text-sm font-bold font-mono text-eduverse-accent">
                     {entry.username[0].toUpperCase()}
-                  </div>
+                  </span>
                   <span className="font-medium text-sm">{entry.username}</span>
                 </div>
-                <div className="text-sm text-eduverse-accent-light">{entry.level}</div>
+                <div className="text-sm font-mono text-eduverse-accent">{entry.level}</div>
                 <div className="text-right font-mono text-sm">{entry.xp.toLocaleString()}</div>
               </motion.div>
             ))}

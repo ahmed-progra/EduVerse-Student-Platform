@@ -35,9 +35,13 @@ export default function CoursesPage() {
   return (
     <div className="space-y-8">
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
-        <h1 className="text-3xl font-bold mb-2">Courses</h1>
+        <h1 className="text-3xl font-bold mb-2 font-display">Courses</h1>
         <p className="text-eduverse-text-muted">Choose your path and master programming languages.</p>
       </motion.div>
+
+      <h2 className="flex items-center gap-2 text-sm font-mono text-eduverse-text-muted">
+        <span className="text-eduverse-accent">//</span> Available Paths
+      </h2>
 
       {loading ? (
         <div className="grid md:grid-cols-2 gap-6" aria-hidden="true">
@@ -71,7 +75,7 @@ export default function CoursesPage() {
                       {course.icon || <BookOpen className="w-6 h-6 text-eduverse-accent" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h2 className="text-xl font-bold mb-1.5">{course.title}</h2>
+                      <h2 className="text-xl font-bold mb-2">{course.title}</h2>
                       <p className="text-sm text-eduverse-text-muted mb-4 leading-relaxed">{course.description}</p>
                       <div className="flex items-center gap-2 text-sm text-eduverse-accent">
                         <BookOpen className="w-4 h-4" aria-hidden="true" />

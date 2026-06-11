@@ -266,14 +266,14 @@ export default function BattlePage() {
           {output && (
             <GlassCard>
               <h3 className="font-semibold mb-2">Output</h3>
-              <pre className="bg-black/30 rounded-xl p-4 text-sm font-mono overflow-auto">{output}</pre>
+              <pre className="bg-black/30 rounded p-4 text-sm font-mono overflow-auto">{output}</pre>
             </GlassCard>
           )}
 
           {/* Result */}
           {result && (
             <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }}>
-              <GlassCard glow className="text-center py-8">
+              <GlassCard className="text-center py-8">
                 <Trophy className={`w-16 h-16 mx-auto mb-4 ${result.winnerId === user?.id ? "text-eduverse-gold" : "text-eduverse-text-muted"}`} />
                 <h2 className="text-2xl font-bold mb-2">
                   {result.winnerId === user?.id ? "Victory!" : result.winnerId ? "Defeat" : "Draw"}

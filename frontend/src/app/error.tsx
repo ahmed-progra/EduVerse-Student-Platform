@@ -26,7 +26,7 @@ export default function GlobalError({
       <p className="text-eduverse-text-muted mb-6 max-w-md">An unexpected error occurred. Try refreshing the page.</p>
       <button
         onClick={reset}
-        className="px-6 py-3 rounded-xl bg-eduverse-accent-strong text-white font-semibold text-sm hover:brightness-110 transition-[filter]"
+        className="px-6 py-3 rounded bg-eduverse-accent-strong text-white font-semibold text-sm hover:brightness-110 transition-[filter]"
       >
         Try Again
       </button>

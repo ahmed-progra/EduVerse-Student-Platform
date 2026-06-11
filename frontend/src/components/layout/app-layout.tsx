@@ -224,12 +224,12 @@ function SidebarContent({
       {user && showFull && (
         <div className="p-4 border-b" style={{ borderColor: "var(--color-eduverse-border)" }}>
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold shrink-0" style={{ background: "var(--color-eduverse-accent-soft)", color: "var(--color-eduverse-accent)" }}>
+            <span className="text-lg font-bold shrink-0 font-mono" style={{ color: "var(--color-eduverse-accent)" }}>
               {user.username[0].toUpperCase()}
-            </div>
+            </span>
             <div className="overflow-hidden">
-              <div className="font-semibold text-sm truncate" style={{ color: "var(--color-eduverse-text)" }}>{user.username}</div>
-              <div className="text-xs" style={{ color: "var(--color-eduverse-text-muted)" }}>Level {user.level}</div>
+              <div className="font-semibold text-sm truncate font-mono" style={{ color: "var(--color-eduverse-text)" }}>{user.username}</div>
+              <div className="text-xs font-mono" style={{ color: "var(--color-eduverse-text-muted)" }}>Level {user.level}</div>
             </div>
           </div>
           <XpBar xp={user.xp} size="sm" showLabel={false} />
@@ -238,9 +238,9 @@ function SidebarContent({
 
       {user && !showFull && (
         <div className="p-3 border-b flex justify-center" style={{ borderColor: "var(--color-eduverse-border)" }}>
-          <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold shrink-0" style={{ background: "var(--color-eduverse-accent-soft)", color: "var(--color-eduverse-accent)" }}>
+          <span className="text-sm font-bold font-mono" style={{ color: "var(--color-eduverse-accent)" }}>
             {user.username[0].toUpperCase()}
-          </div>
+          </span>
         </div>
       )}
 
@@ -248,7 +248,8 @@ function SidebarContent({
         {navSections.map((section) => (
           <div key={section.title} className="mb-4">
             {showFull && (
-              <div className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.12em]" style={{ color: "var(--color-eduverse-text-muted)", opacity: 0.7 }}>
+              <div className="flex items-center gap-2 px-3 mb-1.5 text-xs font-mono" style={{ color: "var(--color-eduverse-text-muted)" }}>
+                <span style={{ color: "var(--color-eduverse-accent)" }}>//</span>
                 {section.title}
               </div>
             )}

@@ -1,0 +1,58 @@
+<h2>App Page Polish — Calm Premium</h2>
+<p class="subtitle">The landing page is calm-premium. The app pages (dashboard, courses, etc.) still use the older style. Here's what I'm proposing to change:</p>
+
+<div class="section">
+  <h3>What stays</h3>
+  <div class="pros-cons">
+    <div class="pros">
+      <ul>
+        <li><strong>GlassCard</strong> component — already solid surface, name is legacy</li>
+        <li><strong>Font family</strong> — Bricolage + Work Sans + Geist Mono stays</li>
+        <li><strong>OKLCH palette</strong> — all color tokens preserved</li>
+        <li><strong>Easing curve</strong> — <code>--ease-out-expo</code> stays</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>What changes</h3>
+  <div class="options" data-multiselect>
+    <div class="option" data-choice="borders" onclick="toggleSelect(this)">
+      <div class="letter">1</div>
+      <div class="content">
+        <h3>Softer borders</h3>
+        <p>Reduce border opacity from ~0.14 to ~0.08. Cards breathe more, feel lighter.</p>
+      </div>
+    </div>
+    <div class="option" data-choice="shadows" onclick="toggleSelect(this)">
+      <div class="letter">2</div>
+      <div class="content">
+        <h3>Softer shadows</h3>
+        <p>Wider, more diffuse shadows instead of dense ones. Think: hover shadow = <code>0 8px 40px / 0.2</code> instead of <code>0 4px 16px / 0.35</code>.</p>
+      </div>
+    </div>
+    <div class="option" data-choice="accents" onclick="toggleSelect(this)">
+      <div class="letter">3</div>
+      <div class="content">
+        <h3>Restrained accents</h3>
+        <p>Dashboard cards use 4 different accent colors (blue, amber, purple, green). Calm premium uses 1-2 muted hues instead.</p>
+      </div>
+    </div>
+    <div class="option" data-choice="spacing" onclick="toggleSelect(this)">
+      <div class="letter">4</div>
+      <div class="content">
+        <h3>Consistent spacing</h3>
+        <p>Unify card padding, section gaps, and header sizing across all pages.</p>
+      </div>
+    </div>
+    <div class="option" data-choice="empty" onclick="toggleSelect(this)">
+      <div class="letter">5</div>
+      <div class="content">
+        <h3>Empty states</h3>
+        <p>Designed empty/loading/error states for every data-driven page.</p>
+      </div>
+    </div>
+  </div>
+  <p class="subtitle" style="margin-top:12px;">Click any/all that feel right. I'll refine based on your picks.</p>
+</div>

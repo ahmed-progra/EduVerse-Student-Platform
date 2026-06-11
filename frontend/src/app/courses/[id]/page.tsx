@@ -65,9 +65,9 @@ export default function CourseDetailPage() {
   if (loading) {
     return (
       <div className="space-y-4 animate-pulse" aria-hidden="true">
-        <div className="h-8 w-64 rounded-lg bg-eduverse-surface" />
-        <div className="h-20 rounded-2xl bg-eduverse-surface" />
-        {[1, 2, 3, 4].map((i) => <div key={i} className="h-16 rounded-2xl bg-eduverse-surface" />)}
+        <div className="h-8 w-64 rounded bg-eduverse-surface" />
+        <div className="h-20 rounded bg-eduverse-surface" />
+        {[1, 2, 3, 4].map((i) => <div key={i} className="h-16 rounded bg-eduverse-surface" />)}
       </div>
     );
   }
@@ -106,23 +106,23 @@ export default function CourseDetailPage() {
         </Link>
         <div className="flex items-center gap-4 mb-2">
           <span
-            className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shrink-0"
+            className="w-14 h-14 rounded flex items-center justify-center text-3xl shrink-0"
             style={{ background: "var(--color-eduverse-accent-soft)", border: "1px solid var(--color-eduverse-border-mid)" }}
             aria-hidden="true"
           >
             {course.icon}
           </span>
           <div className="min-w-0">
-            <h1 className="text-3xl font-bold">{course.title}</h1>
+            <h1 className="text-3xl font-bold font-display">{course.title}</h1>
             <p className="text-eduverse-text-muted">{course.description}</p>
           </div>
         </div>
         {totalCount > 0 && (
           <div className="flex items-center gap-3 mt-4">
-            <div className="h-2 rounded-full bg-eduverse-accent-soft overflow-hidden flex-1 max-w-sm">
+            <div className="h-2 rounded bg-eduverse-accent-soft overflow-hidden flex-1 max-w-sm">
               <motion.div
-                className="h-full rounded-full"
-                style={{ background: "linear-gradient(90deg, oklch(58% 0.21 293), oklch(70% 0.16 295))" }}
+                className="h-full rounded"
+                style={{ background: "var(--color-eduverse-accent-strong)" }}
                 initial={{ width: 0 }}
                 animate={{ width: `${pct}%` }}
                 transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
@@ -135,7 +135,7 @@ export default function CourseDetailPage() {
 
       {/* Placement banner */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
-        <GlassCard hover={false}>
+        <GlassCard >
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <div className="flex items-center gap-3">
               {TierIcon ? (
@@ -189,7 +189,7 @@ export default function CourseDetailPage() {
                     </span>
                     {lesson.title}
                   </h3>
-                  <p className="text-xs text-eduverse-text-muted mt-0.5">+{lesson.xpReward} XP</p>
+                  <p className="text-xs text-eduverse-text-muted mt-1 font-mono">+{lesson.xpReward} XP</p>
                 </div>
                 <ChevronRight className="w-5 h-5 text-eduverse-text-muted transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" />
               </GlassCard>

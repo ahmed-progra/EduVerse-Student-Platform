@@ -25,7 +25,7 @@ export const GradientButton = memo(function GradientButton({
   type = "button",
 }: GradientButtonProps) {
   const variants = {
-    primary: "bg-eduverse-accent-strong text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] hover:brightness-110",
+    primary: "bg-eduverse-accent-strong text-white hover:brightness-110",
     secondary: "bg-eduverse-accent-soft text-eduverse-accent border border-eduverse-border-mid hover:brightness-110",
     danger: "bg-eduverse-danger text-white hover:brightness-110",
     ghost: "bg-transparent text-eduverse-text-body border border-eduverse-border-mid hover:bg-eduverse-surface hover:text-eduverse-text",
@@ -38,7 +38,7 @@ export const GradientButton = memo(function GradientButton({
       disabled={disabled || loading}
       onClick={onClick}
       className={classNames(
-        "inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm",
+        "inline-flex items-center justify-center gap-2 px-6 py-3 rounded font-semibold text-sm",
         "transition-[color,background-color,opacity,box-shadow,filter] duration-200",
         "disabled:opacity-50 disabled:cursor-not-allowed",
         variants[variant],

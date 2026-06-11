@@ -13,7 +13,7 @@ export default function LessonNotFound() {
       <p className="text-eduverse-text-muted mb-6 max-w-md">This lesson doesn&apos;t exist or has been removed.</p>
       <Link
         href="/courses"
-        className="px-6 py-3 rounded-xl bg-eduverse-accent-strong text-white font-semibold text-sm hover:brightness-110 transition-[filter]"
+        className="px-6 py-3 rounded bg-eduverse-accent-strong text-white font-semibold text-sm hover:brightness-110 transition-[filter]"
       >
         Browse Courses
       </Link>

@@ -84,7 +84,7 @@ function PlacementTestContent() {
   if (loading) {
     return (
       <div className="min-h-screen gradient-bg flex items-center justify-center p-4">
-        <div className="w-8 h-8 border-2 border-eduverse-accent border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-eduverse-accent border-t-transparent rounded animate-spin" />
       </div>
     );
   }
@@ -107,9 +107,9 @@ function PlacementTestContent() {
     return (
       <div className="min-h-screen gradient-bg flex items-center justify-center p-4">
         <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
-          <GlassCard className="text-center p-12 max-w-md" hover={false}>
+          <GlassCard className="text-center p-12 max-w-md" >
             <div
-              className="w-20 h-20 rounded-2xl mx-auto mb-6 flex items-center justify-center"
+              className="w-20 h-20 rounded mx-auto mb-6 flex items-center justify-center"
               style={{
                 background: "var(--color-eduverse-accent-soft)",
                 border: "1px solid var(--color-eduverse-border-mid)",
@@ -158,9 +158,9 @@ function PlacementTestContent() {
               <span>Question {currentQ + 1} of {questions.length}</span>
               <span>{Math.round(progress)}%</span>
             </div>
-            <div className="h-2 rounded-full bg-white/10 overflow-hidden">
+            <div className="h-2 rounded bg-white/10 overflow-hidden">
               <motion.div
-                className="h-full rounded-full bg-gradient-to-r from-eduverse-accent to-eduverse-accent-light"
+                className="h-full rounded bg-eduverse-accent-strong"
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.3 }}
@@ -176,7 +176,7 @@ function PlacementTestContent() {
                 key={i}
                 whileHover={{ x: 4 }}
                 onClick={() => handleAnswer(i)}
-                className={`w-full text-left p-4 rounded-xl border transition-all ${
+                className={`w-full text-left p-4 rounded border transition-all ${
                   answers[currentQ] === i
                     ? "border-eduverse-accent bg-eduverse-accent/20"
                     : "border-white/10 bg-white/5 hover:bg-white/10"
@@ -225,7 +225,7 @@ export default function PlacementTestPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen gradient-bg flex items-center justify-center p-4">
-        <div className="w-8 h-8 border-2 border-eduverse-accent border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-eduverse-accent border-t-transparent rounded animate-spin" />
       </div>
     }>
       <PlacementTestContent />

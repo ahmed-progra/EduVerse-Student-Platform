@@ -68,9 +68,9 @@ export default function LessonPage() {
   if (loading) {
     return (
       <div className="space-y-6 max-w-6xl mx-auto animate-pulse" aria-hidden="true">
-        <div className="h-8 w-72 rounded-lg bg-eduverse-surface" />
-        <div className="h-64 rounded-2xl bg-eduverse-surface" />
-        <div className="h-[420px] rounded-2xl bg-eduverse-surface" />
+        <div className="h-8 w-72 rounded bg-eduverse-surface" />
+        <div className="h-64 rounded bg-eduverse-surface" />
+        <div className="h-[420px] rounded bg-eduverse-surface" />
       </div>
     );
   }
@@ -132,14 +132,14 @@ export default function LessonPage() {
 
       {/* Content */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.07, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
-        <GlassCard hover={false}>
+        <GlassCard >
           <div className="lesson-content" dangerouslySetInnerHTML={{ __html: lesson.content }} />
         </GlassCard>
       </motion.div>
 
       {/* Visualizer */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.14, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
-        <GlassCard hover={false} className="p-4">
+        <GlassCard  className="p-4">
           <ErrorBoundary>
             <Visualizer initialCode={initialCode} language={lesson.language} />
           </ErrorBoundary>

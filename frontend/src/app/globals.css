@@ -1,43 +1,36 @@
 @import "tailwindcss";
 
 @theme {
-  /* Calm-premium dark palette — violet identity, restrained (see DESIGN.md) */
-  --color-eduverse-bg: oklch(14% 0.022 295);
-  --color-eduverse-surface: oklch(17.5% 0.026 295);
-  --color-eduverse-raised: oklch(21% 0.03 295);
-  --color-eduverse-editor: oklch(12% 0.02 295);
-  --color-eduverse-glass: oklch(17.5% 0.026 295 / 0.78);
-  --color-eduverse-border: oklch(70% 0.06 295 / 0.08);
-  --color-eduverse-border-mid: oklch(72% 0.08 295 / 0.14);
-  --color-eduverse-accent: oklch(70% 0.16 295);
-  --color-eduverse-accent-strong: oklch(58% 0.21 293);
-  --color-eduverse-accent-light: oklch(78% 0.12 295);
-  --color-eduverse-accent-soft: oklch(70% 0.16 295 / 0.1);
-  --color-eduverse-accent-pink: oklch(74% 0.13 340);
+  /* Code Sorcery — warm dark palette, amber accent. No violet. */
+  --color-eduverse-bg: oklch(12% 0.02 55);
+  --color-eduverse-surface: oklch(16% 0.025 50);
+  --color-eduverse-raised: oklch(20% 0.03 50);
+  --color-eduverse-editor: oklch(9% 0.015 55);
+  --color-eduverse-glass: oklch(16% 0.025 50 / 0.78);
+  --color-eduverse-border: oklch(70% 0.03 55 / 0.08);
+  --color-eduverse-border-mid: oklch(72% 0.04 55 / 0.14);
+  --color-eduverse-accent: oklch(78% 0.14 85);
+  --color-eduverse-accent-strong: oklch(60% 0.18 75);
+  --color-eduverse-accent-light: oklch(85% 0.1 85);
+  --color-eduverse-accent-soft: oklch(78% 0.14 85 / 0.1);
   --color-eduverse-success: oklch(76% 0.14 165);
   --color-eduverse-warning: oklch(80% 0.13 85);
   --color-eduverse-danger: oklch(66% 0.19 25);
-  --color-eduverse-text: oklch(96% 0.008 295);
-  --color-eduverse-text-body: oklch(76% 0.02 295);
-  --color-eduverse-text-muted: oklch(60% 0.025 295);
-  --color-eduverse-gold: oklch(82% 0.13 85);
-  --color-eduverse-silver: oklch(85% 0.01 270);
-  --color-eduverse-bronze: oklch(70% 0.1 60);
-
-  --shadow-eduverse-sm: 0 1px 3px oklch(0% 0 0 / 0.2);
-  --shadow-eduverse-md: 0 4px 24px oklch(0% 0 0 / 0.25);
-  --shadow-eduverse-lg: 0 12px 48px oklch(0% 0 0 / 0.3);
+  --color-eduverse-text: oklch(93% 0.01 80);
+  --color-eduverse-text-body: oklch(72% 0.02 70);
+  --color-eduverse-text-muted: oklch(55% 0.03 65);
+  --color-eduverse-gold: oklch(82% 0.14 85);
+  --color-eduverse-silver: oklch(80% 0.01 270);
+  --color-eduverse-bronze: oklch(68% 0.1 60);
 
   --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
-
-  --gradient-accent: linear-gradient(135deg, oklch(70% 0.16 295), oklch(78% 0.12 295));
 }
 
-/* Fonts come from next/font (layout.tsx) — referenced, not redeclared */
+/* Fonts come from next/font (layout.tsx) */
 @theme inline {
-  --font-sans: var(--font-work-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --font-display: var(--font-bricolage), var(--font-work-sans), ui-sans-serif, sans-serif;
+  --font-sans: var(--font-ibm-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-ibm-plex-mono), ui-monospace, monospace;
+  --font-display: var(--font-fraunces), var(--font-ibm-plex-sans), ui-serif, serif;
 }
 
 *,
@@ -54,18 +47,18 @@ body {
   margin: 0;
   padding: 0;
   background: var(--color-eduverse-bg);
-  background-image: radial-gradient(oklch(70% 0.06 295 / 0.06) 1px, transparent 1px);
+  background-image: radial-gradient(oklch(70% 0.03 55 / 0.06) 1px, transparent 1px);
   background-size: 28px 28px;
   color: var(--color-eduverse-text-body);
   font-family: var(--font-sans);
   min-height: 100vh;
   overflow-x: hidden;
-  line-height: 1.7;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background: oklch(58% 0.21 293 / 0.35);
+  background: oklch(78% 0.14 85 / 0.25);
   color: var(--color-eduverse-text);
 }
 
@@ -132,7 +125,7 @@ body {
 .lesson-content pre.lesson-code {
   background: var(--color-eduverse-editor);
   border: 1px solid var(--color-eduverse-border);
-  border-radius: 10px;
+  border-radius: 4px;
   padding: 1rem 1.2rem;
   margin: 0.75rem 0 1rem;
   overflow-x: auto;
@@ -150,7 +143,7 @@ body {
 .lesson-content .lesson-output {
   background: oklch(76% 0.14 165 / 0.05);
   border: 1px solid oklch(76% 0.14 165 / 0.14);
-  border-radius: 8px;
+  border-radius: 4px;
   padding: 0.6rem 1rem;
   margin: 0.5rem 0 1rem;
   font-family: var(--font-mono);
@@ -207,16 +200,16 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: oklch(70% 0.08 295 / 0.3);
+  background: oklch(78% 0.14 85 / 0.2);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: oklch(70% 0.08 295 / 0.5);
+  background: oklch(78% 0.14 85 / 0.3);
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: oklch(70% 0.08 295 / 0.3) transparent;
+  scrollbar-color: oklch(78% 0.14 85 / 0.2) transparent;
 }
 
 /* ── Reduced motion: resolve animations to their final frame, keep state changes ── */
@@ -248,7 +241,7 @@ body {
   width: min(1100px, 120vw);
   height: 720px;
   transform: translateX(-50%);
-  background: radial-gradient(ellipse at center, oklch(58% 0.21 293 / 0.13) 0%, transparent 65%);
+  background: radial-gradient(ellipse at center, oklch(60% 0.18 75 / 0.1) 0%, transparent 65%);
   pointer-events: none;
   z-index: 0;
 }
@@ -287,7 +280,7 @@ body {
   justify-content: space-between;
   height: 64px;
   padding: 0 max(32px, calc((100% - 1160px) / 2));
-  background: oklch(14% 0.022 295 / 0.8);
+  background: oklch(12% 0.02 55 / 0.8);
   backdrop-filter: blur(16px) saturate(160%);
   -webkit-backdrop-filter: blur(16px) saturate(160%);
   border-bottom: 1px solid var(--color-eduverse-border);
@@ -342,7 +335,7 @@ body {
   font-weight: 600;
   font-size: 0.88rem;
   background: var(--color-eduverse-accent-strong);
-  color: oklch(98% 0.005 295);
+  color: oklch(93% 0.01 80);
   text-decoration: none;
   border: none;
   cursor: pointer;
@@ -481,7 +474,7 @@ body {
   font-weight: 600;
   font-size: 0.95rem;
   background: var(--color-eduverse-accent-strong);
-  color: oklch(98% 0.005 295);
+  color: oklch(93% 0.01 80);
   text-decoration: none;
   border: none;
   cursor: pointer;
@@ -517,7 +510,7 @@ body {
 
 .btn-outline:hover {
   background: var(--color-eduverse-surface);
-  border-color: oklch(72% 0.08 295 / 0.4);
+  border-color: oklch(72% 0.04 55 / 0.3);
   transform: translateY(-1px);
 }
 
@@ -553,7 +546,7 @@ body {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: oklch(38% 0.025 295);
+  background: oklch(30% 0.03 50);
 }
 
 .hd-file {
@@ -608,7 +601,7 @@ body {
   flex-shrink: 0;
   text-align: right;
   margin-right: 12px;
-  color: oklch(38% 0.03 295);
+  color: oklch(30% 0.04 50);
   user-select: none;
 }
 
@@ -664,7 +657,7 @@ body {
 }
 
 @keyframes var-flash {
-  0%   { background: oklch(70% 0.16 295 / 0.28); }
+  0%   { background: oklch(78% 0.14 85 / 0.2); }
   100% { background: oklch(100% 0 0 / 0.025); }
 }
 
@@ -682,7 +675,7 @@ body {
 }
 
 .hd-out-idle {
-  color: oklch(38% 0.03 295);
+  color: oklch(30% 0.04 50);
 }
 
 .hd-foot {
@@ -965,7 +958,7 @@ body {
   margin-top: 10px;
   padding: 8px 18px;
   background: var(--color-eduverse-accent-strong);
-  color: oklch(98% 0.005 295);
+  color: oklch(93% 0.01 80);
   border: none;
   border-radius: 8px;
   font-size: 0.82rem;
@@ -2786,27 +2779,28 @@ h1, h2, h3 {
   border-radius: 4px;
 }
 
-/* Sidebar nav items */
+/* Sidebar nav items — monospace, amber active, letter-spacing 0.02em */
 .side-item {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 11px 16px;
-  border-radius: 12px;
+  border-radius: 4px;
   font-size: 0.875rem;
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
   color: var(--color-eduverse-text-muted);
   border: 1px solid transparent;
-  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease, transform 0.16s var(--ease-out-expo);
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
   cursor: pointer;
   text-decoration: none;
   width: 100%;
   background: transparent;
-  font-family: inherit;
 }
 
 .side-item:hover {
-  color: var(--color-eduverse-text);
-  background: oklch(70% 0.16 295 / 0.06);
+  color: var(--color-eduverse-text-body);
+  background: var(--color-eduverse-accent-soft);
 }
 
 .side-item.active {
@@ -2846,7 +2840,7 @@ h1, h2, h3 {
 /* Skeletons (skeleton.tsx) */
 .sk-card {
   height: 96px;
-  border-radius: 16px;
+  border-radius: 4px;
   background: var(--color-eduverse-surface);
   animation: sk-pulse 1.4s ease-in-out infinite;
 }
@@ -2885,7 +2879,7 @@ h1, h2, h3 {
   color: var(--color-eduverse-text);
   font-size: 0.72rem;
   padding: 5px 10px;
-  border-radius: 8px;
+  border-radius: 4px;
   white-space: nowrap;
   pointer-events: none;
   opacity: 0;
@@ -2904,7 +2898,7 @@ h1, h2, h3 {
   text-align: center;
   padding: 56px 24px;
   border: 1px dashed var(--color-eduverse-border-mid);
-  border-radius: 16px;
+  border-radius: 4px;
   color: var(--color-eduverse-text-muted);
 }
 
@@ -2937,7 +2931,7 @@ h1, h2, h3 {
   gap: 12px;
   background: var(--color-eduverse-raised);
   border: 1px solid oklch(80% 0.13 85 / 0.35);
-  border-radius: 14px;
+  border-radius: 4px;
   padding: 12px 18px;
   box-shadow: var(--shadow-eduverse-lg), 0 0 40px oklch(80% 0.13 85 / 0.15);
 }
@@ -2945,20 +2939,20 @@ h1, h2, h3 {
 /* Inputs */
 .app-input {
   width: 100%;
-  padding: 12px 16px;
-  border-radius: 12px;
+  padding: 10px 14px;
+  border-radius: 4px;
   background: var(--color-eduverse-editor);
-  border: 1px solid var(--color-eduverse-border);
+  border: 1px solid var(--color-eduverse-border-mid);
   color: var(--color-eduverse-text);
   font-family: var(--font-sans);
   font-size: 0.92rem;
   outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color 0.15s ease;
 }
 
 .app-input:focus {
   border-color: var(--color-eduverse-accent);
-  box-shadow: 0 0 0 3px oklch(70% 0.16 295 / 0.15);
+  box-shadow: 0 0 0 2px oklch(78% 0.14 85 / 0.2);
 }
 
 .app-input::placeholder {
@@ -2969,7 +2963,7 @@ h1, h2, h3 {
 /* Form error */
 .form-error {
   padding: 10px 14px;
-  border-radius: 10px;
+  border-radius: 4px;
   font-size: 0.85rem;
   background: oklch(66% 0.19 25 / 0.1);
   border: 1px solid oklch(66% 0.19 25 / 0.3);
@@ -2979,7 +2973,7 @@ h1, h2, h3 {
 /* Segmented filter buttons */
 .seg-btn {
   padding: 8px 16px;
-  border-radius: 10px;
+  border-radius: 4px;
   font-size: 0.85rem;
   font-weight: 600;
   background: var(--color-eduverse-surface);
@@ -2998,15 +2992,15 @@ h1, h2, h3 {
 
 .seg-btn.active {
   background: var(--color-eduverse-accent-strong);
-  color: oklch(98% 0.005 295);
+  color: var(--color-eduverse-text);
   border-color: transparent;
 }
 
 /* Skill unlock celebration */
 @keyframes unlock-pop {
-  0%   { transform: scale(1); box-shadow: 0 0 0 0 oklch(70% 0.16 295 / 0.5); }
-  40%  { transform: scale(1.04); box-shadow: 0 0 0 12px oklch(70% 0.16 295 / 0); }
-  100% { transform: scale(1); box-shadow: 0 0 0 0 oklch(70% 0.16 295 / 0); }
+  0%   { transform: scale(1); box-shadow: 0 0 0 0 oklch(78% 0.14 85 / 0.35); }
+  40%  { transform: scale(1.04); box-shadow: 0 0 0 12px oklch(78% 0.14 85 / 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 oklch(78% 0.14 85 / 0); }
 }
 
 .unlock-pop {
@@ -3028,5 +3022,196 @@ h1, h2, h3 {
 @media (hover: none) {
   .challenge-card:hover {
     transform: none;
+  }
+}
+
+/* ================================================================
+   SKILL MAP — arcane chart (Code Sorcery)
+   ================================================================ */
+
+.skill-map-viewport {
+  position: relative;
+  height: min(64vh, 620px);
+  background: var(--color-eduverse-editor);
+  background-image: radial-gradient(oklch(70% 0.03 55 / 0.05) 1px, transparent 1px);
+  background-size: 26px 26px;
+  border: 1px solid var(--color-eduverse-border);
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.skill-map-viewport.dragging {
+  cursor: grabbing;
+}
+
+.skill-map-world {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+}
+
+.skill-map-world.smooth {
+  transition: transform 0.35s var(--ease-out-expo);
+}
+
+.sm-controls {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  display: flex;
+  gap: 6px;
+  z-index: 5;
+}
+
+.sm-ctrl {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-eduverse-surface);
+  color: var(--color-eduverse-text-body);
+  border: 1px solid var(--color-eduverse-border-mid);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, transform 0.16s var(--ease-out-expo);
+}
+
+.sm-ctrl:hover {
+  color: var(--color-eduverse-text);
+  border-color: var(--color-eduverse-accent);
+}
+
+.sm-ctrl:active {
+  transform: scale(0.94);
+}
+
+.sm-key {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  z-index: 5;
+  background: oklch(9% 0.015 55 / 0.85);
+  border: 1px solid var(--color-eduverse-border);
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--color-eduverse-text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  pointer-events: none;
+}
+
+.sm-key span {
+  display: flex;
+  align-items: center;
+}
+
+.sm-key i {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 7px;
+}
+
+.sm-node {
+  cursor: pointer;
+  outline: none;
+}
+
+.sm-node circle.ring {
+  transition: stroke 0.15s ease, opacity 0.15s ease;
+}
+
+@media (hover: hover) {
+  .sm-node:hover circle.ring {
+    stroke: var(--color-eduverse-accent);
+    opacity: 1;
+  }
+}
+
+.sm-node:focus-visible circle.ring {
+  stroke: var(--color-eduverse-accent);
+  stroke-width: 2.5;
+}
+
+.sm-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: sm-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes sm-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.55; }
+  50%      { transform: scale(1.14); opacity: 0.18; }
+}
+
+.sm-burst {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: sm-burst 1s var(--ease-out-expo) forwards;
+  pointer-events: none;
+}
+
+@keyframes sm-burst {
+  from { transform: scale(1); opacity: 0.8; }
+  to   { transform: scale(2.4); opacity: 0; }
+}
+
+.sm-path-solid {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: sm-draw 0.9s ease-out forwards;
+  animation-delay: var(--d, 0s);
+}
+
+@keyframes sm-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+.sm-path-dim {
+  opacity: 0;
+  animation: sm-fade 0.6s ease-out forwards;
+  animation-delay: var(--d, 0s);
+}
+
+@keyframes sm-fade {
+  to { opacity: 1; }
+}
+
+.sm-topo {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  fill: var(--color-eduverse-text-muted);
+}
+
+.sm-name {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  fill: var(--color-eduverse-text);
+}
+
+.sm-meta {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  fill: var(--color-eduverse-text-muted);
+}
+
+@media (max-width: 768px) {
+  .skill-map-viewport {
+    height: 70vh;
+  }
+  .sm-key {
+    display: none;
   }
 }

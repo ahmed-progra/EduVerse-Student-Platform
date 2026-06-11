@@ -1,30 +1,33 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Work_Sans, Geist_Mono } from "next/font/google";
+import { Fraunces, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 
-const display = Bricolage_Grotesque({
+const display = Fraunces({
   subsets: ["latin"],
-  variable: "--font-bricolage",
+  variable: "--font-fraunces",
   display: "swap",
+  axes: ["SOFT", "WONK"],
 });
 
-const sans = Work_Sans({
+const sans = IBM_Plex_Sans({
   subsets: ["latin"],
-  variable: "--font-work-sans",
+  variable: "--font-ibm-plex-sans",
   display: "swap",
+  weight: ["400", "500", "600"],
 });
 
-const mono = Geist_Mono({
+const mono = IBM_Plex_Mono({
   subsets: ["latin"],
-  variable: "--font-geist-mono",
+  variable: "--font-ibm-plex-mono",
   display: "swap",
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
   title: { default: "EduVerse - See Your Code Run, Line by Line", template: "%s | EduVerse" },
   description: "A student-built learning platform with a step-by-step code visualizer, daily challenges, and AI hints. Python, HTML, CSS, and C++.",
-  icons: { icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%237c3aed'/><text x='16' y='22' text-anchor='middle' fill='white' font-size='18' font-weight='bold' font-family='system-ui'>E</text></svg>" },
+  icons: { icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23CC8800'/><text x='16' y='22' text-anchor='middle' fill='white' font-size='18' font-weight='bold' font-family='system-ui'>E</text></svg>" },
   appleWebApp: { title: "EduVerse" },
 };
 

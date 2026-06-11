@@ -16,14 +16,14 @@ export default function NotFound() {
       <div className="flex gap-3">
         <Link
           href="/"
-          className="px-6 py-3 rounded-xl font-semibold text-sm transition-[filter] hover:brightness-110"
+          className="px-6 py-3 rounded font-semibold text-sm transition-[filter] hover:brightness-110"
           style={{ background: "var(--color-eduverse-accent-strong)", color: "white" }}
         >
           Go Home
         </Link>
         <Link
           href="/dashboard"
-          className="px-6 py-3 rounded-xl font-semibold text-sm transition-colors"
+          className="px-6 py-3 rounded font-semibold text-sm transition-colors"
           style={{
             background: "var(--color-eduverse-surface)",
             color: "var(--color-eduverse-text)",
