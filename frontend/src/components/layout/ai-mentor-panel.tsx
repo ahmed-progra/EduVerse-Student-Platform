@@ -17,12 +17,16 @@ export function AIMentorPanel({ onClose }: { onClose: () => void }) {
   const send = useCallback(async () => {
     if (!input.trim() || loading) return;
     const msg = input;
+    // Prior turns travel with the request so the mentor remembers the conversation.
+    const history = msgs
+      .filter((m) => !m.text.startsWith("Error:"))
+      .map((m) => ({ role: m.role === "assistant" ? "model" : "user", text: m.text }));
     setMsgs((p) => [...p, { role: "user", text: msg }]);
     setInput("");
     setLoading(true);
     try {
-      const res = await api.aiMentor(msg);
-      setResponseLabel("Claude AI");
+      const res = await api.aiMentor(msg, history);
+      setResponseLabel(res.data.model || "Gemini");
       setMsgs((p) => [...p, { role: "assistant", text: res.data.text }]);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Request failed";
@@ -30,7 +34,7 @@ export function AIMentorPanel({ onClose }: { onClose: () => void }) {
     } finally {
       setLoading(false);
     }
-  }, [input, loading]);
+  }, [input, loading, msgs]);
 
   const copyText = (text: string) => navigator.clipboard.writeText(text);
 

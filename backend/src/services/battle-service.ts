@@ -1,5 +1,6 @@
 import { prisma } from "../lib/prisma";
 import { addXp } from "./xp-service";
+import { syncMissionProgress } from "./mentor-service";
 import { executeCode } from "./judge0";
 
 interface TestCase {
@@ -18,54 +19,140 @@ interface ChallengeData {
   difficulty: string;
 }
 
+// Battle challenges are complete stdin -> stdout programs: the player's code
+// is run with each test's `input` as stdin and its stdout (trimmed) compared
+// to `expectedOutput`. Every expected value below is hand-verified. Each
+// difficulty has multiple entries so Hard battles never fall back to Easy.
 const CHALLENGES: ChallengeData[] = [
+  // ── EASY ──
   {
-    id: "debug-001",
-    type: "debug",
-    title: "Fix the Sum Function",
-    description: "The function should return the sum of two numbers, but there's a bug.",
-    starterCode: "def add(a, b):\n    return a - b",
-    solution: "def add(a, b):\n    return a + b",
+    id: "sum-two",
+    type: "write_function",
+    title: "Sum Two Numbers",
+    description: "Read two integers, each on its own line, and print their sum.",
+    starterCode: "a = int(input())\nb = int(input())\n# print their sum\n",
+    solution: "a = int(input())\nb = int(input())\nprint(a + b)",
     testCases: [
       { input: "3\n5", expectedOutput: "8" },
-      { input: "-1\n1", expectedOutput: "0" },
+      { input: "-4\n10", expectedOutput: "6" },
+      { input: "0\n0", expectedOutput: "0" },
     ],
     difficulty: "easy",
   },
   {
-    id: "write-001",
+    id: "even-odd",
     type: "write_function",
-    title: "Check Even or Odd",
-    description: "Write a function that returns 'even' if the number is even, 'odd' otherwise.",
-    starterCode: "def check_even_odd(n):\n    # Write your code here\n    pass",
-    solution: "def check_even_odd(n):\n    return 'even' if n % 2 == 0 else 'odd'",
+    title: "Even or Odd",
+    description: "Read an integer and print 'even' if it is even, otherwise 'odd'.",
+    starterCode: "n = int(input())\n# print 'even' or 'odd'\n",
+    solution: "n = int(input())\nprint('even' if n % 2 == 0 else 'odd')",
     testCases: [
       { input: "4", expectedOutput: "even" },
       { input: "7", expectedOutput: "odd" },
+      { input: "0", expectedOutput: "even" },
     ],
     difficulty: "easy",
   },
   {
-    id: "predict-001",
-    type: "predict_output",
-    title: "What does this print?",
-    description: "What will be the output of this code?",
-    starterCode: "x = 5\ny = 3\nprint(x * y + 2)",
-    solution: "17",
-    testCases: [{ input: "", expectedOutput: "17" }],
+    id: "max-three",
+    type: "debug",
+    title: "Largest of Three (fix the bug)",
+    description: "This should print the largest of three space-separated integers, but it's wrong. Fix it.",
+    starterCode: "a, b, c = map(int, input().split())\nprint(min(a, b, c))",
+    solution: "a, b, c = map(int, input().split())\nprint(max(a, b, c))",
+    testCases: [
+      { input: "3 9 5", expectedOutput: "9" },
+      { input: "10 2 8", expectedOutput: "10" },
+      { input: "-1 -7 -3", expectedOutput: "-1" },
+    ],
     difficulty: "easy",
   },
+
+  // ── MEDIUM ──
   {
-    id: "debug-002",
-    type: "debug",
-    title: "Fix the Loop",
-    description: "This function should count from 1 to n. Fix the bug.",
-    starterCode: "def count_up(n):\n    for i in range(n):\n        print(i)",
-    solution: "def count_up(n):\n    for i in range(1, n + 1):\n        print(i)",
+    id: "fizzbuzz",
+    type: "write_function",
+    title: "FizzBuzz",
+    description: "Read N. Print 1..N one per line, but 'Fizz' for multiples of 3, 'Buzz' for multiples of 5, and 'FizzBuzz' for multiples of both.",
+    starterCode: "n = int(input())\n# loop from 1 to n applying the FizzBuzz rules\n",
+    solution: "n = int(input())\nfor i in range(1, n + 1):\n    if i % 15 == 0:\n        print('FizzBuzz')\n    elif i % 3 == 0:\n        print('Fizz')\n    elif i % 5 == 0:\n        print('Buzz')\n    else:\n        print(i)",
     testCases: [
-      { input: "3", expectedOutput: "1\n2\n3" },
+      { input: "5", expectedOutput: "1\n2\nFizz\n4\nBuzz" },
+      { input: "3", expectedOutput: "1\n2\nFizz" },
     ],
     difficulty: "medium",
+  },
+  {
+    id: "reverse-str",
+    type: "write_function",
+    title: "Reverse a String",
+    description: "Read a line of text and print it reversed.",
+    starterCode: "s = input()\n# print s reversed\n",
+    solution: "s = input()\nprint(s[::-1])",
+    testCases: [
+      { input: "hello", expectedOutput: "olleh" },
+      { input: "abc", expectedOutput: "cba" },
+      { input: "racecar", expectedOutput: "racecar" },
+    ],
+    difficulty: "medium",
+  },
+  {
+    id: "count-vowels",
+    type: "write_function",
+    title: "Count Vowels",
+    description: "Read a lowercase word and print how many vowels (a, e, i, o, u) it contains.",
+    starterCode: "s = input()\n# count the vowels in s\n",
+    solution: "s = input()\nprint(sum(1 for ch in s if ch in 'aeiou'))",
+    testCases: [
+      { input: "education", expectedOutput: "5" },
+      { input: "xyz", expectedOutput: "0" },
+      { input: "aeiou", expectedOutput: "5" },
+    ],
+    difficulty: "medium",
+  },
+
+  // ── HARD ──
+  {
+    id: "fib-nth",
+    type: "write_function",
+    title: "Nth Fibonacci",
+    description: "Read N and print the Nth Fibonacci number, where fib(1)=1, fib(2)=1, fib(3)=2, and so on.",
+    starterCode: "n = int(input())\n# print the nth Fibonacci number\n",
+    solution: "n = int(input())\na, b = 1, 1\nfor _ in range(n - 1):\n    a, b = b, a + b\nprint(a)",
+    testCases: [
+      { input: "1", expectedOutput: "1" },
+      { input: "7", expectedOutput: "13" },
+      { input: "10", expectedOutput: "55" },
+    ],
+    difficulty: "hard",
+  },
+  {
+    id: "palindrome",
+    type: "write_function",
+    title: "Palindrome Check",
+    description: "Read a string and print 'yes' if it reads the same forwards and backwards, otherwise 'no'.",
+    starterCode: "s = input()\n# print 'yes' if s is a palindrome, else 'no'\n",
+    solution: "s = input()\nprint('yes' if s == s[::-1] else 'no')",
+    testCases: [
+      { input: "racecar", expectedOutput: "yes" },
+      { input: "hello", expectedOutput: "no" },
+      { input: "a", expectedOutput: "yes" },
+    ],
+    difficulty: "hard",
+  },
+  {
+    id: "digital-root",
+    type: "write_function",
+    title: "Digital Root",
+    description: "Read a non-negative integer. Repeatedly sum its digits until a single digit remains, then print that digit.",
+    starterCode: "n = int(input())\n# reduce n to a single digit by summing its digits repeatedly\n",
+    solution: "n = int(input())\nwhile n >= 10:\n    n = sum(int(d) for d in str(n))\nprint(n)",
+    testCases: [
+      { input: "9875", expectedOutput: "2" },
+      { input: "12", expectedOutput: "3" },
+      { input: "0", expectedOutput: "0" },
+    ],
+    difficulty: "hard",
   },
 ];
 
@@ -171,6 +258,7 @@ export async function submitBattleSolution(
         await addXp(winnerId, xpReward, "battle");
         const loserId = winnerId === battle.player1Id ? battle.player2Id : battle.player1Id;
         if (loserId) await addXp(loserId, 50, "battle");
+        await syncMissionProgress(winnerId, { kind: "battle_win", difficulty: battle.difficulty });
       } else {
         await addXp(battle.player1Id, 50, "battle");
         await addXp(battle.player2Id!, 50, "battle");
@@ -193,6 +281,7 @@ export async function submitBattleSolution(
       });
 
       await addXp(userId, xpReward, "battle");
+      if (win) await syncMissionProgress(userId, { kind: "battle_win", difficulty: battle.difficulty });
 
       return { battle, winnerId: win ? userId : null, xpReward };
     }

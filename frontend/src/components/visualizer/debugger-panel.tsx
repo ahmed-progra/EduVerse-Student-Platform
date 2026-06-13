@@ -103,12 +103,16 @@ export const DebuggerPanel = memo(function DebuggerPanel({ frames, currentIdx, s
               onClick={async () => {
                 setDiagnosing(true);
                 try {
-                  const res = await api.aiMentor(
-                    `I got a ${error.type} error at line ${error.line}: "${error.message}". Here's my code:\n\`\`\`python\n${code || "# code"}\n\`\`\`\nWhat's wrong and how do I fix it?`
-                  );
+                  const res = await api.aiExplainError({
+                    code: code || "",
+                    errorType: error.type,
+                    errorMessage: error.message,
+                    line: error.line,
+                    language: "python",
+                  });
                   setDiagnosis(res.data.text);
-                } catch {
-                  setDiagnosis("Could not reach AI service.");
+                } catch (err: unknown) {
+                  setDiagnosis(err instanceof Error ? err.message : "Could not reach AI service.");
                 } finally {
                   setDiagnosing(false);
                 }

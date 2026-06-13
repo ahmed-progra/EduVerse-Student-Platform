@@ -7,12 +7,13 @@ import { classNames } from "@/lib/utils";
 interface GlassCardProps {
   children: React.ReactNode;
   className?: string;
+  style?: React.CSSProperties;
   onClick?: () => void;
 }
 
 /* Flat container per Code Sorcery design system.
    Name kept to avoid touching every import. */
-export const GlassCard = memo(function GlassCard({ children, className, onClick }: GlassCardProps) {
+export const GlassCard = memo(function GlassCard({ children, className, style, onClick }: GlassCardProps) {
   return (
     <motion.div
       className={classNames(
@@ -20,6 +21,7 @@ export const GlassCard = memo(function GlassCard({ children, className, onClick 
         onClick && "cursor-pointer",
         className
       )}
+      style={style}
       onClick={onClick}
     >
       {children}

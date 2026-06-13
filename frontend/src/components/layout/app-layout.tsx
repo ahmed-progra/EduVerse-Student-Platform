@@ -10,7 +10,7 @@ import { ErrorBoundary } from "@/components/ui/error-boundary";
 import {
   LayoutDashboard, BookOpen, Swords, Medal, ShoppingBag,
   User, LogOut, Menu, X, GitBranch, ChevronLeft,
-  Brain, Code2, Lightbulb, GraduationCap, FlaskConical,
+  Brain, Code2, Lightbulb, GraduationCap, FlaskConical, Sparkles,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { AIMentorPanel } from "./ai-mentor-panel";
@@ -31,6 +31,7 @@ const navSections: { title: string; items: NavItem[] }[] = [
     title: "Learn",
     items: [
       { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+      { href: "/mentor", label: "AI Coach", icon: Sparkles },
       { href: "/courses", label: "Courses", icon: BookOpen },
       { href: "/codelab", label: "Code Lab", icon: FlaskConical },
       { href: "/skill-tree", label: "Skill Tree", icon: GitBranch },
@@ -65,7 +66,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
   const [activePanel, setActivePanel] = useState<string | null>(null);
 
-  const isPublicPage = pathname.startsWith("/auth") || pathname === "/" || pathname === "/placement-test";
+  const isPublicPage = pathname.startsWith("/auth") || pathname === "/";
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { loadUser(); setMounted(true); }, []);

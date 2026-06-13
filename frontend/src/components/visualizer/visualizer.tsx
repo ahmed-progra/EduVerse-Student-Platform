@@ -8,7 +8,7 @@ import { GradientButton } from "@/components/ui/gradient-button";
 import { api } from "@/lib/api";
 import {
   Play, StepForward, Pause, RotateCcw,
-  FastForward, Clock, Code2, SkipForward, Copy, Terminal
+  FastForward, Clock, Code2, SkipForward, Copy, Terminal, Eye
 } from "lucide-react";
 import { ASTViewer } from "./ast-viewer";
 
@@ -20,9 +20,70 @@ interface VisualizerProps {
 
 const STORAGE_PREFIX = "eduverse_code_";
 const STEPPABLE_LANGUAGES = ["python"];
+// Markup/style languages render in a sandboxed iframe — you don't "execute"
+// them through a code runner, you see them. (C++ etc. still use Judge0.)
+const PREVIEW_LANGUAGES = ["html", "css"];
+
+/**
+ * Build the document shown in the live-preview iframe.
+ *  - HTML: the learner's markup renders directly.
+ *  - CSS: the styles are applied to a demo page. We always include a base
+ *    set of elements, plus an auto-generated block for every class selector
+ *    found in the CSS (each with a few children) so flex/grid/box rules on
+ *    custom classes actually demonstrate something.
+ */
+function buildPreviewDoc(language: string, code: string): string {
+  if (language.toLowerCase() === "html") {
+    // Partial fragments render fine; a full document passes through untouched.
+    return code;
+  }
+
+  // CSS: discover the class selectors the lesson targets.
+  const classes = new Set<string>();
+  const re = /\.(-?[A-Za-z_][\w-]*)/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(code)) && classes.size < 10) classes.add(m[1]);
+
+  const customBlocks = [...classes]
+    .map(
+      (c) =>
+        `<div class="${c}"><span>.${c}</span><div>one</div><div>two</div><div>three</div></div>`
+    )
+    .join("\n      ");
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+/* preview reset so the lesson's CSS is what shows */
+body { margin: 16px; font-family: system-ui, sans-serif; color: #1c1a26; background: #fff; }
+.eduverse-demo-label { font: 600 11px/1.4 monospace; color: #888; text-transform: uppercase; letter-spacing: .05em; margin: 18px 0 6px; }
+${code}
+</style>
+</head>
+<body>
+  <header>
+    <nav class="navbar"><a href="#">Home</a> <a href="#">Docs</a> <a href="#">About</a></nav>
+  </header>
+  <h1>Heading One</h1>
+  <h2>Heading Two</h2>
+  <h3>Heading Three</h3>
+  <p>A paragraph of demo text with a <a href="#">link</a> and <strong>strong</strong> emphasis.</p>
+  <button>A Button</button>
+  <ul><li>First item</li><li>Second item</li><li>Third item</li></ul>
+  <div class="container">
+    <div class="card"><h3>Card title</h3><p>Card body text.</p></div>
+    <div class="box">A box</div>
+  </div>
+  ${classes.size ? `<div class="eduverse-demo-label">Your classes</div>\n      ${customBlocks}` : ""}
+</body>
+</html>`;
+}
 
 export function Visualizer({ initialCode = "", language = "python" }: VisualizerProps) {
   const isSteppable = STEPPABLE_LANGUAGES.includes(language.toLowerCase());
+  const isPreviewable = PREVIEW_LANGUAGES.includes(language.toLowerCase());
   const [code, setCode] = useState(() => {
     if (typeof window !== "undefined" && initialCode) {
       const saved = localStorage.getItem(STORAGE_PREFIX + initialCode.slice(0, 32));
@@ -41,6 +102,14 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
   const [errorInfo, setErrorInfo] = useState<{ line: number; message: string; type: string } | null>(null);
   const [showAST, setShowAST] = useState(false);
   const [runningDirect, setRunningDirect] = useState(false);
+
+  // Debounced document for the live HTML/CSS preview iframe.
+  const [previewDoc, setPreviewDoc] = useState(() => (isPreviewable ? buildPreviewDoc(language, code) : ""));
+  useEffect(() => {
+    if (!isPreviewable) return;
+    const t = setTimeout(() => setPreviewDoc(buildPreviewDoc(language, code)), 250);
+    return () => clearTimeout(t);
+  }, [code, language, isPreviewable]);
 
   const autoPlayRef = useRef(autoPlay);
   const speedRef = useRef(speed);
@@ -226,6 +295,77 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
   const lineCount = useMemo(() => code.split("\n").length, [code]);
 
   const langLabel = language.charAt(0).toUpperCase() + language.slice(1);
+
+  // ── Live preview: HTML & CSS render in a sandboxed iframe ──
+  if (isPreviewable) {
+    return (
+      <div className="visualizer-wrap">
+        <div className="grid md:grid-cols-2 gap-3">
+          {/* Editor */}
+          <div className="visualizer-editor-area">
+            <div className="flex items-center justify-between px-4 py-2 border-b border-white/10 bg-black/20">
+              <div className="flex items-center gap-1.5">
+                <Code2 className="w-3.5 h-3.5 text-eduverse-text-muted" />
+                <span className="text-xs font-semibold text-eduverse-text-muted uppercase tracking-wider">{langLabel}</span>
+              </div>
+              <span className="text-[10px] text-eduverse-text-muted">{code.split("\n").length} lines</span>
+            </div>
+            <div className="code-editor-wrap">
+              <div className="code-editor-gutter">
+                {Array.from({ length: lineCount }, (_, i) => (
+                  <div key={i} className="code-editor-line-num">{i + 1}</div>
+                ))}
+              </div>
+              <textarea
+                className="code-editor-textarea"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                spellCheck={false}
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
+                wrap="off"
+                placeholder={`Write your ${langLabel} here — the preview updates live...`}
+              />
+            </div>
+          </div>
+          {/* Live preview */}
+          <div className="visualizer-editor-area flex flex-col">
+            <div className="flex items-center justify-between px-4 py-2 border-b border-white/10 bg-black/20">
+              <div className="flex items-center gap-1.5">
+                <Eye className="w-3.5 h-3.5 text-eduverse-accent" />
+                <span className="text-xs font-semibold text-eduverse-text-muted uppercase tracking-wider">
+                  {language.toLowerCase() === "css" ? "Live preview (demo page)" : "Live preview"}
+                </span>
+              </div>
+              <span className="text-[10px] text-eduverse-text-muted">updates as you type</span>
+            </div>
+            <iframe
+              title={`${langLabel} preview`}
+              className="w-full bg-white"
+              style={{ minHeight: 320, border: "none", borderRadius: "0 0 0.75rem 0.75rem" }}
+              sandbox="allow-scripts"
+              srcDoc={previewDoc}
+            />
+          </div>
+        </div>
+        <div className="flex gap-2 mt-3">
+          <button
+            onClick={() => navigator.clipboard.writeText(code)}
+            className="px-3 py-2 rounded-xl border border-white/10 text-eduverse-text-muted hover:text-white hover:bg-white/5 transition-colors text-xs flex items-center gap-1.5"
+          >
+            <Copy className="w-3.5 h-3.5" /> Copy
+          </button>
+          <button
+            onClick={() => { setCode(initialCode); localStorage.removeItem(STORAGE_PREFIX + initialCode.slice(0, 32)); }}
+            className="px-3 py-2 rounded-xl border border-white/10 text-eduverse-text-muted hover:text-white hover:bg-white/5 transition-colors text-xs flex items-center gap-1.5"
+          >
+            <RotateCcw className="w-3.5 h-3.5" /> Reset
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (!isSteppable) {
     return (

@@ -10,7 +10,6 @@
     "db:reset": "prisma migrate reset --force && npm run db:seed"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.102.0",
     "@prisma/client": "^6.19.3",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",

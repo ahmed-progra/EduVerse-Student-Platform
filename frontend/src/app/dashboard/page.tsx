@@ -5,6 +5,7 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { XpBar } from "@/components/ui/xp-bar";
 import { AnimatedNumber } from "@/components/ui/animated-number";
 import { EmptyState } from "@/components/ui/empty-state";
+import { AICoachCard } from "@/components/dashboard/ai-coach-card";
 import { useAuthStore } from "@/stores/auth-store";
 import { api } from "@/lib/api";
 import { updateStreak } from "@/lib/streak";
@@ -174,6 +175,11 @@ export default function DashboardPage() {
           </motion.div>
         ))}
       </div>
+
+      {/* ── AI Coach ── */}
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
+        <AICoachCard />
+      </motion.div>
 
       {/* ── Recent Activity ── */}
       <GlassCard>

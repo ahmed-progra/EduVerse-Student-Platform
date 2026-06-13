@@ -32,6 +32,13 @@ model User {
   leaderboard    LeaderboardEntry[]
   inventory      UserInventory[]
   placements     CoursePlacement[]
+  assessments    Assessment[]
+  skillProfiles  SkillProfile[]
+  roadmaps       Roadmap[]
+  learningEvents LearningEvent[]
+  mentorProfile  MentorProfile?
+  missions       Mission[]
+  mentorReports  MentorReport[]
 }
 
 model Course {
@@ -43,8 +50,11 @@ model Course {
   order       Int
   createdAt   DateTime @default(now())
 
-  lessons     Lesson[]
-  placements  CoursePlacement[]
+  lessons       Lesson[]
+  placements    CoursePlacement[]
+  assessments   Assessment[]
+  skillProfiles SkillProfile[]
+  roadmaps      Roadmap[]
 }
 
 model Lesson {
@@ -56,6 +66,10 @@ model Lesson {
   language     String
   order        Int
   xpReward     Int      @default(50)
+  topics       String   @default("[]")       // JSON string[] — canonical topic keys this lesson teaches
+  difficulty   String   @default("beginner") // beginner | intermediate | advanced
+  quiz         String   @default("[]")       // JSON quiz-checkpoint questions
+  estMinutes   Int      @default(10)
   createdAt    DateTime @default(now())
 
   course       Course          @relation(fields: [courseId], references: [id])
@@ -74,6 +88,143 @@ model CoursePlacement {
   course Course @relation(fields: [courseId], references: [id])
 
   @@id([userId, courseId])
+}
+
+// ── Adaptive learning ──────────────────────────────────────────────
+
+// One row per placement-assessment attempt (question snapshot + AI analysis).
+model Assessment {
+  id          String    @id @default(uuid())
+  userId      String
+  courseId    String
+  status      String    @default("in_progress") // in_progress | completed
+  questions   String    @default("[]")          // JSON: served question ids/order (no answers)
+  answers     String    @default("[]")          // JSON: submitted answers
+  score       Int       @default(0)
+  total       Int       @default(0)
+  level       String    @default("")            // beginner | intermediate | advanced
+  analysis    String    @default("{}")          // JSON: topic breakdown, strengths, weaknesses, AI narrative
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  user   User   @relation(fields: [userId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
+}
+
+// Living per-course skill profile: topic -> mastery. Updated continuously.
+model SkillProfile {
+  userId     String
+  courseId   String
+  level      String   @default("beginner")
+  mastery    String   @default("{}") // JSON: { topic: { status, score } }
+  strengths  String   @default("[]")
+  weaknesses String   @default("[]")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
+
+  @@id([userId, courseId])
+}
+
+// Personalized lesson plan with per-skip justification. Regenerates as the profile evolves.
+model Roadmap {
+  userId     String
+  courseId   String
+  items      String   @default("[]") // JSON: [{ lessonId, status: required|skipped, reason }]
+  focus      String   @default("")
+  estMinutes Int      @default(0)
+  version    Int      @default(1)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
+
+  @@id([userId, courseId])
+}
+
+// Analytics trail feeding continuous adaptation (quiz passes/fails, completions).
+model LearningEvent {
+  id        String   @id @default(uuid())
+  userId    String
+  courseId  String
+  lessonId  String?
+  type      String   // assessment_complete | lesson_complete | quiz_pass | quiz_fail
+  payload   String   @default("{}")
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+// ── AI Mentor System (global, cross-course coaching layer) ──────────
+
+// Global cross-course AI mentor profile — one per user. The mentor's living memory.
+model MentorProfile {
+  userId          String    @id
+  summary         String    @default("")   // 2-3 sentence "who this learner is right now"
+  motivation      String    @default("")   // short motivational line
+  focus           String    @default("")   // current recommended focus
+  strengths       String    @default("[]") // JSON string[] cross-course strong topics (labels)
+  weaknesses      String    @default("[]") // JSON string[] knowledge gaps (labels)
+  insights        String    @default("[]") // JSON [{ title, body, kind }]
+  recommendations String    @default("[]") // JSON [{ title, reason, area, href }]
+  projects        String    @default("[]") // JSON [{ title, brief, skills: string[] }]
+  learningSpeed   String    @default("steady") // slow | steady | fast (deterministic)
+  retention       Int       @default(0)        // 0-100 quiz-pass consistency
+  momentum        Int       @default(0)        // 0-100 recent-activity density
+  metrics         String    @default("{}")     // JSON snapshot (counts, growth series, per-course)
+  version         Int       @default(0)
+  lastSyncedAt    DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+// Dynamic AI-generated missions (daily/weekly) with auto-tracked progress + XP reward.
+model Mission {
+  id          String    @id @default(uuid())
+  userId      String
+  scope       String    // daily | weekly
+  type        String    // lesson_complete | quiz_pass | battle_win | topic_mastery | assessment | project | xp_earn
+  title       String
+  description String
+  rationale   String    @default("") // why the mentor chose it (AI, grounded in gaps)
+  target      Int       @default(1)
+  progress    Int       @default(0)
+  courseSlug  String?   // null = any course
+  topicKey    String?   // for topic_mastery
+  difficulty  String?   // for battle_win
+  xpReward    Int       @default(50)
+  status      String    @default("active") // active | completed
+  periodKey   String    // "2026-06-13" (daily) | "2026-W24" (weekly) — uniqueness window
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, scope, periodKey])
+}
+
+// Weekly AI learning report snapshots — recurring check-in.
+model MentorReport {
+  id         String   @id @default(uuid())
+  userId     String
+  periodKey  String   // "2026-W24"
+  narrative  String   @default("")
+  improved   String   @default("[]") // JSON string[]
+  regressed  String   @default("[]")
+  needsWork  String   @default("[]")
+  focusAreas String   @default("[]")
+  projects   String   @default("[]") // JSON [{ title, brief, skills }]
+  metrics    String   @default("{}") // week snapshot (for next week's diff)
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([userId, periodKey])
 }
 
 model UserProgress {

@@ -1480,12 +1480,32 @@ body {
   font-weight: 500;
   cursor: pointer;
   font-family: var(--font-sans);
-  transition: opacity 0.2s;
+  transition: filter 0.18s ease, opacity 0.18s ease, transform 0.16s var(--ease-out-expo);
+}
+
+.ai-panel-action-btn:hover:not(:disabled) {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
 }
 
 .ai-panel-action-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Keyboard focus ring for the custom action buttons (mouse clicks stay clean). */
+.ai-panel-action-btn:focus-visible,
+.ai-panel-save-btn:focus-visible,
+.ai-panel-send:focus-visible,
+.ai-panel-hint-btn:focus-visible,
+.ai-choice:focus-visible {
+  outline: 2px solid var(--color-eduverse-accent);
+  outline-offset: 2px;
+}
+
+/* Inline-styled answer/option buttons (assessment, quizzes) — keyboard focus. */
+.ai-choice {
+  outline: none;
 }
 
 .ai-panel-result {
@@ -2622,6 +2642,21 @@ kbd {
 .ai-panel-action-sm {
   padding: 0.3rem 0.7rem !important;
   font-size: 0.7rem !important;
+}
+
+/* Secondary action: quiet by default so the primary amber button stands alone.
+   Used for Retake, New Quiz, Regenerate, Revise — anything that isn't THE action. */
+.ai-panel-action-ghost {
+  background: transparent !important;
+  color: var(--color-eduverse-text-body) !important;
+  border: 1px solid var(--color-eduverse-border-mid) !important;
+}
+
+.ai-panel-action-ghost:hover:not(:disabled) {
+  background: var(--color-eduverse-accent-soft) !important;
+  border-color: var(--color-eduverse-accent) !important;
+  color: var(--color-eduverse-text) !important;
+  filter: none;
 }
 
 .ai-panel-exam-question {

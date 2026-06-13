@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
+import { api } from "@/lib/api";
 import HeroDemo from "@/components/landing/hero-demo";
 import { Code2, Sparkles, Network, Swords, Medal, ShoppingBag, Flame, ChevronRight, Menu, X } from "lucide-react";
 
@@ -106,6 +107,7 @@ export default function LandingPage() {
   const [expandedChallenge, setExpandedChallenge] = useState<string | null>(null);
   const [challengeCode, setChallengeCode] = useState("");
   const [codeResult, setCodeResult] = useState("");
+  const [codeResultTag, setCodeResultTag] = useState("");
   const [codeLoading, setCodeLoading] = useState(false);
 
   useScrollReveal();
@@ -133,12 +135,32 @@ export default function LandingPage() {
     return () => clearInterval(timer);
   }, []);
 
-  const submitChallengeCode = useCallback(() => {
+  const submitChallengeCode = useCallback(async () => {
     if (!challengeCode.trim() || codeLoading) return;
     setCodeLoading(true);
     setCodeResult("");
+    const loggedIn = typeof window !== "undefined" && !!localStorage.getItem("eduverse_token");
+    if (loggedIn) {
+      // Signed-in visitors get a real AI review of their attempt.
+      try {
+        const started = Date.now();
+        const res = await api.aiReview(challengeCode, "python");
+        setCodeResult(res.data.text);
+        setCodeResultTag(`${res.data.model || "Gemini"} · ${((Date.now() - started) / 1000).toFixed(1)}s`);
+        setConfetti(true);
+        setTimeout(() => setConfetti(false), 1500);
+      } catch (err: unknown) {
+        setCodeResult(err instanceof Error ? err.message : "AI review failed. Try again.");
+        setCodeResultTag("");
+      } finally {
+        setCodeLoading(false);
+      }
+      return;
+    }
+    // Logged-out visitors see an honestly-labeled sample of what AI review looks like.
     setTimeout(() => {
       setCodeResult("Score: 7/10. Logic is correct but O(n²) complexity detected. Use a hash map for an O(n) single pass.");
+      setCodeResultTag("Sample review — log in for live AI feedback");
       setCodeLoading(false);
       setConfetti(true);
       setTimeout(() => setConfetti(false), 1500);
@@ -155,6 +177,7 @@ export default function LandingPage() {
     setExpandedChallenge((prev) => prev === title ? null : title);
     setChallengeCode("");
     setCodeResult("");
+    setCodeResultTag("");
   };
 
   return (
@@ -318,7 +341,7 @@ export default function LandingPage() {
                   {codeResult && (
                     <div className="challenge-result">
                       <p>{codeResult}</p>
-                      <span className="challenge-result-tag">Claude AI · 1.2s</span>
+                      {codeResultTag && <span className="challenge-result-tag">{codeResultTag}</span>}
                     </div>
                   )}
                 </div>

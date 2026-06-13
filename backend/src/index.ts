@@ -1,5 +1,8 @@
 import dotenv from "dotenv";
+import path from "path";
 dotenv.config({ override: true });
+// Repo-root .env holds shared secrets (e.g. GOOGLE_AI_API_KEY); backend/.env wins on conflicts.
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 import express from "express";
 import cors from "cors";
 import { apiLimiter } from "./middleware/rate-limit";
@@ -13,8 +16,9 @@ import leaderboardRoutes from "./routes/leaderboard";
 import shopRoutes from "./routes/shop";
 import userRoutes from "./routes/user";
 import skillTreeRoutes from "./routes/skilltree";
-import placementRoutes from "./routes/placement";
 import aiRoutes from "./routes/ai";
+import learningRoutes from "./routes/learning";
+import mentorRoutes from "./routes/mentor";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -42,8 +46,9 @@ app.use("/api/leaderboard", leaderboardRoutes);
 app.use("/api/shop", shopRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/skilltree", skillTreeRoutes);
-app.use("/api/placement", placementRoutes);
 app.use("/api/ai", aiRoutes);
+app.use("/api/learning", learningRoutes);
+app.use("/api/mentor", mentorRoutes);
 
 app.get("/api/health", (_req, res) => {
   res.json({ success: true, data: { status: "ok", timestamp: new Date().toISOString() } });

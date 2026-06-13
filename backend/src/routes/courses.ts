@@ -28,6 +28,10 @@ router.get("/:id", requireAuth, async (req: Request, res: Response) => {
       include: {
         lessons: {
           orderBy: { order: "asc" },
+          select: {
+            id: true, title: true, order: true, xpReward: true,
+            difficulty: true, estMinutes: true, topics: true, language: true,
+          },
         },
       },
     });
@@ -35,7 +39,18 @@ router.get("/:id", requireAuth, async (req: Request, res: Response) => {
       res.status(404).json({ success: false, error: "Course not found" });
       return;
     }
-    res.json({ success: true, data: course });
+    // Merge the user's completion state so the UI can show real progress.
+    const progress = await prisma.userProgress.findMany({
+      where: { userId: req.userId!, completed: true },
+      select: { lessonId: true },
+    });
+    const done = new Set(progress.map((p) => p.lessonId));
+    const lessons = course.lessons.map((l) => ({
+      ...l,
+      topics: JSON.parse(l.topics || "[]"),
+      completed: done.has(l.id),
+    }));
+    res.json({ success: true, data: { ...course, lessons } });
   } catch (err) {
     res.status(500).json({ success: false, error: "Failed to fetch course" });
   }

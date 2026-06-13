@@ -18,7 +18,7 @@ export function CodeReviewPanel({ onClose }: { onClose: () => void }) {
     setResult("");
     try {
       const res = await api.aiReview(code, lang);
-      setResponseLabel("Claude AI");
+      setResponseLabel(res.data.model || "Gemini");
       setResult(res.data.text);
     } catch (err: unknown) {
       setResult(`Error: ${err instanceof Error ? err.message : "Request failed"}`);

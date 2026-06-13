@@ -12,6 +12,9 @@ import Link from "next/link";
 import { CheckCircle, ChevronLeft, Zap, BookOpen, WifiOff } from "lucide-react";
 import dynamic from "next/dynamic";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
+import { LessonAITools } from "@/components/lessons/lesson-ai-tools";
+import { LessonMentor } from "@/components/lessons/lesson-mentor";
+import { QuizCheckpoint } from "@/components/lessons/quiz-checkpoint";
 
 const Visualizer = dynamic(() => import("@/components/visualizer/visualizer").then(m => ({ default: m.Visualizer })), { ssr: false });
 
@@ -25,6 +28,9 @@ interface LessonData {
   courseId: string;
   xpReward: number;
   completed?: boolean;
+  quiz?: { q: string; options: string[] }[];
+  difficulty?: string;
+  estMinutes?: number;
 }
 
 export default function LessonPage() {
@@ -144,6 +150,29 @@ export default function LessonPage() {
             <Visualizer initialCode={initialCode} language={lesson.language} />
           </ErrorBoundary>
         </GlassCard>
+      </motion.div>
+
+      {/* Quiz checkpoint — feeds the adaptive skill profile */}
+      {lesson.quiz && lesson.quiz.length > 0 && (
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
+          <ErrorBoundary>
+            <QuizCheckpoint lessonId={lesson.id} quiz={lesson.quiz} />
+          </ErrorBoundary>
+        </motion.div>
+      )}
+
+      {/* Context-aware AI mentor: explain differently, simplify, examples, practice, code review */}
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.22, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
+        <ErrorBoundary>
+          <LessonMentor title={lesson.title} content={lesson.content} language={lesson.language} />
+        </ErrorBoundary>
+      </motion.div>
+
+      {/* AI study tools: summary + practice quiz */}
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.26, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
+        <ErrorBoundary>
+          <LessonAITools title={lesson.title} content={lesson.content} language={lesson.language} />
+        </ErrorBoundary>
       </motion.div>
 
       {/* Complete button */}

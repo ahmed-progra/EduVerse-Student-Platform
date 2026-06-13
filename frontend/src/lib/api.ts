@@ -1,11 +1,17 @@
+import type { MentorProfileData, Mission, MentorReportData } from "./mentor-types";
+
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+
+/** AI generations can legitimately take a while (model retries included). */
+const AI_TIMEOUT_MS = 90_000;
 
 interface FetchOptions extends RequestInit {
   skipAuth?: boolean;
+  timeoutMs?: number;
 }
 
 async function fetchApi<T>(path: string, options: FetchOptions = {}): Promise<T> {
-  const { skipAuth, ...fetchOpts } = options;
+  const { skipAuth, timeoutMs, ...fetchOpts } = options;
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -19,12 +25,26 @@ async function fetchApi<T>(path: string, options: FetchOptions = {}): Promise<T>
     }
   }
 
-  const res = await fetch(`${API_BASE}${path}`, {
-    ...fetchOpts,
-    headers,
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${API_BASE}${path}`, {
+      ...fetchOpts,
+      headers,
+      signal: timeoutMs ? AbortSignal.timeout(timeoutMs) : fetchOpts.signal,
+    });
+  } catch (err) {
+    if (err instanceof DOMException && (err.name === "TimeoutError" || err.name === "AbortError")) {
+      throw new Error("Request timed out. Please try again.");
+    }
+    throw new Error("Can't reach the EduVerse server. Is the backend running?");
+  }
 
-  const data = await res.json();
+  let data: { error?: string } & T;
+  try {
+    data = await res.json();
+  } catch {
+    throw new Error(`Server returned an invalid response (HTTP ${res.status})`);
+  }
 
   if (!res.ok) {
     throw new Error(data.error || "API request failed");
@@ -123,36 +143,135 @@ export const api = {
   unlockSkill: (nodeId: string) =>
     fetchApi<{ success: boolean; data: any }>(`/skilltree/unlock/${nodeId}`, { method: "POST" }),
 
-  // Placement
-  getCoursePlacementQuestions: (courseId: string) =>
-    fetchApi<{ success: boolean; data: any[] }>(`/placement/${courseId}/questions`),
-  submitCoursePlacement: (courseId: string, body: { answers: number[] }) =>
-    fetchApi<{ success: boolean; data: any }>(`/placement/${courseId}/submit`, {
+  // Adaptive learning (assessment → skill profile → personalized roadmap)
+  learningState: (courseId: string) =>
+    fetchApi<{ success: boolean; data: any }>(`/learning/${courseId}/state`),
+  assessmentStart: (courseId: string) =>
+    fetchApi<{ success: boolean; data: { assessmentId: string; questions: any[] } }>(
+      `/learning/${courseId}/assessment/start`,
+      { method: "POST", body: JSON.stringify({}) }
+    ),
+  assessmentSubmit: (courseId: string, body: { assessmentId: string; answers: Record<string, number | string | null> }) =>
+    fetchApi<{ success: boolean; data: any }>(`/learning/${courseId}/assessment/submit`, {
       method: "POST",
       body: JSON.stringify(body),
+      timeoutMs: AI_TIMEOUT_MS,
     }),
-  getPlacementResult: (courseId: string) =>
-    fetchApi<{ success: boolean; data: any }>(`/placement/${courseId}/my-result`),
-
-  // AI
-  aiMentor: (message: string) =>
-    fetchApi<{ success: boolean; data: { text: string } }>("/ai/mentor", {
+  learningRefresh: (courseId: string) =>
+    fetchApi<{ success: boolean; data: any }>(`/learning/${courseId}/refresh`, {
       method: "POST",
-      body: JSON.stringify({ message }),
+      body: JSON.stringify({}),
+      timeoutMs: AI_TIMEOUT_MS,
+    }),
+  lessonQuiz: (lessonId: string, answers: number[]) =>
+    fetchApi<{
+      success: boolean;
+      data: { correct: number; total: number; pct: number; passed: boolean; xpGained: number; results: { correct: boolean; answer: number; explain: string }[] };
+    }>(`/lessons/${lessonId}/quiz`, {
+      method: "POST",
+      body: JSON.stringify({ answers }),
+    }),
+
+  // AI (all powered by Google AI Studio via the backend AI service)
+  aiStatus: () =>
+    fetchApi<{ success: boolean; data: { configured: boolean; provider: string } }>("/ai/status"),
+  aiMentor: (message: string, history?: { role: string; text: string }[], context?: string) =>
+    fetchApi<{ success: boolean; data: { text: string; model: string } }>("/ai/mentor", {
+      method: "POST",
+      body: JSON.stringify({ message, history, context }),
+      timeoutMs: AI_TIMEOUT_MS,
     }),
   aiReview: (code: string, language?: string) =>
-    fetchApi<{ success: boolean; data: { text: string } }>("/ai/review", {
+    fetchApi<{ success: boolean; data: { text: string; model: string } }>("/ai/review", {
       method: "POST",
       body: JSON.stringify({ code, language }),
+      timeoutMs: AI_TIMEOUT_MS,
     }),
   aiHints: (challenge?: string) =>
-    fetchApi<{ success: boolean; data: { text: string } }>("/ai/hints", {
+    fetchApi<{ success: boolean; data: { hints: string[]; text: string; model: string } }>("/ai/hints", {
       method: "POST",
       body: JSON.stringify({ challenge }),
+      timeoutMs: AI_TIMEOUT_MS,
     }),
   aiChallenge: (topic?: string, difficulty?: string) =>
-    fetchApi<{ success: boolean; data: { challenge: any } }>("/ai/challenge", {
+    fetchApi<{ success: boolean; data: { challenge: any; model: string } }>("/ai/challenge", {
       method: "POST",
       body: JSON.stringify({ topic, difficulty }),
+      timeoutMs: AI_TIMEOUT_MS,
+    }),
+  aiExamGrade: (body: { question: string; answer: string; topic?: string; difficulty?: string }) =>
+    fetchApi<{
+      success: boolean;
+      data: { score: number; passed: boolean; feedback: string; strengths: string[]; improvements: string[]; model: string };
+    }>("/ai/exam/grade", {
+      method: "POST",
+      body: JSON.stringify(body),
+      timeoutMs: AI_TIMEOUT_MS,
+    }),
+  aiSummary: (body: { title: string; content: string }) =>
+    fetchApi<{ success: boolean; data: { summary: string; keyPoints: string[]; model: string } }>("/ai/summary", {
+      method: "POST",
+      body: JSON.stringify(body),
+      timeoutMs: AI_TIMEOUT_MS,
+    }),
+  aiQuiz: (body: { topic?: string; content?: string; count?: number }) =>
+    fetchApi<{
+      success: boolean;
+      data: { questions: { question: string; options: string[]; answerIndex: number; explanation: string }[]; model: string };
+    }>("/ai/quiz", {
+      method: "POST",
+      body: JSON.stringify(body),
+      timeoutMs: AI_TIMEOUT_MS,
+    }),
+  aiRecommend: () =>
+    fetchApi<{
+      success: boolean;
+      data: { focus: string; recommendations: { title: string; reason: string; area: string; href: string }[]; model: string };
+    }>("/ai/recommend", {
+      method: "POST",
+      body: JSON.stringify({}),
+      timeoutMs: AI_TIMEOUT_MS,
+    }),
+  aiExplainError: (body: { code: string; errorType: string; errorMessage: string; line?: number; language?: string }) =>
+    fetchApi<{ success: boolean; data: { text: string; model: string } }>("/ai/explain-error", {
+      method: "POST",
+      body: JSON.stringify(body),
+      timeoutMs: AI_TIMEOUT_MS,
+    }),
+
+  // AI Mentor System — global, persistent, cross-course coach (Google AI Studio)
+  mentorProfile: (refresh?: boolean) =>
+    fetchApi<{ success: boolean; data: MentorProfileData }>(`/mentor/profile${refresh ? "?refresh=1" : ""}`, {
+      timeoutMs: AI_TIMEOUT_MS,
+    }),
+  mentorSync: () =>
+    fetchApi<{ success: boolean; data: MentorProfileData }>("/mentor/sync", {
+      method: "POST",
+      body: JSON.stringify({}),
+      timeoutMs: AI_TIMEOUT_MS,
+    }),
+  mentorMissions: () =>
+    fetchApi<{ success: boolean; data: { daily: Mission[]; weekly: Mission[] } }>("/mentor/missions", {
+      timeoutMs: AI_TIMEOUT_MS,
+    }),
+  mentorGenerateMissions: (scope?: "daily" | "weekly") =>
+    fetchApi<{ success: boolean; data: { daily?: Mission[]; weekly?: Mission[] } }>(
+      `/mentor/missions/generate${scope ? `?scope=${scope}` : ""}`,
+      { method: "POST", body: JSON.stringify({}), timeoutMs: AI_TIMEOUT_MS }
+    ),
+  mentorCompleteMission: (id: string) =>
+    fetchApi<{ success: boolean; data: Mission }>(`/mentor/missions/${id}/complete`, {
+      method: "POST",
+      body: JSON.stringify({}),
+    }),
+  mentorReport: (refresh?: boolean) =>
+    fetchApi<{ success: boolean; data: MentorReportData }>(`/mentor/report${refresh ? "?refresh=1" : ""}`, {
+      timeoutMs: AI_TIMEOUT_MS,
+    }),
+  mentorChat: (message: string, history?: { role: string; text: string }[]) =>
+    fetchApi<{ success: boolean; data: { text: string; model: string } }>("/mentor/chat", {
+      method: "POST",
+      body: JSON.stringify({ message, history }),
+      timeoutMs: AI_TIMEOUT_MS,
     }),
 };
