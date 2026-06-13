@@ -505,7 +505,7 @@ export async function getActiveMissions(userId: string) {
 /* ── Mission auto-tracking (the XP integration) ────────────────────── */
 
 export interface MissionEvent {
-  kind: "lesson_complete" | "quiz_pass" | "battle_win" | "assessment";
+  kind: "lesson_complete" | "quiz_pass" | "battle_win" | "assessment" | "teach_back";
   courseSlug?: string;
   topicKeys?: string[];
   difficulty?: string;
@@ -528,7 +528,8 @@ function matchesAction(m: NonNullable<MissionRow>, e: MissionEvent): boolean {
       if (m.difficulty && e.difficulty && m.difficulty !== e.difficulty) return false;
       return e.kind === "battle_win";
     case "topic_mastery":
-      if (e.kind !== "quiz_pass") return false;
+      // Both passing a quiz and teaching the topic to Pip count as mastery work.
+      if (e.kind !== "quiz_pass" && e.kind !== "teach_back") return false;
       if (!m.topicKey) return true;
       return Array.isArray(e.topicKeys) && e.topicKeys.includes(m.topicKey);
     default:

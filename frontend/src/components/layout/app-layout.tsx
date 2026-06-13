@@ -10,7 +10,7 @@ import { ErrorBoundary } from "@/components/ui/error-boundary";
 import {
   LayoutDashboard, BookOpen, Swords, Medal, ShoppingBag,
   User, LogOut, Menu, X, GitBranch, ChevronLeft,
-  Brain, Code2, Lightbulb, GraduationCap, FlaskConical, Sparkles,
+  Brain, Code2, Lightbulb, GraduationCap, FlaskConical, Sparkles, Sprout,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { AIMentorPanel } from "./ai-mentor-panel";
@@ -32,6 +32,7 @@ const navSections: { title: string; items: NavItem[] }[] = [
     items: [
       { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
       { href: "/mentor", label: "AI Coach", icon: Sparkles },
+      { href: "/apprentice", label: "Apprentice", icon: Sprout },
       { href: "/courses", label: "Courses", icon: BookOpen },
       { href: "/codelab", label: "Code Lab", icon: FlaskConical },
       { href: "/skill-tree", label: "Skill Tree", icon: GitBranch },

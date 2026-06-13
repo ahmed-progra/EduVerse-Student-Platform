@@ -93,6 +93,17 @@ export default function MentorPage() {
   const metrics = profile?.metrics;
   const lessonsCompleted = metrics?.totals?.lessonsCompleted ?? 0;
 
+  // Build label → /apprentice deep-links so each gap becomes a "teach it to Pip" action.
+  const titleToSlug = new Map((metrics?.perCourse || []).map((c) => [c.title, c.slug]));
+  const weakLinks: Record<string, string> = {};
+  for (const w of metrics?.weakTopics || []) {
+    const slug = titleToSlug.get(w.course);
+    if (slug) {
+      const q = new URLSearchParams({ topic: w.label, topicKey: w.key, course: slug, courseLabel: w.course });
+      weakLinks[w.label] = `/apprentice?${q.toString()}`;
+    }
+  }
+
   return (
     <div className="space-y-8">
       {/* ── Header ── */}
@@ -170,7 +181,7 @@ export default function MentorPage() {
       {/* ── Strong / weak topics ── */}
       {profile && (
         <Section title="Strengths & Gaps" icon={Compass} delay={0.16}>
-          <TopicColumns strengths={profile.strengths} weaknesses={profile.weaknesses} />
+          <TopicColumns strengths={profile.strengths} weaknesses={profile.weaknesses} weakLinks={weakLinks} />
         </Section>
       )}
 

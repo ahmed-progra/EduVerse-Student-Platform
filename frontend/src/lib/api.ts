@@ -1,4 +1,5 @@
 import type { MentorProfileData, Mission, MentorReportData } from "./mentor-types";
+import type { ApprenticeTurn, TeachGrade, TeachableCourse } from "./apprentice-types";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 
@@ -272,6 +273,28 @@ export const api = {
     fetchApi<{ success: boolean; data: { text: string; model: string } }>("/mentor/chat", {
       method: "POST",
       body: JSON.stringify({ message, history }),
+      timeoutMs: AI_TIMEOUT_MS,
+    }),
+
+  // Apprentice Mode — teach the AI (protégé effect)
+  apprenticeTopics: () =>
+    fetchApi<{ success: boolean; data: { maxTurns: number; courses: TeachableCourse[] } }>("/apprentice/topics"),
+  apprenticeStart: (body: { topic: string; courseLabel?: string }) =>
+    fetchApi<{ success: boolean; data: ApprenticeTurn }>("/apprentice/start", {
+      method: "POST",
+      body: JSON.stringify(body),
+      timeoutMs: AI_TIMEOUT_MS,
+    }),
+  apprenticeReply: (body: { topic: string; turns: { role: string; text: string }[]; turnIndex: number }) =>
+    fetchApi<{ success: boolean; data: ApprenticeTurn }>("/apprentice/reply", {
+      method: "POST",
+      body: JSON.stringify(body),
+      timeoutMs: AI_TIMEOUT_MS,
+    }),
+  apprenticeGrade: (body: { topic: string; topicKey?: string | null; courseSlug?: string | null; turns: { role: string; text: string }[] }) =>
+    fetchApi<{ success: boolean; data: TeachGrade }>("/apprentice/grade", {
+      method: "POST",
+      body: JSON.stringify(body),
       timeoutMs: AI_TIMEOUT_MS,
     }),
 };

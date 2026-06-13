@@ -19,6 +19,7 @@ import skillTreeRoutes from "./routes/skilltree";
 import aiRoutes from "./routes/ai";
 import learningRoutes from "./routes/learning";
 import mentorRoutes from "./routes/mentor";
+import apprenticeRoutes from "./routes/apprentice";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -49,6 +50,7 @@ app.use("/api/skilltree", skillTreeRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/learning", learningRoutes);
 app.use("/api/mentor", mentorRoutes);
+app.use("/api/apprentice", apprenticeRoutes);
 
 app.get("/api/health", (_req, res) => {
   res.json({ success: true, data: { status: "ok", timestamp: new Date().toISOString() } });
