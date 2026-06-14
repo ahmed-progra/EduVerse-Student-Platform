@@ -94,16 +94,27 @@ export default function ApprenticePage() {
   }, []);
 
   // ── deep-link: /apprentice?topic=Loops&topicKey=loops&course=python ──
+  // From the Coach dashboard (full topic) or a teach mission (topicKey only —
+  // the label is resolved from the catalog once it loads).
   // Guarded so React StrictMode's double-invoke can't fire two sessions.
   useEffect(() => {
     if (autoStartedRef.current) return;
     const q = new URLSearchParams(window.location.search);
     const topic = q.get("topic");
+    const topicKey = q.get("topicKey");
+    const course = q.get("course");
     if (topic) {
       autoStartedRef.current = true;
-      startTeaching({ topic, topicKey: q.get("topicKey"), courseSlug: q.get("course"), courseLabel: q.get("courseLabel") || undefined });
+      startTeaching({ topic, topicKey, courseSlug: course, courseLabel: q.get("courseLabel") || undefined });
+    } else if (topicKey && course && catalog.length) {
+      const c = catalog.find((x) => x.courseSlug === course);
+      const t = c?.topics.find((x) => x.key === topicKey);
+      if (c && t) {
+        autoStartedRef.current = true;
+        startTeaching({ topic: t.label, topicKey, courseSlug: course, courseLabel: c.courseTitle });
+      }
     }
-  }, [startTeaching]);
+  }, [startTeaching, catalog]);
 
   const sendExplanation = async () => {
     const text = input.trim();

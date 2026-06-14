@@ -200,8 +200,10 @@ export async function gradeTeaching(
     if (grade.overall >= 65 && topicKey && (COURSE_TOPICS[courseSlug!] || []).some((t) => t.key === topicKey)) {
       masteryBoosted = await boostTopicMastery(userId, course.id, courseSlug!, topicKey, grade.overall).catch(() => false);
     }
-    // Advance any topic-mastery mentor mission for this topic.
-    await syncMissionProgress(userId, { kind: "teach_back", courseSlug: courseSlug ?? undefined, topicKeys: topicKey ? [topicKey] : [] });
+    // A reasonably good teach-back advances teach_back + topic_mastery missions.
+    if (grade.overall >= 50) {
+      await syncMissionProgress(userId, { kind: "teach_back", courseSlug: courseSlug ?? undefined, topicKeys: topicKey ? [topicKey] : [] });
+    }
   }
 
   return { ...grade, xpAwarded, masteryBoosted };

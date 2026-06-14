@@ -368,7 +368,7 @@ export async function buildProfile(userId: string, opts: { force?: boolean } = {
 
 /* ── Missions ──────────────────────────────────────────────────────── */
 
-const MISSION_TYPES = new Set(["lesson_complete", "quiz_pass", "battle_win", "topic_mastery", "assessment", "project", "xp_earn"]);
+const MISSION_TYPES = new Set(["lesson_complete", "quiz_pass", "battle_win", "topic_mastery", "assessment", "project", "xp_earn", "teach_back"]);
 const DAILY_COUNT = 3;
 const WEEKLY_COUNT = 4;
 
@@ -390,6 +390,7 @@ Mission types and what "target" means:
 - quiz_pass: pass N lesson quizzes (target 1-4)
 - battle_win: win N coding battles (target 1-3)
 - topic_mastery: practice a specific weak topic via quizzes (target 1-3, set topicKey)
+- teach_back: teach a specific weak topic to the AI apprentice Pip (target 1-2, set topicKey) — the single most effective way to cement a weak topic
 - assessment: take a course placement assessment (target 1)
 - project: build a small project (target 1)
 - xp_earn: earn N XP (target 50-300)
@@ -407,6 +408,8 @@ function clampTarget(type: string, n: number): number {
     case "battle_win":
     case "topic_mastery":
       return Math.max(1, Math.min(type === "battle_win" ? 3 : 4, v));
+    case "teach_back":
+      return Math.max(1, Math.min(2, v));
     default:
       return 1;
   }
@@ -415,6 +418,7 @@ function clampTarget(type: string, n: number): number {
 function missionsFallback(s: Signals, scope: "daily" | "weekly"): MissionSpec[] {
   const weakCourse = [...s.perCourse].filter((c) => c.total > 0).sort((a, b) => a.completed / a.total - b.completed / b.total)[0];
   const weakTopic = s.weakTopics[0];
+  const weakSlug = weakTopic ? s.perCourse.find((c) => c.title === weakTopic.course)?.slug ?? null : null;
   if (scope === "daily") {
     return [
       { type: "lesson_complete", title: "Complete 2 lessons", description: "Finish two lessons in any course today.", rationale: "Steady daily practice builds momentum.", target: 2, xpReward: 40, courseSlug: weakCourse?.slug || null, topicKey: null, difficulty: null },
@@ -426,7 +430,7 @@ function missionsFallback(s: Signals, scope: "daily" | "weekly"): MissionSpec[] 
     { type: "lesson_complete", title: "Finish 5 lessons", description: "Complete five lessons this week.", rationale: "Consistent volume drives progress.", target: 5, xpReward: 80, courseSlug: weakCourse?.slug || null, topicKey: null, difficulty: null },
     { type: "battle_win", title: "Win 2 battles", description: "Win two coding battles this week.", rationale: "Battles sharpen applied skills.", target: 2, xpReward: 90, courseSlug: null, topicKey: null, difficulty: null },
     weakTopic
-      ? { type: "topic_mastery", title: `Improve ${weakTopic.label}`, description: `Pass 2 quizzes covering ${weakTopic.label}.`, rationale: `${weakTopic.label} is one of your weakest topics.`, target: 2, xpReward: 70, courseSlug: null, topicKey: weakTopic.key, difficulty: null }
+      ? { type: "teach_back", title: `Teach ${weakTopic.label} to Pip`, description: `Teach ${weakTopic.label} to your AI apprentice to lock it in.`, rationale: `${weakTopic.label} is one of your weakest topics — teaching it is the fastest way to master it.`, target: 1, xpReward: 80, courseSlug: weakSlug, topicKey: weakTopic.key, difficulty: null }
       : { type: "quiz_pass", title: "Pass 3 quizzes", description: "Pass three lesson quizzes this week.", rationale: "Reinforce what you've studied.", target: 3, xpReward: 70, courseSlug: null, topicKey: null, difficulty: null },
     { type: "project", title: "Build a mini project", description: "Apply your skills in a small self-chosen project.", rationale: "Projects turn knowledge into ability.", target: 1, xpReward: 100, courseSlug: null, topicKey: null, difficulty: null },
   ];
@@ -436,6 +440,42 @@ function topicExists(courseSlug: string | null, topicKey: string | null): boolea
   if (!topicKey) return false;
   if (courseSlug) return (COURSE_TOPICS[courseSlug] || []).some((t) => t.key === topicKey);
   return Object.values(COURSE_TOPICS).some((list) => list.some((t) => t.key === topicKey));
+}
+
+/**
+ * Make topic-scoped missions reliably actionable: backfill a real topicKey when
+ * the model omitted one, and guarantee a weekly teach-back when the learner has
+ * a clear gap (teaching is EduVerse's differentiator — it should always surface).
+ */
+function normalizeTopicScoped(s: Signals, scope: "daily" | "weekly", specs: MissionSpec[], count: number): void {
+  const weakest = s.weakTopics[0];
+  if (!weakest) return;
+  const slugFor = (courseTitle: string) => s.perCourse.find((c) => c.title === courseTitle)?.slug ?? null;
+
+  for (const m of specs) {
+    if ((m.type === "topic_mastery" || m.type === "teach_back") && !m.topicKey) {
+      m.topicKey = weakest.key;
+      if (!m.courseSlug) m.courseSlug = slugFor(weakest.course);
+    }
+  }
+
+  if (scope === "weekly" && !specs.some((m) => m.type === "teach_back")) {
+    const teach: MissionSpec = {
+      type: "teach_back",
+      title: `Teach ${weakest.label} to Pip`,
+      description: `Teach ${weakest.label} to your AI apprentice to lock it in.`,
+      rationale: `${weakest.label} is one of your weakest topics — teaching it is the fastest way to master it.`,
+      target: 1,
+      xpReward: 80,
+      courseSlug: slugFor(weakest.course),
+      topicKey: weakest.key,
+      difficulty: null,
+    };
+    const idx = specs.findIndex((m) => m.type === "topic_mastery");
+    if (idx >= 0) specs[idx] = teach;
+    else if (specs.length >= count) specs[count - 1] = teach;
+    else specs.push(teach);
+  }
 }
 
 async function aiMissions(s: Signals, scope: "daily" | "weekly", count: number): Promise<MissionSpec[]> {
@@ -454,8 +494,9 @@ async function aiMissions(s: Signals, scope: "daily" | "weekly", count: number):
       if (!MISSION_TYPES.has(type)) continue;
       const courseSlug = VALID_COURSES.has(String(m.courseSlug)) ? String(m.courseSlug) : null;
       let topicKey = m.topicKey ? String(m.topicKey) : null;
-      if (type === "topic_mastery" && !topicExists(courseSlug, topicKey)) topicKey = null;
-      if (type !== "topic_mastery") topicKey = null;
+      const topicScoped = type === "topic_mastery" || type === "teach_back";
+      if (topicScoped && !topicExists(courseSlug, topicKey)) topicKey = null;
+      if (!topicScoped) topicKey = null;
       const difficulty = ["easy", "medium", "hard"].includes(String(m.difficulty)) ? String(m.difficulty) : null;
       specs.push({
         type,
@@ -471,6 +512,7 @@ async function aiMissions(s: Signals, scope: "daily" | "weekly", count: number):
       if (specs.length >= count) break;
     }
     if (specs.length === 0) return missionsFallback(s, scope);
+    normalizeTopicScoped(s, scope, specs, count);
     return specs;
   } catch (err) {
     if (err instanceof AIError) {
@@ -530,6 +572,11 @@ function matchesAction(m: NonNullable<MissionRow>, e: MissionEvent): boolean {
     case "topic_mastery":
       // Both passing a quiz and teaching the topic to Pip count as mastery work.
       if (e.kind !== "quiz_pass" && e.kind !== "teach_back") return false;
+      if (!m.topicKey) return true;
+      return Array.isArray(e.topicKeys) && e.topicKeys.includes(m.topicKey);
+    case "teach_back":
+      // Completed by teaching the topic to Pip (gated on a decent grade upstream).
+      if (e.kind !== "teach_back") return false;
       if (!m.topicKey) return true;
       return Array.isArray(e.topicKeys) && e.topicKeys.includes(m.topicKey);
     default:

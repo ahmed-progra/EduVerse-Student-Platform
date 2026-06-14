@@ -1,9 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { Target, Zap, CheckCircle2, RefreshCw, Hammer, Calendar, CalendarDays } from "lucide-react";
+import Link from "next/link";
+import { Target, Zap, CheckCircle2, RefreshCw, Hammer, Calendar, CalendarDays, Sprout } from "lucide-react";
 import type { Mission } from "@/lib/mentor-types";
 import { api } from "@/lib/api";
+
+/** Deep-link to the apprentice classroom for a teach_back mission. */
+function teachHref(m: Mission): string {
+  const q = new URLSearchParams();
+  if (m.topicKey) q.set("topicKey", m.topicKey);
+  if (m.courseSlug) q.set("course", m.courseSlug);
+  const qs = q.toString();
+  return `/apprentice${qs ? `?${qs}` : ""}`;
+}
 
 interface MissionsBoardProps {
   daily: Mission[];
@@ -101,6 +111,7 @@ function MissionCard({ mission, onCompleteProject }: { mission: Mission; onCompl
   const done = mission.status === "completed";
   const pct = Math.min(100, Math.round((mission.progress / Math.max(1, mission.target)) * 100));
   const isProject = mission.type === "project";
+  const isTeach = mission.type === "teach_back";
 
   return (
     <div
@@ -115,6 +126,8 @@ function MissionCard({ mission, onCompleteProject }: { mission: Mission; onCompl
           <div className="flex items-center gap-1.5 text-sm font-semibold text-eduverse-text">
             {done ? (
               <CheckCircle2 size={14} className="text-eduverse-success shrink-0" aria-hidden="true" />
+            ) : isTeach ? (
+              <Sprout size={14} className="text-eduverse-accent shrink-0" aria-hidden="true" />
             ) : isProject ? (
               <Hammer size={14} className="text-eduverse-accent shrink-0" aria-hidden="true" />
             ) : (
@@ -147,6 +160,11 @@ function MissionCard({ mission, onCompleteProject }: { mission: Mission; onCompl
           >
             Mark done
           </button>
+        )}
+        {isTeach && !done && (
+          <Link className="ai-panel-action-btn ai-panel-action-sm" href={teachHref(mission)} aria-label="Teach this topic to Pip">
+            <Sprout size={12} aria-hidden="true" /> Teach now
+          </Link>
         )}
       </div>
       {mission.rationale && !done && (
