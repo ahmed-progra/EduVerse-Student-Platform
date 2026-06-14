@@ -40,6 +40,7 @@ model User {
   mentorProfile  MentorProfile?
   missions       Mission[]
   mentorReports  MentorReport[]
+  projects       Project[]
 }
 
 model Course {
@@ -207,6 +208,38 @@ model Mission {
   user User @relation(fields: [userId], references: [id])
 
   @@index([userId, scope, periodKey])
+}
+
+// AI Project Studio — learners build a real project, AI grades it, it lands on
+// their public portfolio. The destination of the learning journey.
+model Project {
+  id           String    @id @default(uuid())
+  userId       String
+  title        String
+  brief        String                       // what to build
+  language     String                       // python | javascript | html | css | cpp
+  difficulty   String    @default("beginner")
+  skills       String    @default("[]")     // JSON string[] topic keys/labels it demonstrates
+  milestones   String    @default("[]")     // JSON [{ text, done }]
+  starterCode  String    @default("")
+  code         String    @default("")       // learner's working / submitted code
+  status       String    @default("in_progress") // in_progress | completed
+  source       String    @default("custom") // custom | suggested
+  // AI review
+  score        Int?                          // 0-100
+  feedback     String    @default("")        // narrative
+  rubric       String    @default("[]")      // JSON [{ criterion, score, max, note }]
+  strengths    String    @default("[]")
+  improvements String    @default("[]")
+  published    Boolean   @default(true)      // visible on public portfolio when completed
+  xpAwarded    Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  completedAt  DateTime?
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, status])
 }
 
 // Weekly AI learning report snapshots — recurring check-in.

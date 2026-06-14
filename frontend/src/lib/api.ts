@@ -1,5 +1,6 @@
 import type { MentorProfileData, Mission, MentorReportData } from "./mentor-types";
 import type { ApprenticeTurn, TeachGrade, TeachableCourse } from "./apprentice-types";
+import type { Project, ProjectMilestone, ProjectRubric, PortfolioData } from "./project-types";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 
@@ -297,4 +298,27 @@ export const api = {
       body: JSON.stringify(body),
       timeoutMs: AI_TIMEOUT_MS,
     }),
+
+  // Project Studio + public Portfolio
+  projectsList: () => fetchApi<{ success: boolean; data: Project[] }>("/projects"),
+  projectGet: (id: string) => fetchApi<{ success: boolean; data: Project }>(`/projects/${id}`),
+  projectSuggest: (body?: { language?: string; topicHint?: string }) =>
+    fetchApi<{ success: boolean; data: Project }>("/projects/suggest", {
+      method: "POST",
+      body: JSON.stringify(body || {}),
+      timeoutMs: AI_TIMEOUT_MS,
+    }),
+  projectCreate: (body: { title: string; brief: string; language?: string; difficulty?: string; skills?: string[]; milestones?: string[]; starterCode?: string }) =>
+    fetchApi<{ success: boolean; data: Project }>("/projects", { method: "POST", body: JSON.stringify(body) }),
+  projectUpdate: (id: string, body: { code?: string; milestones?: ProjectMilestone[] }) =>
+    fetchApi<{ success: boolean; data: Project }>(`/projects/${id}`, { method: "PATCH", body: JSON.stringify(body) }),
+  projectPublish: (id: string, published: boolean) =>
+    fetchApi<{ success: boolean; data: Project }>(`/projects/${id}/publish`, { method: "PATCH", body: JSON.stringify({ published }) }),
+  projectSubmit: (id: string) =>
+    fetchApi<{ success: boolean; data: { project: Project; grade: { score: number; feedback: string; rubric: ProjectRubric[]; strengths: string[]; improvements: string[]; xpAwarded: number } } }>(
+      `/projects/${id}/submit`,
+      { method: "POST", body: JSON.stringify({}), timeoutMs: AI_TIMEOUT_MS }
+    ),
+  portfolio: (username: string) =>
+    fetchApi<{ success: boolean; data: PortfolioData }>(`/projects/portfolio/${encodeURIComponent(username)}`, { skipAuth: true }),
 };

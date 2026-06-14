@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
-import { Sparkles, RefreshCw, TrendingUp, Target, Compass, MessageSquare, WifiOff } from "lucide-react";
+import { Sparkles, RefreshCw, TrendingUp, Target, Compass, MessageSquare, WifiOff, Rocket, ArrowRight } from "lucide-react";
 import { GlassCard } from "@/components/ui/glass-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useAuthStore } from "@/stores/auth-store";
@@ -204,8 +205,37 @@ export default function MentorPage() {
         </Section>
       )}
 
+      {/* ── Project ideas → Studio ── */}
+      {profile && profile.projects.length > 0 && (
+        <Section title="Project Ideas" icon={Rocket} delay={0.27}>
+          <GlassCard>
+            <p className="text-sm text-eduverse-text-muted mb-3">
+              Turn your learning into proof. Build one of these in the Project Studio — it gets AI-reviewed and added to your portfolio.
+            </p>
+            <div className="grid sm:grid-cols-2 gap-3 mb-4">
+              {profile.projects.map((p, i) => (
+                <div key={i} className="app-card p-3">
+                  <div className="text-sm font-semibold text-eduverse-text">{p.title}</div>
+                  <p className="text-xs text-eduverse-text-muted mt-1">{p.brief}</p>
+                  {p.skills.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {p.skills.map((s) => (
+                        <span key={s} className="text-[10px] px-1.5 py-0.5 rounded bg-eduverse-raised text-eduverse-text-muted">{s}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+            <Link href="/projects" className="ai-panel-action-btn ai-panel-action-sm inline-flex">
+              <Rocket size={13} aria-hidden="true" /> Open Project Studio <ArrowRight size={13} aria-hidden="true" />
+            </Link>
+          </GlassCard>
+        </Section>
+      )}
+
       {/* ── Mentor chat ── */}
-      <Section title="Talk to Your Mentor" icon={MessageSquare} delay={0.28}>
+      <Section title="Talk to Your Mentor" icon={MessageSquare} delay={0.3}>
         <GlassCard>
           <MentorChat />
         </GlassCard>

@@ -10,7 +10,7 @@ import { ErrorBoundary } from "@/components/ui/error-boundary";
 import {
   LayoutDashboard, BookOpen, Swords, Medal, ShoppingBag,
   User, LogOut, Menu, X, GitBranch, ChevronLeft,
-  Brain, Code2, Lightbulb, GraduationCap, FlaskConical, Sparkles, Sprout,
+  Brain, Code2, Lightbulb, GraduationCap, FlaskConical, Sparkles, Sprout, Rocket,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { AIMentorPanel } from "./ai-mentor-panel";
@@ -33,6 +33,7 @@ const navSections: { title: string; items: NavItem[] }[] = [
       { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
       { href: "/mentor", label: "AI Coach", icon: Sparkles },
       { href: "/apprentice", label: "Apprentice", icon: Sprout },
+      { href: "/projects", label: "Projects", icon: Rocket },
       { href: "/courses", label: "Courses", icon: BookOpen },
       { href: "/codelab", label: "Code Lab", icon: FlaskConical },
       { href: "/skill-tree", label: "Skill Tree", icon: GitBranch },
@@ -67,7 +68,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
   const [activePanel, setActivePanel] = useState<string | null>(null);
 
-  const isPublicPage = pathname.startsWith("/auth") || pathname === "/";
+  // Public pages render without the app shell or auth gate (shareable portfolio included).
+  const isPublicPage = pathname.startsWith("/auth") || pathname === "/" || pathname.startsWith("/u/");
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { loadUser(); setMounted(true); }, []);

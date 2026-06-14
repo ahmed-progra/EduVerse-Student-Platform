@@ -547,7 +547,7 @@ export async function getActiveMissions(userId: string) {
 /* ── Mission auto-tracking (the XP integration) ────────────────────── */
 
 export interface MissionEvent {
-  kind: "lesson_complete" | "quiz_pass" | "battle_win" | "assessment" | "teach_back";
+  kind: "lesson_complete" | "quiz_pass" | "battle_win" | "assessment" | "teach_back" | "project";
   courseSlug?: string;
   topicKeys?: string[];
   difficulty?: string;
@@ -579,8 +579,11 @@ function matchesAction(m: NonNullable<MissionRow>, e: MissionEvent): boolean {
       if (e.kind !== "teach_back") return false;
       if (!m.topicKey) return true;
       return Array.isArray(e.topicKeys) && e.topicKeys.includes(m.topicKey);
+    case "project":
+      // Auto-completed by shipping a real project in the Project Studio.
+      return e.kind === "project";
     default:
-      return false; // project (manual), xp_earn (recomputed)
+      return false; // xp_earn (recomputed separately)
   }
 }
 
