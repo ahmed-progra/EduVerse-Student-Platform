@@ -8,6 +8,7 @@ interface User {
   avatar: string;
   level: number;
   xp: number;
+  coins: number;
   rank: number;
   placementLevel: string;
   createdAt: string;
@@ -25,6 +26,7 @@ interface AuthState {
   loadUser: () => Promise<void>;
   setUser: (user: User) => void;
   updateXp: (xp: number, level: number) => void;
+  updateCoins: (coins: number) => void;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -73,6 +75,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const user = get().user;
     if (user) {
       set({ user: { ...user, xp, level } });
+    }
+  },
+
+  updateCoins: (coins) => {
+    const user = get().user;
+    if (user) {
+      set({ user: { ...user, coins } });
     }
   },
 }));

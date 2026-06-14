@@ -364,7 +364,8 @@ async function seedDemoAccount() {
   const totalXp = lessonXp + 75 + 200;
   await prisma.user.update({
     where: { id: demo.id },
-    data: { xp: totalXp, level: calculateLevel(totalXp) },
+    // coins mirror earned XP — XP stays as permanent progression, coins are spendable.
+    data: { xp: totalXp, level: calculateLevel(totalXp), coins: totalXp },
   });
 
   console.log(`  Created demo account (demo@eduverse.dev / demo1234) — ${level} Python learner, ${totalXp} XP`);

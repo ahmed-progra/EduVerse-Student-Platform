@@ -22,10 +22,11 @@ export async function addXp(
 
   const newXp = user.xp + amount;
   const newLevel = calculateLevel(newXp);
+  const newCoins = user.coins + amount; // every XP earned also grants spendable coins
 
   await prisma.user.update({
     where: { id: userId },
-    data: { xp: newXp, level: newLevel },
+    data: { xp: newXp, level: newLevel, coins: newCoins },
   });
 
   await prisma.xpLog.create({
@@ -53,5 +54,5 @@ export async function addXp(
 
   const leveledUp = newLevel > user.level;
 
-  return { xp: newXp, level: newLevel, leveledUp, xpGained: amount };
+  return { xp: newXp, level: newLevel, coins: newCoins, leveledUp, xpGained: amount };
 }

@@ -33,8 +33,8 @@ router.post("/buy/:itemId", requireAuth, async (req: Request, res: Response) => 
       return;
     }
 
-    if (user.xp < item.price) {
-      res.status(400).json({ success: false, error: "Not enough XP" });
+    if (user.coins < item.price) {
+      res.status(400).json({ success: false, error: "Not enough coins" });
       return;
     }
 
@@ -47,22 +47,23 @@ router.post("/buy/:itemId", requireAuth, async (req: Request, res: Response) => 
     }
 
     // Atomic: the conditional decrement and inventory insert succeed or fail
-    // together, so concurrent purchases can't double-spend XP.
+    // together, so concurrent purchases can't double-spend coins. Coins are a
+    // separate spendable currency — XP (level + leaderboard) is never touched.
     await prisma.$transaction(async (tx) => {
       const charged = await tx.user.updateMany({
-        where: { id: user.id, xp: { gte: item.price } },
-        data: { xp: { decrement: item.price } },
+        where: { id: user.id, coins: { gte: item.price } },
+        data: { coins: { decrement: item.price } },
       });
-      if (charged.count === 0) throw new Error("INSUFFICIENT_XP");
+      if (charged.count === 0) throw new Error("INSUFFICIENT_COINS");
       await tx.userInventory.create({
         data: { userId: user.id, itemId: item.id, equipped: false },
       });
     });
 
-    res.json({ success: true, data: { message: "Purchased successfully", item } });
+    res.json({ success: true, data: { message: "Purchased successfully", item, coins: user.coins - item.price } });
   } catch (err) {
-    if (err instanceof Error && err.message === "INSUFFICIENT_XP") {
-      res.status(400).json({ success: false, error: "Not enough XP" });
+    if (err instanceof Error && err.message === "INSUFFICIENT_COINS") {
+      res.status(400).json({ success: false, error: "Not enough coins" });
       return;
     }
     res.status(500).json({ success: false, error: "Purchase failed" });

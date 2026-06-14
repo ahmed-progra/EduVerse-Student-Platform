@@ -8,7 +8,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/stores/auth-store";
 import { useEffect, useState } from "react";
-import { ShoppingBag, Zap, Check, Image, Frame, Sparkles, Type, Monitor, Wand2, WifiOff } from "lucide-react";
+import { ShoppingBag, Coins, Check, Image, Frame, Sparkles, Type, Monitor, Wand2, WifiOff } from "lucide-react";
 
 interface ShopItem {
   id: string;
@@ -34,7 +34,7 @@ const TYPE_ICONS: Record<string, React.ComponentType<{ className?: string }>> = 
 };
 
 export default function ShopPage() {
-  const { user, updateXp } = useAuthStore();
+  const { user, updateCoins } = useAuthStore();
   const [items, setItems] = useState<ShopItem[]>([]);
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -69,12 +69,9 @@ export default function ShopPage() {
   const handleBuy = async (itemId: string) => {
     setBuyingId(itemId);
     try {
-      await api.buyItem(itemId);
+      const res = await api.buyItem(itemId);
       await loadData();
-      if (user) {
-        const profile = await api.getProfile();
-        updateXp(profile.data.xp, profile.data.level);
-      }
+      updateCoins(res.data.coins); // XP/level untouched — only the coin balance changes
     } catch {}
     setBuyingId(null);
   };
@@ -105,7 +102,7 @@ export default function ShopPage() {
           <ShoppingBag className="w-8 h-8 text-eduverse-accent-light" />
           Shop
         </h1>
-        <p className="text-eduverse-text-muted">Spend your XP on cosmetics and upgrades.</p>
+        <p className="text-eduverse-text-muted">Spend your coins on cosmetics and upgrades. Coins are earned alongside XP — buying never costs you levels or rank.</p>
       </motion.div>
 
       {user && (
@@ -114,7 +111,7 @@ export default function ShopPage() {
             <div className="flex items-center justify-between mb-2">
               <span className="font-semibold">Your Balance</span>
               <span className="text-xl font-bold text-eduverse-warning flex items-center gap-1">
-                <Zap className="w-5 h-5" /> {user.xp.toLocaleString()} XP
+                <Coins className="w-5 h-5" /> {user.coins.toLocaleString()} Coins
               </span>
             </div>
             <XpBar xp={user.xp} />
@@ -148,7 +145,7 @@ export default function ShopPage() {
           const owned = ownedIds.has(item.id);
           const equipped = equippedIds.has(item.id);
           const Icon = TYPE_ICONS[item.type] || ShoppingBag;
-          const canAfford = user && user.xp >= item.price && user.level >= item.levelRequired;
+          const canAfford = user && user.coins >= item.price && user.level >= item.levelRequired;
 
           return (
             <motion.div
@@ -169,7 +166,7 @@ export default function ShopPage() {
                   Lv.{item.levelRequired} required
                 </div>
                 <div className="flex items-center justify-center gap-1 text-sm font-bold text-eduverse-warning mb-4">
-                  <Zap className="w-4 h-4" /> {item.price.toLocaleString()} XP
+                  <Coins className="w-4 h-4" /> {item.price.toLocaleString()} Coins
                 </div>
                 {owned ? (
                   <GradientButton

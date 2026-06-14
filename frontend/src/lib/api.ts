@@ -125,7 +125,7 @@ export const api = {
   // Shop
   getShopItems: () => fetchApi<{ success: boolean; data: any[] }>("/shop/items"),
   buyItem: (itemId: string) =>
-    fetchApi<{ success: boolean; data: any }>(`/shop/buy/${itemId}`, { method: "POST" }),
+    fetchApi<{ success: boolean; data: { message: string; item: any; coins: number } }>(`/shop/buy/${itemId}`, { method: "POST" }),
   equipItem: (itemId: string) =>
     fetchApi<{ success: boolean; data: any }>(`/shop/equip/${itemId}`, { method: "POST" }),
   getInventory: () => fetchApi<{ success: boolean; data: any[] }>("/shop/inventory"),
