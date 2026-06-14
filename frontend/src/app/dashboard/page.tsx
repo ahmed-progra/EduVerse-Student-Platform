@@ -145,7 +145,7 @@ export default function DashboardPage() {
               <Link href={action.href} className="block">
                 <motion.div
                   whileTap={{ scale: 0.98 }}
-                  className="app-card text-center p-6 cursor-pointer"
+                  className="app-card app-card-link text-center p-6 cursor-pointer"
                 >
                   <action.icon className="w-6 h-6 text-eduverse-accent mx-auto mb-3" aria-hidden="true" />
                   <h3 className="font-semibold text-sm text-eduverse-text font-display">{action.label}</h3>

@@ -485,7 +485,7 @@ body {
 .btn-primary:hover {
   filter: brightness(1.12);
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px oklch(58% 0.21 293 / 0.35), inset 0 1px 0 oklch(100% 0 0 / 0.12);
+  box-shadow: 0 6px 20px oklch(60% 0.18 75 / 0.35), inset 0 1px 0 oklch(100% 0 0 / 0.12);
 }
 
 .btn-primary:active {
@@ -524,7 +524,7 @@ body {
   background: var(--color-eduverse-editor);
   border: 1px solid var(--color-eduverse-border-mid);
   border-radius: 14px;
-  box-shadow: var(--shadow-eduverse-lg), 0 0 80px oklch(58% 0.21 293 / 0.12);
+  box-shadow: var(--shadow-eduverse-lg), 0 0 80px oklch(60% 0.18 75 / 0.12);
   overflow: hidden;
   font-family: var(--font-mono);
 }
@@ -1899,7 +1899,7 @@ kbd {
   left: 48px;
   right: 0;
   height: 1.65em;
-  background: rgba(124,58,237,0.10);
+  background: var(--color-eduverse-accent-soft);
   border-left: 3px solid var(--color-eduverse-accent);
   pointer-events: none;
   z-index: 2;
@@ -1961,7 +1961,7 @@ kbd {
 }
 
 .visualizer-btn-primary:hover:not(:disabled) {
-  background: #9333ea;
+  background: var(--color-eduverse-accent-strong);
 }
 
 .visualizer-btn-active {
@@ -2006,8 +2006,8 @@ kbd {
 }
 
 .condition-badge {
-  background: rgba(124,58,237,0.08);
-  border: 1px solid rgba(124,58,237,0.18);
+  background: var(--color-eduverse-accent-soft);
+  border: 1px solid var(--color-eduverse-border-mid);
   color: var(--color-eduverse-text);
 }
 
@@ -2713,8 +2713,8 @@ kbd {
 
 /* ── Dashboard stat card glow on hover ── */
 .dashboard-stat-card:hover {
-  box-shadow: 0 0 30px rgba(139,92,246,0.25), 0 8px 32px rgba(0,0,0,0.3);
-  border-color: rgba(139,92,246,0.4);
+  box-shadow: 0 0 30px oklch(78% 0.14 85 / 0.18), 0 8px 32px rgb(0 0 0 / 0.3);
+  border-color: var(--color-eduverse-border-mid);
   transform: translateY(-2px);
 }
 
@@ -2737,17 +2737,17 @@ kbd {
   letter-spacing: 0.02em;
 }
 
-/* ── Neon text on active nav items ── */
+/* ── Amber glow on active nav items ── */
 .nav-active {
   color: var(--color-eduverse-accent-light) !important;
-  text-shadow: 0 0 10px rgba(167,139,250,0.5);
+  text-shadow: 0 0 10px oklch(80% 0.13 85 / 0.5);
 }
 
 /* ── Pulse ring on XP bar fill ── */
 @keyframes xp-ring-pulse {
-  0% { box-shadow: 0 0 0 0 rgba(139,92,246,0.4); }
-  70% { box-shadow: 0 0 0 6px rgba(139,92,246,0); }
-  100% { box-shadow: 0 0 0 0 rgba(139,92,246,0); }
+  0% { box-shadow: 0 0 0 0 oklch(78% 0.14 85 / 0.4); }
+  70% { box-shadow: 0 0 0 6px oklch(78% 0.14 85 / 0); }
+  100% { box-shadow: 0 0 0 0 oklch(78% 0.14 85 / 0); }
 }
 
 /* ── Card reveal shimmer ── */
@@ -2778,22 +2778,84 @@ h1, h2, h3 {
   color: var(--color-eduverse-text);
 }
 
-/* Ambient — static vignette only. No aurora, no particles.
-   Keeps readability on large screens without decorative animation. */
+/* Ambient — a calm, living candlelit atmosphere: slow amber auras that breathe,
+   sparse embers drifting up, and an edge vignette. Decorative, behind all content,
+   GPU-friendly (only transform/opacity animate), and resolved to a still frame
+   under prefers-reduced-motion (see the global reduce rule near the top). */
 .app-ambient {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
+  overflow: hidden;
 }
 
+/* edge vignette — keeps text legible toward the corners */
 .app-ambient::after {
   content: '';
-  position: fixed;
+  position: absolute;
   inset: 0;
-  z-index: 0;
-  background: radial-gradient(ellipse at center, transparent 40%, rgb(0 0 0 / 0.35) 100%);
+  background: radial-gradient(ellipse at center, transparent 42%, rgb(0 0 0 / 0.4) 100%);
   pointer-events: none;
+}
+
+/* soft drifting auras (warm candlelight) */
+.amb-aura {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(72px);
+  will-change: transform, opacity;
+}
+.amb-aura-1 {
+  width: 46vw; height: 46vw;
+  top: -12vw; left: -8vw;
+  background: radial-gradient(circle, oklch(72% 0.15 80 / 0.12), transparent 68%);
+  animation: amb-drift-1 58s var(--ease-out-expo) infinite alternate;
+}
+.amb-aura-2 {
+  width: 40vw; height: 40vw;
+  right: -10vw; bottom: -14vw;
+  background: radial-gradient(circle, oklch(60% 0.18 70 / 0.12), transparent 68%);
+  animation: amb-drift-2 74s var(--ease-out-expo) infinite alternate;
+}
+.amb-aura-3 {
+  width: 32vw; height: 32vw;
+  top: 36%; left: 50%;
+  background: radial-gradient(circle, oklch(82% 0.13 90 / 0.08), transparent 70%);
+  animation: amb-breathe 26s ease-in-out infinite;
+}
+
+@keyframes amb-drift-1 {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(6vw, 4vw, 0) scale(1.14); }
+}
+@keyframes amb-drift-2 {
+  from { transform: translate3d(0, 0, 0) scale(1.06); }
+  to   { transform: translate3d(-5vw, -3vw, 0) scale(1); }
+}
+@keyframes amb-breathe {
+  0%, 100% { transform: translate(-50%, -50%) scale(1);    opacity: 0.5; }
+  50%      { transform: translate(-50%, -50%) scale(1.2);  opacity: 0.95; }
+}
+
+/* sparse embers rising and fading */
+.amb-embers { position: absolute; inset: 0; }
+.amb-embers i {
+  position: absolute;
+  bottom: -4%;
+  width: 3px; height: 3px;
+  border-radius: 50%;
+  background: oklch(80% 0.13 85);
+  box-shadow: 0 0 6px oklch(80% 0.13 85 / 0.85);
+  opacity: 0;
+  animation: amb-rise linear infinite;
+  will-change: transform, opacity;
+}
+@keyframes amb-rise {
+  0%   { transform: translateY(0) translateX(0);     opacity: 0; }
+  12%  { opacity: 0.5; }
+  85%  { opacity: 0.32; }
+  100% { transform: translateY(-106vh) translateX(2.2vw); opacity: 0; }
 }
 
 /* Route entrance */
@@ -2812,6 +2874,16 @@ h1, h2, h3 {
   background: var(--color-eduverse-editor);
   border: 0.5px solid var(--color-eduverse-border);
   border-radius: 4px;
+}
+
+/* Clickable cards: brighten border + faint amber glow on hover, no lift —
+   keeps the flat IDE aesthetic while signalling interactivity. */
+.app-card-link {
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.app-card-link:hover {
+  border-color: var(--color-eduverse-border-mid);
+  box-shadow: inset 0 0 0 1px var(--color-eduverse-accent-soft), 0 0 26px -10px oklch(78% 0.14 85 / 0.35);
 }
 
 /* Sidebar nav items — monospace, amber active, letter-spacing 0.02em */

@@ -72,7 +72,7 @@ function Confetti({ active }: { active: boolean }) {
   const particles = Array.from({ length: 25 }, (_, i) => ({
     id: i,
     left: Math.random() * 100,
-    color: ["#8b7cf6", "#a78bfa", "#34d399", "#c4b5fd", "#e9d5ff"][Math.floor(Math.random() * 5)],
+    color: ["#E2A43B", "#EFC97E", "#3FBE8C", "#ECB44E", "#F2EDE4"][Math.floor(Math.random() * 5)],
     delay: Math.random() * 0.3,
     size: Math.random() * 4 + 3,
   }));

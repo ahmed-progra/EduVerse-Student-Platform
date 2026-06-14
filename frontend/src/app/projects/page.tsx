@@ -198,7 +198,7 @@ function ProjectSection({ title, icon: Icon, projects }: { title: string; icon: 
       <div className="grid sm:grid-cols-2 gap-4">
         {projects.map((p) => (
           <Link key={p.id} href={`/projects/${p.id}`}>
-            <GlassCard className="h-full hover:border-eduverse-accent transition-colors">
+            <GlassCard className="h-full app-card-link">
               <div className="flex items-start justify-between gap-3 mb-2">
                 <h3 className="font-semibold text-eduverse-text">{p.title}</h3>
                 {p.status === "completed" ? (
