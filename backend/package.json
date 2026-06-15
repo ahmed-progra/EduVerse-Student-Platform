@@ -5,9 +5,12 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev --name init",
-    "db:seed": "tsx seed.ts",
-    "db:reset": "prisma migrate reset --force && npm run db:seed"
+    "db:seed": "tsx scripts/seed.ts",
+    "db:reset": "prisma migrate reset --force && npm run db:seed",
+    "test:e2e": "node scripts/learning-e2e.mjs && node scripts/mentor-e2e.mjs && node scripts/apprentice-e2e.mjs && node scripts/projects-e2e.mjs && node scripts/teachback-e2e.mjs && node scripts/ai-e2e.mjs"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",

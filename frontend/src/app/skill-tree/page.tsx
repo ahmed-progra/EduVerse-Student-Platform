@@ -3,8 +3,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { GlassCard } from "@/components/ui/glass-card";
 import { GradientButton } from "@/components/ui/gradient-button";
-import { SkillMap, type MapNode } from "@/components/skill-map/skill-map";
-import { api } from "@/lib/api";
+import { SkillMap, type MapNode } from "@/features/skill-map/skill-map";
+import { api } from "@/services/api-client";
 import { useAuthStore } from "@/stores/auth-store";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -98,6 +98,7 @@ export default function SkillTreePage() {
     setUnlocking(nodeId);
     try {
       await api.unlockSkill(nodeId);
+      api.clearCache();
       await loadTree();
       setJustUnlocked(nodeId);
       setSelectedNode((prev) => prev && prev.id === nodeId ? { ...prev, unlocked: true } : prev);
@@ -172,7 +173,7 @@ export default function SkillTreePage() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 40, transition: { duration: 0.18, ease: "easeOut" } }}
             transition={{ type: "spring", duration: 0.45, bounce: 0.15 }}
-            className="fixed right-0 top-0 h-full w-[360px] z-50 p-4 lg:static lg:h-auto lg:w-[360px] lg:z-auto lg:p-0"
+            className="fixed right-0 top-0 h-full w-[360px] max-w-[calc(100vw-2rem)] z-50 p-4 lg:static lg:h-auto lg:w-[360px] lg:max-w-none lg:z-auto lg:p-0"
           >
             <GlassCard className="h-full overflow-y-auto">
               {/* Header */}

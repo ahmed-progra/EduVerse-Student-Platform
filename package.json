@@ -2,25 +2,39 @@
   "name": "eduverse",
   "version": "1.0.0",
   "private": true,
+  "description": "AI-powered, gamified platform for learning to program — see your code run, line by line.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
   "workspaces": [
-    "frontend",
+    "shared",
     "backend",
-    "shared"
+    "frontend"
   ],
   "scripts": {
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev": "concurrently -n backend,frontend -c blue,magenta \"npm run dev:backend\" \"npm run dev:frontend\"",
     "dev:frontend": "npm run dev -w frontend",
     "dev:backend": "npm run dev -w backend",
     "build": "npm run build -w shared && npm run build -w backend && npm run build -w frontend",
+    "start": "npm run start -w backend",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run typecheck",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "node -e \"try { require('husky').install() } catch {}\"",
+    "db:generate": "npm run db:generate -w backend",
     "db:migrate": "npm run db:migrate -w backend",
     "db:seed": "npm run db:seed -w backend",
-    "db:setup": "npm run db:migrate && npm run db:seed"
+    "db:setup": "npm run db:migrate && npm run db:seed",
+    "test:e2e": "npm run test:e2e -w backend"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",
+    "prettier": "^3.4.2",
     "typescript": "^5.8.3"
   },
-  "dependencies": {
+  "optionalDependencies": {
     "@next/swc-win32-x64-msvc": "^16.2.7"
   }
 }

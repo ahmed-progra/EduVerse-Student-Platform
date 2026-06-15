@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Lightbulb } from "lucide-react";
-import { api } from "@/lib/api";
+import { api } from "@/services/api-client";
 import { AIPanelShell } from "./ai-panel-shell";
 
 export function HintsPanel({ onClose }: { onClose: () => void }) {

@@ -5,8 +5,8 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Rocket, Trophy, Sparkles, Code2, Calendar, Gauge } from "lucide-react";
-import { api } from "@/lib/api";
-import type { PortfolioData } from "@/lib/project-types";
+import { api } from "@/services/api-client";
+import type { PortfolioData } from "@/types/project";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 const langLabel: Record<string, string> = { python: "Python", javascript: "JavaScript", html: "HTML", css: "CSS", cpp: "C++" };

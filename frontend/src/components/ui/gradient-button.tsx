@@ -37,9 +37,10 @@ export const GradientButton = memo(function GradientButton({
       type={type}
       disabled={disabled || loading}
       onClick={onClick}
+      style={{ borderRadius: "var(--radius-button)" }}
       className={classNames(
-        "inline-flex items-center justify-center gap-2 px-6 py-3 rounded font-semibold text-sm",
-        "transition-[color,background-color,opacity,box-shadow,filter] duration-200",
+        "inline-flex items-center justify-center gap-2 px-6 py-3 font-semibold text-sm",
+        "transition-[color,background-color,opacity,filter] duration-200",
         "disabled:opacity-50 disabled:cursor-not-allowed",
         variants[variant],
         className

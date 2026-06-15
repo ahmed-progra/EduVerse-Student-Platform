@@ -3,13 +3,13 @@
 import { motion } from "framer-motion";
 import { GlassCard } from "@/components/ui/glass-card";
 import { EmptyState } from "@/components/ui/empty-state";
-import { api } from "@/lib/api";
+import { api } from "@/services/api-client";
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ChevronLeft, BookOpen, WifiOff, Zap } from "lucide-react";
-import { AssessmentRunner } from "@/components/learning/assessment-runner";
-import { RoadmapView, LearningStateData } from "@/components/learning/roadmap-view";
+import { AssessmentRunner } from "@/features/learning/assessment-runner";
+import { RoadmapView, LearningStateData } from "@/features/learning/roadmap-view";
 
 interface CourseData {
   id: string;
@@ -99,8 +99,7 @@ export default function CourseDetailPage() {
         </Link>
         <div className="flex items-center gap-4 mb-2">
           <span
-            className="w-14 h-14 rounded flex items-center justify-center text-3xl shrink-0"
-            style={{ background: "var(--color-eduverse-accent-soft)", border: "1px solid var(--color-eduverse-border-mid)" }}
+            className="text-3xl leading-none shrink-0"
             aria-hidden="true"
           >
             {course.icon}
@@ -116,8 +115,7 @@ export default function CourseDetailPage() {
       {justCompleted && !showRunner && (
         <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
           <div
-            className="rounded px-4 py-3 text-sm flex items-center gap-2 flex-wrap"
-            style={{ background: "var(--color-eduverse-accent-soft)", border: "1px solid var(--color-eduverse-border-mid)", color: "var(--color-eduverse-text-body)" }}
+            className="px-4 py-3 text-sm flex items-center gap-2 flex-wrap"
             role="status"
           >
             <Zap size={15} style={{ color: "var(--color-eduverse-warning)" }} aria-hidden="true" />

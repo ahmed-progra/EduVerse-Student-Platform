@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { GlassCard } from "@/components/ui/glass-card";
 import { SkeletonCard } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
-import { api } from "@/lib/api";
+import { api } from "@/services/api-client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BookOpen, ChevronRight, WifiOff } from "lucide-react";

@@ -26,6 +26,11 @@
   --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1); /* entrances — strong arrival */
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);  /* on-screen movement / morphs */
   --ease-sine: cubic-bezier(0.45, 0, 0.55, 1);     /* seamless looping / ambient drift */
+
+  --radius-card: 4px;
+  --radius-button: 4px;
+  --radius-input: 4px;
+  --radius-modal: 4px;
 }
 
 /* Fonts come from next/font (layout.tsx) */
@@ -168,31 +173,7 @@ body {
 }
 
 /* ── Shared utility surfaces (used by app pages) ── */
-.glass {
-  background: var(--color-eduverse-glass);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid var(--color-eduverse-border);
-}
-
-.gradient-bg {
-  background: var(--color-eduverse-bg);
-}
-
-.gradient-accent {
-  background: linear-gradient(135deg, var(--color-eduverse-accent-strong), var(--color-eduverse-accent));
-}
-
-.gradient-gold {
-  background: linear-gradient(135deg, oklch(75% 0.15 75), oklch(62% 0.14 60));
-}
-
-.gradient-text {
-  background: var(--gradient-accent);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+/* ── Layout helpers ── */
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar {
@@ -341,7 +322,6 @@ body {
   text-decoration: none;
   border: none;
   cursor: pointer;
-  box-shadow: var(--shadow-eduverse-sm), inset 0 1px 0 oklch(100% 0 0 / 0.12);
   transition: filter 0.18s ease, transform 0.18s var(--ease-out-expo);
 }
 
@@ -479,12 +459,12 @@ body {
   color: oklch(93% 0.01 80);
   text-decoration: none;
   border: none;
-  cursor: pointer;
-  box-shadow: var(--shadow-eduverse-sm), inset 0 1px 0 oklch(100% 0 0 / 0.12);
+    cursor: pointer;
   transition: filter 0.18s ease, transform 0.18s var(--ease-out-expo), box-shadow 0.18s ease;
 }
 
-.btn-primary:hover {
+.btn-primary:hover
+   {
   filter: brightness(1.12);
   transform: translateY(-1px);
   box-shadow: 0 6px 20px oklch(60% 0.18 75 / 0.35), inset 0 1px 0 oklch(100% 0 0 / 0.12);
@@ -526,7 +506,6 @@ body {
   background: var(--color-eduverse-editor);
   border: 1px solid var(--color-eduverse-border-mid);
   border-radius: 14px;
-  box-shadow: var(--shadow-eduverse-lg), 0 0 80px oklch(60% 0.18 75 / 0.12);
   overflow: hidden;
   font-family: var(--font-mono);
 }
@@ -921,9 +900,7 @@ body {
 }
 
 .challenge-card:hover {
-  transform: translateY(-2px);
   border-color: var(--color-eduverse-border-mid);
-  box-shadow: var(--shadow-eduverse-md);
 }
 
 .challenge-card.open {
@@ -1158,7 +1135,6 @@ body {
   border-radius: 999px;
   font-size: 0.8rem;
   color: var(--color-eduverse-text);
-  box-shadow: var(--shadow-eduverse-md);
 }
 
 .streak-chip svg {
@@ -1474,6 +1450,7 @@ body {
 .ai-panel-action-btn {
   align-self: flex-start;
   padding: 0.6rem 1.8rem;
+  min-height: 36px;
   background: var(--color-eduverse-accent);
   color: #fff;
   border: none;
@@ -1717,7 +1694,6 @@ body {
   padding: 0.9rem 1.5rem;
   font-size: 0.88rem;
   color: var(--color-eduverse-text);
-  box-shadow: var(--shadow-eduverse-md);
   animation: toastIn 0.35s ease both, toastOut 0.35s 3.8s ease both;
   display: flex;
   align-items: center;
@@ -2397,18 +2373,6 @@ kbd {
    PROFILE PAGE
    ================================================================ */
 
-/* Skeleton pulse refinement */
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-.skeleton-shimmer {
-  background: linear-gradient(90deg, rgba(255,255,255,0.02) 25%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.02) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s ease-in-out infinite;
-}
-
 /* ================================================================
    AST VIEWER
    ================================================================ */
@@ -2745,31 +2709,6 @@ kbd {
   text-shadow: 0 0 10px oklch(80% 0.13 85 / 0.5);
 }
 
-/* ── Pulse ring on XP bar fill ── */
-@keyframes xp-ring-pulse {
-  0% { box-shadow: 0 0 0 0 oklch(78% 0.14 85 / 0.4); }
-  70% { box-shadow: 0 0 0 6px oklch(78% 0.14 85 / 0); }
-  100% { box-shadow: 0 0 0 0 oklch(78% 0.14 85 / 0); }
-}
-
-/* ── Card reveal shimmer ── */
-@keyframes card-reveal {
-  from {
-    opacity: 0;
-    transform: translateY(16px) scale(0.98);
-    filter: blur(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
-  }
-}
-
-.card-reveal {
-  animation: card-reveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
 /* ================================================================
    APP REGISTER — shared shell primitives (see DESIGN.md)
    ================================================================ */
@@ -2801,65 +2740,6 @@ h1, h2, h3 {
   pointer-events: none;
 }
 
-/* soft drifting auras (warm candlelight) */
-.amb-aura {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(72px);
-  will-change: transform, opacity;
-}
-.amb-aura-1 {
-  width: 46vw; height: 46vw;
-  top: -12vw; left: -8vw;
-  background: radial-gradient(circle, oklch(72% 0.15 80 / 0.12), transparent 68%);
-  animation: amb-drift-1 64s var(--ease-sine) infinite alternate;
-}
-.amb-aura-2 {
-  width: 40vw; height: 40vw;
-  right: -10vw; bottom: -14vw;
-  background: radial-gradient(circle, oklch(60% 0.18 70 / 0.12), transparent 68%);
-  animation: amb-drift-2 78s var(--ease-sine) infinite alternate;
-}
-.amb-aura-3 {
-  width: 32vw; height: 32vw;
-  top: 36%; left: 50%;
-  background: radial-gradient(circle, oklch(82% 0.13 90 / 0.08), transparent 70%);
-  animation: amb-breathe 30s var(--ease-sine) infinite;
-}
-
-@keyframes amb-drift-1 {
-  from { transform: translate3d(0, 0, 0) scale(1); }
-  to   { transform: translate3d(6vw, 4vw, 0) scale(1.14); }
-}
-@keyframes amb-drift-2 {
-  from { transform: translate3d(0, 0, 0) scale(1.06); }
-  to   { transform: translate3d(-5vw, -3vw, 0) scale(1); }
-}
-@keyframes amb-breathe {
-  0%, 100% { transform: translate(-50%, -50%) scale(1);    opacity: 0.5; }
-  50%      { transform: translate(-50%, -50%) scale(1.2);  opacity: 0.95; }
-}
-
-/* sparse embers rising and fading */
-.amb-embers { position: absolute; inset: 0; }
-.amb-embers i {
-  position: absolute;
-  bottom: -4%;
-  width: 3px; height: 3px;
-  border-radius: 50%;
-  background: oklch(80% 0.13 85);
-  box-shadow: 0 0 6px oklch(80% 0.13 85 / 0.85);
-  opacity: 0;
-  animation: amb-rise linear infinite;
-  will-change: transform, opacity;
-}
-@keyframes amb-rise {
-  0%   { transform: translateY(0) translateX(0);          opacity: 0; }
-  18%  { opacity: 0.5; }
-  78%  { opacity: 0.4; }
-  100% { transform: translateY(-106vh) translateX(2.2vw); opacity: 0; }
-}
-
 /* Blur-rise text reveal — for rare, first-impression headings only
    (Emil: blur masks entrances; reads as premium on the Fraunces serif).
    One-shot, GPU-friendly; resolves to the final frame under reduced motion. */
@@ -2879,25 +2759,23 @@ h1, h2, h3 {
 }
 
 .page-enter {
-  animation: page-rise 0.45s var(--ease-out-expo) both;
+  animation: page-rise 0.2s var(--ease-out-expo) both;
 }
 
-/* Card — flat container, no shadows, no hover lift.
-   Border-radius matches IDE-tab conventions (4px). */
+/* Card — flat container, no shadows. */
 .app-card {
   background: var(--color-eduverse-editor);
   border: 0.5px solid var(--color-eduverse-border);
-  border-radius: 4px;
+  border-radius: var(--radius-card);
+  transition: border-color 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Clickable cards: brighten border + faint amber glow on hover, no lift —
-   keeps the flat IDE aesthetic while signalling interactivity. */
+/* Clickable cards: border color shift only */
 .app-card-link {
-  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  transition: border-color 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .app-card-link:hover {
-  border-color: var(--color-eduverse-border-mid);
-  box-shadow: inset 0 0 0 1px var(--color-eduverse-accent-soft), 0 0 26px -10px oklch(78% 0.14 85 / 0.35);
+  border-color: var(--color-eduverse-accent);
 }
 
 /* Sidebar nav items — monospace, amber active, letter-spacing 0.02em */
@@ -2906,7 +2784,7 @@ h1, h2, h3 {
   align-items: center;
   gap: 12px;
   padding: 11px 16px;
-  border-radius: 4px;
+  border-radius: var(--radius-button);
   font-size: 0.875rem;
   font-family: var(--font-mono);
   letter-spacing: 0.02em;
@@ -2961,9 +2839,10 @@ h1, h2, h3 {
 /* Skeletons (skeleton.tsx) */
 .sk-card {
   height: 96px;
-  border-radius: 4px;
-  background: var(--color-eduverse-surface);
-  animation: sk-pulse 1.4s ease-in-out infinite;
+  border-radius: var(--radius-card);
+  background: linear-gradient(90deg, var(--color-eduverse-surface) 25%, var(--color-eduverse-raised) 50%, var(--color-eduverse-surface) 75%);
+  background-size: 200% 100%;
+  animation: sk-shimmer 1.8s infinite linear;
 }
 
 .sk-text {
@@ -2975,8 +2854,14 @@ h1, h2, h3 {
 .sk-line {
   height: 12px;
   border-radius: 6px;
-  background: var(--color-eduverse-surface);
-  animation: sk-pulse 1.4s ease-in-out infinite;
+  background: linear-gradient(90deg, var(--color-eduverse-surface) 25%, var(--color-eduverse-raised) 50%, var(--color-eduverse-surface) 75%);
+  background-size: 200% 100%;
+  animation: sk-shimmer 1.8s infinite linear;
+}
+
+@keyframes sk-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 @keyframes sk-pulse {
@@ -3017,28 +2902,50 @@ h1, h2, h3 {
 /* Empty / offline states */
 .empty-state {
   text-align: center;
-  padding: 56px 24px;
+  padding: 64px 32px;
   border: 1px dashed var(--color-eduverse-border-mid);
-  border-radius: 4px;
+  border-radius: var(--radius-card);
+  background: radial-gradient(circle at center, oklch(16% 0.025 50 / 0.4), transparent);
   color: var(--color-eduverse-text-muted);
+  box-shadow: 0 4px 24px -10px oklch(0% 0 0 / 0.15);
+  animation: page-rise 0.5s var(--ease-out-expo) both;
 }
 
-.empty-state svg {
-  margin: 0 auto 12px;
-  opacity: 0.7;
+.empty-state-icon-container {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--color-eduverse-accent-soft);
+  border: 1px solid oklch(78% 0.14 85 / 0.15);
+  box-shadow: 0 0 16px oklch(78% 0.14 85 / 0.08);
+  position: relative;
+}
+
+.empty-state-icon-container svg {
+  color: var(--color-eduverse-accent);
+  opacity: 0.95;
+  margin: 0 !important;
 }
 
 .empty-state h3 {
-  font-size: 1rem;
+  font-size: 1.15rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
   color: var(--color-eduverse-text);
-  margin: 0 0 6px;
+  margin: 0 0 8px;
 }
 
 .empty-state p {
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   margin: 0 auto;
-  max-width: 24rem;
-  line-height: 1.6;
+  max-width: 26rem;
+  line-height: 1.65;
+  color: var(--color-eduverse-text-muted);
 }
 
 /* XP toast */
@@ -3054,26 +2961,24 @@ h1, h2, h3 {
   border: 1px solid oklch(80% 0.13 85 / 0.35);
   border-radius: 4px;
   padding: 12px 18px;
-  box-shadow: var(--shadow-eduverse-lg), 0 0 40px oklch(80% 0.13 85 / 0.15);
 }
 
 /* Inputs */
 .app-input {
   width: 100%;
   padding: 10px 14px;
-  border-radius: 4px;
+  border-radius: var(--radius-input);
   background: var(--color-eduverse-editor);
   border: 1px solid var(--color-eduverse-border-mid);
   color: var(--color-eduverse-text);
   font-family: var(--font-sans);
   font-size: 0.92rem;
   outline: none;
-  transition: border-color 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .app-input:focus {
   border-color: var(--color-eduverse-accent);
-  box-shadow: 0 0 0 2px oklch(78% 0.14 85 / 0.2);
 }
 
 .app-input::placeholder {
@@ -3084,7 +2989,7 @@ h1, h2, h3 {
 /* Form error */
 .form-error {
   padding: 10px 14px;
-  border-radius: 4px;
+  border-radius: var(--radius-input);
   font-size: 0.85rem;
   background: oklch(66% 0.19 25 / 0.1);
   border: 1px solid oklch(66% 0.19 25 / 0.3);
@@ -3094,7 +2999,8 @@ h1, h2, h3 {
 /* Segmented filter buttons */
 .seg-btn {
   padding: 8px 16px;
-  border-radius: 4px;
+  min-height: 36px;
+  border-radius: var(--radius-button);
   font-size: 0.85rem;
   font-weight: 600;
   background: var(--color-eduverse-surface);
@@ -3115,17 +3021,6 @@ h1, h2, h3 {
   background: var(--color-eduverse-accent-strong);
   color: var(--color-eduverse-text);
   border-color: transparent;
-}
-
-/* Skill unlock celebration */
-@keyframes unlock-pop {
-  0%   { transform: scale(1); box-shadow: 0 0 0 0 oklch(78% 0.14 85 / 0.35); }
-  40%  { transform: scale(1.04); box-shadow: 0 0 0 12px oklch(78% 0.14 85 / 0); }
-  100% { transform: scale(1); box-shadow: 0 0 0 0 oklch(78% 0.14 85 / 0); }
-}
-
-.unlock-pop {
-  animation: unlock-pop 1.2s var(--ease-out-expo);
 }
 
 /* Press feedback on remaining small controls (emil: buttons must feel responsive) */
@@ -3287,27 +3182,6 @@ h1, h2, h3 {
   to   { transform: scale(2.4); opacity: 0; }
 }
 
-.sm-path-solid {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  animation: sm-draw 0.9s ease-out forwards;
-  animation-delay: var(--d, 0s);
-}
-
-@keyframes sm-draw {
-  to { stroke-dashoffset: 0; }
-}
-
-.sm-path-dim {
-  opacity: 0;
-  animation: sm-fade 0.6s ease-out forwards;
-  animation-delay: var(--d, 0s);
-}
-
-@keyframes sm-fade {
-  to { opacity: 1; }
-}
-
 .sm-topo {
   font-family: var(--font-mono);
   font-size: 11px;
@@ -3420,6 +3294,10 @@ h1, h2, h3 {
   animation: sm-fade 0.6s ease-out 0.6s both;
 }
 
+@keyframes sm-fade {
+  to { opacity: 1; }
+}
+
 .bt-skip:hover {
   color: var(--color-eduverse-accent);
 }
@@ -3437,16 +3315,6 @@ h1, h2, h3 {
   color: var(--color-eduverse-accent);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
-}
-
-.bt-clock.danger {
-  color: var(--color-eduverse-danger);
-  animation: bt-blink 1s ease-in-out infinite;
-}
-
-@keyframes bt-blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.55; }
 }
 
 .bt-timebar {
@@ -3590,3 +3458,310 @@ h1, h2, h3 {
     display: none;
   }
 }
+
+/* ================================================================
+   LEADERBOARD — metallic podium pedestals
+   ================================================================ */
+
+.podium-wrap {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 20px;
+  padding: 32px 16px 0;
+}
+
+.podium-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.podium-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-eduverse-bg);
+  position: relative;
+}
+
+.podium-avatar.rank-1 {
+  width: 64px;
+  height: 64px;
+  font-size: 1.3rem;
+  background: oklch(78% 0.14 85);
+}
+
+.podium-avatar.rank-2 {
+  background: oklch(78% 0.02 270);
+}
+
+.podium-avatar.rank-3 {
+  background: oklch(65% 0.1 55);
+}
+
+.podium-name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--color-eduverse-text);
+  text-align: center;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.podium-xp {
+  font-size: 0.7rem;
+  color: var(--color-eduverse-text-muted);
+  font-family: var(--font-mono);
+}
+
+.podium-pedestal {
+  border-radius: 4px 4px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-family: var(--font-display);
+}
+
+.podium-pedestal.rank-1 {
+  height: 120px;
+  background: oklch(65% 0.14 80);
+  color: oklch(15% 0.03 50);
+}
+
+.podium-pedestal.rank-2 {
+  height: 88px;
+  background: oklch(72% 0.02 270);
+  color: oklch(15% 0.03 50);
+}
+
+.podium-pedestal.rank-3 {
+  height: 72px;
+  background: oklch(62% 0.1 55);
+  color: oklch(15% 0.03 50);
+}
+
+.podium-crown-badge {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* ================================================================
+   DASHBOARD — stat card accent numbers
+   ================================================================ */
+
+.stat-number {
+  font-size: 1.75rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  letter-spacing: -0.03em;
+  color: var(--color-eduverse-text);
+  line-height: 1;
+}
+
+.stat-card-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+/* Quick action cards */
+.quick-action-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px 16px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.quick-action-icon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quick-action-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  letter-spacing: 0.01em;
+  color: var(--color-eduverse-text-body);
+  transition: color 0.2s ease;
+}
+
+.quick-action-card:hover .quick-action-label {
+  color: var(--color-eduverse-text);
+}
+
+/* Streak badge */
+.streak-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  background: var(--color-eduverse-warning-soft);
+  border: 1px solid oklch(80% 0.13 85 / 0.2);
+  color: var(--color-eduverse-warning);
+}
+
+/* ================================================================
+   SHOP — balance card accent + equipped ring
+   ================================================================ */
+
+.balance-card-amount {
+  font-size: 2rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  letter-spacing: -0.04em;
+  color: var(--color-eduverse-warning);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shop-item-icon {
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+/* ================================================================
+   CODE LAB — presets + shortcuts
+   ================================================================ */
+
+.shortcut-kbd {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 5px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  background: var(--color-eduverse-raised);
+  border: 1px solid var(--color-eduverse-border-mid);
+  color: var(--color-eduverse-text);
+  box-shadow: 0 1px 0 var(--color-eduverse-border-mid);
+  margin-right: 4px;
+}
+
+.codelab-shortcuts-panel {
+  background: var(--color-eduverse-editor);
+  border: 1px solid var(--color-eduverse-border);
+  border-radius: var(--radius-card);
+  padding: 16px 20px;
+}
+
+.codelab-shortcuts-panel .panel-title {
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-eduverse-text-muted);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.codelab-shortcuts-list {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  font-size: 0.82rem;
+  color: var(--color-eduverse-text-muted);
+}
+
+/* ================================================================
+   PROFILE — achievement card earned/locked states
+   ================================================================ */
+
+.achievement-card {
+  padding: 16px 12px;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-eduverse-border);
+  text-align: center;
+  transition: border-color 0.2s ease, transform 0.2s var(--ease-out-expo), box-shadow 0.2s ease;
+  background: var(--color-eduverse-editor);
+}
+
+.achievement-card.earned {
+  border-color: oklch(78% 0.14 85 / 0.25);
+  background: linear-gradient(135deg, oklch(16% 0.025 50), oklch(78% 0.14 85 / 0.04));
+  box-shadow: 0 0 0 1px oklch(78% 0.14 85 / 0.08), inset 0 1px 0 oklch(100% 0 0 / 0.04);
+}
+
+.achievement-card.earned:hover {
+  border-color: oklch(78% 0.14 85 / 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px oklch(78% 0.14 85 / 0.12);
+}
+
+.achievement-card.locked {
+  opacity: 0.38;
+  filter: grayscale(0.5);
+}
+
+.achievement-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  margin: 0 auto 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.achievement-card.earned .achievement-icon {
+  background: var(--color-eduverse-accent-soft);
+  border: 1px solid oklch(78% 0.14 85 / 0.2);
+}
+
+.achievement-card.locked .achievement-icon {
+  background: var(--color-eduverse-raised);
+  border: 1px solid var(--color-eduverse-border);
+}
+
+/* Section label (// prefix mono style) */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-eduverse-text-muted);
+  margin-bottom: 16px;
+}
+
+.section-label-prefix {
+  color: var(--color-eduverse-accent);
+}
+

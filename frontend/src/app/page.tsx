@@ -3,8 +3,8 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
-import { api } from "@/lib/api";
-import HeroDemo from "@/components/landing/hero-demo";
+import { api } from "@/services/api-client";
+import HeroDemo from "@/features/landing/hero-demo";
 import { Code2, Sparkles, Network, Swords, Medal, ShoppingBag, Flame, ChevronRight, Menu, X } from "lucide-react";
 
 const features = [

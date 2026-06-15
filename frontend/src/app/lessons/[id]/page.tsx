@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { GlassCard } from "@/components/ui/glass-card";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { EmptyState } from "@/components/ui/empty-state";
-import { api } from "@/lib/api";
+import { api } from "@/services/api-client";
 import { useAuthStore } from "@/stores/auth-store";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
@@ -12,11 +12,11 @@ import Link from "next/link";
 import { CheckCircle, ChevronLeft, Zap, BookOpen, WifiOff } from "lucide-react";
 import dynamic from "next/dynamic";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
-import { LessonAITools } from "@/components/lessons/lesson-ai-tools";
-import { LessonMentor } from "@/components/lessons/lesson-mentor";
-import { QuizCheckpoint } from "@/components/lessons/quiz-checkpoint";
+import { LessonAITools } from "@/features/lessons/lesson-ai-tools";
+import { LessonMentor } from "@/features/lessons/lesson-mentor";
+import { QuizCheckpoint } from "@/features/lessons/quiz-checkpoint";
 
-const Visualizer = dynamic(() => import("@/components/visualizer/visualizer").then(m => ({ default: m.Visualizer })), { ssr: false });
+const Visualizer = dynamic(() => import("@/features/visualizer/visualizer").then(m => ({ default: m.Visualizer })), { ssr: false });
 
 interface LessonData {
   id: string;
@@ -59,6 +59,7 @@ export default function LessonPage() {
   const handleComplete = async () => {
     try {
       const res = await api.completeLesson(id as string);
+      api.clearCache();
       if (res.data.xpGained > 0) {
         setXpGained(res.data.xpGained);
         setShowXpGain(true);

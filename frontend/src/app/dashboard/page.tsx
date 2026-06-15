@@ -5,9 +5,10 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { XpBar } from "@/components/ui/xp-bar";
 import { AnimatedNumber } from "@/components/ui/animated-number";
 import { EmptyState } from "@/components/ui/empty-state";
-import { AICoachCard } from "@/components/dashboard/ai-coach-card";
+import { SkeletonActivity, SkeletonCardGrid } from "@/components/ui/skeleton";
+import { AICoachCard } from "@/features/dashboard/ai-coach-card";
 import { useAuthStore } from "@/stores/auth-store";
-import { api } from "@/lib/api";
+import { api } from "@/services/api-client";
 import { updateStreak } from "@/lib/streak";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -79,10 +80,10 @@ export default function DashboardPage() {
   }, []);
 
   const quickActions = [
-    { label: "Continue Learning", icon: BookOpen, href: "/courses" },
-    { label: "Enter Battle", icon: Swords, href: "/battle" },
-    { label: "Skill Tree", icon: GitBranch, href: "/skill-tree" },
-    { label: "Visit Shop", icon: ShoppingBag, href: "/shop" },
+    { label: "Continue Learning", icon: BookOpen, href: "/courses", color: "text-eduverse-accent" },
+    { label: "Enter Battle", icon: Swords, href: "/battle", color: "text-eduverse-danger" },
+    { label: "Skill Tree", icon: GitBranch, href: "/skill-tree", color: "text-eduverse-success" },
+    { label: "Visit Shop", icon: ShoppingBag, href: "/shop", color: "text-eduverse-warning" },
   ];
 
   const statCards = [
@@ -105,14 +106,7 @@ export default function DashboardPage() {
             <p className="text-eduverse-text-muted">Continue your quest to become a code master.</p>
           </div>
           {streak > 0 && (
-            <div
-              className="flex items-center gap-2 px-4 py-2 rounded text-sm font-bold"
-              style={{
-                background: "var(--color-eduverse-accent-soft)",
-                border: "1px solid var(--color-eduverse-accent-soft)",
-                color: "var(--color-eduverse-warning)",
-              }}
-            >
+            <div className="streak-badge">
               <Flame className="w-4 h-4" aria-hidden="true" />
               <span>{streak} day streak{streak >= 7 ? " · On fire!" : ""}</span>
             </div>
@@ -131,10 +125,10 @@ export default function DashboardPage() {
 
       {/* ── Quick Actions ── */}
       <div>
-        <h2 className="flex items-center gap-2 text-sm font-mono text-eduverse-text-muted mb-4">
-          <span className="text-eduverse-accent">//</span> Quick Actions
-        </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="section-label">
+          <span className="section-label-prefix">//</span> Quick Actions
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           {quickActions.map((action, i) => (
             <motion.div
               key={action.label}
@@ -144,11 +138,13 @@ export default function DashboardPage() {
             >
               <Link href={action.href} className="block">
                 <motion.div
-                  whileTap={{ scale: 0.98 }}
-                  className="app-card app-card-link text-center p-6 cursor-pointer"
+                  whileTap={{ scale: 0.97 }}
+                  className="app-card quick-action-card app-card-link"
                 >
-                  <action.icon className="w-6 h-6 text-eduverse-accent mx-auto mb-3" aria-hidden="true" />
-                  <h3 className="font-semibold text-sm text-eduverse-text font-display">{action.label}</h3>
+                  <div className="quick-action-icon">
+                    <action.icon className={`w-5 h-5 ${action.color}`} aria-hidden="true" />
+                  </div>
+                  <span className="quick-action-label">{action.label}</span>
                 </motion.div>
               </Link>
             </motion.div>
@@ -157,24 +153,30 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Stats Grid ── */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {statCards.map((stat, i) => (
-          <motion.div
-            key={stat.label}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 + 0.07 * i, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <div className="app-card p-6">
-              <stat.icon className="w-5 h-5 text-eduverse-text-muted mb-3" aria-hidden="true" />
-              <div className="text-2xl font-bold mb-1 text-eduverse-text font-mono">
-                {loaded && !offline ? <AnimatedNumber value={stat.value} delay={i * 90} /> : "—"}
+      {!loaded ? (
+        <SkeletonCardGrid count={4} />
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          {statCards.map((stat, i) => (
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 + 0.07 * i, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <div className="app-card p-6">
+                <div className="stat-card-icon">
+                  <stat.icon className="w-4 h-4 text-eduverse-accent" aria-hidden="true" />
+                </div>
+                <div className="stat-number">
+                  {loaded && !offline ? <AnimatedNumber value={stat.value} delay={i * 90} /> : "—"}
+                </div>
+                <div className="text-xs text-eduverse-text-muted mt-2">{stat.label}</div>
               </div>
-              <div className="text-xs text-eduverse-text-muted">{stat.label}</div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
 
       {/* ── AI Coach ── */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
@@ -183,22 +185,13 @@ export default function DashboardPage() {
 
       {/* ── Recent Activity ── */}
       <GlassCard>
-        <h2 className="flex items-center gap-2 text-sm font-mono text-eduverse-text-muted mb-5">
-          <span className="text-eduverse-accent">//</span> Recent Activity
-        </h2>
+        <div className="section-label">
+          <span className="section-label-prefix">//</span> Recent Activity
+        </div>
         {!loaded ? (
-          <div className="space-y-3 animate-pulse" aria-hidden="true">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-center justify-between py-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded bg-eduverse-raised" />
-                  <div>
-                    <div className="h-3.5 w-28 bg-eduverse-raised rounded mb-1.5" />
-                    <div className="h-2.5 w-20 bg-eduverse-raised rounded" />
-                  </div>
-                </div>
-                <div className="h-3.5 w-16 bg-eduverse-raised rounded" />
-              </div>
+          <div className="space-y-1" aria-hidden="true">
+            {[1, 2, 3, 4].map((i) => (
+              <SkeletonActivity key={i} />
             ))}
           </div>
         ) : offline ? (
@@ -213,7 +206,7 @@ export default function DashboardPage() {
             title="No activity yet"
             message="Complete a lesson or win a battle to start your journey. Every action earns XP."
           >
-            <Link href="/courses" className="px-4 py-3 rounded text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]">
+            <Link href="/courses" className="px-4 py-3 rounded-[var(--radius-button)] text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]">
               Start a course
             </Link>
           </EmptyState>
@@ -227,10 +220,12 @@ export default function DashboardPage() {
                   initial={{ opacity: 0, x: -8 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.04, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                  className="flex items-center justify-between py-3 px-3 rounded border border-transparent hover:border-eduverse-border hover:bg-eduverse-accent-soft/40 transition-colors"
+                  className="flex items-center justify-between py-3 px-3 rounded-[var(--radius-button)] border border-transparent hover:border-eduverse-border hover:bg-eduverse-accent-soft/40 transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <Icon className="w-4 h-4 text-eduverse-text-muted shrink-0" aria-hidden="true" />
+                    <div className="w-7 h-7 flex items-center justify-center shrink-0">
+                      <Icon className="w-3.5 h-3.5 text-eduverse-text-muted" aria-hidden="true" />
+                    </div>
                     <div>
                       <div className="text-sm font-medium text-eduverse-text capitalize">{log.source}</div>
                       <div className="text-xs text-eduverse-text-muted flex items-center gap-1 mt-0.5">

@@ -1,1 +1,55 @@
-.understand-anything/*.json filter=lfs diff=lfs merge=lfs -text
+# Normalise line endings — Git stores LF, checks out native on Windows
+* text=auto eol=lf
+
+# Windows-only scripts keep CRLF
+*.bat   text eol=crlf
+*.ps1   text eol=crlf
+
+# Language-specific diff attributes for better diffs
+*.ts       text diff=typescript
+*.tsx      text diff=typescript
+*.js       text diff=javascript
+*.jsx      text diff=javascript
+*.mjs      text diff=javascript
+*.cjs      text diff=javascript
+*.json     text diff=json
+*.md       text diff=markdown
+*.yaml     text diff=yaml
+*.yml      text diff=yaml
+*.css      text diff=css
+*.scss     text diff=css
+*.html     text diff=html
+*.prisma   text
+*.sql      text
+*.env      text
+*.env.example text
+
+# Binary files — no EOL conversion, no diff
+*.ttf      binary
+*.woff     binary
+*.woff2    binary
+*.eot      binary
+*.otf      binary
+*.png      binary
+*.jpg      binary
+*.jpeg     binary
+*.gif      binary
+*.ico      binary
+*.svg      binary
+*.webp     binary
+*.avif     binary
+*.mp4      binary
+*.webm     binary
+*.ogg      binary
+*.wav      binary
+*.mp3      binary
+*.pdf      binary
+*.zip      binary
+*.tar      binary
+*.gz       binary
+*.lock     binary
+
+# Collapse generated / lock files from diffs and language stats
+package-lock.json  linguist-generated=true -diff
+*.tsbuildinfo      linguist-generated=true
+docs/**            linguist-documentation

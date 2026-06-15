@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { XpBar } from "@/components/ui/xp-bar";
+import dynamic from "next/dynamic";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import {
   LayoutDashboard, BookOpen, Swords, Medal, ShoppingBag,
@@ -13,11 +14,12 @@ import {
   Brain, Code2, Lightbulb, GraduationCap, FlaskConical, Sparkles, Sprout, Rocket,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { AIMentorPanel } from "./ai-mentor-panel";
-import { CodeReviewPanel } from "./ai-review-panel";
-import { HintsPanel } from "./ai-hints-panel";
-import { ExamPanel } from "./ai-exam-panel";
-import { ChallengePanel } from "./ai-challenge-panel";
+
+const AIMentorPanel = dynamic(() => import("./ai-mentor-panel").then(m => m.AIMentorPanel), { ssr: false });
+const CodeReviewPanel = dynamic(() => import("./ai-review-panel").then(m => m.CodeReviewPanel), { ssr: false });
+const HintsPanel = dynamic(() => import("./ai-hints-panel").then(m => m.HintsPanel), { ssr: false });
+const ExamPanel = dynamic(() => import("./ai-exam-panel").then(m => m.ExamPanel), { ssr: false });
+const ChallengePanel = dynamic(() => import("./ai-challenge-panel").then(m => m.ChallengePanel), { ssr: false });
 
 type NavItem = {
   label: string;
@@ -125,7 +127,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       {/* Mobile top bar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 px-4 py-3 flex items-center justify-between"
         style={{ background: "oklch(14% 0.022 295 / 0.85)", backdropFilter: "blur(16px)", borderBottom: "1px solid var(--color-eduverse-border)" }}>
-        <Link href="/dashboard" className="text-xl font-bold" style={{ fontFamily: "var(--font-display)", color: "var(--color-eduverse-text)" }}>EduVerse</Link>
+        <Link href="/dashboard" prefetch={true} className="text-xl font-bold" style={{ fontFamily: "var(--font-display)", color: "var(--color-eduverse-text)" }}>EduVerse</Link>
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
           className="p-2 rounded-lg"
@@ -159,7 +161,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       </div>
 
       <main className={`transition-[padding] duration-300 pt-16 lg:pt-0 min-h-screen ${collapsed ? "lg:pl-20" : "lg:pl-64"}`}>
-        <div key={activePanel ?? pathname} className="p-4 md:p-8 max-w-7xl mx-auto page-enter">
+        <div className="p-4 md:p-8 max-w-7xl mx-auto page-enter">
           {activePanel ? (
             <ErrorBoundary><AIPanel panel={activePanel} onClose={() => setActivePanel(null)} /></ErrorBoundary>
           ) : children}
@@ -208,6 +210,7 @@ function SidebarContent({
       <div className="px-5 py-5 border-b flex items-center justify-between" style={{ borderColor: "var(--color-eduverse-border)" }}>
         <Link
           href="/dashboard"
+          prefetch={true}
           className={`font-bold ${showFull ? "text-xl" : "text-sm mx-auto"}`}
           style={{ fontFamily: "var(--font-display)", color: "var(--color-eduverse-text)", letterSpacing: "-0.02em" }}
         >
@@ -263,7 +266,7 @@ function SidebarContent({
                 const cls = `side-item ${active ? "active" : ""} ${!showFull ? "collapsed" : ""}`;
                 if (item.href) {
                   return (
-                    <Link key={item.label} href={item.href} className={cls} onClick={() => onNavClick(item)} title={!showFull ? item.label : undefined} aria-current={active ? "page" : undefined}>
+                    <Link key={item.label} href={item.href} prefetch={true} className={cls} onClick={() => onNavClick(item)} title={!showFull ? item.label : undefined} aria-current={active ? "page" : undefined}>
                       <item.icon size={18} aria-hidden="true" />
                       {showFull && item.label}
                     </Link>
@@ -288,7 +291,7 @@ function SidebarContent({
       )}
 
       <div className="p-3 space-y-0.5" style={{ borderTop: "1px solid var(--color-eduverse-border)" }}>
-        <Link href="/profile" className={`side-item ${pathname.startsWith("/profile") ? "active" : ""} ${!showFull ? "collapsed" : ""}`} title={!showFull ? "Profile" : undefined}>
+        <Link href="/profile" prefetch={true} className={`side-item ${pathname.startsWith("/profile") ? "active" : ""} ${!showFull ? "collapsed" : ""}`} title={!showFull ? "Profile" : undefined}>
           <User size={18} aria-hidden="true" />
           {showFull && "Profile"}
         </Link>

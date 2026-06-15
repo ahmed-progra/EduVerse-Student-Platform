@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { GlassCard } from "@/components/ui/glass-card";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { AnimatedNumber } from "@/components/ui/animated-number";
-import { api } from "@/lib/api";
+import { api } from "@/services/api-client";
 import { useAuthStore } from "@/stores/auth-store";
 import { useEffect, useState, useRef } from "react";
 import dynamic from "next/dynamic";

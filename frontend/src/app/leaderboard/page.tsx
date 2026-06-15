@@ -3,10 +3,11 @@
 import { motion } from "framer-motion";
 import { GlassCard } from "@/components/ui/glass-card";
 import { EmptyState } from "@/components/ui/empty-state";
-import { api } from "@/lib/api";
+import { SkeletonRow, SkeletonPodium } from "@/components/ui/skeleton";
+import { api } from "@/services/api-client";
 import { useAuthStore } from "@/stores/auth-store";
 import { useEffect, useState } from "react";
-import { Medal, Trophy, Search, Crown, WifiOff } from "lucide-react";
+import { Search, Crown, WifiOff, Trophy } from "lucide-react";
 
 interface LeaderboardEntry {
   id: string;
@@ -60,25 +61,26 @@ export default function LeaderboardPage() {
     return "text-eduverse-text-muted";
   };
 
-  const getRankIcon = (rank: number) => {
-    if (rank === 1) return <Crown className="w-5 h-5 text-eduverse-gold" />;
-    if (rank === 2) return <Medal className="w-5 h-5 text-eduverse-silver" />;
-    if (rank === 3) return <Medal className="w-5 h-5 text-eduverse-bronze" />;
-    return null;
+  const getRankLabel = (rank: number) => {
+    if (rank === 1) return "👑";
+    if (rank === 2) return "🥈";
+    if (rank === 3) return "🥉";
+    return `#${rank}`;
   };
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-3xl font-bold mb-2 font-display">Leaderboard</h1>
-        <p className="text-eduverse-text-muted">Top programmers ranked by XP.</p>
+        <p className="text-eduverse-text-muted">Top programmers ranked by XP earned.</p>
       </motion.div>
-      <h2 className="flex items-center gap-2 text-sm font-mono text-eduverse-text-muted">
-        <span className="text-eduverse-accent">//</span> Hall of Fame
-      </h2>
+
+      <div className="section-label">
+        <span className="section-label-prefix">//</span> Leaderboard
+      </div>
 
       {/* Filters */}
-      <div className="flex gap-4 flex-wrap">
+      <div className="flex gap-4 flex-wrap items-center">
         <div className="flex gap-2">
           {["all", "weekly"].map((p) => (
             <button
@@ -92,106 +94,161 @@ export default function LeaderboardPage() {
           ))}
         </div>
         <div className="relative flex-1 max-w-xs">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-eduverse-text-muted" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-eduverse-text-muted" aria-hidden="true" />
           <input
             type="text"
             placeholder="Search by username..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             aria-label="Search by username"
-            className="app-input pl-8 py-2 text-sm"
+            className="app-input pl-9 py-2 text-sm"
           />
         </div>
       </div>
 
-      {/* My Rank */}
+      <div className="section-label">
+        <span className="section-label-prefix">//</span> My Rank
+      </div>
+
       {myRank && myRank.rank > 0 && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          <GlassCard className="flex items-center justify-between border-eduverse-accent/30">
-            <div className="flex items-center gap-3">
-              <div className="text-2xl font-bold text-eduverse-accent-light">#{myRank.rank}</div>
-              <div>
-                <div className="font-semibold">Your Rank</div>
-                <div className="text-sm text-eduverse-text-muted">{myRank.score} XP</div>
+          <GlassCard className="flex items-center justify-between border-eduverse-accent/30" style={{ borderColor: "oklch(78% 0.14 85 / 0.3)" }}>
+              <div className="flex items-center gap-4">
+              <div className="w-10 h-10 flex items-center justify-center">
+                <Crown className="w-5 h-5 text-eduverse-accent" aria-hidden="true" />
               </div>
+              <div>
+                <div className="text-xs text-eduverse-text-muted font-mono mb-0.5">Your Rank</div>
+                <div className="text-2xl font-bold text-eduverse-accent-light font-mono">#{myRank.rank}</div>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-xs text-eduverse-text-muted">Total XP</div>
+              <div className="font-bold font-mono text-eduverse-text">{myRank.score.toLocaleString()}</div>
             </div>
           </GlassCard>
         </motion.div>
       )}
 
-      {/* Podium */}
-      {filtered.length >= 3 && !search && (
-        <div className="flex items-end justify-center gap-4 mb-8">
-          {[1, 0, 2].map((i) => {
-            const e = filtered[i];
-            if (!e) return null;
-            const heights = ["h-24", "h-32", "h-20"];
-            const medals = ["text-eduverse-silver", "text-eduverse-gold", "text-eduverse-bronze"];
-            return (
-              <motion.div
-                key={e.rank}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.2 }}
-                className="flex flex-col items-center"
-              >
-                <Trophy className={`w-8 h-8 ${medals[i]}`} />
-                <div className="text-sm font-bold mb-1">{e.username}</div>
-                <div className="text-xs text-eduverse-text-muted mb-2">{e.xp} XP</div>
-                <div className={`w-20 ${heights[i]} rounded-t flex items-center justify-center app-card`}>
-                  <span className="text-2xl font-bold">#{e.rank}</span>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
+      <div className="section-label">
+        <span className="section-label-prefix">//</span> Podium
+      </div>
+
+      {!loading && !offline && filtered.length >= 3 && !search && (
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <GlassCard className="overflow-hidden p-0 pb-0">
+            <div className="podium-wrap">
+              {/* Order: 2nd, 1st, 3rd */}
+              {[1, 0, 2].map((idx) => {
+                const e = filtered[idx];
+                if (!e) return null;
+                const rankClass = [`rank-2`, `rank-1`, `rank-3`][idx];
+                const delays = [0.15, 0, 0.25];
+                return (
+                  <motion.div
+                    key={e.rank}
+                    initial={{ opacity: 0, y: 24 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: delays[idx], duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                    className="podium-col"
+                  >
+                    <div className={`podium-avatar ${rankClass}`}>
+                      {e.username[0].toUpperCase()}
+                    </div>
+                    <div className="podium-name">{e.username}</div>
+                    <div className="podium-xp">{e.xp.toLocaleString()} XP</div>
+                    <div className={`podium-pedestal ${rankClass}`}>
+                      {e.rank === 1 ? "👑" : e.rank === 2 ? "②" : "③"}
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </GlassCard>
+        </motion.div>
       )}
 
-      {/* List */}
+      {/* Skeleton podium while loading */}
+      {loading && !search && <SkeletonPodium />}
+
+      <div className="section-label">
+        <span className="section-label-prefix">//</span> Rankings
+      </div>
+
+      {/* Rankings List */}
       <GlassCard className="p-0 overflow-hidden">
         {loading ? (
-          <div className="p-4 space-y-3 animate-pulse" aria-hidden="true">
-            {[1, 2, 3, 4, 5, 6].map((i) => <div key={i} className="h-12 rounded bg-eduverse-raised" />)}
+          <div className="divide-y divide-white/[0.04]" aria-hidden="true">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="px-4">
+                <SkeletonRow />
+              </div>
+            ))}
           </div>
         ) : offline ? (
-          <div className="p-6">
+          <div className="p-8">
             <EmptyState icon={WifiOff} title="Can't reach the server" message="The EduVerse API isn't responding, so rankings can't be loaded." />
           </div>
         ) : filtered.length === 0 ? (
-          <div className="p-6">
-            <EmptyState icon={Trophy} title={search ? "No matching players" : "No rankings yet"} message={search ? "Nobody on the board matches that name." : "Be the first on the board: complete a lesson or win a battle to earn XP."} />
+          <div className="p-8">
+            <EmptyState
+              icon={Trophy}
+              title={search ? "No matching players" : "No rankings yet"}
+              message={search ? "Nobody on the board matches that name." : "Be the first on the board: complete a lesson or win a battle to earn XP."}
+            />
           </div>
         ) : (
           <div>
             {/* Header */}
-            <div className="grid grid-cols-[60px_1fr_80px_100px] gap-4 p-4 border-b border-white/10 text-sm text-eduverse-text-muted font-semibold">
+            <div className="grid grid-cols-1 md:grid-cols-[64px_1fr_72px_100px] gap-2 md:gap-4 px-5 py-3 border-b border-white/[0.06] text-xs text-eduverse-text-muted font-mono uppercase tracking-wider">
               <div>Rank</div>
-              <div>User</div>
+              <div>Player</div>
               <div>Level</div>
               <div className="text-right">XP</div>
             </div>
-            {filtered.map((entry, i) => (
-              <motion.div
-                key={entry.userId}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.02 }}
-                className={`grid grid-cols-[60px_1fr_80px_100px] gap-4 p-4 border-b border-white/5 last:border-0 items-center hover:bg-white/5 transition-colors ${entry.userId === user?.id ? "bg-eduverse-accent-soft" : ""}`}
-              >
-                <div className={`flex items-center gap-1 font-bold ${getRankStyle(entry.rank)}`}>
-                  {getRankIcon(entry.rank)}
-                  #{entry.rank}
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-bold font-mono text-eduverse-accent">
-                    {entry.username[0].toUpperCase()}
-                  </span>
-                  <span className="font-medium text-sm">{entry.username}</span>
-                </div>
-                <div className="text-sm font-mono text-eduverse-accent">{entry.level}</div>
-                <div className="text-right font-mono text-sm">{entry.xp.toLocaleString()}</div>
-              </motion.div>
-            ))}
+            {filtered.map((entry, i) => {
+              const isMe = entry.userId === user?.id;
+              return (
+                <motion.div
+                  key={entry.userId}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: Math.min(i * 0.025, 0.4) }}
+                  className={`grid grid-cols-1 md:grid-cols-[64px_1fr_72px_100px] gap-2 md:gap-4 px-5 py-4 border-b border-white/[0.03] last:border-0 items-center transition-colors ${
+                    isMe
+                      ? "bg-eduverse-accent-soft border-l-2 border-l-eduverse-accent"
+                      : "hover:bg-white/[0.02]"
+                  }`}
+                  style={isMe ? { borderLeft: "2px solid var(--color-eduverse-accent)" } : {}}
+                >
+                  <div className={`font-bold font-mono text-sm ${getRankStyle(entry.rank)}`}>
+                    {getRankLabel(entry.rank)}
+                  </div>
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-xs font-bold font-mono"
+                      style={{
+                        background: isMe
+                          ? "var(--color-eduverse-accent-strong)"
+                          : "var(--color-eduverse-raised)",
+                        color: isMe ? "var(--color-eduverse-bg)" : "var(--color-eduverse-text-muted)",
+                      }}
+                    >
+                      {entry.username[0].toUpperCase()}
+                    </div>
+                    <span className={`font-medium text-sm truncate ${isMe ? "text-eduverse-accent" : "text-eduverse-text"}`}>
+                      {entry.username}
+                      {isMe && <span className="ml-2 text-[10px] opacity-70">(you)</span>}
+                    </span>
+                  </div>
+                  <div className="text-sm font-mono text-eduverse-accent">{entry.level}</div>
+                  <div className="text-right font-mono text-sm text-eduverse-text">{entry.xp.toLocaleString()}</div>
+                </motion.div>
+              );
+            })}
           </div>
         )}
       </GlassCard>

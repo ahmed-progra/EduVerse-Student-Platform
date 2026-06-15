@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { GlassCard } from "@/components/ui/glass-card";
 import { XpBar } from "@/components/ui/xp-bar";
 import { GradientButton } from "@/components/ui/gradient-button";
-import { api } from "@/lib/api";
+import { api } from "@/services/api-client";
 import { getStreak } from "@/lib/streak";
 import { useAuthStore } from "@/stores/auth-store";
 import { useEffect, useState, useRef, useMemo } from "react";
@@ -113,13 +113,11 @@ export default function ProfilePage() {
   const [avatarError, setAvatarError] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // Edit state
   const [editing, setEditing] = useState(false);
   const [editUsername, setEditUsername] = useState("");
   const [editBio, setEditBio] = useState("");
   const [saving, setSaving] = useState(false);
 
-  // Avatar
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
@@ -166,6 +164,7 @@ export default function ProfilePage() {
       setAvatarPreview(dataUrl);
       try {
         const res = await api.updateProfile({ avatar: dataUrl });
+        api.clearCache();
         setProfile(res.data);
         setUser(res.data);
       } catch {}
@@ -189,6 +188,7 @@ export default function ProfilePage() {
     setSaving(true);
     try {
       const res = await api.updateProfile({ username: editUsername, bio: editBio });
+      api.clearCache();
       setProfile(res.data);
       setUser(res.data);
       setEditing(false);
@@ -228,35 +228,38 @@ export default function ProfilePage() {
 
   if (loading || !profile) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="space-y-6 w-full max-w-4xl">
-          <div className="h-40 rounded bg-white/[0.03] animate-pulse" />
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[1,2,3,4].map(i => <div key={i} className="h-24 rounded bg-white/[0.03] animate-pulse" />)}
-          </div>
-          <div className="h-64 rounded bg-white/[0.03] animate-pulse" />
+      <div className="space-y-6 w-full max-w-5xl mx-auto pb-12">
+        <div className="h-36 rounded-[var(--radius-card)] bg-white/[0.03] animate-pulse" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[1,2,3,4].map(i => <div key={i} className="h-24 rounded-[var(--radius-card)] bg-white/[0.03] animate-pulse" />)}
         </div>
+        <div className="h-64 rounded-[var(--radius-card)] bg-white/[0.03] animate-pulse" />
       </div>
     );
   }
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto pb-12">
-      {/* ── Profile Header ── */}
+
+      <div className="section-label">
+        <span className="section-label-prefix">//</span> Profile
+      </div>
+
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <GlassCard className="relative overflow-hidden">
-          
+        <GlassCard>
           <div className="relative flex flex-col sm:flex-row items-start gap-6">
             {/* Avatar */}
-            <div className="relative group cursor-pointer" onClick={handleAvatarClick}>
-              <div className="w-24 h-24 rounded-full flex items-center justify-center text-4xl font-bold overflow-hidden ring-2 ring-white/10 group-hover:ring-eduverse-accent/50 transition-all duration-300" style={{ background: "linear-gradient(135deg, var(--color-eduverse-accent-strong), var(--color-eduverse-accent))", color: "var(--color-eduverse-text)" }}>
+            <div className="relative group cursor-pointer shrink-0" onClick={handleAvatarClick}>
+              <div
+                className="w-24 h-24 rounded-full flex items-center justify-center text-4xl font-bold overflow-hidden transition-all duration-300 bg-eduverse-accent-strong text-eduverse-text"
+              >
                 {avatarPreview || profile.avatar?.startsWith("data:") ? (
                   <img src={avatarPreview || profile.avatar} alt="" className="w-full h-full object-cover" />
                 ) : (
                   profile.username[0].toUpperCase()
                 )}
               </div>
-              <div className="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                 <Upload className="w-5 h-5 text-white" />
               </div>
               <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
@@ -275,13 +278,13 @@ export default function ProfilePage() {
                     type="text"
                     value={editUsername}
                     onChange={(e) => setEditUsername(e.target.value)}
-                    className="w-full px-4 py-2 rounded bg-white/5 border border-white/10 focus:border-eduverse-accent outline-none text-lg font-bold font-display"
+                    className="app-input text-lg font-bold font-display"
                     placeholder="Username"
                   />
                   <textarea
                     value={editBio}
                     onChange={(e) => setEditBio(e.target.value)}
-                    className="w-full px-4 py-2 rounded bg-white/5 border border-white/10 focus:border-eduverse-accent outline-none text-sm resize-none"
+                    className="app-input resize-none text-sm"
                     rows={3}
                     placeholder="Write something about yourself..."
                   />
@@ -296,20 +299,20 @@ export default function ProfilePage() {
                 <>
                   <div className="flex items-center gap-3 flex-wrap">
                     <h1 className="text-2xl font-bold font-display">{profile.username}</h1>
-                    <button onClick={handleStartEdit} className="text-xs text-eduverse-text-muted hover:text-white px-2 py-1 rounded bg-white/5 flex items-center gap-1">
+                    <button onClick={handleStartEdit} className="text-xs text-eduverse-text-muted hover:text-white px-2.5 py-1.5 rounded-[var(--radius-button)] bg-white/5 border border-white/10 hover:border-white/20 flex items-center gap-1.5 transition-colors">
                       <Edit3 className="w-3 h-3" /> Edit
                     </button>
-                    <span className={`px-3 py-1 rounded text-xs font-semibold capitalize ${tierBadgeColors[profile.placementLevel] || "bg-eduverse-accent/20 text-eduverse-accent-light"}`}>
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${tierBadgeColors[profile.placementLevel] || "bg-eduverse-accent/20 text-eduverse-accent-light"}`}>
                       {profile.placementLevel}
                     </span>
                   </div>
                   <p className="text-sm text-eduverse-text-muted mt-2 max-w-lg leading-relaxed">
                     {profile.bio || "No bio yet. Click edit to add one."}
                   </p>
-                  <div className="flex items-center gap-4 mt-3 text-xs text-eduverse-text-muted flex-wrap">
-                    <span className="flex items-center gap-2"><Mail className="w-3.5 h-3.5" /> {profile.email}</span>
-                    <span className="flex items-center gap-2"><Calendar className="w-3.5 h-3.5" /> Joined {new Date(profile.createdAt).toLocaleDateString("en-US", { month: "long", year: "numeric" })}</span>
-                    <span className="flex items-center gap-2"><Medal className="w-3.5 h-3.5" /> Rank #{profile.rank || "—"}</span>
+                  <div className="flex items-center gap-5 mt-3 text-xs text-eduverse-text-muted flex-wrap">
+                    <span className="flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" /> {profile.email}</span>
+                    <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> Joined {new Date(profile.createdAt).toLocaleDateString("en-US", { month: "long", year: "numeric" })}</span>
+                    <span className="flex items-center gap-1.5"><Medal className="w-3.5 h-3.5" /> Rank #{profile.rank || "—"}</span>
                   </div>
                 </>
               )}
@@ -318,15 +321,18 @@ export default function ProfilePage() {
         </GlassCard>
       </motion.div>
 
-      {/* ── XP & Level ── */}
+      <div className="section-label">
+        <span className="section-label-prefix">//</span> XP & Level
+      </div>
+
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
         <GlassCard>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-bold font-display flex items-center gap-2">
               <Zap className="w-5 h-5 text-eduverse-warning" />
-              Level {profile.level} &mdash; {profile.xp.toLocaleString()} Total XP
+              Level {profile.level} &mdash; {profile.xp.toLocaleString()} XP
             </h2>
-            <span className="text-xs text-eduverse-text-muted">
+            <span className="text-xs text-eduverse-text-muted hidden sm:block">
               {totalXpEarned.toLocaleString()} XP earned all time
             </span>
           </div>
@@ -334,7 +340,10 @@ export default function ProfilePage() {
         </GlassCard>
       </motion.div>
 
-      {/* ── Stats Grid ── */}
+      <div className="section-label">
+        <span className="section-label-prefix">//</span> Stats
+      </div>
+
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
           { label: "Level", value: profile.level, icon: TrendingUp, color: "text-eduverse-accent-light" },
@@ -343,7 +352,7 @@ export default function ProfilePage() {
           { label: "Skills Unlocked", value: profile.skills?.filter(s => s.unlocked).length || 0, icon: GitBranch, color: "text-eduverse-accent-light" },
           { label: "Items Owned", value: profile.inventory?.length || 0, icon: ShoppingBag, color: "text-eduverse-warning" },
           { label: "Rank", value: `#${profile.rank || "—"}`, icon: Medal, color: "text-eduverse-gold" },
-          { label: "Streak", value: `${streak} days`, icon: Flame, color: streak >= 7 ? "text-orange-400" : "text-eduverse-text-muted" },
+          { label: "Streak", value: `${streak}d`, icon: Flame, color: streak >= 7 ? "text-orange-400" : "text-eduverse-text-muted" },
           { label: "Battles Won", value: battlesPlayed ? `${battlesWon}/${battlesPlayed}` : "0", icon: Swords, color: "text-eduverse-danger" },
         ].map((stat, i) => (
           <motion.div
@@ -352,16 +361,21 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.07 + i * 0.03 }}
           >
-            <GlassCard className="text-center p-6" >
-              <stat.icon className={`w-5 h-5 mx-auto mb-2 ${stat.color}`} />
-              <div className="text-xl font-bold font-display">{stat.value}</div>
-              <div className="text-xs text-eduverse-text-muted mt-1">{stat.label}</div>
+            <GlassCard className="text-center p-5">
+              <div className="w-8 h-8 flex items-center justify-center mx-auto mb-3">
+                <stat.icon className={`w-4 h-4 ${stat.color}`} aria-hidden="true" />
+              </div>
+              <div className="text-xl font-bold font-mono text-eduverse-text">{stat.value}</div>
+              <div className="text-[11px] text-eduverse-text-muted mt-1 leading-tight">{stat.label}</div>
             </GlassCard>
           </motion.div>
         ))}
       </div>
 
-      {/* ── Two column: Activity Heatmap + XP Breakdown ── */}
+      <div className="section-label">
+        <span className="section-label-prefix">//</span> Activity
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Activity Heatmap */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
@@ -376,13 +390,13 @@ export default function ProfilePage() {
                 return (
                   <div
                     key={i}
-                    className={`w-3 h-3 rounded-sm ${activityColor(amount)}`}
+                    className={`w-3 h-3 rounded-sm ${activityColor(amount)} transition-colors`}
                     title={`${day.date}: ${amount} XP`}
                   />
                 );
               })}
             </div>
-            <div className="flex items-center gap-2 mt-3 text-[10px] text-eduverse-text-muted">
+            <div className="flex items-center gap-2 mt-4 text-[10px] text-eduverse-text-muted">
               <span>Less</span>
               <div className="w-3 h-3 rounded-sm bg-white/[0.03]" />
               <div className="w-3 h-3 rounded-sm bg-eduverse-accent/20" />
@@ -402,7 +416,7 @@ export default function ProfilePage() {
               XP Breakdown
             </h2>
             {Object.keys(xpBreakdown).length === 0 ? (
-              <p className="text-sm text-eduverse-text-muted">No XP history yet.</p>
+              <p className="text-sm text-eduverse-text-muted py-6 text-center">No XP history yet. Start coding!</p>
             ) : (
               <div className="space-y-3">
                 {Object.entries(xpBreakdown)
@@ -413,19 +427,19 @@ export default function ProfilePage() {
                     const Icon = sourceIcons[source] || Zap;
                     return (
                       <div key={source}>
-                        <div className="flex items-center justify-between text-sm mb-1">
+                        <div className="flex items-center justify-between text-sm mb-1.5">
                           <span className={`flex items-center gap-2 capitalize ${sourceColors[source] || "text-eduverse-text-muted"}`}>
                             <Icon className="w-3.5 h-3.5" />
                             {source}
                           </span>
-                          <span className="font-semibold">{amount.toLocaleString()} XP ({pct}%)</span>
+                          <span className="font-semibold font-mono text-xs">{amount.toLocaleString()} XP · {pct}%</span>
                         </div>
-                        <div className="h-1.5 rounded bg-white/5 overflow-hidden">
+                        <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
                           <motion.div
-                            className={`h-full rounded ${sourceBarColors[source] || "bg-eduverse-accent"}`}
+                            className={`h-full rounded-full ${sourceBarColors[source] || "bg-eduverse-accent"}`}
                             initial={{ width: 0 }}
                             animate={{ width: `${pct}%` }}
-                            transition={{ duration: 0.6, ease: "easeOut" }}
+                            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
                           />
                         </div>
                       </div>
@@ -437,30 +451,33 @@ export default function ProfilePage() {
         </motion.div>
       </div>
 
-      {/* ── Course Progress ── */}
+      <div className="section-label">
+        <span className="section-label-prefix">//</span> Courses
+      </div>
+
       {Object.keys(courseProgress).length > 0 && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
           <GlassCard>
             <h2 className="text-sm font-bold font-display mb-4 flex items-center gap-2">
-              <Layers className="w-4 h-5 text-eduverse-success" />
+              <Layers className="w-4 h-4 text-eduverse-success" />
               Course Progress
             </h2>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {Object.entries(courseProgress).map(([courseId, { total, done }]) => {
                 const pct = Math.round((done / total) * 100);
                 const courseName = profile.progress?.find(p => p.lesson.courseId === courseId)?.lesson.title?.split(" ")[0] || "Course";
                 return (
                   <div key={courseId}>
-                    <div className="flex items-center justify-between text-sm mb-1">
+                    <div className="flex items-center justify-between text-sm mb-2">
                       <span className="font-medium truncate mr-2">{courseName}</span>
-                      <span className="text-xs text-eduverse-text-muted whitespace-nowrap">{done}/{total} ({pct}%)</span>
+                      <span className="text-xs text-eduverse-text-muted font-mono whitespace-nowrap">{done}/{total} ({pct}%)</span>
                     </div>
-                    <div className="h-2 rounded bg-white/5 overflow-hidden">
+                    <div className="h-2 rounded-full bg-white/5 overflow-hidden">
                       <motion.div
-                        className="h-full rounded bg-eduverse-accent-strong"
+                        className="h-full rounded-full bg-eduverse-accent-strong"
                         initial={{ width: 0 }}
                         animate={{ width: `${pct}%` }}
-                        transition={{ duration: 0.6, ease: "easeOut" }}
+                        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
                       />
                     </div>
                   </div>
@@ -471,11 +488,14 @@ export default function ProfilePage() {
         </motion.div>
       )}
 
-      {/* ── Achievements ── */}
+      <div className="section-label">
+        <span className="section-label-prefix">//</span> Achievements
+      </div>
+
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
         <GlassCard>
-          <h2 className="text-sm font-bold font-display mb-4 flex items-center gap-2">
-            <Award className="w-4 h-5 text-eduverse-gold" />
+          <h2 className="text-sm font-bold font-display mb-5 flex items-center gap-2">
+            <Award className="w-4 h-4 text-eduverse-gold" />
             Achievements
             <span className="text-xs text-eduverse-text-muted font-normal ml-1">
               ({earnedAchievements.length}/{achievements.length})
@@ -487,14 +507,12 @@ export default function ProfilePage() {
               return (
                 <div
                   key={ach.id}
-                  className={`p-3 rounded border text-center transition-all ${
-                    ach.earned
-                      ? "bg-eduverse-accent/5 border-eduverse-accent/20"
-                      : "bg-white/[0.02] border-white/[0.05] opacity-40"
-                  }`}
+                  className={`achievement-card ${ach.earned ? "earned" : "locked"}`}
                 >
-                  <Icon className={`w-5 h-5 mx-auto mb-2 ${ach.earned ? "text-eduverse-gold" : "text-eduverse-text-muted"}`} />
-                  <div className="text-xs font-semibold">{ach.label}</div>
+                  <div className="achievement-icon">
+                    <Icon className={`w-4 h-4 ${ach.earned ? "text-eduverse-gold" : "text-eduverse-text-muted"}`} />
+                  </div>
+                  <div className="text-xs font-semibold text-eduverse-text">{ach.label}</div>
                   <div className="text-[10px] text-eduverse-text-muted mt-1 leading-tight">{ach.desc}</div>
                 </div>
               );
@@ -503,26 +521,29 @@ export default function ProfilePage() {
         </GlassCard>
       </motion.div>
 
-      {/* ── Equipped Items ── */}
+      <div className="section-label">
+        <span className="section-label-prefix">//</span> Equipped
+      </div>
+
       {profile.inventory?.filter(i => i.equipped).length > 0 && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
           <GlassCard>
             <h2 className="text-sm font-bold font-display mb-4 flex items-center gap-2">
-              <ShoppingBag className="w-4 h-5 text-eduverse-accent-light" />
+              <ShoppingBag className="w-4 h-4 text-eduverse-accent-light" />
               Equipped Items
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
               {profile.inventory?.filter(i => i.equipped).map((inv) => (
-                <div key={inv.itemId} className="flex items-center gap-3 p-3 rounded bg-white/5">
-                  <div className="w-8 h-8 rounded bg-eduverse-accent/10 flex items-center justify-center text-sm">
+                <div key={inv.itemId} className="flex items-center gap-3 p-3 rounded-[var(--radius-card)]">
+                  <div className="w-9 h-9 flex items-center justify-center shrink-0">
                     {inv.item.imageUrl ? (
-                      <img src={inv.item.imageUrl} alt="" className="w-6 h-6" />
+                      <img src={inv.item.imageUrl} alt="" className="w-5 h-5" />
                     ) : (
                       <Star className="w-4 h-4 text-eduverse-accent-light" />
                     )}
                   </div>
                   <div>
-                    <div className="text-sm font-semibold">{inv.item.name}</div>
+                    <div className="text-sm font-semibold text-eduverse-text">{inv.item.name}</div>
                     <div className="text-[10px] text-eduverse-text-muted capitalize">{inv.item.type}</div>
                   </div>
                 </div>
@@ -532,11 +553,14 @@ export default function ProfilePage() {
         </motion.div>
       )}
 
-      {/* ── Recent XP Gains ── */}
+      <div className="section-label">
+        <span className="section-label-prefix">//</span> Recent XP
+      </div>
+
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
         <GlassCard>
           <h2 className="text-sm font-bold font-display mb-4 flex items-center gap-2">
-            <Zap className="w-4 h-5 text-eduverse-warning" />
+            <Zap className="w-4 h-4 text-eduverse-warning" />
             Recent XP Gains
           </h2>
           <div className="space-y-1">
@@ -546,9 +570,9 @@ export default function ProfilePage() {
                 initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.02 }}
-                className="flex items-center justify-between py-2 px-3 rounded hover:bg-white/[0.02] transition-colors text-sm"
+                className="flex items-center justify-between py-2.5 px-3 rounded-[var(--radius-button)] hover:bg-white/[0.025] transition-colors text-sm"
               >
-                  <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
                   <span className={`capitalize flex items-center gap-1.5 ${sourceColors[log.source] || "text-eduverse-text-muted"}`}>
                     {SourceIcon(log.source)}
                     {log.source}
@@ -557,9 +581,9 @@ export default function ProfilePage() {
                     {new Date(log.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                   </span>
                 </div>
-                <span className="font-bold text-eduverse-success text-sm">+{log.amount} XP</span>
+                <span className="font-bold text-eduverse-success text-sm font-mono">+{log.amount} XP</span>
               </motion.div>
-            )) || <p className="text-sm text-eduverse-text-muted py-4 text-center">No XP history yet. Start coding!</p>}
+            )) || <p className="text-sm text-eduverse-text-muted py-6 text-center">No XP history yet. Start coding!</p>}
           </div>
         </GlassCard>
       </motion.div>
@@ -569,7 +593,7 @@ export default function ProfilePage() {
 
 function PieChartIcon() {
   return (
-    <svg className="w-4 h-5 text-eduverse-accent-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg className="w-4 h-4 text-eduverse-accent-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
       <path d="M22 12A10 10 0 0 0 12 2v10z" />
     </svg>

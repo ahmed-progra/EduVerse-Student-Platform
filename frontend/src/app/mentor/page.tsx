@@ -7,15 +7,15 @@ import { Sparkles, RefreshCw, TrendingUp, Target, Compass, MessageSquare, WifiOf
 import { GlassCard } from "@/components/ui/glass-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useAuthStore } from "@/stores/auth-store";
-import { api } from "@/lib/api";
-import type { MentorProfileData, Mission, MentorReportData } from "@/lib/mentor-types";
-import { MetricTiles } from "@/components/mentor/metric-tiles";
-import { GrowthChart } from "@/components/mentor/growth-chart";
-import { TopicColumns } from "@/components/mentor/topic-columns";
-import { MissionsBoard } from "@/components/mentor/missions-board";
-import { WeeklyReport } from "@/components/mentor/weekly-report";
-import { InsightsList } from "@/components/mentor/insights-list";
-import { MentorChat } from "@/components/mentor/mentor-chat";
+import { api } from "@/services/api-client";
+import type { MentorProfileData, Mission, MentorReportData } from "@/types/mentor";
+import { MetricTiles } from "@/features/mentor/metric-tiles";
+import { GrowthChart } from "@/features/mentor/growth-chart";
+import { TopicColumns } from "@/features/mentor/topic-columns";
+import { MissionsBoard } from "@/features/mentor/missions-board";
+import { WeeklyReport } from "@/features/mentor/weekly-report";
+import { InsightsList } from "@/features/mentor/insights-list";
+import { MentorChat } from "@/features/mentor/mentor-chat";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -27,6 +27,18 @@ function Section({ title, icon: Icon, children, delay = 0 }: { title: string; ic
       </h2>
       {children}
     </motion.section>
+  );
+}
+
+function SkeletonCard() {
+  return (
+    <GlassCard>
+      <div className="space-y-3 animate-pulse" aria-label="Loading">
+        <div className="h-4 w-1/2 rounded bg-eduverse-raised" />
+        <div className="h-4 w-2/3 rounded bg-eduverse-raised" />
+        <div className="h-4 w-3/4 rounded bg-eduverse-raised" />
+      </div>
+    </GlassCard>
   );
 }
 
@@ -157,8 +169,10 @@ export default function MentorPage() {
       </motion.div>
 
       {/* ── Skill assessment tiles ── */}
-      {profile && (
-        <Section title="Current Skill Assessment" icon={Target} delay={0.1}>
+      <Section title="Current Skill Assessment" icon={Target} delay={0.1}>
+        {profileLoading ? (
+          <SkeletonCard />
+        ) : profile ? (
           <MetricTiles
             level={user?.level ?? 1}
             xp={user?.xp ?? 0}
@@ -167,24 +181,32 @@ export default function MentorPage() {
             momentum={profile.momentum}
             lessonsCompleted={lessonsCompleted}
           />
-        </Section>
-      )}
+        ) : null}
+      </Section>
 
       {/* ── Growth chart ── */}
-      {profile && (
-        <Section title="Your Growth" icon={TrendingUp} delay={0.13}>
-          <GlassCard>
+      <Section title="Your Growth" icon={TrendingUp} delay={0.13}>
+        <GlassCard>
+          {profileLoading ? (
+            <div className="space-y-3 animate-pulse" aria-label="Loading">
+              <div className="h-4 w-1/2 rounded bg-eduverse-raised" />
+              <div className="h-4 w-2/3 rounded bg-eduverse-raised" />
+              <div className="h-4 w-3/4 rounded bg-eduverse-raised" />
+            </div>
+          ) : profile ? (
             <GrowthChart data={metrics?.growthSeries || []} />
-          </GlassCard>
-        </Section>
-      )}
+          ) : null}
+        </GlassCard>
+      </Section>
 
       {/* ── Strong / weak topics ── */}
-      {profile && (
-        <Section title="Strengths & Gaps" icon={Compass} delay={0.16}>
+      <Section title="Strengths & Gaps" icon={Compass} delay={0.16}>
+        {profileLoading ? (
+          <SkeletonCard />
+        ) : profile ? (
           <TopicColumns strengths={profile.strengths} weaknesses={profile.weaknesses} weakLinks={weakLinks} />
-        </Section>
-      )}
+        ) : null}
+      </Section>
 
       {/* ── Missions ── */}
       <Section title="Smart Missions" icon={Target} delay={0.19}>
@@ -199,37 +221,45 @@ export default function MentorPage() {
       </Section>
 
       {/* ── Insights + recommendations ── */}
-      {profile && (
-        <Section title="Insights & Next Steps" icon={Sparkles} delay={0.25}>
+      <Section title="Insights & Next Steps" icon={Sparkles} delay={0.25}>
+        {profileLoading ? (
+          <SkeletonCard />
+        ) : profile ? (
           <InsightsList insights={profile.insights} recommendations={profile.recommendations} />
-        </Section>
-      )}
+        ) : null}
+      </Section>
 
       {/* ── Project ideas → Studio ── */}
-      {profile && profile.projects.length > 0 && (
+      {profile && (
         <Section title="Project Ideas" icon={Rocket} delay={0.27}>
           <GlassCard>
-            <p className="text-sm text-eduverse-text-muted mb-3">
-              Turn your learning into proof. Build one of these in the Project Studio — it gets AI-reviewed and added to your portfolio.
-            </p>
-            <div className="grid sm:grid-cols-2 gap-3 mb-4">
-              {profile.projects.map((p, i) => (
-                <div key={i} className="app-card p-3">
-                  <div className="text-sm font-semibold text-eduverse-text">{p.title}</div>
-                  <p className="text-xs text-eduverse-text-muted mt-1">{p.brief}</p>
-                  {p.skills.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mt-2">
-                      {p.skills.map((s) => (
-                        <span key={s} className="text-[10px] px-1.5 py-0.5 rounded bg-eduverse-raised text-eduverse-text-muted">{s}</span>
-                      ))}
+            {profile.projects.length > 0 ? (
+              <>
+                <p className="text-sm text-eduverse-text-muted mb-3">
+                  Turn your learning into proof. Build one of these in the Project Studio — it gets AI-reviewed and added to your portfolio.
+                </p>
+                <div className="grid sm:grid-cols-2 gap-3 mb-4">
+                  {profile.projects.map((p, i) => (
+                    <div key={i} className="app-card p-3">
+                      <div className="text-sm font-semibold text-eduverse-text">{p.title}</div>
+                      <p className="text-xs text-eduverse-text-muted mt-1">{p.brief}</p>
+                      {p.skills.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          {p.skills.map((s) => (
+                            <span key={s} className="text-[10px] px-1.5 py-0.5 rounded bg-eduverse-raised text-eduverse-text-muted">{s}</span>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                  )}
+                  ))}
                 </div>
-              ))}
-            </div>
-            <Link href="/projects" className="ai-panel-action-btn ai-panel-action-sm inline-flex">
-              <Rocket size={13} aria-hidden="true" /> Open Project Studio <ArrowRight size={13} aria-hidden="true" />
-            </Link>
+                <Link href="/projects" className="ai-panel-action-btn ai-panel-action-sm inline-flex">
+                  <Rocket size={13} aria-hidden="true" /> Open Project Studio <ArrowRight size={13} aria-hidden="true" />
+                </Link>
+              </>
+            ) : (
+              <EmptyState icon={Rocket} title="No project ideas yet" message="Complete more lessons and assessments to unlock personalized project ideas." />
+            )}
           </GlassCard>
         </Section>
       )}

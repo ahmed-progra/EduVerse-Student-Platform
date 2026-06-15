@@ -32,8 +32,8 @@ export const XpBar = memo(function XpBar({ xp, showLabel = true, size = "md" }: 
       )}
 
       <div
-        className={`${heights[size]} rounded w-full overflow-hidden`}
-        style={{ background: "var(--color-eduverse-raised)" }}
+        className={`${heights[size]} w-full overflow-hidden`}
+        style={{ background: "var(--color-eduverse-raised)", borderRadius: "var(--radius-button)", border: "1px solid var(--color-eduverse-border)" }}
         role="progressbar"
         aria-valuenow={Math.round(progress)}
         aria-valuemin={0}
@@ -41,11 +41,14 @@ export const XpBar = memo(function XpBar({ xp, showLabel = true, size = "md" }: 
         aria-label={`Level ${level} progress`}
       >
         <motion.div
-          className="h-full rounded"
-          style={{ background: "var(--color-eduverse-accent-strong)" }}
+          className="h-full"
+          style={{ 
+            background: "var(--color-eduverse-accent-strong)",
+            borderRadius: "var(--radius-button)",
+          }}
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
-          transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 1.3, ease: [0.22, 1, 0.36, 1] }}
         />
       </div>
 

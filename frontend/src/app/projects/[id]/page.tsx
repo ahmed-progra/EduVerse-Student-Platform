@@ -12,8 +12,8 @@ import {
 import { GlassCard } from "@/components/ui/glass-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useAuthStore } from "@/stores/auth-store";
-import { api } from "@/lib/api";
-import type { Project, ProjectMilestone } from "@/lib/project-types";
+import { api } from "@/services/api-client";
+import type { Project, ProjectMilestone } from "@/types/project";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false });
 const ease = [0.22, 1, 0.36, 1] as const;

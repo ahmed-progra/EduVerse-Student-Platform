@@ -2,13 +2,14 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sprout, Send, GraduationCap, Sparkles, ChevronRight, Lightbulb } from "lucide-react";
+import { Sprout, Send, GraduationCap, Sparkles, ChevronRight, Lightbulb, WifiOff, Compass } from "lucide-react";
 import { GlassCard } from "@/components/ui/glass-card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { useAuthStore } from "@/stores/auth-store";
-import { api } from "@/lib/api";
-import type { TeachTurn, TeachGrade, TeachableCourse } from "@/lib/apprentice-types";
-import { PipAvatar } from "@/components/apprentice/pip-avatar";
-import { TeachGradeCard } from "@/components/apprentice/teach-grade-card";
+import { api } from "@/services/api-client";
+import type { TeachTurn, TeachGrade, TeachableCourse } from "@/types/apprentice";
+import { PipAvatar } from "@/features/apprentice/pip-avatar";
+import { TeachGradeCard } from "@/features/apprentice/teach-grade-card";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -24,6 +25,8 @@ export default function ApprenticePage() {
 
   const [phase, setPhase] = useState<"pick" | "teach" | "graded">("pick");
   const [catalog, setCatalog] = useState<TeachableCourse[]>([]);
+  const [catalogLoading, setCatalogLoading] = useState(true);
+  const [catalogOffline, setCatalogOffline] = useState(false);
   const [maxTurns, setMaxTurns] = useState(5);
   const [suggested, setSuggested] = useState<StartTarget[]>([]);
 
@@ -51,6 +54,8 @@ export default function ApprenticePage() {
 
   // ── load topic catalog + suggested weak topics ──
   useEffect(() => {
+    setCatalogLoading(true);
+    setCatalogOffline(false);
     api
       .apprenticeTopics()
       .then((res) => {
@@ -69,7 +74,11 @@ export default function ApprenticePage() {
           setSuggested(targets);
         }).catch(() => {});
       })
-      .catch(() => setError("Could not load topics. Is the backend running?"));
+      .catch(() => {
+        setCatalogOffline(true);
+        setError("Could not load topics. Is the backend running?");
+      })
+      .finally(() => setCatalogLoading(false));
   }, []);
 
   const startTeaching = useCallback(async (t: StartTarget) => {
@@ -179,12 +188,31 @@ export default function ApprenticePage() {
         </p>
       </motion.div>
 
-      {error && phase === "pick" && (
+      {error && phase === "pick" && catalogOffline && (
+        <EmptyState icon={WifiOff} title="Can't reach the server" message="The EduVerse API isn't responding, so the topic catalog can't be loaded." />
+      )}
+
+      {error && phase === "pick" && !catalogOffline && (
         <p className="text-sm text-eduverse-text-muted" role="alert">Error: {error}</p>
       )}
 
       {/* ── PICK ── */}
-      {phase === "pick" && (
+      {phase === "pick" && catalogLoading && (
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05, duration: 0.5, ease }} className="space-y-5">
+          <div className="space-y-2" aria-label="Loading topics">
+            <div className="h-20 rounded animate-pulse bg-eduverse-surface" />
+            <div className="h-48 rounded animate-pulse bg-eduverse-surface" />
+          </div>
+        </motion.div>
+      )}
+
+      {phase === "pick" && !catalogLoading && !catalogOffline && catalog.length === 0 && (
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05, duration: 0.5, ease }}>
+          <EmptyState icon={Compass} title="No topics available" message="The topic catalog returned empty. Try again later or check with your instructor." />
+        </motion.div>
+      )}
+
+      {phase === "pick" && !catalogLoading && !catalogOffline && catalog.length > 0 && (
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05, duration: 0.5, ease }} className="space-y-5">
           {suggested.length > 0 && (
             <GlassCard>

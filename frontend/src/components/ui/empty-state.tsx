@@ -15,10 +15,12 @@ export function EmptyState({
 }) {
   return (
     <div className="empty-state">
-      <Icon size={28} aria-hidden="true" />
+      <div className="empty-state-icon-container">
+        <Icon size={24} aria-hidden="true" />
+      </div>
       <h3>{title}</h3>
       <p>{message}</p>
-      {children && <div className="mt-4 flex justify-center gap-2">{children}</div>}
+      {children && <div className="mt-5 flex justify-center gap-2">{children}</div>}
     </div>
   );
 }

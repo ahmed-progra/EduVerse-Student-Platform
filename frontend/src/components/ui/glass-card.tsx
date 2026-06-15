@@ -16,9 +16,10 @@ interface GlassCardProps {
 export const GlassCard = memo(function GlassCard({ children, className, style, onClick }: GlassCardProps) {
   return (
     <motion.div
+      whileTap={onClick ? { scale: 0.985 } : undefined}
       className={classNames(
         "app-card p-6",
-        onClick && "cursor-pointer",
+        onClick && "cursor-pointer app-card-link",
         className
       )}
       style={style}
