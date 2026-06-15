@@ -189,7 +189,7 @@ export default function ProjectWorkspace() {
       {/* Submit / actions */}
       <div className="flex items-center gap-3 flex-wrap">
         <button
-          className="px-4 py-2.5 rounded bg-eduverse-accent-strong text-white text-sm font-semibold hover:brightness-110 transition-[filter] disabled:opacity-50 flex items-center gap-2"
+          className="px-4 py-2.5 rounded bg-eduverse-accent-strong text-white text-sm font-semibold hover:brightness-110 active:scale-[0.97] transition-[filter,transform] duration-150 disabled:opacity-50 flex items-center gap-2"
           onClick={submit}
           disabled={submitting}
         >

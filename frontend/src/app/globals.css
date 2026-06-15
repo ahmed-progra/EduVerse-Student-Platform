@@ -23,7 +23,9 @@
   --color-eduverse-silver: oklch(80% 0.01 270);
   --color-eduverse-bronze: oklch(68% 0.1 60);
 
-  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1); /* entrances — strong arrival */
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);  /* on-screen movement / morphs */
+  --ease-sine: cubic-bezier(0.45, 0, 0.55, 1);     /* seamless looping / ambient drift */
 }
 
 /* Fonts come from next/font (layout.tsx) */
@@ -2810,19 +2812,19 @@ h1, h2, h3 {
   width: 46vw; height: 46vw;
   top: -12vw; left: -8vw;
   background: radial-gradient(circle, oklch(72% 0.15 80 / 0.12), transparent 68%);
-  animation: amb-drift-1 58s var(--ease-out-expo) infinite alternate;
+  animation: amb-drift-1 64s var(--ease-sine) infinite alternate;
 }
 .amb-aura-2 {
   width: 40vw; height: 40vw;
   right: -10vw; bottom: -14vw;
   background: radial-gradient(circle, oklch(60% 0.18 70 / 0.12), transparent 68%);
-  animation: amb-drift-2 74s var(--ease-out-expo) infinite alternate;
+  animation: amb-drift-2 78s var(--ease-sine) infinite alternate;
 }
 .amb-aura-3 {
   width: 32vw; height: 32vw;
   top: 36%; left: 50%;
   background: radial-gradient(circle, oklch(82% 0.13 90 / 0.08), transparent 70%);
-  animation: amb-breathe 26s ease-in-out infinite;
+  animation: amb-breathe 30s var(--ease-sine) infinite;
 }
 
 @keyframes amb-drift-1 {
@@ -2852,10 +2854,22 @@ h1, h2, h3 {
   will-change: transform, opacity;
 }
 @keyframes amb-rise {
-  0%   { transform: translateY(0) translateX(0);     opacity: 0; }
-  12%  { opacity: 0.5; }
-  85%  { opacity: 0.32; }
+  0%   { transform: translateY(0) translateX(0);          opacity: 0; }
+  18%  { opacity: 0.5; }
+  78%  { opacity: 0.4; }
   100% { transform: translateY(-106vh) translateX(2.2vw); opacity: 0; }
+}
+
+/* Blur-rise text reveal — for rare, first-impression headings only
+   (Emil: blur masks entrances; reads as premium on the Fraunces serif).
+   One-shot, GPU-friendly; resolves to the final frame under reduced motion. */
+.reveal-rise {
+  animation: reveal-rise 0.9s var(--ease-out-expo) both;
+  animation-delay: var(--d, 0s); /* slots into existing staggered reveals */
+}
+@keyframes reveal-rise {
+  from { opacity: 0; transform: translateY(14px); filter: blur(8px); }
+  to   { opacity: 1; transform: none;             filter: blur(0); }
 }
 
 /* Route entrance */

@@ -230,7 +230,7 @@ export default function LandingPage() {
           <p className="hero-kicker intro" style={{ "--d": "0.05s" } as React.CSSProperties}>
             <span aria-hidden="true">{"//"}</span> a student-built learning platform
           </p>
-          <h1 className="hero-title intro" style={{ "--d": "0.13s" } as React.CSSProperties}>
+          <h1 className="hero-title reveal-rise" style={{ "--d": "0.13s" } as React.CSSProperties}>
             See your code run,<br /><span className="hero-highlight">line by line.</span>
           </h1>
           <p className="hero-desc intro" style={{ "--d": "0.21s" } as React.CSSProperties}>

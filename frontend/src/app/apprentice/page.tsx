@@ -257,7 +257,7 @@ export default function ApprenticePage() {
                   onKeyDown={(e) => e.key === "Enter" && customTopic.trim() && startTeaching({ topic: customTopic.trim(), topicKey: null, courseSlug: null })}
                 />
                 <button
-                  className="px-3 py-2 rounded bg-eduverse-accent-strong text-white text-sm font-semibold hover:brightness-110 transition-[filter] disabled:opacity-50"
+                  className="px-3 py-2 rounded bg-eduverse-accent-strong text-white text-sm font-semibold hover:brightness-110 active:scale-[0.97] transition-[filter,transform] duration-150 disabled:opacity-50"
                   disabled={!customTopic.trim()}
                   onClick={() => customTopic.trim() && startTeaching({ topic: customTopic.trim(), topicKey: null, courseSlug: null })}
                 >
@@ -332,7 +332,7 @@ export default function ApprenticePage() {
             </div>
             <div className="flex items-center gap-3 flex-wrap">
               <button
-                className="px-3 py-2 rounded bg-eduverse-accent-strong text-white text-sm font-semibold hover:brightness-110 transition-[filter] disabled:opacity-50 flex items-center gap-1.5"
+                className="px-3 py-2 rounded bg-eduverse-accent-strong text-white text-sm font-semibold hover:brightness-110 active:scale-[0.97] transition-[filter,transform] duration-150 disabled:opacity-50 flex items-center gap-1.5"
                 onClick={sendExplanation}
                 disabled={!input.trim() || thinking}
               >
