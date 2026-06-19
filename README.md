@@ -33,8 +33,8 @@ Built by students, for students. The UI is a warm, dark "Code Sorcery" theme wit
 | Category     | Technology                                                                 |
 | ------------ | -------------------------------------------------------------------------- |
 | Frontend     | Next.js 16 (App Router), React 19, Framer Motion, Tailwind CSS v4, Zustand |
-| Backend      | Express 5, Prisma ORM, SQLite (via Better‑SQLite3)                         |
-| AI           | Anthropic Claude API (powering mentor, apprentice, projects, missions)     |
+| Backend      | Express 5, Prisma ORM, PostgreSQL (Supabase)                              |
+| AI           | Google AI Studio — Gemini (powering mentor, apprentice, projects, missions) |
 | Code Editor  | Monaco Editor (via `@monaco-editor/react`)                                 |
 | Code Exec.   | Skulpt (Python, in‑browser) · Judge0 (C++) · sandboxed iframe (HTML/CSS)   |
 | Tooling      | TypeScript 5, Turbopack, Prettier, tsx                                     |
@@ -50,7 +50,9 @@ EduVerse is an **npm workspaces monorepo** with three packages:
 | `backend/`   | Express 5 REST API — auth, courses, lessons, AI services, battles, leaderboard, shop, project grading, skill tree |
 | `shared/`    | TypeScript types and interfaces shared between frontend and backend |
 
-The frontend communicates with the backend via RESTful JSON endpoints. AI features (mentor, apprentice, project grading, mission generation) flow through a centralized AI service in the backend that interfaces with the Anthropic Claude API with retry and fallback logic. The Skill Tree and XP system drive gamification across all surfaces.
+The frontend communicates with the backend via RESTful JSON endpoints. AI features (mentor, apprentice, project grading, mission generation) flow through a centralized AI service in the backend that interfaces with **Google AI Studio (Gemini)** with retry, model fallback, and graceful deterministic fallback logic. The Skill Tree and XP system drive gamification across all surfaces.
+
+📚 **Deeper docs:** [Architecture](docs/ARCHITECTURE.md) · [API reference](docs/API.md) · [Database](docs/DATABASE.md) · [Development guide](docs/DEVELOPMENT.md)
 
 ## Prerequisites
 
@@ -61,7 +63,7 @@ The frontend communicates with the backend via RESTful JSON endpoints. AI featur
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-org/eduverse.git
+git clone https://github.com/ragnarlufe/eduverse.git
 cd eduverse
 
 # 2. Install all dependencies (all workspaces)
@@ -93,8 +95,10 @@ Copy `.env.example` to `backend/.env` and fill in the values.
 
 | Variable            | Description                                        | Required |
 | ------------------- | -------------------------------------------------- | -------- |
-| `DATABASE_URL`      | SQLite database file path (e.g., `file:./dev.db`)  | Yes      |
-| `ANTHROPIC_API_KEY` | Anthropic Claude API key                           | Yes      |
+| `DATABASE_URL`      | PostgreSQL app connection (Supabase transaction pooler, `:6543`) | Yes |
+| `DIRECT_URL`        | PostgreSQL migration connection (session pooler, `:5432`) | Yes |
+| `GOOGLE_AI_API_KEY` | Google AI Studio (Gemini) API key                  | Yes      |
+| `GOOGLE_AI_MODEL`   | Override the default model (`gemini-2.5-flash`)    | No       |
 | `JWT_SECRET`        | Secret key for signing JWT tokens                  | Yes      |
 | `JWT_EXPIRES_IN`    | Token expiration duration (default `7d`)           | No       |
 | `PORT`              | Backend server port (default `4000`)               | No       |
@@ -102,6 +106,7 @@ Copy `.env.example` to `backend/.env` and fill in the values.
 | `JUDGE0_URL`        | Judge0 CE endpoint for C++ execution               | No       |
 | `JUDGE0_API_KEY`    | Judge0 API key (optional, public endpoint works without one) | No |
 | `JUDGE0_HOST`       | Judge0 custom host header (for RapidAPI setups)    | No       |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Google OAuth sign-in (optional)  | No |
 
 ## Development
 
@@ -129,7 +134,7 @@ npm run dev            # Both concurrently
 
 ### E2E tests
 
-End‑to‑end test suites run against a live backend and the real Anthropic API:
+End‑to‑end test suites run against a live backend and the real Google Gemini API:
 
 ```bash
 cd backend
@@ -137,6 +142,7 @@ node scripts/learning-e2e.mjs       # adaptive learning placement
 node scripts/mentor-e2e.mjs         # AI mentor + missions
 node scripts/apprentice-e2e.mjs     # apprentice teaching
 node scripts/projects-e2e.mjs       # project studio + portfolio
+node scripts/teachback-e2e.mjs      # teach-back grading
 node scripts/ai-e2e.mjs             # AI endpoint integration
 ```
 
