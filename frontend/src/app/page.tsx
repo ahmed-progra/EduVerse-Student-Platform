@@ -5,15 +5,28 @@ import Link from "next/link";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { api } from "@/services/api-client";
 import HeroDemo from "@/features/landing/hero-demo";
-import { Code2, Sparkles, Network, Swords, Medal, ShoppingBag, Flame, ChevronRight, Menu, X } from "lucide-react";
+import {
+  Code2, Sparkles, Network, Swords, Medal, ShoppingBag, Flame, ChevronRight, Menu, X,
+  Boxes, BookOpen, Library, Sigma, Orbit, FlaskConical,
+} from "lucide-react";
 
 const features = [
-  { icon: Code2, title: "Code Visualizer", desc: "Watch execution line by line with live variable tracking.", href: "/codelab" },
-  { icon: Sparkles, title: "AI Co-Pilot", desc: "Error diagnosis, hints, and exam prep that explain instead of solve.", href: "/courses" },
-  { icon: Network, title: "Skill Tree", desc: "RPG-style progression. Click a node, load the example, run it.", href: "/skill-tree" },
-  { icon: Swords, title: "Coding Battles", desc: "Real-time duels. Same problem, two editors, one winner.", href: "/battle" },
-  { icon: Medal, title: "Leaderboard", desc: "Climb the campus ranks one challenge at a time.", href: "/leaderboard" },
-  { icon: ShoppingBag, title: "Rewards Shop", desc: "Spend earned XP on cosmetics and power-ups.", href: "/shop" },
+  { icon: BookOpen, title: "Every Subject", desc: "Programming, math, physics, and science — one catalog, one progress system.", href: "/courses" },
+  { icon: Sparkles, title: "Your AI Tutor", desc: "A coach that adapts to you: explains, hints, quizzes, and plans your week.", href: "/mentor" },
+  { icon: Boxes, title: "Interactive 3D Labs", desc: "Explore math surfaces, orbital physics, and molecular science you can rotate.", href: "/lab" },
+  { icon: Code2, title: "Step-through Visualizer", desc: "Watch code and concepts unfold line by line, with live state.", href: "/codelab" },
+  { icon: Library, title: "Resources & Library", desc: "Keep notes, study guides, and materials for every class in one place.", href: "/resources" },
+  { icon: Network, title: "Skill Tree & Progress", desc: "Turn studying into momentum — unlock skills, climb ranks, earn rewards.", href: "/skill-tree" },
+];
+
+const subjects = [
+  { name: "Python", group: "Programming", icon: Code2 },
+  { name: "HTML", group: "Programming", icon: Code2 },
+  { name: "CSS", group: "Programming", icon: Code2 },
+  { name: "C++", group: "Programming", icon: Code2 },
+  { name: "Mathematics", group: "Sciences", icon: Sigma },
+  { name: "Physics", group: "Sciences", icon: Orbit },
+  { name: "Science", group: "Sciences", icon: FlaskConical },
 ];
 
 const challengeData = [
@@ -192,10 +205,10 @@ export default function LandingPage() {
           EduVerse
         </Link>
         <ul className="landing-nav-links">
+          <li><a href="#subjects" className="nav-link">Subjects</a></li>
           <li><a href="#features" className="nav-link">Features</a></li>
-          <li><a href="#challenges" className="nav-link">Challenges</a></li>
           <li><a href="/courses" className="nav-link">Courses</a></li>
-          <li><a href="/codelab" className="nav-link">Code Lab</a></li>
+          <li><a href="/lab" className="nav-link">3D Labs</a></li>
         </ul>
         <div className="flex items-center gap-2">
           <Link href="/auth/register" className="nav-cta">
@@ -216,65 +229,95 @@ export default function LandingPage() {
       {mobileOpen && (
         <div className="mobile-nav lg:hidden">
           <ul>
+            <li><a href="#subjects" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Subjects</a></li>
             <li><a href="#features" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Features</a></li>
-            <li><a href="#challenges" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Challenges</a></li>
             <li><Link href="/courses" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Courses</Link></li>
-            <li><Link href="/codelab" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Code Lab</Link></li>
+            <li><Link href="/lab" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>3D Labs</Link></li>
           </ul>
         </div>
       )}
 
       {/* ─── HERO ─── */}
       <section className="landing-hero">
+        <div className="hero-beams" aria-hidden="true">
+          <div className="beam-ray" />
+        </div>
         <div className="hero-copy">
           <p className="hero-kicker intro" style={{ "--d": "0.05s" } as React.CSSProperties}>
-            <span aria-hidden="true">{"//"}</span> a student-built learning platform
+            <span aria-hidden="true">{"//"}</span> a student-built academic companion
           </p>
           <h1 className="hero-title reveal-rise" style={{ "--d": "0.13s" } as React.CSSProperties}>
-            See your code run,<br /><span className="hero-highlight">line by line.</span>
+            Every subject you study,<br /><span className="hero-highlight">finally in one place.</span>
           </h1>
           <p className="hero-desc intro" style={{ "--d": "0.21s" } as React.CSSProperties}>
-            EduVerse runs your code step by step and shows every variable change as it
-            happens. AI hints when you&apos;re stuck. A new challenge every day.
+            Programming, math, physics, and science — with an AI tutor that adapts to you,
+            step-through visualizers, and interactive 3D labs. Built by students, for students.
           </p>
           <div className="hero-btns intro" style={{ "--d": "0.29s" } as React.CSSProperties}>
-            <Link href="/auth/register" className="btn-primary">
+            <Link href="/auth/register" className="glow-pill">
               Start learning free
             </Link>
-            <Link href="/codelab" className="btn-outline">
-              Open the Code Lab
+            <Link href="/courses" className="glass-pill">
+              Explore subjects
             </Link>
           </div>
           <p className="hero-facts intro" style={{ "--d": "0.37s" } as React.CSSProperties}>
-            4 languages&ensp;·&ensp;120 lessons&ensp;·&ensp;$0, no paywalls
+            7 subjects&ensp;·&ensp;AI tutor&ensp;·&ensp;3D labs&ensp;·&ensp;$0, no paywalls
           </p>
         </div>
-        <div className="hero-demo-col intro" style={{ "--d": "0.3s" } as React.CSSProperties}>
-          <HeroDemo />
+        <div className="hero-stage intro" style={{ "--d": "0.34s" } as React.CSSProperties}>
+          <div className="hero-stage-frame">
+            <HeroDemo />
+          </div>
+        </div>
+      </section>
+
+      {/* ─── SUBJECTS ─── */}
+      <section id="subjects" className="landing-section">
+        <div className="sec-header rv">
+          <p className="sec-kicker">Subjects</p>
+          <h2 className="sec-title">One platform, every subject</h2>
+          <p className="sec-sub">From your first line of Python to orbital mechanics and the double helix — programming and the sciences, under one roof.</p>
+        </div>
+        <div className="subjects-grid">
+          {subjects.map((s, i) => (
+            <Link
+              key={s.name}
+              href="/courses"
+              className="subject-chip rv"
+              style={{ "--reveal-delay": `${(i % 4) * 0.06}s` } as React.CSSProperties}
+            >
+              <span className="subject-chip-icon"><s.icon size={18} aria-hidden="true" /></span>
+              <span className="subject-chip-name">{s.name}</span>
+              <span className="subject-chip-group">{s.group}</span>
+            </Link>
+          ))}
         </div>
       </section>
 
       {/* ─── FEATURE COLUMNS ─── */}
       <section id="features" className="landing-section">
         <div className="sec-header rv">
-          <p className="sec-kicker">Features</p>
-          <h2 className="sec-title">Tools that teach, not just test</h2>
-          <p className="sec-sub">Everything is built around one idea: you learn faster when you can see what the machine is doing.</p>
+          <p className="sec-kicker">Everything you need</p>
+          <h2 className="sec-title">A complete academic companion</h2>
+          <p className="sec-sub">Every subject, an AI tutor, interactive labs, and a progress system that turns studying into momentum — one unified experience.</p>
         </div>
 
-        <div className="feature-rule" aria-hidden="true" />
-        <div className="feature-grid">
+        <div className="feature-bento">
           {features.map((f, i) => (
-            <div key={f.title} className="feature-col rv" style={{ "--reveal-delay": `${(i % 3) * 0.08}s` } as React.CSSProperties}>
-              <div className="feature-col-head">
-                <f.icon size={17} aria-hidden="true" />
-                <h3>{f.title}</h3>
-              </div>
+            <Link
+              key={f.title}
+              href={f.href}
+              className="feature-card glass-panel glass-panel-link rv"
+              style={{ "--reveal-delay": `${(i % 3) * 0.08}s` } as React.CSSProperties}
+            >
+              <span className="feature-icon"><f.icon size={20} aria-hidden="true" /></span>
+              <h3>{f.title}</h3>
               <p>{f.desc}</p>
-              <Link href={f.href} className="feature-col-link">
+              <span className="feature-go">
                 Learn more <ChevronRight size={13} aria-hidden="true" />
-              </Link>
-            </div>
+              </span>
+            </Link>
           ))}
         </div>
       </section>
@@ -370,12 +413,13 @@ export default function LandingPage() {
 
       {/* ─── CTA BAND ─── */}
       <section className="landing-band">
-        <div className="rv">
+        <div className="beam-up" aria-hidden="true" />
+        <div className="rv" style={{ position: "relative" }}>
           <h2 className="band-title">Built by students,<br /><span className="band-hl">for students.</span></h2>
           <p className="band-sub">
             No paywalls, no fake numbers. Real challenges that prepare you for real interviews.
           </p>
-          <Link href="/auth/register" className="btn-primary">Create a free account</Link>
+          <Link href="/auth/register" className="glow-pill">Create a free account</Link>
         </div>
       </section>
 
@@ -387,7 +431,7 @@ export default function LandingPage() {
               <Code2 size={18} aria-hidden="true" />
               EduVerse
             </Link>
-            <p className="footer-tagline">No fluff. Just code.</p>
+            <p className="footer-tagline">Every subject. One home.</p>
           </div>
           <nav className="footer-links" aria-label="Footer">
             <a href="#features">Features</a>
