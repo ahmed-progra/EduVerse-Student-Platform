@@ -24,7 +24,14 @@
     "@types/node": "^22.15.0",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
+    "@types/three": "^0.184.1",
     "tailwindcss": "^4.3.0",
     "typescript": "^5.8.3"
-  }
+  },
+  "browserslist": [
+    "chrome >= 90",
+    "edge >= 90",
+    "firefox >= 103",
+    "safari >= 15"
+  ]
 }

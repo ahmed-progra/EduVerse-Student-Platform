@@ -10,8 +10,9 @@ import dynamic from "next/dynamic";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import {
   LayoutDashboard, BookOpen, Swords, Medal, ShoppingBag,
-  User, LogOut, Menu, X, GitBranch, ChevronLeft,
+  User, LogOut, Menu, X, GitBranch, ChevronLeft, ChevronDown,
   Brain, Code2, Lightbulb, GraduationCap, FlaskConical, Sparkles, Sprout, Rocket,
+  Boxes, Search, ChevronsUpDown, Settings, Library, Megaphone,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -37,8 +38,16 @@ const navSections: { title: string; items: NavItem[] }[] = [
       { href: "/apprentice", label: "Apprentice", icon: Sprout },
       { href: "/projects", label: "Projects", icon: Rocket },
       { href: "/courses", label: "Courses", icon: BookOpen },
+      { href: "/lab", label: "3D Lab", icon: Boxes },
       { href: "/codelab", label: "Code Lab", icon: FlaskConical },
       { href: "/skill-tree", label: "Skill Tree", icon: GitBranch },
+    ],
+  },
+  {
+    title: "Academics",
+    items: [
+      { href: "/resources", label: "Resources", icon: Library },
+      { href: "/announcements", label: "Announcements", icon: Megaphone },
     ],
   },
   {
@@ -126,11 +135,14 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
       {/* Mobile top bar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 px-4 py-3 flex items-center justify-between"
-        style={{ background: "oklch(14% 0.022 295 / 0.85)", backdropFilter: "blur(16px)", borderBottom: "1px solid var(--color-eduverse-border)" }}>
-        <Link href="/dashboard" prefetch={true} className="text-xl font-bold" style={{ fontFamily: "var(--font-display)", color: "var(--color-eduverse-text)" }}>EduVerse</Link>
+        style={{ background: "oklch(13% 0.028 262 / 0.92)", backdropFilter: "blur(20px) saturate(160%)", borderBottom: "1px solid var(--color-eduverse-border)" }}>
+        <Link href="/dashboard" prefetch={true} className="text-xl font-bold flex items-center gap-2" style={{ fontFamily: "var(--font-display)", color: "var(--color-eduverse-text)", letterSpacing: "-0.02em" }}>
+          <Code2 size={20} style={{ color: "var(--color-eduverse-accent)" }} aria-hidden="true" />
+          EduVerse
+        </Link>
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="p-2 rounded-lg"
+          className="p-2 rounded-lg hover:bg-eduverse-accent-soft transition-colors"
           style={{ color: "var(--color-eduverse-text-body)" }}
           aria-label="Toggle menu"
           aria-expanded={mobileOpen}
@@ -185,7 +197,7 @@ function AIPanel({ panel, onClose }: { panel: string; onClose: () => void }) {
 function SidebarContent({
   user, pathname, logout, activePanel, onNavClick, mobile, collapsed, onToggle,
 }: {
-  user: { username: string; level: number; xp: number } | null;
+  user: { username: string; level: number; xp: number; email?: string } | null;
   pathname: string;
   logout: () => void;
   activePanel: string | null;
@@ -195,6 +207,9 @@ function SidebarContent({
   onToggle?: () => void;
 }) {
   const showFull = !collapsed || mobile;
+  const [query, setQuery] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [closedSections, setClosedSections] = useState<Record<string, boolean>>({});
 
   const isActive = (item: NavItem) => {
     if (item.href) return pathname === item.href || pathname.startsWith(item.href + "/");
@@ -202,102 +217,140 @@ function SidebarContent({
     return false;
   };
 
+  const q = query.trim().toLowerCase();
+  const sections = navSections
+    .map((s) => ({ ...s, items: q ? s.items.filter((i) => i.label.toLowerCase().includes(q)) : s.items }))
+    .filter((s) => s.items.length > 0);
+
+  const renderItem = (item: NavItem) => {
+    const active = isActive(item);
+    const cls = `side-item ${active ? "active" : ""} ${!showFull ? "collapsed" : ""}`;
+    const inner = (
+      <>
+        <item.icon size={18} aria-hidden="true" />
+        {showFull && <span className="side-item-label">{item.label}</span>}
+      </>
+    );
+    if (item.href) {
+      return (
+        <Link key={item.label} href={item.href} prefetch className={cls} onClick={() => onNavClick(item)} data-label={item.label} aria-label={!showFull ? item.label : undefined} aria-current={active ? "page" : undefined}>
+          {inner}
+        </Link>
+      );
+    }
+    return (
+      <button key={item.label} className={cls} onClick={() => onNavClick(item)} data-label={item.label} aria-label={!showFull ? item.label : undefined} aria-pressed={active}>
+        {inner}
+      </button>
+    );
+  };
+
   return (
-    <div
-      className={`flex flex-col h-full ${mobile ? "relative w-72" : "w-full"}`}
-      style={{ background: "var(--color-eduverse-surface)", borderRight: "1px solid var(--color-eduverse-border)" }}
-    >
-      <div className="px-5 py-5 border-b flex items-center justify-between" style={{ borderColor: "var(--color-eduverse-border)" }}>
-        <Link
-          href="/dashboard"
-          prefetch={true}
-          className={`font-bold ${showFull ? "text-xl" : "text-sm mx-auto"}`}
-          style={{ fontFamily: "var(--font-display)", color: "var(--color-eduverse-text)", letterSpacing: "-0.02em" }}
-        >
-          {showFull ? "EduVerse" : "EV"}
+    <div className={`sb ${mobile ? "sb-mobile" : "sb-full"} ${!showFull ? "sb-collapsed" : ""}`}>
+      {/* Brand header */}
+      <div className="sb-head">
+        <Link href="/dashboard" prefetch className={`sb-brand ${!showFull ? "sb-brand-collapsed" : ""}`}>
+          <span className="sb-brand-mark"><Code2 size={20} aria-hidden="true" /></span>
+          {showFull && (
+            <span className="sb-brand-text">
+              <span className="sb-brand-name">EduVerse</span>
+              <span className="sb-brand-sub">code sorcery</span>
+            </span>
+          )}
         </Link>
         {!mobile && onToggle && (
-          <button
-            onClick={onToggle}
-            className="p-1.5 rounded-lg transition-colors hover:bg-eduverse-accent-soft"
-            style={{ color: "var(--color-eduverse-text-muted)" }}
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            <ChevronLeft size={16} className={`transition-transform duration-300 ${collapsed ? "rotate-180" : ""}`} />
+          <button onClick={onToggle} className="sb-collapse" aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}>
+            {showFull ? <ChevronLeft size={16} /> : <ChevronsUpDown size={15} />}
           </button>
         )}
       </div>
 
-      {user && showFull && (
-        <div className="p-4 border-b" style={{ borderColor: "var(--color-eduverse-border)" }}>
-          <div className="flex items-center gap-3 mb-3">
-            <span className="text-lg font-bold shrink-0 font-mono" style={{ color: "var(--color-eduverse-accent)" }}>
-              {user.username[0].toUpperCase()}
-            </span>
-            <div className="overflow-hidden">
-              <div className="font-semibold text-sm truncate font-mono" style={{ color: "var(--color-eduverse-text)" }}>{user.username}</div>
-              <div className="text-xs font-mono" style={{ color: "var(--color-eduverse-text-muted)" }}>Level {user.level}</div>
+      {/* Search / nav filter */}
+      {showFull && (
+        <div className="sb-search">
+          <Search size={15} aria-hidden="true" />
+          <input
+            className="sb-search-input"
+            placeholder="Search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            aria-label="Filter navigation"
+          />
+        </div>
+      )}
+
+      {/* Nav */}
+      <nav className="sb-nav" aria-label="Main">
+        {sections.map((section) => {
+          const isClosed = !!closedSections[section.title] && showFull && !q;
+          return (
+            <div key={section.title} className="sb-section">
+              {showFull ? (
+                <button
+                  className="sb-section-head"
+                  onClick={() => setClosedSections((c) => ({ ...c, [section.title]: !c[section.title] }))}
+                  aria-expanded={!isClosed}
+                >
+                  <span className="sb-section-label"><span className="sb-section-slash">//</span> {section.title}</span>
+                  <ChevronDown size={13} className={`sb-section-chevron ${isClosed ? "closed" : ""}`} aria-hidden="true" />
+                </button>
+              ) : (
+                <div className="sb-section-rule" aria-hidden="true" />
+              )}
+              {!isClosed && <div className="sb-section-items">{section.items.map(renderItem)}</div>}
             </div>
+          );
+        })}
+        {q && sections.length === 0 && showFull && (
+          <p className="sb-no-results">No matches for &ldquo;{query}&rdquo;</p>
+        )}
+      </nav>
+
+      {showFull && (
+        <div className="sb-hint">Press <kbd>/</kbd> for AI Mentor</div>
+      )}
+
+      {showFull && user && (
+        <div className="sb-xp">
+          <div className="sb-xp-row">
+            <span>Level {user.level}</span>
+            <span className="sb-xp-val">{user.xp} XP</span>
           </div>
           <XpBar xp={user.xp} size="sm" showLabel={false} />
         </div>
       )}
 
-      {user && !showFull && (
-        <div className="p-3 border-b flex justify-center" style={{ borderColor: "var(--color-eduverse-border)" }}>
-          <span className="text-sm font-bold font-mono" style={{ color: "var(--color-eduverse-accent)" }}>
-            {user.username[0].toUpperCase()}
-          </span>
-        </div>
-      )}
-
-      <nav className="flex-1 px-3 py-4 overflow-y-auto" aria-label="Main">
-        {navSections.map((section) => (
-          <div key={section.title} className="mb-4">
-            {showFull && (
-              <div className="flex items-center gap-2 px-3 mb-1.5 text-xs font-mono" style={{ color: "var(--color-eduverse-text-muted)" }}>
-                <span style={{ color: "var(--color-eduverse-accent)" }}>//</span>
-                {section.title}
-              </div>
-            )}
-            <div className="space-y-0.5">
-              {section.items.map((item) => {
-                const active = isActive(item);
-                const cls = `side-item ${active ? "active" : ""} ${!showFull ? "collapsed" : ""}`;
-                if (item.href) {
-                  return (
-                    <Link key={item.label} href={item.href} prefetch={true} className={cls} onClick={() => onNavClick(item)} title={!showFull ? item.label : undefined} aria-current={active ? "page" : undefined}>
-                      <item.icon size={18} aria-hidden="true" />
-                      {showFull && item.label}
-                    </Link>
-                  );
-                }
-                return (
-                  <button key={item.label} className={cls} onClick={() => onNavClick(item)} title={!showFull ? item.label : undefined} aria-pressed={active}>
-                    <item.icon size={18} aria-hidden="true" />
-                    {showFull && item.label}
-                  </button>
-                );
-              })}
-            </div>
+      {/* User card + menu */}
+      <div className="sb-user-wrap">
+        {menuOpen && <div className="sb-menu-backdrop" onClick={() => setMenuOpen(false)} aria-hidden="true" />}
+        {menuOpen && (
+          <div className="sb-user-menu" role="menu">
+            <Link href="/profile" prefetch className="sb-menu-item" role="menuitem" onClick={() => setMenuOpen(false)}>
+              <User size={15} aria-hidden="true" /> View profile
+            </Link>
+            <Link href="/profile" prefetch className="sb-menu-item" role="menuitem" onClick={() => setMenuOpen(false)}>
+              <Settings size={15} aria-hidden="true" /> Account settings
+            </Link>
+            <button className="sb-menu-item danger" role="menuitem" onClick={() => { setMenuOpen(false); logout(); }}>
+              <LogOut size={15} aria-hidden="true" /> Log out
+            </button>
           </div>
-        ))}
-      </nav>
-
-      {showFull && (
-        <div className="px-5 pb-2 text-[10px]" style={{ color: "var(--color-eduverse-text-muted)", opacity: 0.6 }}>
-          Press <kbd>/</kbd> for AI Mentor
-        </div>
-      )}
-
-      <div className="p-3 space-y-0.5" style={{ borderTop: "1px solid var(--color-eduverse-border)" }}>
-        <Link href="/profile" prefetch={true} className={`side-item ${pathname.startsWith("/profile") ? "active" : ""} ${!showFull ? "collapsed" : ""}`} title={!showFull ? "Profile" : undefined}>
-          <User size={18} aria-hidden="true" />
-          {showFull && "Profile"}
-        </Link>
-        <button onClick={logout} className={`side-item danger ${!showFull ? "collapsed" : ""}`} title={!showFull ? "Logout" : undefined}>
-          <LogOut size={18} aria-hidden="true" />
-          {showFull && "Logout"}
+        )}
+        <button
+          className={`sb-user ${!showFull ? "collapsed" : ""}`}
+          onClick={() => setMenuOpen((o) => !o)}
+          aria-haspopup="menu"
+          aria-expanded={menuOpen}
+          title={!showFull ? user?.username : undefined}
+        >
+          <span className="sb-user-avatar">{user?.username?.[0]?.toUpperCase() ?? "U"}</span>
+          {showFull && (
+            <span className="sb-user-info">
+              <span className="sb-user-name">{user?.username ?? "User"}</span>
+              <span className="sb-user-email">{user?.email ?? `Level ${user?.level ?? 1}`}</span>
+            </span>
+          )}
+          {showFull && <ChevronsUpDown size={15} className="sb-user-chevron" aria-hidden="true" />}
         </button>
       </div>
     </div>

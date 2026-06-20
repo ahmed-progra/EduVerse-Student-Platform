@@ -35,7 +35,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${display.variable} ${sans.variable} ${mono.variable}`}>
       <body>
-        <div className="app-ambient" aria-hidden="true" />
+        <div className="app-ambient" aria-hidden="true">
+          <div className="ambient-aurora" />
+          <div className="ambient-twinkle" />
+        </div>
         <Providers>{children}</Providers>
       </body>
     </html>
