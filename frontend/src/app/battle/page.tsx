@@ -6,6 +6,7 @@ import { GradientButton } from "@/components/ui/gradient-button";
 import { AnimatedNumber } from "@/components/ui/animated-number";
 import { api } from "@/services/api-client";
 import { useAuthStore } from "@/stores/auth-store";
+import { fadeUp, staggerContainer, fastEaseTransition } from "@/lib/motion";
 import { useEffect, useState, useRef } from "react";
 import dynamic from "next/dynamic";
 import { Swords, Clock, Play, Trophy, History, ShieldAlert, Scale } from "lucide-react";
@@ -164,9 +165,12 @@ export default function BattlePage() {
     : null;
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto">
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
-        <h1 className="text-3xl font-bold mb-2 font-display flex items-center gap-3">
+    <motion.div className="space-y-6 max-w-6xl mx-auto" initial="hidden" animate="visible" variants={staggerContainer}>
+      <motion.div variants={fadeUp} transition={fastEaseTransition}>
+        <div className="section-label">
+          <span className="section-label-prefix">//</span> Arena
+        </div>
+        <h1 className="text-3xl font-bold mb-2 font-display flex items-center gap-3 tracking-tight">
           <Swords className="w-7 h-7 text-eduverse-accent" aria-hidden="true" />
           Battle Arena
         </h1>
@@ -174,7 +178,7 @@ export default function BattlePage() {
       </motion.div>
 
       {view === "lobby" && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.05 }}>
           <GlassCard>
             <h2 className="flex items-center gap-2 text-sm font-mono text-eduverse-text-muted mb-6">
               <span className="text-eduverse-accent">{"//"}</span> Configure Battle
@@ -245,7 +249,7 @@ export default function BattlePage() {
 
       {/* ── Staging: the summoning ── */}
       {view === "staging" && challenge && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.1 }}>
           <div className="battle-staging">
             <div className="bt-meta font-mono">
               <span className="capitalize">{difficulty}</span> · {formatTime(timeLimit)} · {challenge.type.replace("_", " ")}
@@ -268,7 +272,7 @@ export default function BattlePage() {
       )}
 
       {view === "arena" && challenge && (
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }} className="space-y-4">
+        <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.15 }} className="space-y-4">
           {/* Timer & status */}
           <div className="bt-timer-row">
             <div className="flex items-center gap-4 min-w-0">
@@ -368,6 +372,6 @@ export default function BattlePage() {
           </AnimatePresence>
         </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }

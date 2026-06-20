@@ -1,11 +1,19 @@
 import { Router, Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 import { requireAuth } from "../middleware/auth";
+import { getCached, setCache } from "../lib/cache";
 
 const router = Router();
 
+const COURSES_DATA_KEY = "courses:all";
+
 router.get("/", requireAuth, async (_req: Request, res: Response) => {
   try {
+    const cached = getCached<any[]>(COURSES_DATA_KEY);
+    if (cached) {
+      res.json({ success: true, data: cached });
+      return;
+    }
     const courses = await prisma.course.findMany({
       orderBy: { order: "asc" },
       include: {
@@ -15,6 +23,7 @@ router.get("/", requireAuth, async (_req: Request, res: Response) => {
         },
       },
     });
+    setCache(COURSES_DATA_KEY, courses);
     res.json({ success: true, data: courses });
   } catch (err) {
     res.status(500).json({ success: false, error: "Failed to fetch courses" });

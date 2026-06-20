@@ -1,12 +1,21 @@
 import { Router, Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 import { requireAuth } from "../middleware/auth";
+import { getCached, setCache } from "../lib/cache";
 
 const router = Router();
 
+const SHOP_ITEMS_KEY = "shop:items";
+
 router.get("/items", async (_req: Request, res: Response) => {
   try {
+    const cached = getCached<any[]>(SHOP_ITEMS_KEY);
+    if (cached) {
+      res.json({ success: true, data: cached });
+      return;
+    }
     const items = await prisma.shopItem.findMany({ orderBy: { price: "asc" } });
+    setCache(SHOP_ITEMS_KEY, items);
     res.json({ success: true, data: items });
   } catch (err) {
     res.status(500).json({ success: false, error: "Failed to fetch shop items" });

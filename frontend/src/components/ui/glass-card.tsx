@@ -11,14 +11,12 @@ interface GlassCardProps {
   onClick?: () => void;
 }
 
-/* Flat container per Code Sorcery design system.
-   Name kept to avoid touching every import. */
 export const GlassCard = memo(function GlassCard({ children, className, style, onClick }: GlassCardProps) {
   return (
     <motion.div
       whileTap={onClick ? { scale: 0.985 } : undefined}
       className={classNames(
-        "app-card p-6",
+        "app-card p-5 md:p-6",
         onClick && "cursor-pointer app-card-link",
         className
       )}

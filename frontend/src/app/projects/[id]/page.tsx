@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
+import { fadeUp, staggerContainer, fastEaseTransition } from "@/lib/motion";
 import {
   ChevronLeft, Save, Sparkles, CheckCircle2, Circle, Zap, Award,
   TrendingUp, AlertCircle, Globe, EyeOff, WifiOff, Rocket, RefreshCw,
@@ -16,7 +17,6 @@ import { api } from "@/services/api-client";
 import type { Project, ProjectMilestone } from "@/types/project";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false });
-const ease = [0.22, 1, 0.36, 1] as const;
 const langLabel: Record<string, string> = { python: "Python", javascript: "JavaScript", html: "HTML", css: "CSS", cpp: "C++" };
 
 export default function ProjectWorkspace() {
@@ -98,11 +98,11 @@ export default function ProjectWorkspace() {
 
   if (loading) {
     return (
-      <div className="space-y-4 animate-pulse max-w-6xl mx-auto" aria-hidden="true">
-        <div className="h-8 w-64 rounded bg-eduverse-surface" />
+      <div className="space-y-4 max-w-6xl mx-auto" aria-hidden="true">
+        <div className="sk-card" style={{ height: "40px", width: "250px" }} />
         <div className="grid lg:grid-cols-2 gap-4">
-          <div className="h-96 rounded bg-eduverse-surface" />
-          <div className="h-96 rounded bg-eduverse-surface" />
+          <div className="sk-card" style={{ height: "380px" }} />
+          <div className="sk-card" style={{ height: "380px" }} />
         </div>
       </div>
     );
@@ -110,7 +110,7 @@ export default function ProjectWorkspace() {
   if (offline || !project) {
     return (
       <EmptyState icon={offline ? WifiOff : Rocket} title={offline ? "Can't reach the server" : "Project not found"} message={offline ? "Start the backend and refresh." : "This project doesn't exist."}>
-        <Link href="/projects" className="px-4 py-2 rounded text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]">Back to Studio</Link>
+        <Link href="/projects" className="inline-flex items-center gap-1.5 px-5 py-2 rounded-[var(--radius-button)] text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]">Back to Studio</Link>
       </EmptyState>
     );
   }
@@ -118,14 +118,17 @@ export default function ProjectWorkspace() {
   const done = project.status === "completed";
 
   return (
-    <div className="space-y-5 max-w-6xl mx-auto">
-      <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, ease }}>
+    <motion.div className="space-y-5 max-w-6xl mx-auto" initial="hidden" animate="visible" variants={staggerContainer}>
+      <motion.div variants={fadeUp} transition={fastEaseTransition}>
+        <div className="section-label">
+          <span className="section-label-prefix">//</span> Project
+        </div>
         <Link href="/projects" className="text-sm text-eduverse-text-muted hover:text-eduverse-accent inline-flex items-center gap-1 mb-3 transition-colors">
           <ChevronLeft className="w-4 h-4" aria-hidden="true" /> Project Studio
         </Link>
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
-            <h1 className="text-2xl font-bold font-display">{project.title}</h1>
+            <h1 className="text-2xl font-bold font-display tracking-tight">{project.title}</h1>
             <div className="flex items-center gap-3 mt-1.5 text-sm text-eduverse-text-muted">
               <span className="font-mono text-xs">{langLabel[project.language] || project.language}</span>
               <span className="capitalize">{project.difficulty}</span>
@@ -137,7 +140,7 @@ export default function ProjectWorkspace() {
 
       <div className="grid lg:grid-cols-2 gap-4">
         {/* Brief + milestones */}
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05, duration: 0.45, ease }} className="space-y-4">
+        <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.05 }} className="space-y-4">
           <GlassCard>
             <h2 className="flex items-center gap-2 text-sm font-mono text-eduverse-text-muted mb-2"><span className="text-eduverse-accent">//</span> Brief</h2>
             <p className="text-sm leading-relaxed text-eduverse-text-body">{project.brief}</p>
@@ -166,7 +169,7 @@ export default function ProjectWorkspace() {
         </motion.div>
 
         {/* Editor */}
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.45, ease }}>
+        <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.1 }}>
           <GlassCard className="p-0 overflow-hidden">
             <div className="flex items-center justify-between px-4 py-2.5 border-b border-eduverse-border">
               <span className="text-xs font-mono text-eduverse-text-muted">{`main.${project.language === "cpp" ? "cpp" : project.language === "javascript" ? "js" : project.language === "python" ? "py" : project.language}`}</span>
@@ -211,7 +214,7 @@ export default function ProjectWorkspace() {
 
       {/* Grade */}
       {done && project.score !== null && (
-        <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease }}>
+        <motion.div variants={fadeUp} transition={fastEaseTransition}>
           <GlassCard>
             <div className="flex items-center gap-4 mb-4">
               <div className="flex flex-col items-center justify-center rounded-full w-20 h-20 shrink-0" style={{ border: "2px solid var(--color-eduverse-success)", background: "var(--color-eduverse-accent-soft)" }}>
@@ -259,6 +262,6 @@ export default function ProjectWorkspace() {
           </GlassCard>
         </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }

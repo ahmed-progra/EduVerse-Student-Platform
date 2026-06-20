@@ -1,12 +1,19 @@
 import { Router, Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 import { requireAuth } from "../middleware/auth";
+import { getCached, setCache } from "../lib/cache";
 
 const router = Router();
 
 router.get("/", async (req: Request, res: Response) => {
   try {
     const period = (req.query.period as string) || "all";
+    const cacheKey = `leaderboard:${period}`;
+    const cached = getCached<any>(cacheKey);
+    if (cached) {
+      res.json({ success: true, data: cached });
+      return;
+    }
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 50;
     const skip = (page - 1) * limit;
@@ -41,7 +48,9 @@ router.get("/", async (req: Request, res: Response) => {
       rank: skip + i + 1,
     }));
 
-    res.json({ success: true, data: { entries: data, total, page, limit } });
+    const result = { entries: data, total, page, limit };
+    setCache(cacheKey, result);
+    res.json({ success: true, data: result });
   } catch (err) {
     res.status(500).json({ success: false, error: "Failed to fetch leaderboard" });
   }

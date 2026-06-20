@@ -4,14 +4,13 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { fadeUp, staggerContainer, fastEaseTransition } from "@/lib/motion";
 import { Rocket, Sparkles, Plus, Wand2, CheckCircle2, Clock, Trophy, ArrowRight, WifiOff } from "lucide-react";
 import { GlassCard } from "@/components/ui/glass-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useAuthStore } from "@/stores/auth-store";
 import { api } from "@/services/api-client";
 import type { Project } from "@/types/project";
-
-const ease = [0.22, 1, 0.36, 1] as const;
 const LANGS = ["python", "javascript", "html", "css", "cpp"];
 const langLabel: Record<string, string> = { python: "Python", javascript: "JavaScript", html: "HTML", css: "CSS", cpp: "C++" };
 
@@ -68,9 +67,12 @@ export default function ProjectsPage() {
   const completed = projects.filter((p) => p.status === "completed");
 
   return (
-    <div className="space-y-8">
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease }}>
-        <h1 className="text-3xl font-bold mb-1 font-display flex items-center gap-3">
+    <motion.div className="space-y-8" initial="hidden" animate="visible" variants={staggerContainer}>
+      <motion.div variants={fadeUp} transition={fastEaseTransition}>
+        <div className="section-label">
+          <span className="section-label-prefix">//</span> Projects
+        </div>
+        <h1 className="text-3xl font-bold mb-1 font-display flex items-center gap-3 tracking-tight">
           <div className="w-9 h-9 rounded-[var(--radius-button)] bg-eduverse-accent-soft border border-eduverse-border flex items-center justify-center">
             <Rocket className="w-4 h-4 text-eduverse-accent" aria-hidden="true" />
           </div>
@@ -90,7 +92,7 @@ export default function ProjectsPage() {
       </motion.div>
 
       {/* Start a project */}
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05, duration: 0.5, ease }}>
+      <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.05 }}>
         <GlassCard>
           <div className="section-label">
             <span className="section-label-prefix">//</span> Start a project
@@ -189,9 +191,7 @@ export default function ProjectsPage() {
       {/* My projects */}
       {loading ? (
         <div className="grid sm:grid-cols-2 gap-4" aria-hidden="true">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-36 rounded-[var(--radius-card)] bg-eduverse-surface animate-pulse" />
-          ))}
+          {[1, 2, 3, 4].map((i) => <div key={i} className="sk-card" style={{ height: "140px" }} />)}
         </div>
       ) : offline ? (
         <EmptyState icon={WifiOff} title="Can't reach the server" message="Start the backend, then refresh." />
@@ -211,7 +211,7 @@ export default function ProjectsPage() {
           )}
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }
 

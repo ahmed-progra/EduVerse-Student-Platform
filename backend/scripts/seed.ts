@@ -1,8 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import { COURSES } from "./curriculum";
-import { calculateLevel } from "./src/services/xp-service";
-import { classifyLevel, saveProfile, buildAndSaveRoadmap, type MasteryMap } from "./src/services/learning-service";
+import { COURSES } from "../curriculum";
+import { calculateLevel } from "../src/services/xp-service";
+import { classifyLevel, saveProfile, buildAndSaveRoadmap, type MasteryMap } from "../src/services/learning-service";
 
 const prisma = new PrismaClient();
 

@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { GlassCard } from "@/components/ui/glass-card";
+import { fadeUp, staggerContainer, fastEaseTransition } from "@/lib/motion";
 import dynamic from "next/dynamic";
 import { useState, useCallback, useEffect } from "react";
 import { FlaskConical, RotateCcw, BookOpen, Bug, Keyboard } from "lucide-react";
@@ -70,9 +71,12 @@ export default function CodeLabPage() {
   }, [code]);
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-3xl font-bold mb-2 flex items-center gap-3 font-display">
+    <motion.div className="space-y-6 max-w-6xl mx-auto" initial="hidden" animate="visible" variants={staggerContainer}>
+      <motion.div variants={fadeUp} transition={fastEaseTransition}>
+        <div className="section-label">
+          <span className="section-label-prefix">//</span> Lab
+        </div>
+        <h1 className="text-3xl font-bold mb-2 flex items-center gap-3 font-display tracking-tight">
           <div className="w-10 h-10 rounded-[var(--radius-button)] bg-eduverse-accent-soft border border-eduverse-border flex items-center justify-center">
             <FlaskConical className="w-5 h-5 text-eduverse-accent-light" />
           </div>
@@ -82,12 +86,7 @@ export default function CodeLabPage() {
       </motion.div>
 
       {/* Presets */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.06, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="flex flex-wrap items-center gap-2"
-      >
+      <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.06 }} className="flex flex-wrap items-center gap-2">
         <span className="text-xs text-eduverse-text-muted uppercase tracking-wider flex items-center gap-1.5 font-mono mr-1">
           <BookOpen className="w-3 h-3" /> Presets
         </span>
@@ -125,11 +124,7 @@ export default function CodeLabPage() {
       </motion.div>
 
       {/* Visualizer */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.12, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      >
+      <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.12 }}>
         <GlassCard className="p-4">
           <Visualizer
             key={code}
@@ -140,11 +135,7 @@ export default function CodeLabPage() {
       </motion.div>
 
       {/* Shortcuts */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.18, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      >
+      <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.18 }}>
         <div className="codelab-shortcuts-panel">
           <div className="panel-title">
             <Keyboard className="w-3 h-3" /> Keyboard Shortcuts
@@ -156,6 +147,6 @@ export default function CodeLabPage() {
           </div>
         </div>
       </motion.div>
-    </div>
+    </motion.div>
   );
 }

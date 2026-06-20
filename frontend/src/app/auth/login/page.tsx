@@ -43,7 +43,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="form-error" role="alert">
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="form-error" role="alert">
                 {error}
               </motion.div>
             )}

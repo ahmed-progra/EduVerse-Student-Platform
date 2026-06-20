@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { GlassCard } from "@/components/ui/glass-card";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { api } from "@/services/api-client";
+import { fadeUp, fastEaseTransition } from "@/lib/motion";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight, Zap, Trophy, Star, Sprout } from "lucide-react";
@@ -68,7 +69,7 @@ function PlacementTestContent() {
 
   if (!courseId) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4" style={{ background: "var(--color-eduverse-bg)" }}>
+      <div className="min-h-screen flex items-center justify-center p-4">
         <GlassCard className="p-8 text-center max-w-md">
           <h2 className="text-2xl font-bold mb-4 font-display">No Course Selected</h2>
           <p className="text-eduverse-text-muted mb-6">{error}</p>
@@ -82,15 +83,15 @@ function PlacementTestContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4" style={{ background: "var(--color-eduverse-bg)" }}>
-        <div className="w-8 h-8 border-2 border-eduverse-accent border-t-transparent rounded animate-spin" />
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="sk-card" style={{ width: "400px", height: "300px" }} />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4" style={{ background: "var(--color-eduverse-bg)" }}>
+      <div className="min-h-screen flex items-center justify-center p-4">
         <GlassCard className="p-8 text-center max-w-md">
           <h2 className="text-2xl font-bold mb-4 font-display">Something went wrong</h2>
           <p className="text-eduverse-text-muted mb-6">{error}</p>
@@ -104,8 +105,8 @@ function PlacementTestContent() {
 
   if (result) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4" style={{ background: "var(--color-eduverse-bg)" }}>
-        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <motion.div variants={fadeUp} transition={fastEaseTransition}>
           <GlassCard className="text-center p-12 max-w-md" >
             <div
               className="w-20 h-20 rounded mx-auto mb-6 flex items-center justify-center"
@@ -143,7 +144,7 @@ function PlacementTestContent() {
   if (!q) return null;
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: "var(--color-eduverse-bg)" }}>
+    <div className="min-h-screen flex items-center justify-center p-4">
       <motion.div
         key={currentQ}
         initial={{ opacity: 0, x: 20 }}
@@ -223,8 +224,8 @@ function PlacementTestContent() {
 export default function PlacementTestPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center p-4" style={{ background: "var(--color-eduverse-bg)" }}>
-        <div className="w-8 h-8 border-2 border-eduverse-accent border-t-transparent rounded animate-spin" />
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="sk-card" style={{ width: "400px", height: "200px" }} />
       </div>
     }>
       <PlacementTestContent />

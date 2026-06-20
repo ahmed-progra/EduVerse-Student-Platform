@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { fadeUp, staggerContainer, fastEaseTransition } from "@/lib/motion";
 import { Sparkles, RefreshCw, TrendingUp, Target, Compass, MessageSquare, WifiOff, Rocket, ArrowRight } from "lucide-react";
 import { GlassCard } from "@/components/ui/glass-card";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -17,11 +18,9 @@ import { WeeklyReport } from "@/features/mentor/weekly-report";
 import { InsightsList } from "@/features/mentor/insights-list";
 import { MentorChat } from "@/features/mentor/mentor-chat";
 
-const ease = [0.22, 1, 0.36, 1] as const;
-
 function Section({ title, icon: Icon, children, delay = 0 }: { title: string; icon: typeof Target; children: React.ReactNode; delay?: number }) {
   return (
-    <motion.section initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay, duration: 0.5, ease }}>
+    <motion.section variants={fadeUp} transition={{ ...fastEaseTransition, delay }}>
       <h2 className="flex items-center gap-2 text-sm font-mono text-eduverse-text-muted mb-3">
         <Icon size={14} className="text-eduverse-accent" aria-hidden="true" /> {title}
       </h2>
@@ -31,15 +30,7 @@ function Section({ title, icon: Icon, children, delay = 0 }: { title: string; ic
 }
 
 function SkeletonCard() {
-  return (
-    <GlassCard>
-      <div className="space-y-3 animate-pulse" aria-label="Loading">
-        <div className="h-4 w-1/2 rounded bg-eduverse-raised" />
-        <div className="h-4 w-2/3 rounded bg-eduverse-raised" />
-        <div className="h-4 w-3/4 rounded bg-eduverse-raised" />
-      </div>
-    </GlassCard>
-  );
+  return <GlassCard><div className="sk-card" style={{ height: "80px" }} /></GlassCard>;
 }
 
 export default function MentorPage() {
@@ -118,12 +109,15 @@ export default function MentorPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <motion.div className="space-y-8" initial="hidden" animate="visible" variants={staggerContainer}>
       {/* ── Header ── */}
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease }}>
+      <motion.div variants={fadeUp} transition={fastEaseTransition}>
+        <div className="section-label">
+          <span className="section-label-prefix">//</span> Coach
+        </div>
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
-            <h1 className="text-3xl font-bold mb-1 font-display flex items-center gap-2">
+            <h1 className="text-3xl font-bold mb-1 font-display flex items-center gap-2 tracking-tight">
               <Sparkles className="w-7 h-7 text-eduverse-accent" aria-hidden="true" /> AI Coach
             </h1>
             <p className="text-eduverse-text-muted">Your personal programming mentor — it learns you and adapts.</p>
@@ -136,7 +130,7 @@ export default function MentorPage() {
       </motion.div>
 
       {/* ── Mentor summary + motivation ── */}
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05, duration: 0.5, ease }}>
+      <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.05 }}>
         <GlassCard>
           {profileLoading ? (
             <div className="space-y-2 animate-pulse" aria-label="Loading mentor profile">
@@ -270,6 +264,6 @@ export default function MentorPage() {
           <MentorChat />
         </GlassCard>
       </Section>
-    </div>
+    </motion.div>
   );
 }

@@ -7,6 +7,7 @@ import { GradientButton } from "@/components/ui/gradient-button";
 import { api } from "@/services/api-client";
 import { getStreak } from "@/lib/streak";
 import { useAuthStore } from "@/stores/auth-store";
+import { fadeUp, staggerContainer, fastEaseTransition } from "@/lib/motion";
 import { useEffect, useState, useRef, useMemo } from "react";
 import {
   Zap, BookOpen, Swords, GitBranch, ShoppingBag,
@@ -229,30 +230,26 @@ export default function ProfilePage() {
   if (loading || !profile) {
     return (
       <div className="space-y-6 w-full max-w-5xl mx-auto pb-12">
-        <div className="h-36 rounded-[var(--radius-card)] bg-white/[0.03] animate-pulse" />
+        <div className="sk-card" style={{ height: "140px" }} />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[1,2,3,4].map(i => <div key={i} className="h-24 rounded-[var(--radius-card)] bg-white/[0.03] animate-pulse" />)}
+          {[1,2,3,4].map(i => <div key={i} className="sk-card" style={{ height: "96px" }} />)}
         </div>
-        <div className="h-64 rounded-[var(--radius-card)] bg-white/[0.03] animate-pulse" />
+        <div className="sk-card" style={{ height: "200px" }} />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto pb-12">
+    <motion.div className="space-y-6 max-w-5xl mx-auto pb-12" initial="hidden" animate="visible" variants={staggerContainer}>
 
-      <div className="section-label">
-        <span className="section-label-prefix">//</span> Profile
-      </div>
-
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+      <motion.div variants={fadeUp} transition={fastEaseTransition}>
+        <div className="section-label">
+          <span className="section-label-prefix">//</span> Profile
+        </div>
         <GlassCard>
           <div className="relative flex flex-col sm:flex-row items-start gap-6">
-            {/* Avatar */}
             <div className="relative group cursor-pointer shrink-0" onClick={handleAvatarClick}>
-              <div
-                className="w-24 h-24 rounded-full flex items-center justify-center text-4xl font-bold overflow-hidden transition-all duration-300 bg-eduverse-accent-strong text-eduverse-text"
-              >
+              <div className="w-24 h-24 rounded-full flex items-center justify-center text-4xl font-bold overflow-hidden transition-all duration-300 bg-eduverse-accent-strong text-eduverse-text shadow-md">
                 {avatarPreview || profile.avatar?.startsWith("data:") ? (
                   <img src={avatarPreview || profile.avatar} alt="" className="w-full h-full object-cover" />
                 ) : (
@@ -270,7 +267,6 @@ export default function ProfilePage() {
               )}
             </div>
 
-            {/* Info */}
             <div className="flex-1 min-w-0 w-full">
               {editing ? (
                 <div className="space-y-3">
@@ -298,8 +294,8 @@ export default function ProfilePage() {
               ) : (
                 <>
                   <div className="flex items-center gap-3 flex-wrap">
-                    <h1 className="text-2xl font-bold font-display">{profile.username}</h1>
-                    <button onClick={handleStartEdit} className="text-xs text-eduverse-text-muted hover:text-white px-2.5 py-1.5 rounded-[var(--radius-button)] bg-white/5 border border-white/10 hover:border-white/20 flex items-center gap-1.5 transition-colors">
+                    <h1 className="text-2xl font-bold font-display tracking-tight">{profile.username}</h1>
+                    <button onClick={handleStartEdit} className="text-xs text-eduverse-text-muted hover:text-white px-2.5 py-1.5 rounded-[var(--radius-button)] bg-eduverse-surface border border-eduverse-border hover:border-eduverse-border-mid flex items-center gap-1.5 transition-all">
                       <Edit3 className="w-3 h-3" /> Edit
                     </button>
                     <span className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${tierBadgeColors[profile.placementLevel] || "bg-eduverse-accent/20 text-eduverse-accent-light"}`}>
@@ -321,14 +317,13 @@ export default function ProfilePage() {
         </GlassCard>
       </motion.div>
 
-      <div className="section-label">
-        <span className="section-label-prefix">//</span> XP & Level
-      </div>
-
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
+      <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.05 }}>
+        <div className="section-label">
+          <span className="section-label-prefix">//</span> XP & Level
+        </div>
         <GlassCard>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-bold font-display flex items-center gap-2">
+            <h2 className="text-lg font-bold font-display flex items-center gap-2 tracking-tight">
               <Zap className="w-5 h-5 text-eduverse-warning" />
               Level {profile.level} &mdash; {profile.xp.toLocaleString()} XP
             </h2>
@@ -340,45 +335,44 @@ export default function ProfilePage() {
         </GlassCard>
       </motion.div>
 
-      <div className="section-label">
-        <span className="section-label-prefix">//</span> Stats
-      </div>
+      <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.08 }}>
+        <div className="section-label">
+          <span className="section-label-prefix">//</span> Stats
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {[
+            { label: "Level", value: profile.level, icon: TrendingUp, color: "text-eduverse-accent-light" },
+            { label: "Total XP", value: profile.xp.toLocaleString(), icon: Zap, color: "text-eduverse-warning" },
+            { label: "Lessons Done", value: profile.progress?.filter(p => p.completed).length || 0, icon: BookOpen, color: "text-eduverse-success" },
+            { label: "Skills Unlocked", value: profile.skills?.filter(s => s.unlocked).length || 0, icon: GitBranch, color: "text-eduverse-accent-light" },
+            { label: "Items Owned", value: profile.inventory?.length || 0, icon: ShoppingBag, color: "text-eduverse-warning" },
+            { label: "Rank", value: `#${profile.rank || "—"}`, icon: Medal, color: "text-eduverse-gold" },
+            { label: "Streak", value: `${streak}d`, icon: Flame, color: streak >= 7 ? "text-eduverse-accent-light" : "text-eduverse-text-muted" },
+            { label: "Battles Won", value: battlesPlayed ? `${battlesWon}/${battlesPlayed}` : "0", icon: Swords, color: "text-eduverse-danger" },
+          ].map((stat, i) => (
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.12 + i * 0.04 }}
+            >
+              <GlassCard className="text-center p-5">
+                <div className="w-8 h-8 flex items-center justify-center mx-auto mb-3">
+                  <stat.icon className={`w-4 h-4 ${stat.color}`} aria-hidden="true" />
+                </div>
+                <div className="text-xl font-bold font-mono text-eduverse-text tracking-tight">{stat.value}</div>
+                <div className="text-[11px] text-eduverse-text-muted mt-1 leading-tight">{stat.label}</div>
+              </GlassCard>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {[
-          { label: "Level", value: profile.level, icon: TrendingUp, color: "text-eduverse-accent-light" },
-          { label: "Total XP", value: profile.xp.toLocaleString(), icon: Zap, color: "text-eduverse-warning" },
-          { label: "Lessons Done", value: profile.progress?.filter(p => p.completed).length || 0, icon: BookOpen, color: "text-eduverse-success" },
-          { label: "Skills Unlocked", value: profile.skills?.filter(s => s.unlocked).length || 0, icon: GitBranch, color: "text-eduverse-accent-light" },
-          { label: "Items Owned", value: profile.inventory?.length || 0, icon: ShoppingBag, color: "text-eduverse-warning" },
-          { label: "Rank", value: `#${profile.rank || "—"}`, icon: Medal, color: "text-eduverse-gold" },
-          { label: "Streak", value: `${streak}d`, icon: Flame, color: streak >= 7 ? "text-orange-400" : "text-eduverse-text-muted" },
-          { label: "Battles Won", value: battlesPlayed ? `${battlesWon}/${battlesPlayed}` : "0", icon: Swords, color: "text-eduverse-danger" },
-        ].map((stat, i) => (
-          <motion.div
-            key={stat.label}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.07 + i * 0.03 }}
-          >
-            <GlassCard className="text-center p-5">
-              <div className="w-8 h-8 flex items-center justify-center mx-auto mb-3">
-                <stat.icon className={`w-4 h-4 ${stat.color}`} aria-hidden="true" />
-              </div>
-              <div className="text-xl font-bold font-mono text-eduverse-text">{stat.value}</div>
-              <div className="text-[11px] text-eduverse-text-muted mt-1 leading-tight">{stat.label}</div>
-            </GlassCard>
-          </motion.div>
-        ))}
-      </div>
-
-      <div className="section-label">
-        <span className="section-label-prefix">//</span> Activity
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Activity Heatmap */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
+      <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.12 }}>
+        <div className="section-label">
+          <span className="section-label-prefix">//</span> Activity
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <GlassCard>
             <h2 className="text-sm font-bold font-display mb-4 flex items-center gap-2">
               <BarChart3 className="w-4 h-4 text-eduverse-accent-light" />
@@ -406,10 +400,7 @@ export default function ProfilePage() {
               <span>More</span>
             </div>
           </GlassCard>
-        </motion.div>
 
-        {/* XP Breakdown */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <GlassCard>
             <h2 className="text-sm font-bold font-display mb-4 flex items-center gap-2">
               <PieChartIcon />
@@ -448,15 +439,15 @@ export default function ProfilePage() {
               </div>
             )}
           </GlassCard>
-        </motion.div>
-      </div>
+        </div>
+      </motion.div>
 
       <div className="section-label">
         <span className="section-label-prefix">//</span> Courses
       </div>
 
       {Object.keys(courseProgress).length > 0 && (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
+        <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.25 }}>
           <GlassCard>
             <h2 className="text-sm font-bold font-display mb-4 flex items-center gap-2">
               <Layers className="w-4 h-4 text-eduverse-success" />
@@ -492,7 +483,7 @@ export default function ProfilePage() {
         <span className="section-label-prefix">//</span> Achievements
       </div>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+      <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.3 }}>
         <GlassCard>
           <h2 className="text-sm font-bold font-display mb-5 flex items-center gap-2">
             <Award className="w-4 h-4 text-eduverse-gold" />
@@ -526,7 +517,7 @@ export default function ProfilePage() {
       </div>
 
       {profile.inventory?.filter(i => i.equipped).length > 0 && (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
+        <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.35 }}>
           <GlassCard>
             <h2 className="text-sm font-bold font-display mb-4 flex items-center gap-2">
               <ShoppingBag className="w-4 h-4 text-eduverse-accent-light" />
@@ -557,7 +548,7 @@ export default function ProfilePage() {
         <span className="section-label-prefix">//</span> Recent XP
       </div>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+      <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.4 }}>
         <GlassCard>
           <h2 className="text-sm font-bold font-display mb-4 flex items-center gap-2">
             <Zap className="w-4 h-4 text-eduverse-warning" />
@@ -587,7 +578,7 @@ export default function ProfilePage() {
           </div>
         </GlassCard>
       </motion.div>
-    </div>
+    </motion.div>
   );
 }
 

@@ -5,6 +5,7 @@ import { signToken } from "../lib/jwt";
 import { validEmail, validUsername, validPassword } from "../lib/validate";
 import { authLimiter } from "../middleware/rate-limit";
 import { requireAuth } from "../middleware/auth";
+import { getCached, setCache, clearCache } from "../lib/cache";
 
 const router = Router();
 
@@ -157,18 +158,21 @@ router.post("/google", authLimiter, async (req: Request, res: Response) => {
 
 router.get("/me", requireAuth, async (req: Request, res: Response) => {
   try {
+    const cacheKey = `user:${req.userId}`;
+    const cached = getCached<any>(cacheKey);
+    if (cached) {
+      res.json({ success: true, data: cached });
+      return;
+    }
     const user = await prisma.user.findUnique({
       where: { id: req.userId },
-      include: {
-        inventory: { include: { item: true } },
-        skills: true,
-      },
     });
     if (!user) {
       res.status(404).json({ success: false, error: "User not found" });
       return;
     }
     const { passwordHash, ...safe } = user;
+    setCache(cacheKey, safe);
     res.json({ success: true, data: safe });
   } catch (err) {
     res.status(500).json({ success: false, error: "Failed to get user" });

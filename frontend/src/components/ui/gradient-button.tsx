@@ -14,7 +14,6 @@ interface GradientButtonProps {
   type?: "button" | "submit";
 }
 
-/* Solid-accent button per the design system. Name kept for API stability. */
 export const GradientButton = memo(function GradientButton({
   children,
   onClick,
@@ -26,7 +25,7 @@ export const GradientButton = memo(function GradientButton({
 }: GradientButtonProps) {
   const variants = {
     primary: "bg-eduverse-accent-strong text-white hover:brightness-110",
-    secondary: "bg-eduverse-accent-soft text-eduverse-accent border border-eduverse-border-mid hover:brightness-110",
+    secondary: "bg-eduverse-accent-soft text-eduverse-accent border border-eduverse-border-mid hover:bg-eduverse-accent-soft/70",
     danger: "bg-eduverse-danger text-white hover:brightness-110",
     ghost: "bg-transparent text-eduverse-text-body border border-eduverse-border-mid hover:bg-eduverse-surface hover:text-eduverse-text",
   };
@@ -34,14 +33,16 @@ export const GradientButton = memo(function GradientButton({
   return (
     <motion.button
       whileTap={disabled || loading ? undefined : { scale: 0.97 }}
+      whileHover={disabled || loading ? undefined : { y: -1 }}
       type={type}
       disabled={disabled || loading}
       onClick={onClick}
-      style={{ borderRadius: "var(--radius-button)" }}
       className={classNames(
         "inline-flex items-center justify-center gap-2 px-6 py-3 font-semibold text-sm",
-        "transition-[color,background-color,opacity,filter] duration-200",
+        "transition-all duration-200",
         "disabled:opacity-50 disabled:cursor-not-allowed",
+        "shadow-sm hover:shadow-md",
+        "rounded-[var(--radius-button)]",
         variants[variant],
         className
       )}

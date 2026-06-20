@@ -6,6 +6,7 @@ import { GradientButton } from "@/components/ui/gradient-button";
 import { SkillMap, type MapNode } from "@/features/skill-map/skill-map";
 import { api } from "@/services/api-client";
 import { useAuthStore } from "@/stores/auth-store";
+import { fadeUp, staggerContainer, fastEaseTransition } from "@/lib/motion";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -124,9 +125,10 @@ export default function SkillTreePage() {
 
   if (loading) {
     return (
-      <div className="space-y-6 animate-pulse" aria-hidden="true">
-        <div className="h-8 w-56 rounded bg-eduverse-surface" />
-        <div className="h-[60vh] rounded bg-eduverse-surface" />
+      <div className="space-y-6" aria-label="Loading skill tree">
+        <div className="sk-card" style={{ height: "40px", width: "200px" }} />
+        <div className="sk-card" style={{ height: "20px", width: "350px" }} />
+        <div className="sk-card" style={{ height: "60vh" }} />
       </div>
     );
   }
@@ -134,12 +136,15 @@ export default function SkillTreePage() {
   const selectedStatus = selectedNode ? statusFor(selectedNode) : null;
 
   return (
-    <div className="flex gap-6">
+    <motion.div className="flex gap-6" initial="hidden" animate="visible" variants={staggerContainer}>
       <div className={`flex-1 min-w-0 space-y-6 transition-[max-width] duration-300 ${selectedNode ? "lg:max-w-[calc(100%-380px)]" : ""}`}>
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
+        <motion.div variants={fadeUp} transition={fastEaseTransition}>
           <div className="flex items-end justify-between gap-4 flex-wrap">
             <div>
-              <h1 className="text-3xl font-bold mb-2 font-display flex items-center gap-3">
+              <div className="section-label">
+                <span className="section-label-prefix">//</span> Skills
+              </div>
+              <h1 className="text-3xl font-bold mb-2 font-display flex items-center gap-3 tracking-tight">
                 <GitBranch className="w-7 h-7 text-eduverse-accent" aria-hidden="true" />
                 Skill Map
               </h1>
@@ -154,7 +159,7 @@ export default function SkillTreePage() {
           </div>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
+        <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.08 }}>
           <SkillMap
             nodes={nodes}
             getStatus={statusFor}
@@ -355,6 +360,6 @@ export default function SkillTreePage() {
           />
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }

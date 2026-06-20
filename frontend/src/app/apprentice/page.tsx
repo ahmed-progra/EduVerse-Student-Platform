@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { fadeUp, staggerContainer, fastEaseTransition } from "@/lib/motion";
 import { Sprout, Send, GraduationCap, Sparkles, ChevronRight, Lightbulb, WifiOff, Compass } from "lucide-react";
 import { GlassCard } from "@/components/ui/glass-card";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -177,10 +178,13 @@ export default function ApprenticePage() {
   const courseTopics = catalog.find((c) => c.courseSlug === selCourse)?.topics || [];
 
   return (
-    <div className="space-y-6 max-w-3xl mx-auto">
+    <motion.div className="space-y-6 max-w-3xl mx-auto" initial="hidden" animate="visible" variants={staggerContainer}>
       {/* ── Header ── */}
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease }}>
-        <h1 className="text-3xl font-bold mb-1 font-display flex items-center gap-2">
+      <motion.div variants={fadeUp} transition={fastEaseTransition}>
+        <div className="section-label">
+          <span className="section-label-prefix">//</span> Teach
+        </div>
+        <h1 className="text-3xl font-bold mb-1 font-display flex items-center gap-2 tracking-tight">
           <Sprout className="w-7 h-7 text-eduverse-accent" aria-hidden="true" /> Apprentice
         </h1>
         <p className="text-eduverse-text-muted">
@@ -189,31 +193,33 @@ export default function ApprenticePage() {
       </motion.div>
 
       {error && phase === "pick" && catalogOffline && (
-        <EmptyState icon={WifiOff} title="Can't reach the server" message="The EduVerse API isn't responding, so the topic catalog can't be loaded." />
+        <motion.div variants={fadeUp} transition={fastEaseTransition}>
+          <EmptyState icon={WifiOff} title="Can't reach the server" message="The EduVerse API isn't responding, so the topic catalog can't be loaded." />
+        </motion.div>
       )}
 
       {error && phase === "pick" && !catalogOffline && (
-        <p className="text-sm text-eduverse-text-muted" role="alert">Error: {error}</p>
+        <motion.div variants={fadeUp} transition={fastEaseTransition}>
+          <p className="text-sm text-eduverse-text-muted" role="alert">Error: {error}</p>
+        </motion.div>
       )}
 
       {/* ── PICK ── */}
       {phase === "pick" && catalogLoading && (
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05, duration: 0.5, ease }} className="space-y-5">
-          <div className="space-y-2" aria-label="Loading topics">
-            <div className="h-20 rounded animate-pulse bg-eduverse-surface" />
-            <div className="h-48 rounded animate-pulse bg-eduverse-surface" />
-          </div>
+        <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.05 }} className="space-y-5">
+          <div className="sk-card" style={{ height: "80px" }} />
+          <div className="sk-card" style={{ height: "200px" }} />
         </motion.div>
       )}
 
       {phase === "pick" && !catalogLoading && !catalogOffline && catalog.length === 0 && (
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05, duration: 0.5, ease }}>
+        <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.05 }}>
           <EmptyState icon={Compass} title="No topics available" message="The topic catalog returned empty. Try again later or check with your instructor." />
         </motion.div>
       )}
 
       {phase === "pick" && !catalogLoading && !catalogOffline && catalog.length > 0 && (
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05, duration: 0.5, ease }} className="space-y-5">
+        <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.05 }} className="space-y-5">
           {suggested.length > 0 && (
             <GlassCard>
               <h2 className="flex items-center gap-2 text-sm font-mono text-eduverse-text-muted mb-3">
@@ -299,7 +305,7 @@ export default function ApprenticePage() {
 
       {/* ── TEACH ── */}
       {phase === "teach" && target && (
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease }}>
+        <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.1 }}>
           <GlassCard>
             <div className="flex items-center justify-between gap-3 mb-1">
               <div className="text-sm font-mono text-eduverse-text-muted">
@@ -385,10 +391,12 @@ export default function ApprenticePage() {
 
       {/* ── GRADED ── */}
       {phase === "graded" && grade && target && (
-        <GlassCard>
-          <TeachGradeCard grade={grade} topic={target.topic} onTeachAgain={reset} />
-        </GlassCard>
+        <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.15 }}>
+          <GlassCard>
+            <TeachGradeCard grade={grade} topic={target.topic} onTeachAgain={reset} />
+          </GlassCard>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }

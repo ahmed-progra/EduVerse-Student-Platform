@@ -41,8 +41,8 @@ export function SkeletonActivity() {
 
 export function SkeletonWidget() {
   return (
-    <div className="app-card p-6 flex flex-col justify-between" style={{ height: "120px" }}>
-      <div className="w-5 h-5 rounded" style={{ background: "var(--color-eduverse-surface)", animation: "sk-shimmer 1.8s infinite linear" }} />
+    <div className="app-card p-6 flex flex-col justify-between min-h-[120px]">
+      <div className="w-6 h-6 rounded-lg" style={{ background: "var(--color-eduverse-surface)", animation: "sk-shimmer 1.8s infinite linear" }} />
       <div>
         <div className="sk-line mb-2" style={{ width: "40%", height: "16px" }} />
         <div className="sk-line" style={{ width: "60%", height: "8px" }} />
@@ -54,19 +54,16 @@ export function SkeletonWidget() {
 export function SkeletonPodium() {
   return (
     <div className="flex items-end justify-center gap-6 my-8">
-      {/* 2nd place */}
       <div className="flex flex-col items-center gap-2">
         <div className="w-10 h-10 rounded-full" style={{ background: "var(--color-eduverse-surface)", animation: "sk-shimmer 1.8s infinite linear" }} />
         <div className="sk-line" style={{ width: "45px", height: "8px" }} />
         <div className="w-20 h-24 rounded-t-xl" style={{ background: "var(--color-eduverse-surface)", animation: "sk-shimmer 1.8s infinite linear" }} />
       </div>
-      {/* 1st place */}
       <div className="flex flex-col items-center gap-2">
         <div className="w-12 h-12 rounded-full" style={{ background: "var(--color-eduverse-surface)", animation: "sk-shimmer 1.8s infinite linear" }} />
         <div className="sk-line" style={{ width: "55px", height: "10px" }} />
         <div className="w-20 h-32 rounded-t-xl" style={{ background: "var(--color-eduverse-surface)", animation: "sk-shimmer 1.8s infinite linear" }} />
       </div>
-      {/* 3rd place */}
       <div className="flex flex-col items-center gap-2">
         <div className="w-10 h-10 rounded-full" style={{ background: "var(--color-eduverse-surface)", animation: "sk-shimmer 1.8s infinite linear" }} />
         <div className="sk-line" style={{ width: "40px", height: "8px" }} />

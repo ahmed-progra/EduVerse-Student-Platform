@@ -6,6 +6,7 @@ import { GradientButton } from "@/components/ui/gradient-button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { api } from "@/services/api-client";
 import { useAuthStore } from "@/stores/auth-store";
+import { fadeUp, staggerContainer, fastEaseTransition } from "@/lib/motion";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
@@ -74,10 +75,10 @@ export default function LessonPage() {
 
   if (loading) {
     return (
-      <div className="space-y-6 max-w-6xl mx-auto animate-pulse" aria-hidden="true">
-        <div className="h-8 w-72 rounded bg-eduverse-surface" />
-        <div className="h-64 rounded bg-eduverse-surface" />
-        <div className="h-[420px] rounded bg-eduverse-surface" />
+      <div className="space-y-6 max-w-6xl mx-auto" aria-hidden="true">
+        <div className="sk-card" style={{ height: "80px" }} />
+        <div className="sk-card" style={{ height: "200px" }} />
+        <div className="sk-card" style={{ height: "420px" }} />
       </div>
     );
   }
@@ -85,9 +86,7 @@ export default function LessonPage() {
   if (offline) {
     return (
       <EmptyState icon={WifiOff} title="Can't reach the server" message="The EduVerse API isn't responding. Start the backend, then refresh.">
-        <Link href="/courses" className="px-4 py-2 rounded-lg text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]">
-          Back to Courses
-        </Link>
+        <Link href="/courses" className="inline-flex items-center gap-1.5 px-5 py-2 rounded-[var(--radius-button)] text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]">Back to Courses</Link>
       </EmptyState>
     );
   }
@@ -95,15 +94,13 @@ export default function LessonPage() {
   if (!lesson) {
     return (
       <EmptyState icon={BookOpen} title="Lesson not found" message="This lesson doesn't exist or has been removed.">
-        <Link href="/courses" className="px-4 py-2 rounded-lg text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]">
-          Back to Courses
-        </Link>
+        <Link href="/courses" className="inline-flex items-center gap-1.5 px-5 py-2 rounded-[var(--radius-button)] text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]">Back to Courses</Link>
       </EmptyState>
     );
   }
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto">
+    <motion.div className="space-y-6 max-w-6xl mx-auto" initial="hidden" animate="visible" variants={staggerContainer}>
       {/* XP gain toast */}
       <AnimatePresence>
         {showXpGain && (
@@ -125,52 +122,55 @@ export default function LessonPage() {
       </AnimatePresence>
 
       {/* Header */}
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
+      <motion.div variants={fadeUp} transition={fastEaseTransition}>
+        <div className="section-label">
+          <span className="section-label-prefix">//</span> Lesson
+        </div>
         <Link href={`/courses/${lesson.courseId}`} className="text-sm text-eduverse-text-muted hover:text-eduverse-accent inline-flex items-center gap-1 mb-4 transition-colors">
           <ChevronLeft className="w-4 h-4" aria-hidden="true" /> Back to Course
         </Link>
-        <h1 className="text-2xl font-bold">{lesson.title}</h1>
+        <h1 className="text-2xl font-bold font-display tracking-tight">{lesson.title}</h1>
         <div className="flex items-center gap-4 mt-2 text-sm text-eduverse-text-muted">
-          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.8rem" }}>{lesson.language.toUpperCase()}</span>
+          <span className="font-mono text-xs">{lesson.language.toUpperCase()}</span>
           <span>+{lesson.xpReward} XP</span>
           {completed && <span className="text-eduverse-success flex items-center gap-1"><CheckCircle className="w-4 h-4" aria-hidden="true" />Completed</span>}
         </div>
       </motion.div>
 
       {/* Content */}
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.07, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
-        <GlassCard >
+      <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.07 }}>
+        <GlassCard>
           <div className="lesson-content" dangerouslySetInnerHTML={{ __html: lesson.content }} />
         </GlassCard>
       </motion.div>
 
       {/* Visualizer */}
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.14, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
-        <GlassCard  className="p-4">
+      <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.14 }}>
+        <GlassCard className="p-4">
           <ErrorBoundary>
             <Visualizer initialCode={initialCode} language={lesson.language} />
           </ErrorBoundary>
         </GlassCard>
       </motion.div>
 
-      {/* Quiz checkpoint — feeds the adaptive skill profile */}
+      {/* Quiz checkpoint */}
       {lesson.quiz && lesson.quiz.length > 0 && (
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
+        <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.18 }}>
           <ErrorBoundary>
             <QuizCheckpoint lessonId={lesson.id} quiz={lesson.quiz} />
           </ErrorBoundary>
         </motion.div>
       )}
 
-      {/* Context-aware AI mentor: explain differently, simplify, examples, practice, code review */}
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.22, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
+      {/* Context-aware AI mentor */}
+      <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.22 }}>
         <ErrorBoundary>
           <LessonMentor title={lesson.title} content={lesson.content} language={lesson.language} />
         </ErrorBoundary>
       </motion.div>
 
-      {/* AI study tools: summary + practice quiz */}
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.26, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
+      {/* AI study tools */}
+      <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.26 }}>
         <ErrorBoundary>
           <LessonAITools title={lesson.title} content={lesson.content} language={lesson.language} />
         </ErrorBoundary>
@@ -178,12 +178,12 @@ export default function LessonPage() {
 
       {/* Complete button */}
       {!completed && (
-        <div className="flex justify-center">
+        <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.3 }} className="flex justify-center">
           <GradientButton onClick={handleComplete}>
             <CheckCircle className="w-4 h-4" aria-hidden="true" /> Mark Complete (+{lesson.xpReward} XP)
           </GradientButton>
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }

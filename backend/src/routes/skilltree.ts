@@ -2,11 +2,18 @@ import { Router, Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 import { requireAuth } from "../middleware/auth";
 import { addXp } from "../services/xp-service";
+import { getCached, setCache, clearCache } from "../lib/cache";
 
 const router = Router();
 
 router.get("/", requireAuth, async (_req: Request, res: Response) => {
   try {
+    const cacheKey = `skilltree:${_req.userId}`;
+    const cached = getCached<any[]>(cacheKey);
+    if (cached) {
+      res.json({ success: true, data: cached });
+      return;
+    }
     const nodes = await prisma.skillTreeNode.findMany();
     const userSkills = await prisma.userSkill.findMany({
       where: { userId: _req.userId },
@@ -31,6 +38,7 @@ router.get("/", requireAuth, async (_req: Request, res: Response) => {
       unlocked: unlockedMap.get(n.id) || false,
     }));
 
+    setCache(cacheKey, data);
     res.json({ success: true, data });
   } catch (err) {
     res.status(500).json({ success: false, error: "Failed to fetch skill tree" });
@@ -96,6 +104,8 @@ router.post("/unlock/:nodeId", requireAuth, async (req: Request, res: Response) 
       create: { userId: user.id, skillId: node.id, unlocked: true },
       update: { unlocked: true },
     });
+
+    clearCache(`skilltree:${req.userId}`);
 
     res.json({
       success: true,
