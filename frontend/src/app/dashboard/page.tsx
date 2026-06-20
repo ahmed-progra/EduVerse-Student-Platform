@@ -7,14 +7,16 @@ import { AnimatedNumber } from "@/components/ui/animated-number";
 import { EmptyState } from "@/components/ui/empty-state";
 import { SkeletonActivity, SkeletonCardGrid } from "@/components/ui/skeleton";
 import { AICoachCard } from "@/features/dashboard/ai-coach-card";
+import { AnnouncementsCard } from "@/features/announcements/announcements-card";
 import { useAuthStore } from "@/stores/auth-store";
 import { api } from "@/services/api-client";
 import { updateStreak } from "@/lib/streak";
+import { fadeUp, staggerContainer, fastEaseTransition, cardHover } from "@/lib/motion";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   BookOpen, Swords, GitBranch, ShoppingBag,
-  Zap, Code2, Flame, Trophy, Star, Clock, Target, Flag, WifiOff, Sparkles,
+  Zap, Code2, Flame, Trophy, Star, Clock, Target, Flag, WifiOff, Sparkles, ArrowRight,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -94,13 +96,13 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="space-y-8">
+    <motion.div className="space-y-8" initial="hidden" animate="visible" variants={staggerContainer}>
 
       {/* ── Welcome Header ── */}
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
+      <motion.div variants={fadeUp} transition={fastEaseTransition}>
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
-            <h1 className="text-3xl font-bold mb-1 font-display">
+            <h1 className="text-3xl font-bold mb-1 font-display tracking-tight">
               Welcome back, <span className="text-eduverse-accent">{user?.username}</span>
             </h1>
             <p className="text-eduverse-text-muted">Continue your quest to become a code master.</p>
@@ -116,7 +118,7 @@ export default function DashboardPage() {
 
       {/* ── XP Bar ── */}
       {user && (
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
+        <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.05 }}>
           <GlassCard>
             <XpBar xp={user.xp} size="lg" />
           </GlassCard>
@@ -124,21 +126,16 @@ export default function DashboardPage() {
       )}
 
       {/* ── Quick Actions ── */}
-      <div>
+      <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.1 }}>
         <div className="section-label">
           <span className="section-label-prefix">//</span> Quick Actions
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          {quickActions.map((action, i) => (
-            <motion.div
-              key={action.label}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 + 0.07 * i, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            >
+        <motion.div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4" variants={staggerContainer}>
+          {quickActions.map((action) => (
+            <motion.div key={action.label} variants={fadeUp} transition={fastEaseTransition}>
               <Link href={action.href} className="block">
                 <motion.div
-                  whileTap={{ scale: 0.97 }}
+                  {...cardHover}
                   className="app-card quick-action-card app-card-link"
                 >
                   <div className="quick-action-icon">
@@ -149,100 +146,114 @@ export default function DashboardPage() {
               </Link>
             </motion.div>
           ))}
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
+
+      {/* ── Announcements ── */}
+      <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.12 }}>
+        <AnnouncementsCard />
+      </motion.div>
 
       {/* ── Stats Grid ── */}
       {!loaded ? (
         <SkeletonCardGrid count={4} />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          {statCards.map((stat, i) => (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 + 0.07 * i, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <div className="app-card p-6">
-                <div className="stat-card-icon">
-                  <stat.icon className="w-4 h-4 text-eduverse-accent" aria-hidden="true" />
+        <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.15 }}>
+          <div className="section-label">
+            <span className="section-label-prefix">//</span> Your Stats
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            {statCards.map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 + 0.07 * i, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <div className="app-card p-6 dashboard-stat-card">
+                  <div className="stat-card-icon">
+                    <stat.icon className="w-5 h-5 text-eduverse-accent" aria-hidden="true" />
+                  </div>
+                  <div className="stat-number">
+                    {loaded && !offline ? <AnimatedNumber value={stat.value} delay={i * 90} /> : "—"}
+                  </div>
+                  <div className="text-xs text-eduverse-text-muted mt-2 font-mono">{stat.label}</div>
                 </div>
-                <div className="stat-number">
-                  {loaded && !offline ? <AnimatedNumber value={stat.value} delay={i * 90} /> : "—"}
-                </div>
-                <div className="text-xs text-eduverse-text-muted mt-2">{stat.label}</div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
       )}
 
       {/* ── AI Coach ── */}
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
+      <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.2 }}>
         <AICoachCard />
       </motion.div>
 
       {/* ── Recent Activity ── */}
-      <GlassCard>
-        <div className="section-label">
-          <span className="section-label-prefix">//</span> Recent Activity
-        </div>
-        {!loaded ? (
-          <div className="space-y-1" aria-hidden="true">
-            {[1, 2, 3, 4].map((i) => (
-              <SkeletonActivity key={i} />
-            ))}
+      <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.25 }}>
+        <GlassCard>
+          <div className="flex items-center justify-between mb-4">
+            <div className="section-label" style={{ marginBottom: 0 }}>
+              <span className="section-label-prefix">//</span> Recent Activity
+            </div>
           </div>
-        ) : offline ? (
-          <EmptyState
-            icon={WifiOff}
-            title="Can't reach the server"
-            message="The EduVerse API isn't responding. Start the backend, then refresh this page."
-          />
-        ) : recentActivity.length === 0 ? (
-          <EmptyState
-            icon={Sparkles}
-            title="No activity yet"
-            message="Complete a lesson or win a battle to start your journey. Every action earns XP."
-          >
-            <Link href="/courses" className="px-4 py-3 rounded-[var(--radius-button)] text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]">
-              Start a course
-            </Link>
-          </EmptyState>
-        ) : (
-          <div className="space-y-1">
-            {recentActivity.slice(0, 10).map((log, i) => {
-              const Icon = sourceIcons[log.source] || Zap;
-              return (
-                <motion.div
-                  key={log.id}
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.04, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                  className="flex items-center justify-between py-3 px-3 rounded-[var(--radius-button)] border border-transparent hover:border-eduverse-border hover:bg-eduverse-accent-soft/40 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-7 h-7 flex items-center justify-center shrink-0">
-                      <Icon className="w-3.5 h-3.5 text-eduverse-text-muted" aria-hidden="true" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-eduverse-text capitalize">{log.source}</div>
-                      <div className="text-xs text-eduverse-text-muted flex items-center gap-1 mt-0.5">
-                        <Clock className="w-2.5 h-2.5" aria-hidden="true" />
-                        {new Date(log.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+          {!loaded ? (
+            <div className="space-y-1" aria-hidden="true">
+              {[1, 2, 3, 4].map((i) => (
+                <SkeletonActivity key={i} />
+              ))}
+            </div>
+          ) : offline ? (
+            <EmptyState
+              icon={WifiOff}
+              title="Can't reach the server"
+              message="The EduVerse API isn't responding. Start the backend, then refresh this page."
+            />
+          ) : recentActivity.length === 0 ? (
+            <EmptyState
+              icon={Sparkles}
+              title="No activity yet"
+              message="Complete a lesson or win a battle to start your journey. Every action earns XP."
+            >
+              <Link href="/courses" className="inline-flex items-center gap-2 px-5 py-3 rounded-[var(--radius-button)] text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-all">
+                Start a course <ArrowRight className="w-4 h-4" />
+              </Link>
+            </EmptyState>
+          ) : (
+            <div className="space-y-0.5">
+              {recentActivity.slice(0, 10).map((log, i) => {
+                const Icon = sourceIcons[log.source] || Zap;
+                return (
+                  <motion.div
+                    key={log.id}
+                    initial={{ opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.04, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                    className="flex items-center justify-between py-3 px-3 rounded-[var(--radius-button)] border border-transparent hover:border-eduverse-border hover:bg-eduverse-accent-soft/40 transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: "var(--color-eduverse-accent-soft)" }}>
+                        <Icon className="w-3.5 h-3.5 text-eduverse-text-muted" aria-hidden="true" />
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium text-eduverse-text capitalize">{log.source}</div>
+                        <div className="text-xs text-eduverse-text-muted flex items-center gap-1 mt-0.5">
+                          <Clock className="w-2.5 h-2.5" aria-hidden="true" />
+                          {new Date(log.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <span className="text-sm font-bold font-mono text-eduverse-success">
-                    +{log.amount} XP
-                  </span>
-                </motion.div>
-              );
-            })}
-          </div>
-        )}
-      </GlassCard>
-    </div>
+                    <span className="text-sm font-bold font-mono text-eduverse-success px-2 py-0.5 rounded" style={{ background: "oklch(76% 0.14 165 / 0.1)" }}>
+                      +{log.amount} XP
+                    </span>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
+        </GlassCard>
+      </motion.div>
+    </motion.div>
   );
 }
