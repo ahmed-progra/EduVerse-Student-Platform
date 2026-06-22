@@ -176,6 +176,7 @@ function PlacementTestContent() {
                 key={i}
                 whileHover={{ x: 4 }}
                 onClick={() => handleAnswer(i)}
+                aria-pressed={answers[q.id] === i}
                 className={`w-full text-left p-4 rounded border transition-all ${
                   answers[q.id] === i
                     ? "border-eduverse-accent bg-eduverse-accent/20"

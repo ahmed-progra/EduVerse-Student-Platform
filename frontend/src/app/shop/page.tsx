@@ -43,6 +43,7 @@ export default function ShopPage() {
   const [offline, setOffline] = useState(false);
   const [buyingId, setBuyingId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>("all");
+  const [purchased, setPurchased] = useState<{ name: string; price: number } | null>(null);
 
   const loadData = async () => {
     try {
@@ -70,11 +71,16 @@ export default function ShopPage() {
 
   const handleBuy = async (itemId: string) => {
     setBuyingId(itemId);
+    const item = items.find((it) => it.id === itemId);
     try {
       const res = await api.buyItem(itemId);
       api.clearCache();
       await loadData();
       updateCoins(res.data.coins);
+      if (item) {
+        setPurchased({ name: item.name, price: item.price });
+        setTimeout(() => setPurchased(null), 2600);
+      }
     } catch {}
     setBuyingId(null);
   };
@@ -99,6 +105,24 @@ export default function ShopPage() {
 
   return (
     <motion.div className="space-y-8" initial="hidden" animate="visible" variants={staggerContainer}>
+      <AnimatePresence>
+        {purchased && (
+          <motion.div
+            initial={{ opacity: 0, y: -14, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, transition: { duration: 0.18, ease: "easeOut" } }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="xp-toast"
+            role="status"
+          >
+            <Coins className="w-6 h-6 text-eduverse-warning" aria-hidden="true" />
+            <div>
+              <div className="font-bold text-eduverse-text">Purchased {purchased.name}</div>
+              <div className="text-xs text-eduverse-text-muted">−{purchased.price.toLocaleString()} coins</div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <motion.div variants={fadeUp} transition={fastEaseTransition}>
         <h1 className="text-3xl font-bold mb-2 flex items-center gap-3 font-display tracking-tight">
           <Gift className="w-6 h-6 text-eduverse-accent-light" />

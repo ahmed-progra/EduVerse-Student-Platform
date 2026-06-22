@@ -167,6 +167,21 @@ export function RoadmapView({
           </div>
           <span className="text-xs text-eduverse-text-muted whitespace-nowrap">{doneCount}/{required.length} completed</span>
         </div>
+
+        {pct === 100 && required.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="mt-4 flex items-center gap-3 rounded-[var(--radius-card)] border border-[var(--color-eduverse-border-mid)] bg-eduverse-accent-soft px-4 py-3"
+          >
+            <Trophy className="w-5 h-5 text-eduverse-accent shrink-0" aria-hidden="true" />
+            <div>
+              <p className="text-sm font-semibold text-eduverse-text">Path complete!</p>
+              <p className="text-xs text-eduverse-text-muted">You finished every required lesson on this roadmap. Update your path to unlock the next level.</p>
+            </div>
+          </motion.div>
+        )}
       </GlassCard>
 
       {/* ── Mastery + strengths/weaknesses ── */}

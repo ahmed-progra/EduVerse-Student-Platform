@@ -10,13 +10,13 @@ import { AICoachCard } from "@/features/dashboard/ai-coach-card";
 import { AnnouncementsCard } from "@/features/announcements/announcements-card";
 import { useAuthStore } from "@/stores/auth-store";
 import { api } from "@/services/api-client";
-import { updateStreak } from "@/lib/streak";
+import { streakFromActivity } from "@/lib/streak";
 import { fadeUp, staggerContainer, fastEaseTransition, cardHover } from "@/lib/motion";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   BookOpen, Swords, GitBranch, ShoppingBag,
-  Zap, Code2, Flame, Trophy, Star, Clock, Target, Flag, WifiOff, Sparkles, ArrowRight,
+  Zap, Code2, Flame, Trophy, Star, Clock, Target, Flag, WifiOff, Sparkles, ArrowRight, Rocket,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -53,18 +53,20 @@ export default function DashboardPage() {
   const [loaded, setLoaded] = useState(false);
   const [offline, setOffline] = useState(false);
   const [streak, setStreak] = useState(0);
+  const [rank, setRank] = useState(0);
 
   useEffect(() => {
-    setStreak(updateStreak());
     async function load() {
       try {
-        const [profileRes, logsRes, battlesRes] = await Promise.all([
+        const [profileRes, logsRes, battlesRes, rankRes] = await Promise.all([
           api.getProfile(),
           api.getXpLogs(),
           api.getBattleHistory().catch(() => ({ data: [] as BattleEntry[] })),
+          api.getRank().catch(() => ({ data: { rank: 0 } })),
         ]);
         const profile = profileRes.data as ProfileData;
         const battles = (battlesRes.data as BattleEntry[]) || [];
+        setRank((rankRes.data as { rank?: number })?.rank || 0);
         const userId = useAuthStore.getState().user?.id;
         setStats({
           lessonsDone: profile.progress?.filter((p) => p.completed).length || 0,
@@ -72,7 +74,9 @@ export default function DashboardPage() {
           skillsUnlocked: profile.skills?.filter((s) => s.unlocked).length || 0,
           totalXp: profile.xp,
         });
-        setRecentActivity(logsRes.data || []);
+        const logs: XpLogEntry[] = logsRes.data || [];
+        setRecentActivity(logs);
+        setStreak(streakFromActivity(logs.map((l) => l.createdAt)));
       } catch {
         setOffline(true);
       }
@@ -83,6 +87,7 @@ export default function DashboardPage() {
 
   const quickActions = [
     { label: "Continue Learning", icon: BookOpen, href: "/courses", color: "text-eduverse-accent" },
+    { label: "Build a Project", icon: Rocket, href: "/projects", color: "text-eduverse-accent" },
     { label: "Enter Battle", icon: Swords, href: "/battle", color: "text-eduverse-danger" },
     { label: "Skill Tree", icon: GitBranch, href: "/skill-tree", color: "text-eduverse-success" },
     { label: "Visit Shop", icon: ShoppingBag, href: "/shop", color: "text-eduverse-warning" },
@@ -107,12 +112,20 @@ export default function DashboardPage() {
             </h1>
             <p className="text-eduverse-text-muted">Continue your quest to become a code master.</p>
           </div>
-          {streak > 0 && (
-            <div className="streak-badge">
-              <Flame className="w-4 h-4" aria-hidden="true" />
-              <span>{streak} day streak{streak >= 7 ? " · On fire!" : ""}</span>
-            </div>
-          )}
+          <div className="flex items-center gap-2 flex-wrap">
+            {rank > 0 && (
+              <Link href="/leaderboard" className="streak-badge hover:brightness-110 transition-[filter]" style={{ textDecoration: "none" }}>
+                <Trophy className="w-4 h-4" aria-hidden="true" />
+                <span>Rank #{rank}</span>
+              </Link>
+            )}
+            {streak > 0 && (
+              <div className="streak-badge">
+                <Flame className="w-4 h-4" aria-hidden="true" />
+                <span>{streak} day streak{streak >= 7 ? " · On fire!" : ""}</span>
+              </div>
+            )}
+          </div>
         </div>
       </motion.div>
 
@@ -130,7 +143,7 @@ export default function DashboardPage() {
         <div className="section-label">
           <span className="section-label-prefix">//</span> Quick Actions
         </div>
-        <motion.div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4" variants={staggerContainer}>
+        <motion.div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4" variants={staggerContainer}>
           {quickActions.map((action) => (
             <motion.div key={action.label} variants={fadeUp} transition={fastEaseTransition}>
               <Link href={action.href} className="block">

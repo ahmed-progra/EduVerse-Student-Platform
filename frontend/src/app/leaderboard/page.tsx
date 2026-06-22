@@ -63,9 +63,9 @@ export default function LeaderboardPage() {
   };
 
   const getRankLabel = (rank: number) => {
-    if (rank === 1) return "👑";
-    if (rank === 2) return "🥈";
-    if (rank === 3) return "🥉";
+    if (rank === 1) return <Crown className="w-4 h-4 inline" aria-label="Rank 1" />;
+    if (rank === 2) return <Medal className="w-4 h-4 inline" aria-label="Rank 2" />;
+    if (rank === 3) return <Medal className="w-4 h-4 inline" aria-label="Rank 3" />;
     return `#${rank}`;
   };
 
@@ -155,7 +155,7 @@ export default function LeaderboardPage() {
                     <div className="podium-name">{e.username}</div>
                     <div className="podium-xp">{e.xp.toLocaleString()} XP</div>
                     <div className={`podium-pedestal ${rankClass}`}>
-                      {e.rank === 1 ? "👑" : e.rank === 2 ? "②" : "③"}
+                      {e.rank === 1 ? <Crown className="w-5 h-5" aria-hidden="true" /> : <Medal className="w-5 h-5" aria-hidden="true" />}
                     </div>
                   </motion.div>
                 );

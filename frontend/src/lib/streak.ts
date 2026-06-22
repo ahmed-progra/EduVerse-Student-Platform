@@ -14,6 +14,35 @@ export function getStreak(): number {
   }
 }
 
+/**
+ * Real learning streak: consecutive days (ending today, or yesterday as grace)
+ * on which the user actually earned XP. Derived from XP-log timestamps so it
+ * reflects genuine activity instead of app-opens. Pass ISO strings / Dates.
+ */
+export function streakFromActivity(timestamps: (string | number | Date)[]): number {
+  if (!timestamps || timestamps.length === 0) return 0;
+  const days = new Set<string>();
+  for (const t of timestamps) {
+    const d = new Date(t);
+    if (!Number.isNaN(d.getTime())) days.add(d.toDateString());
+  }
+  if (days.size === 0) return 0;
+
+  const DAY = 86400000;
+  let cursor = new Date();
+  // Grace: a streak that ran through yesterday still counts today.
+  if (!days.has(cursor.toDateString())) {
+    cursor = new Date(cursor.getTime() - DAY);
+    if (!days.has(cursor.toDateString())) return 0;
+  }
+  let count = 0;
+  while (days.has(cursor.toDateString())) {
+    count++;
+    cursor = new Date(cursor.getTime() - DAY);
+  }
+  return count;
+}
+
 export function updateStreak(): number {
   if (typeof window === "undefined") return 0;
   try {

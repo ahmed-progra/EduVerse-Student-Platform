@@ -378,12 +378,13 @@ export default function ProfilePage() {
               <BarChart3 className="w-4 h-4 text-eduverse-accent-light" />
               Activity (Last 12 Weeks)
             </h2>
-            <div className="flex gap-1 flex-wrap">
+            <div className="flex gap-1 flex-wrap" role="img" aria-label="Daily XP activity heatmap for the last 12 weeks">
               {days12Weeks.map((day, i) => {
                 const amount = activityData[day.date] || 0;
                 return (
                   <div
                     key={i}
+                    aria-hidden="true"
                     className={`w-3 h-3 rounded-sm ${activityColor(amount)} transition-colors`}
                     title={`${day.date}: ${amount} XP`}
                   />
@@ -442,12 +443,11 @@ export default function ProfilePage() {
         </div>
       </motion.div>
 
-      <div className="section-label">
-        <span className="section-label-prefix">//</span> Courses
-      </div>
-
       {Object.keys(courseProgress).length > 0 && (
         <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.25 }}>
+          <div className="section-label">
+            <span className="section-label-prefix">//</span> Courses
+          </div>
           <GlassCard>
             <h2 className="text-sm font-bold font-display mb-4 flex items-center gap-2">
               <Layers className="w-4 h-4 text-eduverse-success" />
@@ -512,12 +512,11 @@ export default function ProfilePage() {
         </GlassCard>
       </motion.div>
 
-      <div className="section-label">
-        <span className="section-label-prefix">//</span> Equipped
-      </div>
-
       {profile.inventory?.filter(i => i.equipped).length > 0 && (
         <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.35 }}>
+          <div className="section-label">
+            <span className="section-label-prefix">//</span> Equipped
+          </div>
           <GlassCard>
             <h2 className="text-sm font-bold font-display mb-4 flex items-center gap-2">
               <ShoppingBag className="w-4 h-4 text-eduverse-accent-light" />

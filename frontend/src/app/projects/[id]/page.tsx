@@ -262,6 +262,27 @@ export default function ProjectWorkspace() {
           </GlassCard>
         </motion.div>
       )}
+
+      {done && (
+        <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.05 }}>
+          <GlassCard className="text-center py-6">
+            <p className="text-sm font-semibold text-eduverse-text mb-1">What&apos;s next?</p>
+            <p className="text-xs text-eduverse-text-muted mb-4 max-w-md mx-auto">
+              {project.skills.length > 0
+                ? `You just practiced ${project.skills.slice(0, 3).join(", ")}. See where it fits on your skill tree, or ship another project.`
+                : "Keep building — track your progress on the skill tree, or start another project."}
+            </p>
+            <div className="flex items-center justify-center gap-3 flex-wrap">
+              <Link href="/skill-tree" className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-[var(--radius-button)] text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]">
+                Explore the Skill Tree
+              </Link>
+              <Link href="/projects" className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-[var(--radius-button)] text-sm font-medium border border-[var(--color-eduverse-border-mid)] text-eduverse-text hover:border-eduverse-accent transition-colors">
+                Start another project
+              </Link>
+            </div>
+          </GlassCard>
+        </motion.div>
+      )}
     </motion.div>
   );
 }
