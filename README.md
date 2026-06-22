@@ -2,7 +2,7 @@
 
 **See your code run, line by line.** EduVerse is an AI‑powered, gamified learning platform that transforms programming education into an RPG adventure. Every learner gets a personal AI mentor, a skill tree to conquer, coding battles to fight, and an AI apprentice to teach — turning mastery into an actual, shareable portfolio.
 
-Languages: **Python, HTML, CSS, C++** — 4 courses, ~120 lessons, one journey.
+Languages: **Python, HTML, CSS, C++** (programming) + **Mathematics, Physics, Science** (academic) — 7 courses, 172 lessons, one journey.
 
 ---
 
@@ -20,6 +20,7 @@ Built by students, for students. The UI is a warm, dark "Code Sorcery" theme wit
 - **AI Mentor** (`/mentor`) — Persistent, cross‑course coach that tracks your mastery profile, identifies weak topics, assigns smart daily/weekly missions, and produces weekly learning reports. Profile‑aware chat grounded in your real activity.
 - **Skill Tree** — Branching ability map across Python mastery, frontend mastery, algorithms, and debugging. Unlock nodes with XP and level requirements.
 - **Battle Arena** (`/battle`) — Timed coding duels against other players. Multiple difficulty levels and challenge types (debug, write function, predict output).
+- **3D Interactive Lab** (`/lab`) — Explore Mathematics, Physics, and Science concepts through interactive 3D scenes with real‑time parameter manipulation (Three.js + React Three Fiber).
 - **Code Lab** (`/codelab`) — In‑browser code editor with Monaco, live preview, and the step visualizer.
 - **Project Studio + Portfolio** (`/projects`, `/u/:username`) — AI suggests projects appropriate to your level. Build them in‑app, get them AI‑graded against a rubric. Publish to a shareable public portfolio.
 - **Placement Test** — Adaptive assessment that builds a per‑topic mastery profile and generates a personalized roadmap, skipping content you already know.
@@ -33,7 +34,7 @@ Built by students, for students. The UI is a warm, dark "Code Sorcery" theme wit
 | Category     | Technology                                                                 |
 | ------------ | -------------------------------------------------------------------------- |
 | Frontend     | Next.js 16 (App Router), React 19, Framer Motion, Tailwind CSS v4, Zustand |
-| Backend      | Express 5, Prisma ORM, PostgreSQL (Supabase)                              |
+| Backend      | Express 5, Prisma ORM, PostgreSQL (Supabase), SQLite (local mirror)       |
 | AI           | Google AI Studio — Gemini (powering mentor, apprentice, projects, missions) |
 | Code Editor  | Monaco Editor (via `@monaco-editor/react`)                                 |
 | Code Exec.   | Skulpt (Python, in‑browser) · Judge0 (C++) · sandboxed iframe (HTML/CSS)   |
@@ -176,7 +177,10 @@ eduverse/
 │   │   │                      # apprentice, project, XP, battle
 │   │   └── index.ts           # Entry point
 │   ├── prisma/                # Prisma schema + migrations
-│   ├── curriculum/            # Authored lesson content
+│   ├── curriculum/            # Authored lesson content (172 lessons, 7 courses)
+│   │   ├── math.ts            #   Mathematics (16 lessons)
+│   │   ├── physics.ts         #   Physics (16 lessons)
+│   │   └── science.ts         #   Science (16 lessons)
 │   └── scripts/               # E2E test suites
 ├── shared/                    # Shared TypeScript types
 │   └── types.ts
