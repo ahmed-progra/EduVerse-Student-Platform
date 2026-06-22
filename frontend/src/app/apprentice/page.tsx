@@ -317,7 +317,7 @@ export default function ApprenticePage() {
               <PipAvatar understanding={understanding} thinking={thinking} />
             </div>
 
-            <div className="space-y-3 max-h-[24rem] overflow-y-auto pr-1 mb-4">
+            <div className="space-y-3 max-h-[24rem] overflow-y-auto pr-1 mb-4" role="log" aria-live="polite" aria-label="Teaching conversation with Pip">
               <AnimatePresence initial={false}>
                 {messages.map((m, i) => (
                   <motion.div
