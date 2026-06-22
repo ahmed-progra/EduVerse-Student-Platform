@@ -16,6 +16,8 @@ export function EmptyState({
   return (
     <div className="empty-state">
       <div className="empty-state-icon-container">
+        <span className="empty-state-halo" aria-hidden="true" />
+        <span className="empty-state-orbit" aria-hidden="true" />
         <Icon size={24} aria-hidden="true" />
       </div>
       <h3>{title}</h3>

@@ -1,21 +1,16 @@
+// Mirrors the real lesson layout (single column: header → content → visualizer)
+// so there's no content shift when the page resolves.
 export default function LessonLoading() {
   return (
-    <div className="space-y-6 max-w-6xl mx-auto animate-pulse">
-      <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-eduverse-surface" />
-        <div className="h-8 w-48 rounded-lg bg-eduverse-surface" />
+    <div className="space-y-6 max-w-6xl mx-auto" role="status" aria-busy="true" aria-label="Loading lesson">
+      <div className="space-y-3">
+        <div className="sk-line" style={{ width: "110px", height: "12px" }} />
+        <div className="sk-line" style={{ width: "min(360px, 70%)", height: "28px" }} />
       </div>
-      <div className="h-4 w-96 rounded-lg bg-eduverse-surface" />
-      <div className="grid lg:grid-cols-[1fr_400px] gap-6">
-        <div className="space-y-4">
-          <div className="h-[460px] rounded-2xl bg-eduverse-surface" />
-          <div className="h-24 rounded-2xl bg-eduverse-surface" />
-        </div>
-        <div className="space-y-4">
-          <div className="h-48 rounded-2xl bg-eduverse-surface" />
-          <div className="h-64 rounded-2xl bg-eduverse-surface" />
-        </div>
-      </div>
+      <div className="sk-card" style={{ height: "80px" }} />
+      <div className="sk-card" style={{ height: "200px" }} />
+      <div className="sk-card" style={{ height: "420px" }} />
+      <span className="sr-only">Loading lesson…</span>
     </div>
   );
 }

@@ -10,12 +10,13 @@ import { fadeUp, staggerContainer, fastEaseTransition } from "@/lib/motion";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { CheckCircle, ChevronLeft, Zap, BookOpen, WifiOff } from "lucide-react";
+import { CheckCircle, ChevronLeft, Zap, Sparkles, BookOpen, WifiOff, ArrowRight } from "lucide-react";
 import dynamic from "next/dynamic";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { LessonAITools } from "@/features/lessons/lesson-ai-tools";
 import { LessonMentor } from "@/features/lessons/lesson-mentor";
 import { QuizCheckpoint } from "@/features/lessons/quiz-checkpoint";
+import { Confetti } from "@/components/ui/confetti";
 
 const Visualizer = dynamic(() => import("@/features/visualizer/visualizer").then(m => ({ default: m.Visualizer })), { ssr: false });
 
@@ -44,6 +45,9 @@ export default function LessonPage() {
   const [loading, setLoading] = useState(true);
   const [offline, setOffline] = useState(false);
   const [initialCode, setInitialCode] = useState("");
+  const [celebrate, setCelebrate] = useState(false);
+  const [leveledUp, setLeveledUp] = useState(false);
+  const [newLevel, setNewLevel] = useState<number | null>(null);
 
   useEffect(() => {
     api.getLesson(id as string).then((res) => {
@@ -62,13 +66,18 @@ export default function LessonPage() {
       const res = await api.completeLesson(id as string);
       api.clearCache();
       if (res.data.xpGained > 0) {
+        const didLevelUp = !!res.data.leveledUp;
         setXpGained(res.data.xpGained);
+        setLeveledUp(didLevelUp);
+        setNewLevel(res.data.level ?? null);
         setShowXpGain(true);
         setCompleted(true);
+        setCelebrate(true);
         if (user) {
           updateXp(res.data.xp, res.data.level);
         }
-        setTimeout(() => setShowXpGain(false), 3200);
+        setTimeout(() => setCelebrate(false), didLevelUp ? 2600 : 1600);
+        setTimeout(() => setShowXpGain(false), didLevelUp ? 4200 : 3200);
       }
     } catch {}
   };
@@ -101,6 +110,8 @@ export default function LessonPage() {
 
   return (
     <motion.div className="space-y-6 max-w-6xl mx-auto" initial="hidden" animate="visible" variants={staggerContainer}>
+      <Confetti active={celebrate} count={leveledUp ? 64 : 28} />
+
       {/* XP gain toast */}
       <AnimatePresence>
         {showXpGain && (
@@ -112,10 +123,23 @@ export default function LessonPage() {
             className="xp-toast"
             role="status"
           >
-            <Zap className="w-6 h-6 text-eduverse-warning" aria-hidden="true" />
+            {leveledUp ? (
+              <Sparkles className="w-6 h-6 text-eduverse-accent" aria-hidden="true" />
+            ) : (
+              <Zap className="w-6 h-6 text-eduverse-warning" aria-hidden="true" />
+            )}
             <div>
-              <div className="font-bold text-eduverse-warning">+{xpGained} XP</div>
-              <div className="text-xs text-eduverse-text-muted">Lesson completed!</div>
+              {leveledUp ? (
+                <>
+                  <div className="font-bold text-eduverse-accent">Level {newLevel} reached!</div>
+                  <div className="text-xs text-eduverse-text-muted">+{xpGained} XP · lesson complete</div>
+                </>
+              ) : (
+                <>
+                  <div className="font-bold text-eduverse-warning">+{xpGained} XP</div>
+                  <div className="text-xs text-eduverse-text-muted">Lesson completed!</div>
+                </>
+              )}
             </div>
           </motion.div>
         )}
@@ -176,12 +200,32 @@ export default function LessonPage() {
         </ErrorBoundary>
       </motion.div>
 
-      {/* Complete button */}
-      {!completed && (
+      {/* Complete button / next-best-action */}
+      {!completed ? (
         <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.3 }} className="flex justify-center">
           <GradientButton onClick={handleComplete}>
             <CheckCircle className="w-4 h-4" aria-hidden="true" /> Mark Complete (+{lesson.xpReward} XP)
           </GradientButton>
+        </motion.div>
+      ) : (
+        <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.3 }}>
+          <GlassCard className="text-center py-8">
+            <div className="flex items-center justify-center gap-2 text-eduverse-success mb-2">
+              <CheckCircle className="w-5 h-5" aria-hidden="true" />
+              <span className="font-semibold">Lesson complete</span>
+            </div>
+            <p className="text-sm text-eduverse-text-muted mb-5 max-w-md mx-auto">
+              Nice work — keep the momentum going. Your path picks the best next lesson for you.
+            </p>
+            <div className="flex items-center justify-center gap-3 flex-wrap">
+              <Link href={`/courses/${lesson.courseId}`} className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-[var(--radius-button)] text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]">
+                Continue your path <ArrowRight className="w-4 h-4" aria-hidden="true" />
+              </Link>
+              <Link href="/mentor" className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-[var(--radius-button)] text-sm font-medium border border-[var(--color-eduverse-border-mid)] text-eduverse-text hover:border-eduverse-accent transition-colors">
+                Ask the AI Coach
+              </Link>
+            </div>
+          </GlassCard>
         </motion.div>
       )}
     </motion.div>

@@ -2,7 +2,7 @@
 
 import { useAuthStore } from "@/stores/auth-store";
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { XpBar } from "@/components/ui/xp-bar";
@@ -15,6 +15,7 @@ import {
   Boxes, Search, ChevronsUpDown, Settings, Library, Megaphone,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { CommandPalette, type CommandItem } from "./command-palette";
 
 const AIMentorPanel = dynamic(() => import("./ai-mentor-panel").then(m => m.AIMentorPanel), { ssr: false });
 const CodeReviewPanel = dynamic(() => import("./ai-review-panel").then(m => m.CodeReviewPanel), { ssr: false });
@@ -78,6 +79,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [activePanel, setActivePanel] = useState<string | null>(null);
+  const [cmdOpen, setCmdOpen] = useState(false);
 
   // Public pages render without the app shell or auth gate (shareable portfolio included).
   const isPublicPage = pathname.startsWith("/auth") || pathname === "/" || pathname.startsWith("/u/");
@@ -95,6 +97,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && (e.key === "k" || e.key === "K")) {
+        e.preventDefault();
+        setCmdOpen((o) => !o);
+        return;
+      }
       if (e.key === "Escape" && mobileOpen) setMobileOpen(false);
       if (e.key === "/" && !["INPUT", "TEXTAREA"].includes((e.target as HTMLElement).tagName)) {
         e.preventDefault();
@@ -106,6 +113,40 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
   }, [mobileOpen]);
+
+  // Mobile drawer: lock body scroll, move focus into the drawer, and restore it
+  // to the opener on close. Background is made inert below, so focus stays trapped.
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const opener = document.activeElement as HTMLElement | null;
+    document.getElementById("mobile-drawer")?.focus();
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      opener?.focus?.();
+    };
+  }, [mobileOpen]);
+
+  // Global command palette (⌘K / Ctrl K): jump to any page, AI tool, or action.
+  const cmdItems = useMemo<CommandItem[]>(() => {
+    const items: CommandItem[] = [];
+    for (const section of navSections) {
+      for (const item of section.items) {
+        if (item.href) {
+          const href = item.href;
+          items.push({ id: `nav:${href}`, label: item.label, group: "Navigate", icon: item.icon, run: () => router.push(href) });
+        } else if (item.panel) {
+          const panel = item.panel;
+          items.push({ id: `panel:${panel}`, label: item.label, group: "AI Tools", icon: item.icon, hint: "panel", run: () => { setActivePanel(panel); setMobileOpen(false); } });
+        }
+      }
+    }
+    items.push({ id: "acct:profile", label: "View profile", group: "Account", icon: User, run: () => router.push("/profile") });
+    items.push({ id: "acct:settings", label: "Account settings", group: "Account", icon: Settings, run: () => router.push("/profile") });
+    items.push({ id: "acct:logout", label: "Log out", group: "Account", icon: LogOut, run: () => logout() });
+    return items;
+  }, [router, logout]);
 
   if (isPublicPage) return <>{children}</>;
 
@@ -155,37 +196,44 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
+            id="mobile-drawer"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Navigation menu"
+            tabIndex={-1}
             initial={{ x: -320 }}
             animate={{ x: 0 }}
             exit={{ x: -320 }}
             transition={{ type: "tween", duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 z-40 lg:hidden"
+            className="fixed inset-0 z-40 lg:hidden outline-none"
           >
             <div className="absolute inset-0 bg-black/60" onClick={() => setMobileOpen(false)} />
-            <SidebarContent user={user} pathname={pathname} logout={logout} activePanel={activePanel} onNavClick={handleNavClick} mobile />
+            <SidebarContent user={user} pathname={pathname} logout={logout} activePanel={activePanel} onNavClick={handleNavClick} onOpenCmd={() => setCmdOpen(true)} mobile />
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Desktop sidebar */}
       <div className={`hidden lg:fixed lg:inset-y-0 lg:flex lg:flex-col transition-[width] duration-300 z-30 ${collapsed ? "lg:w-20" : "lg:w-64"}`}>
-        <SidebarContent user={user} pathname={pathname} logout={logout} activePanel={activePanel} onNavClick={handleNavClick} collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} />
+        <SidebarContent user={user} pathname={pathname} logout={logout} activePanel={activePanel} onNavClick={handleNavClick} onOpenCmd={() => setCmdOpen(true)} collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} />
       </div>
 
-      <main className={`transition-[padding] duration-300 pt-16 lg:pt-0 min-h-screen ${collapsed ? "lg:pl-20" : "lg:pl-64"}`}>
+      <main inert={mobileOpen} className={`transition-[padding] duration-300 pt-16 lg:pt-0 min-h-screen ${collapsed ? "lg:pl-20" : "lg:pl-64"}`}>
         <div className="p-4 md:p-8 max-w-7xl mx-auto page-enter">
           {activePanel ? (
-            <ErrorBoundary><AIPanel panel={activePanel} onClose={() => setActivePanel(null)} /></ErrorBoundary>
+            <ErrorBoundary><AIPanel panel={activePanel} onClose={() => setActivePanel(null)} context={`The user is level ${user?.level ?? 1} on EduVerse and is currently viewing the route "${pathname}". Tailor your guidance to what they are likely doing there (a lesson, course, 3D lab, code lab, skill tree, battle, project, or the dashboard).`} /></ErrorBoundary>
           ) : children}
         </div>
       </main>
+
+      <CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} items={cmdItems} />
     </div>
   );
 }
 
-function AIPanel({ panel, onClose }: { panel: string; onClose: () => void }) {
+function AIPanel({ panel, onClose, context }: { panel: string; onClose: () => void; context?: string }) {
   switch (panel) {
-    case "mentor": return <AIMentorPanel onClose={onClose} />;
+    case "mentor": return <AIMentorPanel onClose={onClose} context={context} />;
     case "exam": return <ExamPanel onClose={onClose} />;
     case "review": return <CodeReviewPanel onClose={onClose} />;
     case "hints": return <HintsPanel onClose={onClose} />;
@@ -195,13 +243,14 @@ function AIPanel({ panel, onClose }: { panel: string; onClose: () => void }) {
 }
 
 function SidebarContent({
-  user, pathname, logout, activePanel, onNavClick, mobile, collapsed, onToggle,
+  user, pathname, logout, activePanel, onNavClick, onOpenCmd, mobile, collapsed, onToggle,
 }: {
   user: { username: string; level: number; xp: number; email?: string } | null;
   pathname: string;
   logout: () => void;
   activePanel: string | null;
   onNavClick: (item: NavItem) => void;
+  onOpenCmd?: () => void;
   mobile?: boolean;
   collapsed?: boolean;
   onToggle?: () => void;
@@ -276,6 +325,11 @@ function SidebarContent({
             onChange={(e) => setQuery(e.target.value)}
             aria-label="Filter navigation"
           />
+          {onOpenCmd && (
+            <button type="button" className="sb-cmdk" onClick={onOpenCmd} aria-label="Open command menu" title="Command menu (Ctrl K)">
+              <kbd>⌘K</kbd>
+            </button>
+          )}
         </div>
       )}
 
@@ -307,7 +361,7 @@ function SidebarContent({
       </nav>
 
       {showFull && (
-        <div className="sb-hint">Press <kbd>/</kbd> for AI Mentor</div>
+        <div className="sb-hint">Press <kbd>/</kbd> for AI · <kbd>⌘K</kbd> to search</div>
       )}
 
       {showFull && user && (

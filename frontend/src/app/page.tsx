@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { api } from "@/services/api-client";
 import HeroDemo from "@/features/landing/hero-demo";
+import { Confetti } from "@/components/ui/confetti";
 import {
   Code2, Sparkles, Network, Swords, Medal, ShoppingBag, Flame, ChevronRight, Menu, X,
   Boxes, BookOpen, Library, Sigma, Orbit, FlaskConical,
@@ -78,35 +79,6 @@ function updateStreak(): number {
   }
   localStorage.setItem("eduverse_streak", JSON.stringify({ count: 1, date: today }));
   return 1;
-}
-
-function Confetti({ active }: { active: boolean }) {
-  if (!active) return null;
-  const particles = Array.from({ length: 25 }, (_, i) => ({
-    id: i,
-    left: Math.random() * 100,
-    color: ["#E2A43B", "#EFC97E", "#3FBE8C", "#ECB44E", "#F2EDE4"][Math.floor(Math.random() * 5)],
-    delay: Math.random() * 0.3,
-    size: Math.random() * 4 + 3,
-  }));
-  return (
-    <div className="confetti-container">
-      {particles.map((p) => (
-        <div
-          key={p.id}
-          className="confetti-particle"
-          style={{
-            left: `${p.left}%`,
-            top: "-10px",
-            width: `${p.size}px`,
-            height: `${p.size}px`,
-            background: p.color,
-            animationDelay: `${p.delay}s`,
-          }}
-        />
-      ))}
-    </div>
-  );
 }
 
 export default function LandingPage() {
@@ -207,10 +179,13 @@ export default function LandingPage() {
         <ul className="landing-nav-links">
           <li><a href="#subjects" className="nav-link">Subjects</a></li>
           <li><a href="#features" className="nav-link">Features</a></li>
-          <li><a href="/courses" className="nav-link">Courses</a></li>
-          <li><a href="/lab" className="nav-link">3D Labs</a></li>
+          <li><Link href="/courses" className="nav-link">Courses</Link></li>
+          <li><Link href="/lab" className="nav-link">3D Labs</Link></li>
         </ul>
         <div className="flex items-center gap-2">
+          <Link href="/auth/login" className="nav-link hidden sm:inline-flex">
+            Log in
+          </Link>
           <Link href="/auth/register" className="nav-cta">
             Get started
           </Link>
@@ -233,6 +208,7 @@ export default function LandingPage() {
             <li><a href="#features" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Features</a></li>
             <li><Link href="/courses" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Courses</Link></li>
             <li><Link href="/lab" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>3D Labs</Link></li>
+            <li><Link href="/auth/login" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Log in</Link></li>
           </ul>
         </div>
       )}
@@ -360,7 +336,16 @@ export default function LandingPage() {
               key={c.title}
               className={`challenge-card intro ${expandedChallenge === c.title ? "open" : ""}`}
               style={{ "--d": `${(i % 3) * 0.05}s` } as React.CSSProperties}
+              role="button"
+              tabIndex={0}
+              aria-expanded={expandedChallenge === c.title}
               onClick={() => toggleChallenge(c.title)}
+              onKeyDown={(e) => {
+                if ((e.key === "Enter" || e.key === " ") && e.target === e.currentTarget) {
+                  e.preventDefault();
+                  toggleChallenge(c.title);
+                }
+              }}
             >
               <h3 className="challenge-title">{c.title}</h3>
               <p className="challenge-desc">{c.desc}</p>

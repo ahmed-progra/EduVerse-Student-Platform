@@ -115,12 +115,13 @@ export default function CourseDetailPage() {
       {justCompleted && !showRunner && (
         <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
           <div
-            className="px-4 py-3 text-sm flex items-center gap-2 flex-wrap"
+            className="px-4 py-3 text-sm flex items-center gap-2.5 flex-wrap rounded-[var(--radius-card)]"
             role="status"
+            style={{ background: "oklch(76% 0.14 165 / 0.08)", border: "1px solid oklch(76% 0.14 165 / 0.22)" }}
           >
-            <Zap size={15} style={{ color: "var(--color-eduverse-warning)" }} aria-hidden="true" />
-            Assessment complete — your personalized path is ready{justCompleted?.xp?.xpGained ? ` (+${justCompleted.xp.xpGained} XP)` : ""}.
-            <button className="ml-auto text-xs underline opacity-70 hover:opacity-100" onClick={() => setJustCompleted(null)}>dismiss</button>
+            <Zap size={15} style={{ color: "var(--color-eduverse-success)" }} aria-hidden="true" />
+            <span className="text-eduverse-text">Assessment complete — your personalized path is ready{justCompleted?.xp?.xpGained ? ` (+${justCompleted.xp.xpGained} XP)` : ""}.</span>
+            <button className="ml-auto text-xs underline opacity-70 hover:opacity-100 transition-opacity" onClick={() => setJustCompleted(null)}>dismiss</button>
           </div>
         </motion.div>
       )}
