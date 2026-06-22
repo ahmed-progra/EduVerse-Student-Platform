@@ -11,37 +11,36 @@ tests, and troubleshooting.
   works, and `docker-compose.yml` can spin one up locally.
 - A **Google AI Studio** API key for AI features —
   <https://aistudio.google.com/apikey>
-- *(Optional)* A **Judge0** endpoint/key for C++ execution.
+- _(Optional)_ A **Judge0** endpoint/key for C++ execution.
 
 ## 1. Clone & install
 
 ```bash
-git clone https://github.com/ragnarlufe/eduverse.git
-cd eduverse
+git clone https://github.com/ahmed-progra/EduVerse-Student-Platform.git
+cd EduVerse-Student-Platform
 npm install        # installs all workspaces (frontend, backend, shared)
 ```
 
 ## 2. Configure environment
 
-The backend reads `backend/.env` (and falls back to the repo-root `.env`).
-Copy the template and fill in your values:
+The backend reads the repo-root `.env`. Copy the template and fill in your values:
 
 ```bash
-cp .env.example backend/.env
+cp .env.example .env
 ```
 
-| Variable | Required | Purpose |
-| --- | --- | --- |
-| `DATABASE_URL` | ✅ | App connection (Supabase transaction pooler, `:6543`) |
-| `DIRECT_URL` | ✅ | Migration connection (session pooler, `:5432`) |
-| `JWT_SECRET` | ✅ | Signing secret — **change it** for any deployment |
-| `JWT_EXPIRES_IN` | — | Token lifetime (default `7d`) |
-| `PORT` | — | Backend port (default `4000`) |
-| `FRONTEND_URL` | — | Allowed CORS origin (default `http://localhost:3000`) |
-| `GOOGLE_AI_API_KEY` | ✅ (AI) | Google AI Studio key |
-| `GOOGLE_AI_MODEL` | — | Override the default `gemini-2.5-flash` |
-| `JUDGE0_URL` / `JUDGE0_API_KEY` / `JUDGE0_HOST` | — | C++ execution |
-| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | — | Google OAuth sign-in |
+| Variable                                        | Required | Purpose                                               |
+| ----------------------------------------------- | -------- | ----------------------------------------------------- |
+| `DATABASE_URL`                                  | ✅       | App connection (Supabase transaction pooler, `:6543`) |
+| `DIRECT_URL`                                    | ✅       | Migration connection (session pooler, `:5432`)        |
+| `JWT_SECRET`                                    | ✅       | Signing secret — **change it** for any deployment     |
+| `JWT_EXPIRES_IN`                                | —        | Token lifetime (default `7d`)                         |
+| `PORT`                                          | —        | Backend port (default `4000`)                         |
+| `FRONTEND_URL`                                  | —        | Allowed CORS origin (default `http://localhost:3000`) |
+| `GOOGLE_AI_API_KEY`                             | ✅ (AI)  | Google AI Studio key                                  |
+| `GOOGLE_AI_MODEL`                               | —        | Override the default `gemini-2.5-flash`               |
+| `JUDGE0_URL` / `JUDGE0_API_KEY` / `JUDGE0_HOST` | —        | C++ execution                                         |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`     | —        | Google OAuth sign-in                                  |
 
 > Secrets live only in gitignored `.env` files and are never committed.
 
@@ -79,18 +78,18 @@ npm run dev:frontend    # next dev
 
 ### Root
 
-| Script | Description |
-| --- | --- |
-| `npm run dev` | Backend + frontend together |
-| `npm run build` | Build `shared → backend → frontend` |
-| `npm run start` | Start the compiled backend |
-| `npm run typecheck` | `tsc --noEmit` across all workspaces |
-| `npm run format` / `format:check` | Prettier write / verify |
-| `npm run db:generate` | Generate the Prisma client |
-| `npm run db:migrate` | Apply migrations |
-| `npm run db:seed` | Seed the database |
-| `npm run db:setup` | Migrate + seed |
-| `npm run test:e2e` | Run all backend E2E suites |
+| Script                            | Description                          |
+| --------------------------------- | ------------------------------------ |
+| `npm run dev`                     | Backend + frontend together          |
+| `npm run build`                   | Build `shared → backend → frontend`  |
+| `npm run start`                   | Start the compiled backend           |
+| `npm run typecheck`               | `tsc --noEmit` across all workspaces |
+| `npm run format` / `format:check` | Prettier write / verify              |
+| `npm run db:generate`             | Generate the Prisma client           |
+| `npm run db:migrate`              | Apply migrations                     |
+| `npm run db:seed`                 | Seed the database                    |
+| `npm run db:setup`                | Migrate + seed                       |
+| `npm run test:e2e`                | Run all backend E2E suites           |
 
 ### Backend (`-w backend`)
 
@@ -154,14 +153,14 @@ eduverse/
 
 ## Troubleshooting
 
-| Symptom | Fix |
-| --- | --- |
-| `prisma generate` EPERM on Windows | Stop the running backend (it locks the query-engine DLL), then retry. |
-| Database unreachable | Free Supabase projects auto-pause — open the dashboard, **Restore**, and retry. |
-| AI features return fallbacks | Check `GOOGLE_AI_API_KEY`; the service degrades gracefully when the key is missing or quota-limited. |
-| CORS errors in the browser | Ensure `FRONTEND_URL` matches the frontend origin. |
-| `/courses` renders empty | The backend isn't running or the DB isn't seeded — start it and run `npm run db:seed`. |
-| C++ "execution unavailable" | Set `JUDGE0_URL` (and a key for reliable demos). |
+| Symptom                            | Fix                                                                                                  |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `prisma generate` EPERM on Windows | Stop the running backend (it locks the query-engine DLL), then retry.                                |
+| Database unreachable               | Free Supabase projects auto-pause — open the dashboard, **Restore**, and retry.                      |
+| AI features return fallbacks       | Check `GOOGLE_AI_API_KEY`; the service degrades gracefully when the key is missing or quota-limited. |
+| CORS errors in the browser         | Ensure `FRONTEND_URL` matches the frontend origin.                                                   |
+| `/courses` renders empty           | The backend isn't running or the DB isn't seeded — start it and run `npm run db:seed`.               |
+| C++ "execution unavailable"        | Set `JUDGE0_URL` (and a key for reliable demos).                                                     |
 
 ## Local infrastructure (optional)
 

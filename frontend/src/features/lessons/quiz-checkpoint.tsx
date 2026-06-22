@@ -60,12 +60,23 @@ export function QuizCheckpoint({ lessonId, quiz }: { lessonId: string; quiz: Qui
         {result && (
           <span
             className="inline-flex items-center gap-1.5 text-sm font-bold font-mono"
-            style={{ color: result.passed ? "var(--color-eduverse-success)" : "var(--color-eduverse-danger)" }}
+            style={{
+              color: result.passed
+                ? "var(--color-eduverse-success)"
+                : "var(--color-eduverse-danger)",
+            }}
           >
-            {result.passed ? <CheckCircle size={15} aria-hidden="true" /> : <XCircle size={15} aria-hidden="true" />}
+            {result.passed ? (
+              <CheckCircle size={15} aria-hidden="true" />
+            ) : (
+              <XCircle size={15} aria-hidden="true" />
+            )}
             {result.correct}/{result.total} {result.passed ? "— passed" : "— keep practicing"}
             {result.xpGained > 0 && (
-              <span className="inline-flex items-center gap-0.5 ml-2" style={{ color: "var(--color-eduverse-warning)" }}>
+              <span
+                className="inline-flex items-center gap-0.5 ml-2"
+                style={{ color: "var(--color-eduverse-warning)" }}
+              >
                 <Zap size={13} aria-hidden="true" /> +{result.xpGained} XP
               </span>
             )}
@@ -75,7 +86,8 @@ export function QuizCheckpoint({ lessonId, quiz }: { lessonId: string; quiz: Qui
 
       {!result && (
         <p className="text-sm text-eduverse-text-muted mb-4">
-          Lock in what you just learned — your answers update your skill profile and your personalized path.
+          Lock in what you just learned — your answers update your skill profile and your
+          personalized path.
         </p>
       )}
 
@@ -87,8 +99,20 @@ export function QuizCheckpoint({ lessonId, quiz }: { lessonId: string; quiz: Qui
               <div className="text-sm font-semibold text-eduverse-text mb-2 flex items-start gap-2">
                 <span className="font-mono text-eduverse-accent shrink-0">{qi + 1}.</span>
                 <span>{q.q}</span>
-                {verdict?.correct && <CheckCircle size={15} className="text-eduverse-success mt-0.5 shrink-0" aria-label="Correct" />}
-                {verdict && !verdict.correct && <XCircle size={15} className="text-eduverse-danger mt-0.5 shrink-0" aria-label="Incorrect" />}
+                {verdict?.correct && (
+                  <CheckCircle
+                    size={15}
+                    className="text-eduverse-success mt-0.5 shrink-0"
+                    aria-label="Correct"
+                  />
+                )}
+                {verdict && !verdict.correct && (
+                  <XCircle
+                    size={15}
+                    className="text-eduverse-danger mt-0.5 shrink-0"
+                    aria-label="Incorrect"
+                  />
+                )}
               </div>
               <div className="space-y-1.5">
                 {q.options.map((opt, oi) => {
@@ -111,7 +135,10 @@ export function QuizCheckpoint({ lessonId, quiz }: { lessonId: string; quiz: Qui
                             : chosen
                               ? "var(--color-eduverse-accent)"
                               : "var(--color-eduverse-border)",
-                        background: chosen || showCorrect ? "var(--color-eduverse-accent-soft)" : "transparent",
+                        background:
+                          chosen || showCorrect
+                            ? "var(--color-eduverse-accent-soft)"
+                            : "transparent",
                         color: "var(--color-eduverse-text-body)",
                         cursor: result ? "default" : "pointer",
                       }}
@@ -132,16 +159,27 @@ export function QuizCheckpoint({ lessonId, quiz }: { lessonId: string; quiz: Qui
         })}
       </div>
 
-      {error && <p className="text-sm mt-4 text-eduverse-danger" role="alert">{error}</p>}
+      {error && (
+        <p className="text-sm mt-4 text-eduverse-danger" role="alert">
+          {error}
+        </p>
+      )}
 
       <div className="flex items-center gap-3 mt-5">
         {!result ? (
-          <button className="ai-panel-action-btn" onClick={submit} disabled={!allAnswered || submitting}>
+          <button
+            className="ai-panel-action-btn"
+            onClick={submit}
+            disabled={!allAnswered || submitting}
+          >
             {submitting ? "Grading…" : allAnswered ? "Check Answers" : "Answer all questions first"}
           </button>
         ) : (
           !result.passed && (
-            <button className="ai-panel-action-btn ai-panel-action-sm ai-panel-action-ghost" onClick={retry}>
+            <button
+              className="ai-panel-action-btn ai-panel-action-sm ai-panel-action-ghost"
+              onClick={retry}
+            >
               <RefreshCw size={12} aria-hidden="true" /> Try Again
             </button>
           )

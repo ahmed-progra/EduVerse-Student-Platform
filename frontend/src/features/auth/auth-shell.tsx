@@ -14,12 +14,15 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
             <span>{"//"}</span> eduverse
           </p>
           <h1 className="auth-headline font-display">
-            Learn the craft,<br />line by line.
+            Learn the craft,
+            <br />
+            line by line.
           </h1>
           <pre className="auth-snippet font-mono">
             <code>
               <span className="ak">def</span> <span className="af">level_up</span>(you):{"\n"}
-              {"    "}<span className="ak">while</span> you.curious:{"\n"}
+              {"    "}
+              <span className="ak">while</span> you.curious:{"\n"}
               {"        "}you.write_code(){"\n"}
               {"        "}you.xp <span className="ao">+=</span> <span className="an">1</span>
             </code>

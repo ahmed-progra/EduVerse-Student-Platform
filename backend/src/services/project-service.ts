@@ -37,10 +37,14 @@ function str(v: unknown, fallback: string): string {
   return s || fallback;
 }
 function strArr(v: unknown, max: number): string[] {
-  return (Array.isArray(v) ? v : []).map((x) => String(x)).filter(Boolean).slice(0, max);
+  return (Array.isArray(v) ? v : [])
+    .map((x) => String(x))
+    .filter(Boolean)
+    .slice(0, max);
 }
 const STARTERS: Record<string, string> = {
-  python: "def main():\n    # your code here\n    pass\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  python:
+    'def main():\n    # your code here\n    pass\n\n\nif __name__ == "__main__":\n    main()\n',
   javascript: "function main() {\n  // your code here\n}\n\nmain();\n",
   html: "<!doctype html>\n<html>\n  <head><title>My Project</title></head>\n  <body>\n    <!-- your markup here -->\n  </body>\n</html>\n",
   css: "/* your styles here */\n.card {\n}\n",
@@ -63,18 +67,24 @@ function suggestFallback(language: string, difficulty: string, skills: string[])
   const lang = LANGUAGES.has(language) ? language : "python";
   return {
     title: "Number Guessing Game",
-    brief: "Build a small program where the computer picks a secret number and the player guesses it. Tell the player whether each guess is too high or too low, and count how many tries it took.",
+    brief:
+      "Build a small program where the computer picks a secret number and the player guesses it. Tell the player whether each guess is too high or too low, and count how many tries it took.",
     language: lang,
     difficulty: DIFFICULTIES.has(difficulty) ? difficulty : "beginner",
     skills: skills.length ? skills.slice(0, 4) : ["variables", "conditionals", "loops"],
-    milestones: ["Pick a random secret number", "Read the player's guess", "Give higher/lower feedback in a loop", "Announce the win and the number of tries"],
+    milestones: [
+      "Pick a random secret number",
+      "Read the player's guess",
+      "Give higher/lower feedback in a loop",
+      "Announce the win and the number of tries",
+    ],
     starterCode: STARTERS[lang] || STARTERS.python,
   };
 }
 
 export async function suggestProject(
   userId: string,
-  opts: { language?: string; topicHint?: string } = {}
+  opts: { language?: string; topicHint?: string } = {},
 ): Promise<ProjectSpec> {
   const signals = await gatherSignals(userId);
   const level = signals.user.placementLevel || "beginner";
@@ -82,11 +92,20 @@ export async function suggestProject(
   const context = [
     `Student level: ${level} (account level ${signals.user.level}).`,
     signals.strengths.length ? `Strong topics: ${signals.strengths.slice(0, 6).join(", ")}.` : "",
-    signals.weaknesses.length ? `Weak topics to target: ${signals.weaknesses.slice(0, 6).join(", ")}.` : "",
-    `Courses they're taking: ${signals.perCourse.filter((c) => c.completed > 0).map((c) => c.title).join(", ") || "just starting"}.`,
+    signals.weaknesses.length
+      ? `Weak topics to target: ${signals.weaknesses.slice(0, 6).join(", ")}.`
+      : "",
+    `Courses they're taking: ${
+      signals.perCourse
+        .filter((c) => c.completed > 0)
+        .map((c) => c.title)
+        .join(", ") || "just starting"
+    }.`,
     wantLang ? `Use language: ${wantLang}.` : "Pick the most fitting language for them.",
     opts.topicHint ? `Center the project on: ${opts.topicHint}.` : "",
-  ].filter(Boolean).join("\n");
+  ]
+    .filter(Boolean)
+    .join("\n");
 
   try {
     const { data } = await generateJSON<Record<string, unknown>>({
@@ -96,14 +115,18 @@ export async function suggestProject(
       temperature: 0.7,
       maxOutputTokens: 1200,
     });
-    const language = LANGUAGES.has(String(data.language)) ? String(data.language) : wantLang || "python";
+    const language = LANGUAGES.has(String(data.language))
+      ? String(data.language)
+      : wantLang || "python";
     const fb = suggestFallback(language, String(data.difficulty), signals.weaknesses);
     const milestones = strArr(data.milestones, 6);
     return {
       title: clampText(str(data.title, fb.title), 80),
       brief: clampText(str(data.brief, fb.brief), 800),
       language,
-      difficulty: DIFFICULTIES.has(String(data.difficulty)) ? String(data.difficulty) : fb.difficulty,
+      difficulty: DIFFICULTIES.has(String(data.difficulty))
+        ? String(data.difficulty)
+        : fb.difficulty,
       skills: strArr(data.skills, 5).length ? strArr(data.skills, 5) : fb.skills,
       milestones: milestones.length >= 2 ? milestones : fb.milestones,
       starterCode: str(data.starterCode, STARTERS[language] || STARTERS.python),
@@ -119,7 +142,11 @@ export async function suggestProject(
 
 /* ── CRUD ──────────────────────────────────────────────────────────── */
 
-export async function createProject(userId: string, spec: ProjectSpec, source: "custom" | "suggested") {
+export async function createProject(
+  userId: string,
+  spec: ProjectSpec,
+  source: "custom" | "suggested",
+) {
   const language = LANGUAGES.has(spec.language) ? spec.language : "python";
   return prisma.project.create({
     data: {
@@ -148,7 +175,7 @@ export async function getProject(userId: string, id: string) {
 export async function updateProject(
   userId: string,
   id: string,
-  patch: { code?: string; milestones?: Array<{ text: string; done: boolean }> }
+  patch: { code?: string; milestones?: Array<{ text: string; done: boolean }> },
 ) {
   const project = await getProject(userId, id);
   if (!project) throw new AIError("Project not found.", 404);
@@ -156,7 +183,9 @@ export async function updateProject(
   if (typeof patch.code === "string") data.code = clampText(patch.code, 40000);
   if (Array.isArray(patch.milestones)) {
     data.milestones = JSON.stringify(
-      patch.milestones.map((m) => ({ text: String(m.text || ""), done: Boolean(m.done) })).slice(0, 8)
+      patch.milestones
+        .map((m) => ({ text: String(m.text || ""), done: Boolean(m.done) }))
+        .slice(0, 8),
     );
   }
   return prisma.project.update({ where: { id }, data });
@@ -195,7 +224,10 @@ export interface GradedProject {
   xpAwarded: number;
 }
 
-export async function gradeProject(userId: string, id: string): Promise<{ project: Awaited<ReturnType<typeof getProject>>; grade: GradedProject }> {
+export async function gradeProject(
+  userId: string,
+  id: string,
+): Promise<{ project: Awaited<ReturnType<typeof getProject>>; grade: GradedProject }> {
   const project = await getProject(userId, id);
   if (!project) throw new AIError("Project not found.", 404);
   if (!project.code || project.code.trim().length < 10) {
@@ -204,7 +236,9 @@ export async function gradeProject(userId: string, id: string): Promise<{ projec
 
   const milestones = (() => {
     try {
-      return (JSON.parse(project.milestones || "[]") as Array<{ text: string }>).map((m) => `- ${m.text}`).join("\n");
+      return (JSON.parse(project.milestones || "[]") as Array<{ text: string }>)
+        .map((m) => `- ${m.text}`)
+        .join("\n");
     } catch {
       return "";
     }
@@ -240,10 +274,21 @@ export async function gradeProject(userId: string, id: string): Promise<{ projec
     if (!(err instanceof AIError)) throw err;
     grade = {
       score: 65,
-      feedback: "Automatic review was unavailable, but you shipped a project — that's what counts. Revisit the brief's requirements and refine when you can.",
-      rubric: [{ criterion: "Submission", score: 65, max: 100, note: "Project submitted; detailed review pending." }],
+      feedback:
+        "Automatic review was unavailable, but you shipped a project — that's what counts. Revisit the brief's requirements and refine when you can.",
+      rubric: [
+        {
+          criterion: "Submission",
+          score: 65,
+          max: 100,
+          note: "Project submitted; detailed review pending.",
+        },
+      ],
       strengths: ["You built and submitted a complete project"],
-      improvements: ["Re-check each milestone is fully met", "Tidy naming and add a comment or two"],
+      improvements: [
+        "Re-check each milestone is fully met",
+        "Tidy naming and add a comment or two",
+      ],
     };
   }
 
@@ -265,11 +310,17 @@ export async function gradeProject(userId: string, id: string): Promise<{ projec
   });
 
   // Rewards + learning-loop wiring (each guarded — never sink the response).
-  await addXp(userId, xpAwarded, "challenge").catch((e) => console.error("[projects] XP payout failed:", e));
+  await addXp(userId, xpAwarded, "challenge").catch((e) =>
+    console.error("[projects] XP payout failed:", e),
+  );
   const slug = languageToSlug[project.language];
   if (slug) {
     const course = await prisma.course.findUnique({ where: { slug } });
-    if (course) await recordEvent(userId, course.id, null, "project_complete", { title: project.title, score: grade.score }).catch(() => {});
+    if (course)
+      await recordEvent(userId, course.id, null, "project_complete", {
+        title: project.title,
+        score: grade.score,
+      }).catch(() => {});
   }
   await syncMissionProgress(userId, { kind: "project", courseSlug: slug }).catch(() => {});
 

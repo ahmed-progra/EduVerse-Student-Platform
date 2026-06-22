@@ -5,14 +5,30 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { fadeUp, staggerContainer, fastEaseTransition } from "@/lib/motion";
-import { Rocket, Sparkles, Plus, Wand2, CheckCircle2, Clock, Trophy, ArrowRight, WifiOff } from "lucide-react";
+import {
+  Rocket,
+  Sparkles,
+  Plus,
+  Wand2,
+  CheckCircle2,
+  Clock,
+  Trophy,
+  ArrowRight,
+  WifiOff,
+} from "lucide-react";
 import { GlassCard } from "@/components/ui/glass-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useAuthStore } from "@/stores/auth-store";
 import { api } from "@/services/api-client";
 import type { Project } from "@/types/project";
 const LANGS = ["python", "javascript", "html", "css", "cpp"];
-const langLabel: Record<string, string> = { python: "Python", javascript: "JavaScript", html: "HTML", css: "CSS", cpp: "C++" };
+const langLabel: Record<string, string> = {
+  python: "Python",
+  javascript: "JavaScript",
+  html: "HTML",
+  css: "CSS",
+  cpp: "C++",
+};
 
 export default function ProjectsPage() {
   const router = useRouter();
@@ -55,7 +71,11 @@ export default function ProjectsPage() {
     setCreating(true);
     setError("");
     try {
-      const res = await api.projectCreate({ title: cTitle.trim(), brief: cBrief.trim(), language: cLang });
+      const res = await api.projectCreate({
+        title: cTitle.trim(),
+        brief: cBrief.trim(),
+        language: cLang,
+      });
       router.push(`/projects/${res.data.id}`);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Could not create the project.");
@@ -67,7 +87,12 @@ export default function ProjectsPage() {
   const completed = projects.filter((p) => p.status === "completed");
 
   return (
-    <motion.div className="space-y-8" initial="hidden" animate="visible" variants={staggerContainer}>
+    <motion.div
+      className="space-y-8"
+      initial="hidden"
+      animate="visible"
+      variants={staggerContainer}
+    >
       <motion.div variants={fadeUp} transition={fastEaseTransition}>
         <div className="section-label">
           <span className="section-label-prefix">//</span> Projects
@@ -79,7 +104,8 @@ export default function ProjectsPage() {
           Project Studio
         </h1>
         <p className="text-eduverse-text-muted mt-1">
-          Turn what you&apos;ve learned into real, AI-reviewed projects — and a portfolio that proves it.
+          Turn what you&apos;ve learned into real, AI-reviewed projects — and a portfolio that
+          proves it.
           {user && (
             <>
               {" "}
@@ -106,7 +132,9 @@ export default function ProjectsPage() {
                 </div>
                 Get an AI project idea
               </div>
-              <p className="text-xs text-eduverse-text-muted mb-4 ml-9">The mentor designs a project tailored to your level and weak spots.</p>
+              <p className="text-xs text-eduverse-text-muted mb-4 ml-9">
+                The mentor designs a project tailored to your level and weak spots.
+              </p>
               <div className="flex gap-2">
                 <select
                   value={suggestLang}
@@ -116,7 +144,9 @@ export default function ProjectsPage() {
                 >
                   <option value="">Any language</option>
                   {LANGS.map((l) => (
-                    <option key={l} value={l}>{langLabel[l]}</option>
+                    <option key={l} value={l}>
+                      {langLabel[l]}
+                    </option>
                   ))}
                 </select>
                 <button
@@ -138,9 +168,14 @@ export default function ProjectsPage() {
                 </div>
                 Start your own
               </div>
-              <p className="text-xs text-eduverse-text-muted mb-4 ml-9">Have an idea already? Define it and start building.</p>
+              <p className="text-xs text-eduverse-text-muted mb-4 ml-9">
+                Have an idea already? Define it and start building.
+              </p>
               {!showCustom ? (
-                <button className="ai-panel-action-btn ai-panel-action-ghost" onClick={() => setShowCustom(true)}>
+                <button
+                  className="ai-panel-action-btn ai-panel-action-ghost"
+                  onClick={() => setShowCustom(true)}
+                >
                   <Plus size={14} aria-hidden="true" /> New blank project
                 </button>
               ) : (
@@ -165,7 +200,9 @@ export default function ProjectsPage() {
                       aria-label="Language"
                     >
                       {LANGS.map((l) => (
-                        <option key={l} value={l}>{langLabel[l]}</option>
+                        <option key={l} value={l}>
+                          {langLabel[l]}
+                        </option>
                       ))}
                     </select>
                     <button
@@ -191,10 +228,16 @@ export default function ProjectsPage() {
       {/* My projects */}
       {loading ? (
         <div className="grid sm:grid-cols-2 gap-4" aria-hidden="true">
-          {[1, 2, 3, 4].map((i) => <div key={i} className="sk-card" style={{ height: "140px" }} />)}
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="sk-card" style={{ height: "140px" }} />
+          ))}
         </div>
       ) : offline ? (
-        <EmptyState icon={WifiOff} title="Can't reach the server" message="Start the backend, then refresh." />
+        <EmptyState
+          icon={WifiOff}
+          title="Can't reach the server"
+          message="Start the backend, then refresh."
+        />
       ) : projects.length === 0 ? (
         <EmptyState
           icon={Rocket}
@@ -215,7 +258,15 @@ export default function ProjectsPage() {
   );
 }
 
-function ProjectSection({ title, icon: Icon, projects }: { title: string; icon: typeof Clock; projects: Project[] }) {
+function ProjectSection({
+  title,
+  icon: Icon,
+  projects,
+}: {
+  title: string;
+  icon: typeof Clock;
+  projects: Project[];
+}) {
   return (
     <div>
       <div className="section-label">
@@ -240,13 +291,23 @@ function ProjectSection({ title, icon: Icon, projects }: { title: string; icon: 
                   </span>
                 )}
               </div>
-              <p className="text-xs text-eduverse-text-muted line-clamp-2 mb-4 leading-relaxed">{p.brief}</p>
+              <p className="text-xs text-eduverse-text-muted line-clamp-2 mb-4 leading-relaxed">
+                {p.brief}
+              </p>
               <div className="flex items-center justify-between">
                 <div className="flex flex-wrap gap-1.5">
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-eduverse-raised text-eduverse-text-muted font-mono border border-white/5">{langLabel[p.language] || p.language}</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-eduverse-raised text-eduverse-text-muted border border-white/5">{p.difficulty}</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-eduverse-raised text-eduverse-text-muted font-mono border border-white/5">
+                    {langLabel[p.language] || p.language}
+                  </span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-eduverse-raised text-eduverse-text-muted border border-white/5">
+                    {p.difficulty}
+                  </span>
                 </div>
-                <ArrowRight size={15} className="text-eduverse-text-muted shrink-0" aria-hidden="true" />
+                <ArrowRight
+                  size={15}
+                  className="text-eduverse-text-muted shrink-0"
+                  aria-hidden="true"
+                />
               </div>
             </GlassCard>
           </Link>

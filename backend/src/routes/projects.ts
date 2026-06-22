@@ -126,7 +126,7 @@ router.post("/", async (req: Request, res: Response) => {
         milestones: Array.isArray(req.body?.milestones) ? req.body.milestones.map(String) : [],
         starterCode: asStr(req.body?.starterCode),
       },
-      "custom"
+      "custom",
     );
     res.json({ success: true, data: serialize(project) });
   } catch (err) {
@@ -161,7 +161,11 @@ router.patch("/:id", async (req: Request, res: Response) => {
 
 router.patch("/:id/publish", async (req: Request, res: Response) => {
   try {
-    const project = await setPublished(req.userId!, req.params.id as string, Boolean(req.body?.published));
+    const project = await setPublished(
+      req.userId!,
+      req.params.id as string,
+      Boolean(req.body?.published),
+    );
     res.json({ success: true, data: serialize(project) });
   } catch (err) {
     sendErr(res, err, "publish");

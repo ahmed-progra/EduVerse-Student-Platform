@@ -23,12 +23,7 @@ import {
   Trophy,
 } from "lucide-react";
 import type { SceneHandle, ParamValues } from "./three-scene";
-import {
-  type LabSubject,
-  type LabControl,
-  modelDefaults,
-  rebuildKeysOf,
-} from "./lab-subjects";
+import { type LabSubject, type LabControl, modelDefaults, rebuildKeysOf } from "./lab-subjects";
 import { LabChart } from "./lab-chart";
 
 const FAV_KEY = "eduverse_lab_favorites";
@@ -37,7 +32,9 @@ const LAST_KEY = "eduverse_lab_last";
 type LearnTab = "concepts" | "applications" | "tasks" | "challenge";
 
 const ThreeScene = dynamic(() => import("./three-scene").then((m) => m.ThreeScene), { ssr: false });
-const ModelViewer = dynamic(() => import("./model-viewer").then((m) => m.ModelViewer), { ssr: false });
+const ModelViewer = dynamic(() => import("./model-viewer").then((m) => m.ModelViewer), {
+  ssr: false,
+});
 
 function decimals(step: number) {
   if (step >= 1) return 0;
@@ -134,8 +131,18 @@ export function LabWorkbench({ subject }: { subject: LabSubject }) {
 
   const learnTabs = (
     [
-      { key: "concepts", label: "Concepts", Icon: Lightbulb, has: (model.concepts?.length ?? 0) > 0 },
-      { key: "applications", label: "Real-world", Icon: Globe, has: (model.applications?.length ?? 0) > 0 },
+      {
+        key: "concepts",
+        label: "Concepts",
+        Icon: Lightbulb,
+        has: (model.concepts?.length ?? 0) > 0,
+      },
+      {
+        key: "applications",
+        label: "Real-world",
+        Icon: Globe,
+        has: (model.applications?.length ?? 0) > 0,
+      },
       { key: "tasks", label: "Tasks", Icon: Target, has: (model.tasks?.length ?? 0) > 0 },
       { key: "challenge", label: "Challenge", Icon: Trophy, has: !!model.challenge },
     ] as const
@@ -217,7 +224,9 @@ export function LabWorkbench({ subject }: { subject: LabSubject }) {
             {model.objective && (
               <div className="wb-objective">
                 <Target size={13} aria-hidden="true" />
-                <span><strong>Objective:</strong> {model.objective}</span>
+                <span>
+                  <strong>Objective:</strong> {model.objective}
+                </span>
               </div>
             )}
           </div>
@@ -249,7 +258,11 @@ export function LabWorkbench({ subject }: { subject: LabSubject }) {
               className={`wb-play ${playing ? "playing" : ""}`}
               onClick={() => setParam(model.playKey!, !playing)}
             >
-              {playing ? <Pause size={16} aria-hidden="true" /> : <Play size={16} aria-hidden="true" />}
+              {playing ? (
+                <Pause size={16} aria-hidden="true" />
+              ) : (
+                <Play size={16} aria-hidden="true" />
+              )}
               {playing ? "Pause animation" : "Play animation"}
             </button>
           )}
@@ -259,7 +272,13 @@ export function LabWorkbench({ subject }: { subject: LabSubject }) {
         <section className="wb-stage-col">
           <div className="wb-stage glass-panel" ref={stageRef}>
             {model.glb ? (
-              <ModelViewer key={model.glb} url={model.glb} params={params} onReady={onReady} className="lab-canvas" />
+              <ModelViewer
+                key={model.glb}
+                url={model.glb}
+                params={params}
+                onReady={onReady}
+                className="lab-canvas"
+              />
             ) : (
               <ThreeScene
                 init={model.init!}

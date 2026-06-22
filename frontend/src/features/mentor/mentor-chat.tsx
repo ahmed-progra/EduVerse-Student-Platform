@@ -43,20 +43,33 @@ export function MentorChat() {
         const res = await api.mentorChat(msg, history);
         setMsgs((p) => [...p, { role: "assistant", text: res.data.text }]);
       } catch (err: unknown) {
-        setMsgs((p) => [...p, { role: "assistant", text: `Error: ${err instanceof Error ? err.message : "Request failed"}` }]);
+        setMsgs((p) => [
+          ...p,
+          {
+            role: "assistant",
+            text: `Error: ${err instanceof Error ? err.message : "Request failed"}`,
+          },
+        ]);
       } finally {
         setLoading(false);
       }
     },
-    [loading, msgs]
+    [loading, msgs],
   );
 
   return (
     <div>
-      <div className="space-y-3 max-h-80 overflow-y-auto pr-1 mb-3" role="log" aria-live="polite" aria-label="Mentor conversation">
+      <div
+        className="space-y-3 max-h-80 overflow-y-auto pr-1 mb-3"
+        role="log"
+        aria-live="polite"
+        aria-label="Mentor conversation"
+      >
         {msgs.length === 0 && !loading && (
           <div className="text-sm text-eduverse-text-muted">
-            <p className="mb-3">Your mentor knows your full progress. Ask anything — it answers in context.</p>
+            <p className="mb-3">
+              Your mentor knows your full progress. Ask anything — it answers in context.
+            </p>
             <div className="flex flex-wrap gap-2">
               {SUGGESTIONS.map((s) => (
                 <button
@@ -75,7 +88,10 @@ export function MentorChat() {
             key={i}
             className="text-sm leading-relaxed rounded-lg px-3 py-2 whitespace-pre-wrap"
             style={{
-              background: m.role === "user" ? "var(--color-eduverse-accent-soft)" : "var(--color-eduverse-raised)",
+              background:
+                m.role === "user"
+                  ? "var(--color-eduverse-accent-soft)"
+                  : "var(--color-eduverse-raised)",
               color: "var(--color-eduverse-text-body)",
               marginLeft: m.role === "user" ? "auto" : 0,
               maxWidth: "92%",
@@ -87,7 +103,8 @@ export function MentorChat() {
         ))}
         {loading && (
           <div className="flex items-center gap-2 text-sm text-eduverse-text-muted">
-            <Sparkles size={14} className="text-eduverse-accent animate-pulse" aria-hidden="true" /> Mentor is thinking…
+            <Sparkles size={14} className="text-eduverse-accent animate-pulse" aria-hidden="true" />{" "}
+            Mentor is thinking…
           </div>
         )}
         <div ref={endRef} />

@@ -43,15 +43,18 @@ function PlacementTestContent() {
       setError("No course selected. Please choose a course from the courses page.");
       return;
     }
-    api.assessmentStart(courseId).then((res) => {
-      setAssessmentId(res.data.assessmentId);
-      setQuestions(res.data.questions);
-      setAnswers({});
-      setLoading(false);
-    }).catch(() => {
-      setLoading(false);
-      setError("Failed to load questions for this course.");
-    });
+    api
+      .assessmentStart(courseId)
+      .then((res) => {
+        setAssessmentId(res.data.assessmentId);
+        setQuestions(res.data.questions);
+        setAnswers({});
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+        setError("Failed to load questions for this course.");
+      });
   }, [courseId]);
 
   const handleAnswer = (index: number) => {
@@ -107,21 +110,34 @@ function PlacementTestContent() {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <motion.div variants={fadeUp} transition={fastEaseTransition}>
-          <GlassCard className="text-center p-12 max-w-md" >
+          <GlassCard className="text-center p-12 max-w-md">
             <div
               className="w-20 h-20 rounded mx-auto mb-6 flex items-center justify-center"
               style={{
                 background: "var(--color-eduverse-accent-soft)",
                 border: "1px solid var(--color-eduverse-border-mid)",
-                color: result.level === "advanced" ? "var(--color-eduverse-accent)" : result.level === "intermediate" ? "var(--color-eduverse-warning)" : "var(--color-eduverse-success)",
+                color:
+                  result.level === "advanced"
+                    ? "var(--color-eduverse-accent)"
+                    : result.level === "intermediate"
+                      ? "var(--color-eduverse-warning)"
+                      : "var(--color-eduverse-success)",
               }}
             >
-              {result.level === "advanced" ? <Trophy size={36} aria-hidden="true" /> : result.level === "intermediate" ? <Star size={36} aria-hidden="true" /> : <Sprout size={36} aria-hidden="true" />}
+              {result.level === "advanced" ? (
+                <Trophy size={36} aria-hidden="true" />
+              ) : result.level === "intermediate" ? (
+                <Star size={36} aria-hidden="true" />
+              ) : (
+                <Sprout size={36} aria-hidden="true" />
+              )}
             </div>
             <h2 className="text-3xl font-bold mb-4 font-display">
               You are <span className="capitalize text-eduverse-accent">{result.level}</span>!
             </h2>
-            <div className="text-5xl font-bold mb-2 font-mono">{result.score}/{result.total}</div>
+            <div className="text-5xl font-bold mb-2 font-mono">
+              {result.score}/{result.total}
+            </div>
             <p className="text-eduverse-text-muted mb-2">questions correct</p>
             {result.xp?.xpGained && result.xp.xpGained > 0 && (
               <div className="flex items-center justify-center gap-2 text-eduverse-warning font-bold mb-6">
@@ -155,7 +171,9 @@ function PlacementTestContent() {
         <GlassCard className="p-8">
           <div className="mb-6">
             <div className="flex justify-between text-sm text-eduverse-text-muted mb-2">
-              <span>Question {currentQ + 1} of {questions.length}</span>
+              <span>
+                Question {currentQ + 1} of {questions.length}
+              </span>
               <span>{Math.round(progress)}%</span>
             </div>
             <div className="h-2 rounded bg-white/10 overflow-hidden">
@@ -207,11 +225,7 @@ function PlacementTestContent() {
                 Next <ChevronRight className="w-4 h-4" />
               </GradientButton>
             ) : (
-              <GradientButton
-                onClick={handleSubmit}
-                disabled={!allAnswered}
-                loading={submitting}
-              >
+              <GradientButton onClick={handleSubmit} disabled={!allAnswered} loading={submitting}>
                 Submit Test
               </GradientButton>
             )}
@@ -224,11 +238,13 @@ function PlacementTestContent() {
 
 export default function PlacementTestPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="sk-card" style={{ width: "400px", height: "200px" }} />
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center p-4">
+          <div className="sk-card" style={{ width: "400px", height: "200px" }} />
+        </div>
+      }
+    >
       <PlacementTestContent />
     </Suspense>
   );

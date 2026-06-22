@@ -34,58 +34,82 @@ export default function LoginPage() {
   return (
     <AuthShell>
       <GlassCard className="p-8">
-          <div className="text-center mb-8">
-            <Link href="/" className="text-3xl font-bold" style={{ fontFamily: "var(--font-display)", color: "var(--color-eduverse-text)", letterSpacing: "-0.02em" }}>
-              Edu<span className="text-eduverse-accent">Verse</span>
-            </Link>
-            <p className="text-eduverse-text-muted mt-2">Welcome back, adventurer</p>
+        <div className="text-center mb-8">
+          <Link
+            href="/"
+            className="text-3xl font-bold"
+            style={{
+              fontFamily: "var(--font-display)",
+              color: "var(--color-eduverse-text)",
+              letterSpacing: "-0.02em",
+            }}
+          >
+            Edu<span className="text-eduverse-accent">Verse</span>
+          </Link>
+          <p className="text-eduverse-text-muted mt-2">Welcome back, adventurer</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+              className="form-error"
+              role="alert"
+            >
+              {error}
+            </motion.div>
+          )}
+
+          <div>
+            <label
+              htmlFor="login-email"
+              className="block text-sm font-medium text-eduverse-text-muted mb-1"
+            >
+              Email
+            </label>
+            <input
+              id="login-email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="app-input"
+              placeholder="your@email.com"
+              autoComplete="email"
+              required
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="login-password"
+              className="block text-sm font-medium text-eduverse-text-muted mb-1"
+            >
+              Password
+            </label>
+            <input
+              id="login-password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="app-input"
+              placeholder="Enter your password"
+              autoComplete="current-password"
+              required
+            />
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="form-error" role="alert">
-                {error}
-              </motion.div>
-            )}
+          <GradientButton type="submit" loading={loading} className="w-full">
+            Login
+          </GradientButton>
+        </form>
 
-            <div>
-              <label htmlFor="login-email" className="block text-sm font-medium text-eduverse-text-muted mb-1">Email</label>
-              <input
-                id="login-email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="app-input"
-                placeholder="your@email.com"
-                autoComplete="email"
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="login-password" className="block text-sm font-medium text-eduverse-text-muted mb-1">Password</label>
-              <input
-                id="login-password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="app-input"
-                placeholder="Enter your password"
-                autoComplete="current-password"
-                required
-              />
-            </div>
-
-            <GradientButton type="submit" loading={loading} className="w-full">
-              Login
-            </GradientButton>
-          </form>
-
-          <p className="text-center text-sm text-eduverse-text-muted mt-6">
-            Don&apos;t have an account?{" "}
-             <Link href="/auth/register" className="text-eduverse-accent hover:underline">
-              Register
-            </Link>
-          </p>
+        <p className="text-center text-sm text-eduverse-text-muted mt-6">
+          Don&apos;t have an account?{" "}
+          <Link href="/auth/register" className="text-eduverse-accent hover:underline">
+            Register
+          </Link>
+        </p>
       </GlassCard>
     </AuthShell>
   );

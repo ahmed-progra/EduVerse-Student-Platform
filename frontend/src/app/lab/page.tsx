@@ -39,7 +39,9 @@ export default function LabHubPage() {
   };
 
   const favModels = models.filter(({ model }) => favs.has(model.id));
-  const lastEntry = last ? models.find(({ subject, model }) => subject.slug === last.subject && model.id === last.model) : null;
+  const lastEntry = last
+    ? models.find(({ subject, model }) => subject.slug === last.subject && model.id === last.model)
+    : null;
   const totalModels = models.length;
 
   const Card = ({ subject, model }: (typeof models)[number]) => (
@@ -91,7 +93,8 @@ export default function LabHubPage() {
           <div>
             <h1 className="text-3xl font-bold font-display tracking-tight">3D Lab</h1>
             <p className="text-eduverse-text-muted mt-1">
-              {totalModels} interactive, orbitable 3D models across {LAB_SUBJECTS.length} subjects. Drag to explore, tune the parameters, learn by doing.
+              {totalModels} interactive, orbitable 3D models across {LAB_SUBJECTS.length} subjects.
+              Drag to explore, tune the parameters, learn by doing.
             </p>
           </div>
         </div>
@@ -103,7 +106,10 @@ export default function LabHubPage() {
           <div className="section-label" style={{ marginBottom: 12 }}>
             <span className="section-label-prefix">//</span> Continue learning
           </div>
-          <Link href={`/lab/${lastEntry.subject.slug}?model=${lastEntry.model.id}`} className="lab-continue glass-panel glass-panel-link">
+          <Link
+            href={`/lab/${lastEntry.subject.slug}?model=${lastEntry.model.id}`}
+            className="lab-continue glass-panel glass-panel-link"
+          >
             <span className="lab-gcard-icon">
               <lastEntry.model.Icon size={22} aria-hidden="true" />
             </span>
@@ -134,7 +140,8 @@ export default function LabHubPage() {
       {/* All models */}
       <div>
         <div className="section-label" style={{ marginBottom: 12 }}>
-          <span className="section-label-prefix">//</span> <Sparkles size={13} className="inline -mt-0.5" aria-hidden="true" /> All models
+          <span className="section-label-prefix">//</span>{" "}
+          <Sparkles size={13} className="inline -mt-0.5" aria-hidden="true" /> All models
         </div>
         <div className="lab-gallery">
           {models.map((m) => (
@@ -150,7 +157,11 @@ export default function LabHubPage() {
         </div>
         <div className="lab-grid">
           {LAB_SUBJECTS.map((s) => (
-            <Link key={s.slug} href={`/lab/${s.slug}`} className="lab-card glass-panel glass-panel-link">
+            <Link
+              key={s.slug}
+              href={`/lab/${s.slug}`}
+              className="lab-card glass-panel glass-panel-link"
+            >
               <span className="lab-card-icon">
                 <s.Icon size={24} aria-hidden="true" />
               </span>

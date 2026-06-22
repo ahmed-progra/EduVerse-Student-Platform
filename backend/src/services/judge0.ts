@@ -43,7 +43,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 export async function executeCode(
   sourceCode: string,
   language: string,
-  stdin: string = ""
+  stdin: string = "",
 ): Promise<Judge0Result> {
   if (NON_EXECUTABLE_LANGUAGES.has(language)) {
     return {
@@ -57,7 +57,13 @@ export async function executeCode(
 
   const langId = LANGUAGE_IDS[language];
   if (!langId) {
-    return { stdout: "", stderr: "", error: `Unsupported language: ${language}`, time: "0", status: "Error" };
+    return {
+      stdout: "",
+      stderr: "",
+      error: `Unsupported language: ${language}`,
+      time: "0",
+      status: "Error",
+    };
   }
 
   const body = JSON.stringify({ source_code: sourceCode, language_id: langId, stdin });
@@ -80,22 +86,38 @@ export async function executeCode(
         return {
           stdout: "",
           stderr: "",
-          error: "The code runner is rate-limited right now. Wait a few seconds and run again." +
+          error:
+            "The code runner is rate-limited right now. Wait a few seconds and run again." +
             (JUDGE0_API_KEY ? "" : " (Tip: set JUDGE0_API_KEY in .env to raise the limit.)"),
           time: "0",
           status: "Rate limited",
         };
       }
       if (res.status === 401 || res.status === 403) {
-        return { stdout: "", stderr: "", error: "Code runner rejected the request — check JUDGE0_API_KEY.", time: "0", status: "Auth error" };
+        return {
+          stdout: "",
+          stderr: "",
+          error: "Code runner rejected the request — check JUDGE0_API_KEY.",
+          time: "0",
+          status: "Auth error",
+        };
       }
       if (res.status >= 500) {
         lastError = "The code runner is temporarily unavailable. Please try again.";
-        if (attempt === 0) { await sleep(800); continue; }
+        if (attempt === 0) {
+          await sleep(800);
+          continue;
+        }
         return { stdout: "", stderr: "", error: lastError, time: "0", status: "Error" };
       }
       if (!res.ok) {
-        return { stdout: "", stderr: "", error: `Code runner error (HTTP ${res.status}).`, time: "0", status: "Error" };
+        return {
+          stdout: "",
+          stderr: "",
+          error: `Code runner error (HTTP ${res.status}).`,
+          time: "0",
+          status: "Error",
+        };
       }
 
       const result = await res.json().catch(() => ({}));
@@ -111,7 +133,10 @@ export async function executeCode(
       lastError = aborted
         ? "Code execution timed out. Try simplifying your code or run again."
         : "Couldn't reach the code runner. Check your connection (or the JUDGE0_URL setting).";
-      if (!aborted && attempt === 0) { await sleep(800); continue; }
+      if (!aborted && attempt === 0) {
+        await sleep(800);
+        continue;
+      }
       if (aborted) break;
     } finally {
       clearTimeout(timer);

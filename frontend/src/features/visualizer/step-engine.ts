@@ -41,8 +41,15 @@ function instrumentCode(code: string): string {
   function isExecutableLine(trimmed: string): boolean {
     if (!trimmed) return false;
     if (trimmed.startsWith("#")) return false;
-    if (trimmed.startsWith("def ") || trimmed.startsWith("class ") || trimmed.startsWith("@")) return false;
-    if (trimmed.startsWith("elif ") || trimmed.startsWith("else:") || trimmed.startsWith("except") || trimmed.startsWith("finally:")) return false;
+    if (trimmed.startsWith("def ") || trimmed.startsWith("class ") || trimmed.startsWith("@"))
+      return false;
+    if (
+      trimmed.startsWith("elif ") ||
+      trimmed.startsWith("else:") ||
+      trimmed.startsWith("except") ||
+      trimmed.startsWith("finally:")
+    )
+      return false;
     return true;
   }
 
@@ -55,7 +62,7 @@ function instrumentCode(code: string): string {
       continue;
     }
 
-    if (!inMultiline && (trimmed.startsWith("#"))) {
+    if (!inMultiline && trimmed.startsWith("#")) {
       result.push(line);
       continue;
     }
@@ -69,7 +76,11 @@ function instrumentCode(code: string): string {
 
     if (inMultiline) {
       result.push(line);
-      if (trimmed.includes(multilineQuote!) && (trimmed.endsWith(multilineQuote!) || trimmed.slice(0 - multilineQuote!.length) === multilineQuote!)) {
+      if (
+        trimmed.includes(multilineQuote!) &&
+        (trimmed.endsWith(multilineQuote!) ||
+          trimmed.slice(0 - multilineQuote!.length) === multilineQuote!)
+      ) {
         inMultiline = false;
         multilineQuote = null;
       }
@@ -103,7 +114,9 @@ export async function initSkulpt(): Promise<boolean> {
       const skulpt: any = await import("skulpt");
       Sk = skulpt.default || skulpt;
       Sk.configure({
-        output: (text: string) => { capturedOutput += text; },
+        output: (text: string) => {
+          capturedOutput += text;
+        },
         // Skulpt's `read` is its module loader — serve stdlib files (sys, math,
         // random, …) from the bundled builtinFiles so imports actually resolve.
         // (Skulpt's own `print` pulls in `sys`, so without this every program
@@ -161,7 +174,7 @@ export async function runCode(
   onStep: StepCallback,
   onDone: DoneCallback,
   onError: (line: number, msg: string, type: string) => void,
-  directRun = false
+  directRun = false,
 ): Promise<void> {
   if (!Sk) {
     const loaded = await initSkulpt();
@@ -192,7 +205,14 @@ export async function runCode(
         // Skulpt mangles identifiers that clash with JS reserved words by
         // appending `_$rw$` (e.g. `name` → `name_$rw$`); show the clean name.
         const key = rawKey.replace(/_\$rw\$$/, "");
-        if (key === "Sk" || key === "_sk_vars_before" || key === "_sk_keys" || key === "_sk_step" || key.startsWith("__")) continue;
+        if (
+          key === "Sk" ||
+          key === "_sk_vars_before" ||
+          key === "_sk_keys" ||
+          key === "_sk_step" ||
+          key.startsWith("__")
+        )
+          continue;
         const v = g[rawKey];
         if (v === undefined || v === null) continue;
         try {
@@ -207,8 +227,10 @@ export async function runCode(
             else if (v instanceof Sk.builtin.int_) type = "int";
             else if (v instanceof Sk.builtin.float_) type = "float";
             else if (v instanceof Sk.builtin.bool) type = "bool";
-            else if (v instanceof Sk.builtin.none) { type = "NoneType"; val = null; }
-            else if (typeof v?.tp$name === "string") type = v.tp$name;
+            else if (v instanceof Sk.builtin.none) {
+              type = "NoneType";
+              val = null;
+            } else if (typeof v?.tp$name === "string") type = v.tp$name;
           } catch {
             val = String(v);
             type = typeof v;
@@ -217,10 +239,15 @@ export async function runCode(
         } catch {}
       }
       return vars;
-    } catch { return {}; }
+    } catch {
+      return {};
+    }
   }
 
-  function detectChanges(currentVars: Record<string, { type: string; value: any }>, step: StepFrame) {
+  function detectChanges(
+    currentVars: Record<string, { type: string; value: any }>,
+    step: StepFrame,
+  ) {
     const changed: string[] = [];
     for (const [k, v] of Object.entries(currentVars)) {
       if (lastVars[k] !== undefined && JSON.stringify(lastVars[k]) !== JSON.stringify(v.value)) {

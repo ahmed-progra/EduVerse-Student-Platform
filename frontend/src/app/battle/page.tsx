@@ -15,7 +15,9 @@ import { Swords, Clock, Play, Trophy, History, ShieldAlert, Scale } from "lucide
 
 const Editor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
-  loading: () => <div className="h-[350px] bg-eduverse-editor animate-pulse" aria-label="Loading code editor" />,
+  loading: () => (
+    <div className="h-[350px] bg-eduverse-editor animate-pulse" aria-label="Loading code editor" />
+  ),
 });
 
 interface BattleChallenge {
@@ -58,7 +60,10 @@ export default function BattlePage() {
   const startTimeRef = useRef(0);
 
   useEffect(() => {
-    api.getBattleHistory().then((res) => setHistory(res.data)).catch(() => {});
+    api
+      .getBattleHistory()
+      .then((res) => setHistory(res.data))
+      .catch(() => {});
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
       if (countdownRef.current) clearInterval(countdownRef.current);
@@ -151,7 +156,10 @@ export default function BattlePage() {
         const profile = await api.getProfile();
         updateXp(profile.data.xp, profile.data.level);
       }
-      api.getBattleHistory().then((r) => setHistory(r.data)).catch(() => {});
+      api
+        .getBattleHistory()
+        .then((r) => setHistory(r.data))
+        .catch(() => {});
     } catch {}
   };
 
@@ -163,7 +171,11 @@ export default function BattlePage() {
 
   const timeFraction = timeLimit > 0 ? timeLeft / timeLimit : 0;
   const verdict = result
-    ? result.winnerId === user?.id ? "victory" : result.winnerId ? "defeat" : "draw"
+    ? result.winnerId === user?.id
+      ? "victory"
+      : result.winnerId
+        ? "defeat"
+        : "draw"
     : null;
 
   // One-shot victory confetti — keyed on the verdict so the running arena timer
@@ -178,7 +190,12 @@ export default function BattlePage() {
   }, [verdict]);
 
   return (
-    <motion.div className="space-y-6 max-w-6xl mx-auto" initial="hidden" animate="visible" variants={staggerContainer}>
+    <motion.div
+      className="space-y-6 max-w-6xl mx-auto"
+      initial="hidden"
+      animate="visible"
+      variants={staggerContainer}
+    >
       <motion.div variants={fadeUp} transition={fastEaseTransition}>
         <div className="section-label">
           <span className="section-label-prefix">//</span> Arena
@@ -187,7 +204,9 @@ export default function BattlePage() {
           <Swords className="w-7 h-7 text-eduverse-accent" aria-hidden="true" />
           Battle Arena
         </h1>
-        <p className="text-eduverse-text-muted">You against the clock. Solve it before the sand runs out.</p>
+        <p className="text-eduverse-text-muted">
+          You against the clock. Solve it before the sand runs out.
+        </p>
       </motion.div>
 
       {view === "lobby" && (
@@ -250,12 +269,17 @@ export default function BattlePage() {
             ) : (
               <div className="space-y-2">
                 {history.map((b) => (
-                  <div key={b.id} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0 text-sm">
+                  <div
+                    key={b.id}
+                    className="flex items-center justify-between py-2 border-b border-white/5 last:border-0 text-sm"
+                  >
                     <div className="font-mono text-xs">
                       <span className="capitalize text-eduverse-text-body">{b.difficulty}</span>
                       <span className="text-eduverse-text-muted ml-2">{b.timeLimit}s</span>
                     </div>
-                    <div className={`font-semibold ${b.winnerId === user?.id ? "text-eduverse-success" : b.winnerId ? "text-eduverse-danger" : "text-eduverse-text-muted"}`}>
+                    <div
+                      className={`font-semibold ${b.winnerId === user?.id ? "text-eduverse-success" : b.winnerId ? "text-eduverse-danger" : "text-eduverse-text-muted"}`}
+                    >
                       {b.winnerId === user?.id ? "Won" : b.winnerId ? "Lost" : "Draw"}
                     </div>
                   </div>
@@ -271,7 +295,8 @@ export default function BattlePage() {
         <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.1 }}>
           <div className="battle-staging">
             <div className="bt-meta font-mono">
-              <span className="capitalize">{difficulty}</span> · {formatTime(timeLimit)} · {challenge.type.replace("_", " ")}
+              <span className="capitalize">{difficulty}</span> · {formatTime(timeLimit)} ·{" "}
+              {challenge.type.replace("_", " ")}
             </div>
             <h2 className="bt-title font-display">{challenge.title}</h2>
             <p className="bt-desc">{challenge.description}</p>
@@ -280,7 +305,12 @@ export default function BattlePage() {
               <Swords className="w-4 h-4 text-eduverse-accent" />
               <span>the clock</span>
             </div>
-            <div key={countdown} className="bt-count font-mono" role="timer" aria-label={`Battle starts in ${countdown}`}>
+            <div
+              key={countdown}
+              className="bt-count font-mono"
+              role="timer"
+              aria-label={`Battle starts in ${countdown}`}
+            >
               {countdown}
             </div>
             <button className="bt-skip font-mono" onClick={skipCountdown}>
@@ -291,15 +321,25 @@ export default function BattlePage() {
       )}
 
       {view === "arena" && challenge && (
-        <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.15 }} className="space-y-4">
+        <motion.div
+          variants={fadeUp}
+          transition={{ ...fastEaseTransition, delay: 0.15 }}
+          className="space-y-4"
+        >
           {/* Timer & status */}
           <div className="bt-timer-row">
             <div className="flex items-center gap-4 min-w-0">
-              <div className={`bt-clock font-mono ${timeLeft < 30 && !submitted ? "danger" : ""}`} role="timer" aria-label={`${formatTime(timeLeft)} remaining`}>
+              <div
+                className={`bt-clock font-mono ${timeLeft < 30 && !submitted ? "danger" : ""}`}
+                role="timer"
+                aria-label={`${formatTime(timeLeft)} remaining`}
+              >
                 <Clock className="w-5 h-5 inline mr-2 -mt-1" aria-hidden="true" />
                 {formatTime(timeLeft)}
               </div>
-              <span className="text-sm capitalize text-eduverse-text-muted truncate">{challenge.type.replace("_", " ")}</span>
+              <span className="text-sm capitalize text-eduverse-text-muted truncate">
+                {challenge.type.replace("_", " ")}
+              </span>
             </div>
             <GradientButton
               onClick={() => battle && handleSubmit(battle.id, code)}
@@ -318,7 +358,9 @@ export default function BattlePage() {
           {/* Challenge */}
           <GlassCard>
             <h2 className="font-bold mb-2 font-display">{challenge.title}</h2>
-            <p className="text-sm text-eduverse-text-muted leading-relaxed">{challenge.description}</p>
+            <p className="text-sm text-eduverse-text-muted leading-relaxed">
+              {challenge.description}
+            </p>
           </GlassCard>
 
           {/* Editor */}
@@ -349,8 +391,12 @@ export default function BattlePage() {
 
           {output && (
             <GlassCard>
-              <h3 className="text-xs font-mono text-eduverse-text-muted mb-2"><span className="text-eduverse-accent">{"//"}</span> Output</h3>
-              <pre className="bg-black/30 rounded p-4 text-sm font-mono overflow-auto">{output}</pre>
+              <h3 className="text-xs font-mono text-eduverse-text-muted mb-2">
+                <span className="text-eduverse-accent">{"//"}</span> Output
+              </h3>
+              <pre className="bg-black/30 rounded p-4 text-sm font-mono overflow-auto">
+                {output}
+              </pre>
             </GlassCard>
           )}
 
@@ -376,14 +422,24 @@ export default function BattlePage() {
                   </div>
                   <h2 className="text-4xl font-bold mb-1 font-display capitalize">{verdict}</h2>
                   <p className="text-sm text-eduverse-text-muted font-mono mb-3">
-                    {verdict === "victory" ? "the clock yields" : verdict === "defeat" ? "the clock claims this one" : "honors are even"}
+                    {verdict === "victory"
+                      ? "the clock yields"
+                      : verdict === "defeat"
+                        ? "the clock claims this one"
+                        : "honors are even"}
                   </p>
                   {result.xpReward > 0 && (
                     <p className="text-eduverse-success font-bold font-mono text-lg">
                       +<AnimatedNumber value={result.xpReward} /> XP
                     </p>
                   )}
-                  <GradientButton onClick={() => { setView("lobby"); setResult(null); }} className="mt-5">
+                  <GradientButton
+                    onClick={() => {
+                      setView("lobby");
+                      setResult(null);
+                    }}
+                    className="mt-5"
+                  >
                     Back to Lobby
                   </GradientButton>
                 </GlassCard>

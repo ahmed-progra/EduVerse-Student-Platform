@@ -27,7 +27,7 @@ Fixes # (issue number)
 Describe the testing you did (or why it isn't needed). Include:
 
 - [ ] Tests added / updated
-- [ ] E2E suite(s) run: `learning-e2e`, `mentor-e2e`, `apprentice-e2e`, `projects-e2e`, `ai-e2e`
+- [ ] E2E suite(s) run: `learning-e2e`, `mentor-e2e`, `apprentice-e2e`, `teachback-e2e`, `projects-e2e`, `ai-e2e`
 - [ ] `npm run typecheck` passes
 - [ ] `npm run format:check` passes
 

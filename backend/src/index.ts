@@ -27,7 +27,12 @@ const PORT = process.env.PORT || 4000;
 
 const allowedOrigins = process.env.FRONTEND_URL
   ? process.env.FRONTEND_URL.split(",")
-  : ["http://localhost:3000", "http://localhost:3001", "http://localhost:3002", "http://localhost:3003"];
+  : [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "http://localhost:3002",
+      "http://localhost:3003",
+    ];
 
 app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use((_req, res, next) => {

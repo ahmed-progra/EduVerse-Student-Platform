@@ -12,19 +12,42 @@ const Visualizer = dynamic(
   () => import("@/features/visualizer/visualizer").then((m) => ({ default: m.Visualizer })),
   {
     ssr: false,
-    loading: () => <div className="h-[420px] rounded-[var(--radius-card)] bg-eduverse-editor animate-pulse" aria-label="Loading editor" />,
-  }
+    loading: () => (
+      <div
+        className="h-[420px] rounded-[var(--radius-card)] bg-eduverse-editor animate-pulse"
+        aria-label="Loading editor"
+      />
+    ),
+  },
 );
 
 const HANDOFF_KEY = "eduverse_codelab_code";
 
 const PRESETS = [
-  { name: "Hello World", code: 'print("Hello, EduVerse!")\n\nname = input("What\'s your name? ")\nprint(f"Nice to meet you, {name}!")' },
-  { name: "Variables", code: "# Variables & Types\nname = \"Alice\"\nage = 25\nheight = 1.68\nis_student = True\n\nprint(f\"{name} is {age} years old\")\nprint(type(name))\nprint(type(age))" },
-  { name: "Lists", code: "# Lists\nfruits = [\"apple\", \"banana\", \"cherry\"]\nfruits.append(\"date\")\nfruits.sort()\nprint(fruits)\n\n# Slicing\nnumbers = list(range(10))\nprint(numbers[::2])" },
-  { name: "Loops", code: "# Loops\nfor i in range(5):\n    print(f\"Iteration {i}\")\n\n# While\ncount = 0\nwhile count < 3:\n    print(f\"Count: {count}\")\n    count += 1" },
-  { name: "Functions", code: "# Functions\ndef greet(name):\n    return f\"Hello, {name}!\"\n\ndef add(a, b):\n    return a + b\n\nprint(greet(\"EduVerse\"))\nprint(add(10, 20))" },
-  { name: "Debug Me", code: "# Find the bugs!\ndef average(nums):\n    total = sum(nums)\n    return total / len(nums)\n\n# Edge cases\nprint(average([10, 20, 30]))\n# print(average([]))  # what happens?" },
+  {
+    name: "Hello World",
+    code: 'print("Hello, EduVerse!")\n\nname = input("What\'s your name? ")\nprint(f"Nice to meet you, {name}!")',
+  },
+  {
+    name: "Variables",
+    code: '# Variables & Types\nname = "Alice"\nage = 25\nheight = 1.68\nis_student = True\n\nprint(f"{name} is {age} years old")\nprint(type(name))\nprint(type(age))',
+  },
+  {
+    name: "Lists",
+    code: '# Lists\nfruits = ["apple", "banana", "cherry"]\nfruits.append("date")\nfruits.sort()\nprint(fruits)\n\n# Slicing\nnumbers = list(range(10))\nprint(numbers[::2])',
+  },
+  {
+    name: "Loops",
+    code: '# Loops\nfor i in range(5):\n    print(f"Iteration {i}")\n\n# While\ncount = 0\nwhile count < 3:\n    print(f"Count: {count}")\n    count += 1',
+  },
+  {
+    name: "Functions",
+    code: '# Functions\ndef greet(name):\n    return f"Hello, {name}!"\n\ndef add(a, b):\n    return a + b\n\nprint(greet("EduVerse"))\nprint(add(10, 20))',
+  },
+  {
+    name: "Debug Me",
+    code: "# Find the bugs!\ndef average(nums):\n    total = sum(nums)\n    return total / len(nums)\n\n# Edge cases\nprint(average([10, 20, 30]))\n# print(average([]))  # what happens?",
+  },
 ];
 
 const BUG_MUTATIONS = [
@@ -71,7 +94,12 @@ export default function CodeLabPage() {
   }, [code]);
 
   return (
-    <motion.div className="space-y-6 max-w-6xl mx-auto" initial="hidden" animate="visible" variants={staggerContainer}>
+    <motion.div
+      className="space-y-6 max-w-6xl mx-auto"
+      initial="hidden"
+      animate="visible"
+      variants={staggerContainer}
+    >
       <motion.div variants={fadeUp} transition={fastEaseTransition}>
         <div className="section-label">
           <span className="section-label-prefix">//</span> Lab
@@ -82,11 +110,17 @@ export default function CodeLabPage() {
           </div>
           Code Lab
         </h1>
-        <p className="text-eduverse-text-muted">Experiment with Python code — step through execution, inspect variables, and debug.</p>
+        <p className="text-eduverse-text-muted">
+          Experiment with Python code — step through execution, inspect variables, and debug.
+        </p>
       </motion.div>
 
       {/* Presets */}
-      <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.06 }} className="flex flex-wrap items-center gap-2">
+      <motion.div
+        variants={fadeUp}
+        transition={{ ...fastEaseTransition, delay: 0.06 }}
+        className="flex flex-wrap items-center gap-2"
+      >
         <span className="text-xs text-eduverse-text-muted uppercase tracking-wider flex items-center gap-1.5 font-mono mr-1">
           <BookOpen className="w-3 h-3" /> Presets
         </span>
@@ -126,11 +160,7 @@ export default function CodeLabPage() {
       {/* Visualizer */}
       <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.12 }}>
         <GlassCard className="p-4">
-          <Visualizer
-            key={code}
-            initialCode={code}
-            language="python"
-          />
+          <Visualizer key={code} initialCode={code} language="python" />
         </GlassCard>
       </motion.div>
 
@@ -141,9 +171,15 @@ export default function CodeLabPage() {
             <Keyboard className="w-3 h-3" /> Keyboard Shortcuts
           </div>
           <div className="codelab-shortcuts-list">
-            <span><kbd className="shortcut-kbd">Ctrl+Enter</kbd> Next Step</span>
-            <span><kbd className="shortcut-kbd">Ctrl+Shift+Enter</kbd> Run All</span>
-            <span><kbd className="shortcut-kbd">Ctrl+Shift+R</kbd> Reset</span>
+            <span>
+              <kbd className="shortcut-kbd">Ctrl+Enter</kbd> Next Step
+            </span>
+            <span>
+              <kbd className="shortcut-kbd">Ctrl+Shift+Enter</kbd> Run All
+            </span>
+            <span>
+              <kbd className="shortcut-kbd">Ctrl+Shift+R</kbd> Reset
+            </span>
           </div>
         </div>
       </motion.div>

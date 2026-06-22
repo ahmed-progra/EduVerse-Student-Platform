@@ -98,7 +98,7 @@ export function CommandPalette({
       const panel = panelRef.current;
       if (!panel) return;
       const focusables = panel.querySelectorAll<HTMLElement>(
-        'input, button, [href], [tabindex]:not([tabindex="-1"])'
+        'input, button, [href], [tabindex]:not([tabindex="-1"])',
       );
       if (focusables.length === 0) return;
       const first = focusables[0];
@@ -116,8 +116,19 @@ export function CommandPalette({
   if (!open) return null;
 
   return (
-    <div className="cmdk-overlay" role="dialog" aria-modal="true" aria-label="Command menu" onMouseDown={onClose}>
-      <div ref={panelRef} className="cmdk-panel" onMouseDown={(e) => e.stopPropagation()} onKeyDown={onKeyDown}>
+    <div
+      className="cmdk-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Command menu"
+      onMouseDown={onClose}
+    >
+      <div
+        ref={panelRef}
+        className="cmdk-panel"
+        onMouseDown={(e) => e.stopPropagation()}
+        onKeyDown={onKeyDown}
+      >
         <div className="cmdk-input-row">
           <Search size={16} className="cmdk-input-icon" aria-hidden="true" />
           <input

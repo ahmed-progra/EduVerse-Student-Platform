@@ -10,10 +10,24 @@ import { useAuthStore } from "@/stores/auth-store";
 import { fadeUp, staggerContainer, fastEaseTransition } from "@/lib/motion";
 import { useEffect, useState, useRef, useMemo } from "react";
 import {
-  Zap, BookOpen, Swords, GitBranch, ShoppingBag,
-  Medal, Calendar, Mail, Edit3, Upload,
-  Flame, Trophy, Target, Award, BarChart3, TrendingUp,
-  Star, Layers
+  Zap,
+  BookOpen,
+  Swords,
+  GitBranch,
+  ShoppingBag,
+  Medal,
+  Calendar,
+  Mail,
+  Edit3,
+  Upload,
+  Flame,
+  Trophy,
+  Target,
+  Award,
+  BarChart3,
+  TrendingUp,
+  Star,
+  Layers,
 } from "lucide-react";
 
 interface ProfileData {
@@ -28,7 +42,11 @@ interface ProfileData {
   placementLevel: string;
   createdAt: string;
   progress: { lessonId: string; completed: boolean; lesson: { courseId: string; title: string } }[];
-  inventory: { itemId: string; equipped: boolean; item: { name: string; type: string; imageUrl: string } }[];
+  inventory: {
+    itemId: string;
+    equipped: boolean;
+    item: { name: string; type: string; imageUrl: string };
+  }[];
   skills: { skillId: string; unlocked: boolean; skill: { name: string } }[];
   xpLogs: { id: string; amount: number; source: string; createdAt: string }[];
 }
@@ -46,24 +64,72 @@ const tierBadgeColors: Record<string, string> = {
 };
 
 function getAchievements(profile: ProfileData | null, streak: number, battlesWon: number) {
-  const lessonsDone = profile?.progress?.filter(p => p.completed).length || 0;
-  const skillsUnlocked = profile?.skills?.filter(s => s.unlocked).length || 0;
+  const lessonsDone = profile?.progress?.filter((p) => p.completed).length || 0;
+  const skillsUnlocked = profile?.skills?.filter((s) => s.unlocked).length || 0;
   const itemsOwned = profile?.inventory?.length || 0;
   const level = profile?.level || 0;
   const xp = profile?.xp || 0;
 
   return [
-    { id: "first_lesson", label: "First Steps", desc: "Complete your first lesson", earned: lessonsDone >= 1, icon: BookOpen },
-    { id: "scholar", label: "Scholar", desc: "Complete 30 lessons", earned: lessonsDone >= 30, icon: BookOpen },
-    { id: "level_5", label: "Rising Star", desc: "Reach level 5", earned: level >= 5, icon: TrendingUp },
-    { id: "level_10", label: "Code Master", desc: "Reach level 10", earned: level >= 10, icon: Trophy },
+    {
+      id: "first_lesson",
+      label: "First Steps",
+      desc: "Complete your first lesson",
+      earned: lessonsDone >= 1,
+      icon: BookOpen,
+    },
+    {
+      id: "scholar",
+      label: "Scholar",
+      desc: "Complete 30 lessons",
+      earned: lessonsDone >= 30,
+      icon: BookOpen,
+    },
+    {
+      id: "level_5",
+      label: "Rising Star",
+      desc: "Reach level 5",
+      earned: level >= 5,
+      icon: TrendingUp,
+    },
+    {
+      id: "level_10",
+      label: "Code Master",
+      desc: "Reach level 10",
+      earned: level >= 10,
+      icon: Trophy,
+    },
     { id: "xp_1000", label: "Century", desc: "Earn 1,000 XP", earned: xp >= 1000, icon: Zap },
     { id: "xp_5000", label: "Powerhouse", desc: "Earn 5,000 XP", earned: xp >= 5000, icon: Zap },
-    { id: "skills_5", label: "Skill Collector", desc: "Unlock 5 skills", earned: skillsUnlocked >= 5, icon: GitBranch },
-    { id: "items_5", label: "Shopper", desc: "Own 5 items", earned: itemsOwned >= 5, icon: ShoppingBag },
+    {
+      id: "skills_5",
+      label: "Skill Collector",
+      desc: "Unlock 5 skills",
+      earned: skillsUnlocked >= 5,
+      icon: GitBranch,
+    },
+    {
+      id: "items_5",
+      label: "Shopper",
+      desc: "Own 5 items",
+      earned: itemsOwned >= 5,
+      icon: ShoppingBag,
+    },
     { id: "streak_7", label: "On Fire!", desc: "7-day streak", earned: streak >= 7, icon: Flame },
-    { id: "streak_30", label: "Unstoppable", desc: "30-day streak", earned: streak >= 30, icon: Flame },
-    { id: "battle_5", label: "Warrior", desc: "Win 5 battles", earned: battlesWon >= 5, icon: Swords },
+    {
+      id: "streak_30",
+      label: "Unstoppable",
+      desc: "30-day streak",
+      earned: streak >= 30,
+      icon: Flame,
+    },
+    {
+      id: "battle_5",
+      label: "Warrior",
+      desc: "Win 5 battles",
+      earned: battlesWon >= 5,
+      icon: Swords,
+    },
   ];
 }
 
@@ -82,7 +148,10 @@ function getLast12Weeks() {
   for (let i = 83; i >= 0; i--) {
     const d = new Date(now);
     d.setDate(d.getDate() - i);
-    days.push({ date: d.toISOString().split("T")[0], label: d.toLocaleDateString("en-US", { weekday: "short" }) });
+    days.push({
+      date: d.toISOString().split("T")[0],
+      label: d.toLocaleDateString("en-US", { weekday: "short" }),
+    });
   }
   return days;
 }
@@ -128,24 +197,39 @@ export default function ProfilePage() {
   const maxActivity = Math.max(...Object.values(activityData), 1);
   const xpBreakdown = useMemo(() => getXpBreakdown(profile?.xpLogs || []), [profile]);
   const courseProgress = useMemo(() => getCourseProgress(profile?.progress || []), [profile]);
-  const achievements = useMemo(() => getAchievements(profile, streak, battlesWon), [profile, streak, battlesWon]);
-  const totalXpEarned = useMemo(() => profile?.xpLogs?.reduce((s, l) => s + l.amount, 0) || 0, [profile]);
+  const achievements = useMemo(
+    () => getAchievements(profile, streak, battlesWon),
+    [profile, streak, battlesWon],
+  );
+  const totalXpEarned = useMemo(
+    () => profile?.xpLogs?.reduce((s, l) => s + l.amount, 0) || 0,
+    [profile],
+  );
 
-  const earnedAchievements = achievements.filter(a => a.earned);
+  const earnedAchievements = achievements.filter((a) => a.earned);
 
   useEffect(() => {
-    api.getProfile().then((res) => {
-      setProfile(res.data);
-      setEditUsername(res.data.username);
-      setEditBio(res.data.bio || "");
-      setLoading(false);
-    }).catch(() => setLoading(false));
-    api.getBattleHistory().then((res) => {
-      const battles = res.data || [];
-      const userId = useAuthStore.getState().user?.id;
-      setBattlesPlayed(battles.length);
-      setBattlesWon(battles.filter((b: { winnerId: string | null }) => b.winnerId && b.winnerId === userId).length);
-    }).catch(() => {});
+    api
+      .getProfile()
+      .then((res) => {
+        setProfile(res.data);
+        setEditUsername(res.data.username);
+        setEditBio(res.data.bio || "");
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+    api
+      .getBattleHistory()
+      .then((res) => {
+        const battles = res.data || [];
+        const userId = useAuthStore.getState().user?.id;
+        setBattlesPlayed(battles.length);
+        setBattlesWon(
+          battles.filter((b: { winnerId: string | null }) => b.winnerId && b.winnerId === userId)
+            .length,
+        );
+      })
+      .catch(() => {});
   }, []);
 
   const handleAvatarClick = () => fileInputRef.current?.click();
@@ -232,7 +316,9 @@ export default function ProfilePage() {
       <div className="space-y-6 w-full max-w-5xl mx-auto pb-12">
         <div className="sk-card" style={{ height: "140px" }} />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[1,2,3,4].map(i => <div key={i} className="sk-card" style={{ height: "96px" }} />)}
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="sk-card" style={{ height: "96px" }} />
+          ))}
         </div>
         <div className="sk-card" style={{ height: "200px" }} />
       </div>
@@ -240,8 +326,12 @@ export default function ProfilePage() {
   }
 
   return (
-    <motion.div className="space-y-6 max-w-5xl mx-auto pb-12" initial="hidden" animate="visible" variants={staggerContainer}>
-
+    <motion.div
+      className="space-y-6 max-w-5xl mx-auto pb-12"
+      initial="hidden"
+      animate="visible"
+      variants={staggerContainer}
+    >
       <motion.div variants={fadeUp} transition={fastEaseTransition}>
         <div className="section-label">
           <span className="section-label-prefix">//</span> Profile
@@ -251,7 +341,11 @@ export default function ProfilePage() {
             <div className="relative group cursor-pointer shrink-0" onClick={handleAvatarClick}>
               <div className="w-24 h-24 rounded-full flex items-center justify-center text-4xl font-bold overflow-hidden transition-all duration-300 bg-eduverse-accent-strong text-eduverse-text shadow-md">
                 {avatarPreview || profile.avatar?.startsWith("data:") ? (
-                  <img src={avatarPreview || profile.avatar} alt="" className="w-full h-full object-cover" />
+                  <img
+                    src={avatarPreview || profile.avatar}
+                    alt=""
+                    className="w-full h-full object-cover"
+                  />
                 ) : (
                   profile.username[0].toUpperCase()
                 )}
@@ -259,7 +353,13 @@ export default function ProfilePage() {
               <div className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                 <Upload className="w-5 h-5 text-white" />
               </div>
-              <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleAvatarChange}
+              />
               {avatarError && (
                 <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 whitespace-nowrap form-error !py-1.5 !px-3 text-xs z-10">
                   {avatarError}
@@ -285,20 +385,37 @@ export default function ProfilePage() {
                     placeholder="Write something about yourself..."
                   />
                   <div className="flex gap-2">
-                    <GradientButton onClick={handleSaveEdit} disabled={saving} className="text-xs py-2">
+                    <GradientButton
+                      onClick={handleSaveEdit}
+                      disabled={saving}
+                      className="text-xs py-2"
+                    >
                       {saving ? "Saving..." : "Save"}
                     </GradientButton>
-                    <GradientButton onClick={handleCancelEdit} variant="ghost" className="text-xs py-2">Cancel</GradientButton>
+                    <GradientButton
+                      onClick={handleCancelEdit}
+                      variant="ghost"
+                      className="text-xs py-2"
+                    >
+                      Cancel
+                    </GradientButton>
                   </div>
                 </div>
               ) : (
                 <>
                   <div className="flex items-center gap-3 flex-wrap">
-                    <h1 className="text-2xl font-bold font-display tracking-tight">{profile.username}</h1>
-                    <button onClick={handleStartEdit} className="text-xs text-eduverse-text-muted hover:text-white px-2.5 py-1.5 rounded-[var(--radius-button)] bg-eduverse-surface border border-eduverse-border hover:border-eduverse-border-mid flex items-center gap-1.5 transition-all">
+                    <h1 className="text-2xl font-bold font-display tracking-tight">
+                      {profile.username}
+                    </h1>
+                    <button
+                      onClick={handleStartEdit}
+                      className="text-xs text-eduverse-text-muted hover:text-white px-2.5 py-1.5 rounded-[var(--radius-button)] bg-eduverse-surface border border-eduverse-border hover:border-eduverse-border-mid flex items-center gap-1.5 transition-all"
+                    >
                       <Edit3 className="w-3 h-3" /> Edit
                     </button>
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${tierBadgeColors[profile.placementLevel] || "bg-eduverse-accent/20 text-eduverse-accent-light"}`}>
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${tierBadgeColors[profile.placementLevel] || "bg-eduverse-accent/20 text-eduverse-accent-light"}`}
+                    >
                       {profile.placementLevel}
                     </span>
                   </div>
@@ -306,9 +423,19 @@ export default function ProfilePage() {
                     {profile.bio || "No bio yet. Click edit to add one."}
                   </p>
                   <div className="flex items-center gap-5 mt-3 text-xs text-eduverse-text-muted flex-wrap">
-                    <span className="flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" /> {profile.email}</span>
-                    <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> Joined {new Date(profile.createdAt).toLocaleDateString("en-US", { month: "long", year: "numeric" })}</span>
-                    <span className="flex items-center gap-1.5"><Medal className="w-3.5 h-3.5" /> Rank #{profile.rank || "—"}</span>
+                    <span className="flex items-center gap-1.5">
+                      <Mail className="w-3.5 h-3.5" /> {profile.email}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <Calendar className="w-3.5 h-3.5" /> Joined{" "}
+                      {new Date(profile.createdAt).toLocaleDateString("en-US", {
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <Medal className="w-3.5 h-3.5" /> Rank #{profile.rank || "—"}
+                    </span>
                   </div>
                 </>
               )}
@@ -341,14 +468,54 @@ export default function ProfilePage() {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
-            { label: "Level", value: profile.level, icon: TrendingUp, color: "text-eduverse-accent-light" },
-            { label: "Total XP", value: profile.xp.toLocaleString(), icon: Zap, color: "text-eduverse-warning" },
-            { label: "Lessons Done", value: profile.progress?.filter(p => p.completed).length || 0, icon: BookOpen, color: "text-eduverse-success" },
-            { label: "Skills Unlocked", value: profile.skills?.filter(s => s.unlocked).length || 0, icon: GitBranch, color: "text-eduverse-accent-light" },
-            { label: "Items Owned", value: profile.inventory?.length || 0, icon: ShoppingBag, color: "text-eduverse-warning" },
-            { label: "Rank", value: `#${profile.rank || "—"}`, icon: Medal, color: "text-eduverse-gold" },
-            { label: "Streak", value: `${streak}d`, icon: Flame, color: streak >= 7 ? "text-eduverse-accent-light" : "text-eduverse-text-muted" },
-            { label: "Battles Won", value: battlesPlayed ? `${battlesWon}/${battlesPlayed}` : "0", icon: Swords, color: "text-eduverse-danger" },
+            {
+              label: "Level",
+              value: profile.level,
+              icon: TrendingUp,
+              color: "text-eduverse-accent-light",
+            },
+            {
+              label: "Total XP",
+              value: profile.xp.toLocaleString(),
+              icon: Zap,
+              color: "text-eduverse-warning",
+            },
+            {
+              label: "Lessons Done",
+              value: profile.progress?.filter((p) => p.completed).length || 0,
+              icon: BookOpen,
+              color: "text-eduverse-success",
+            },
+            {
+              label: "Skills Unlocked",
+              value: profile.skills?.filter((s) => s.unlocked).length || 0,
+              icon: GitBranch,
+              color: "text-eduverse-accent-light",
+            },
+            {
+              label: "Items Owned",
+              value: profile.inventory?.length || 0,
+              icon: ShoppingBag,
+              color: "text-eduverse-warning",
+            },
+            {
+              label: "Rank",
+              value: `#${profile.rank || "—"}`,
+              icon: Medal,
+              color: "text-eduverse-gold",
+            },
+            {
+              label: "Streak",
+              value: `${streak}d`,
+              icon: Flame,
+              color: streak >= 7 ? "text-eduverse-accent-light" : "text-eduverse-text-muted",
+            },
+            {
+              label: "Battles Won",
+              value: battlesPlayed ? `${battlesWon}/${battlesPlayed}` : "0",
+              icon: Swords,
+              color: "text-eduverse-danger",
+            },
           ].map((stat, i) => (
             <motion.div
               key={stat.label}
@@ -360,8 +527,12 @@ export default function ProfilePage() {
                 <div className="w-8 h-8 flex items-center justify-center mx-auto mb-3">
                   <stat.icon className={`w-4 h-4 ${stat.color}`} aria-hidden="true" />
                 </div>
-                <div className="text-xl font-bold font-mono text-eduverse-text tracking-tight">{stat.value}</div>
-                <div className="text-[11px] text-eduverse-text-muted mt-1 leading-tight">{stat.label}</div>
+                <div className="text-xl font-bold font-mono text-eduverse-text tracking-tight">
+                  {stat.value}
+                </div>
+                <div className="text-[11px] text-eduverse-text-muted mt-1 leading-tight">
+                  {stat.label}
+                </div>
               </GlassCard>
             </motion.div>
           ))}
@@ -378,7 +549,11 @@ export default function ProfilePage() {
               <BarChart3 className="w-4 h-4 text-eduverse-accent-light" />
               Activity (Last 12 Weeks)
             </h2>
-            <div className="flex gap-1 flex-wrap" role="img" aria-label="Daily XP activity heatmap for the last 12 weeks">
+            <div
+              className="flex gap-1 flex-wrap"
+              role="img"
+              aria-label="Daily XP activity heatmap for the last 12 weeks"
+            >
               {days12Weeks.map((day, i) => {
                 const amount = activityData[day.date] || 0;
                 return (
@@ -408,7 +583,9 @@ export default function ProfilePage() {
               XP Breakdown
             </h2>
             {Object.keys(xpBreakdown).length === 0 ? (
-              <p className="text-sm text-eduverse-text-muted py-6 text-center">No XP history yet. Start coding!</p>
+              <p className="text-sm text-eduverse-text-muted py-6 text-center">
+                No XP history yet. Start coding!
+              </p>
             ) : (
               <div className="space-y-3">
                 {Object.entries(xpBreakdown)
@@ -420,11 +597,15 @@ export default function ProfilePage() {
                     return (
                       <div key={source}>
                         <div className="flex items-center justify-between text-sm mb-1.5">
-                          <span className={`flex items-center gap-2 capitalize ${sourceColors[source] || "text-eduverse-text-muted"}`}>
+                          <span
+                            className={`flex items-center gap-2 capitalize ${sourceColors[source] || "text-eduverse-text-muted"}`}
+                          >
                             <Icon className="w-3.5 h-3.5" />
                             {source}
                           </span>
-                          <span className="font-semibold font-mono text-xs">{amount.toLocaleString()} XP · {pct}%</span>
+                          <span className="font-semibold font-mono text-xs">
+                            {amount.toLocaleString()} XP · {pct}%
+                          </span>
                         </div>
                         <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
                           <motion.div
@@ -456,12 +637,17 @@ export default function ProfilePage() {
             <div className="space-y-4">
               {Object.entries(courseProgress).map(([courseId, { total, done }]) => {
                 const pct = Math.round((done / total) * 100);
-                const courseName = profile.progress?.find(p => p.lesson.courseId === courseId)?.lesson.title?.split(" ")[0] || "Course";
+                const courseName =
+                  profile.progress
+                    ?.find((p) => p.lesson.courseId === courseId)
+                    ?.lesson.title?.split(" ")[0] || "Course";
                 return (
                   <div key={courseId}>
                     <div className="flex items-center justify-between text-sm mb-2">
                       <span className="font-medium truncate mr-2">{courseName}</span>
-                      <span className="text-xs text-eduverse-text-muted font-mono whitespace-nowrap">{done}/{total} ({pct}%)</span>
+                      <span className="text-xs text-eduverse-text-muted font-mono whitespace-nowrap">
+                        {done}/{total} ({pct}%)
+                      </span>
                     </div>
                     <div className="h-2 rounded-full bg-white/5 overflow-hidden">
                       <motion.div
@@ -501,10 +687,14 @@ export default function ProfilePage() {
                   className={`achievement-card ${ach.earned ? "earned" : "locked"}`}
                 >
                   <div className="achievement-icon">
-                    <Icon className={`w-4 h-4 ${ach.earned ? "text-eduverse-gold" : "text-eduverse-text-muted"}`} />
+                    <Icon
+                      className={`w-4 h-4 ${ach.earned ? "text-eduverse-gold" : "text-eduverse-text-muted"}`}
+                    />
                   </div>
                   <div className="text-xs font-semibold text-eduverse-text">{ach.label}</div>
-                  <div className="text-[10px] text-eduverse-text-muted mt-1 leading-tight">{ach.desc}</div>
+                  <div className="text-[10px] text-eduverse-text-muted mt-1 leading-tight">
+                    {ach.desc}
+                  </div>
                 </div>
               );
             })}
@@ -512,7 +702,7 @@ export default function ProfilePage() {
         </GlassCard>
       </motion.div>
 
-      {profile.inventory?.filter(i => i.equipped).length > 0 && (
+      {profile.inventory?.filter((i) => i.equipped).length > 0 && (
         <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.35 }}>
           <div className="section-label">
             <span className="section-label-prefix">//</span> Equipped
@@ -523,21 +713,30 @@ export default function ProfilePage() {
               Equipped Items
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {profile.inventory?.filter(i => i.equipped).map((inv) => (
-                <div key={inv.itemId} className="flex items-center gap-3 p-3 rounded-[var(--radius-card)]">
-                  <div className="w-9 h-9 flex items-center justify-center shrink-0">
-                    {inv.item.imageUrl ? (
-                      <img src={inv.item.imageUrl} alt="" className="w-5 h-5" />
-                    ) : (
-                      <Star className="w-4 h-4 text-eduverse-accent-light" />
-                    )}
+              {profile.inventory
+                ?.filter((i) => i.equipped)
+                .map((inv) => (
+                  <div
+                    key={inv.itemId}
+                    className="flex items-center gap-3 p-3 rounded-[var(--radius-card)]"
+                  >
+                    <div className="w-9 h-9 flex items-center justify-center shrink-0">
+                      {inv.item.imageUrl ? (
+                        <img src={inv.item.imageUrl} alt="" className="w-5 h-5" />
+                      ) : (
+                        <Star className="w-4 h-4 text-eduverse-accent-light" />
+                      )}
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold text-eduverse-text">
+                        {inv.item.name}
+                      </div>
+                      <div className="text-[10px] text-eduverse-text-muted capitalize">
+                        {inv.item.type}
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="text-sm font-semibold text-eduverse-text">{inv.item.name}</div>
-                    <div className="text-[10px] text-eduverse-text-muted capitalize">{inv.item.type}</div>
-                  </div>
-                </div>
-              ))}
+                ))}
             </div>
           </GlassCard>
         </motion.div>
@@ -563,17 +762,28 @@ export default function ProfilePage() {
                 className="flex items-center justify-between py-2.5 px-3 rounded-[var(--radius-button)] hover:bg-white/[0.025] transition-colors text-sm"
               >
                 <div className="flex items-center gap-2.5">
-                  <span className={`capitalize flex items-center gap-1.5 ${sourceColors[log.source] || "text-eduverse-text-muted"}`}>
+                  <span
+                    className={`capitalize flex items-center gap-1.5 ${sourceColors[log.source] || "text-eduverse-text-muted"}`}
+                  >
                     {SourceIcon(log.source)}
                     {log.source}
                   </span>
                   <span className="text-xs text-eduverse-text-muted">
-                    {new Date(log.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                    {new Date(log.createdAt).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                    })}
                   </span>
                 </div>
-                <span className="font-bold text-eduverse-success text-sm font-mono">+{log.amount} XP</span>
+                <span className="font-bold text-eduverse-success text-sm font-mono">
+                  +{log.amount} XP
+                </span>
               </motion.div>
-            )) || <p className="text-sm text-eduverse-text-muted py-6 text-center">No XP history yet. Start coding!</p>}
+            )) || (
+              <p className="text-sm text-eduverse-text-muted py-6 text-center">
+                No XP history yet. Start coding!
+              </p>
+            )}
           </div>
         </GlassCard>
       </motion.div>
@@ -583,7 +793,15 @@ export default function ProfilePage() {
 
 function PieChartIcon() {
   return (
-    <svg className="w-4 h-4 text-eduverse-accent-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      className="w-4 h-4 text-eduverse-accent-light"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
       <path d="M22 12A10 10 0 0 0 12 2v10z" />
     </svg>

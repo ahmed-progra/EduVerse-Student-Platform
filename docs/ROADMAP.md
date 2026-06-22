@@ -1,8 +1,9 @@
 # TODO — EduVerse Frontend
 
 ## Done: landing page "calm premium" rebuild (2026-06-10)
+
 Supersedes the earlier anti-gravity float/tilt work, which was removed.
-Design direction is recorded in PRODUCT.md and DESIGN.md.
+Design direction is recorded in [product.md](product.md).
 
 - [x] Replace 8 competing ambient animation systems (particle canvas, aurora blobs,
       floats, glow pulses, tilt/glare, parallax, shimmer) with one static hero glow
@@ -18,6 +19,7 @@ Design direction is recorded in PRODUCT.md and DESIGN.md.
 - [x] TypeScript check passes; verified in preview at 1440px and 375px
 
 ## Next
+
 - [ ] Propagate the calm-premium system to app pages (dashboard, courses, codelab,
       lessons, auth) — replace glassmorphism cards, align fonts/tokens, audit
       remaining continuous animations there

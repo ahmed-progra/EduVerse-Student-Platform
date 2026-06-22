@@ -16,7 +16,14 @@ import { prisma } from "../lib/prisma";
 import { generateJSON, AIError, clampText } from "./ai-service";
 import { addXp } from "./xp-service";
 import { COURSE_TOPICS, topicLabel } from "../learning/topics";
-import { getProfile, saveProfile, statusFor, classifyLevel, recordEvent, MasteryMap } from "./learning-service";
+import {
+  getProfile,
+  saveProfile,
+  statusFor,
+  classifyLevel,
+  recordEvent,
+  MasteryMap,
+} from "./learning-service";
 import { syncMissionProgress } from "./mentor-service";
 
 export const MAX_TEACH_TURNS = 5;
@@ -71,7 +78,11 @@ export async function apprenticeStart(topic: string, courseLabel?: string) {
       temperature: 0.85,
       maxOutputTokens: 400,
     });
-    return { say: str(data.say, fallback.say), understanding: clampPct(data.understanding, 12), done: false };
+    return {
+      say: str(data.say, fallback.say),
+      understanding: clampPct(data.understanding, 12),
+      done: false,
+    };
   } catch (err) {
     if (err instanceof AIError) return fallback;
     throw err;
@@ -143,7 +154,7 @@ export async function gradeTeaching(
   topic: string,
   topicKey: string | null,
   courseSlug: string | null,
-  turns: TeachTurn[]
+  turns: TeachTurn[],
 ): Promise<TeachGrade> {
   let grade: Omit<TeachGrade, "xpAwarded" | "masteryBoosted">;
   try {
@@ -172,8 +183,14 @@ export async function gradeTeaching(
       completeness,
       overall,
       verdict: str(data.verdict, "Pip came away with a clearer picture — nice work."),
-      strengths: (Array.isArray(data.strengths) ? data.strengths : []).map(String).filter(Boolean).slice(0, 3),
-      improvements: (Array.isArray(data.improvements) ? data.improvements : []).map(String).filter(Boolean).slice(0, 3),
+      strengths: (Array.isArray(data.strengths) ? data.strengths : [])
+        .map(String)
+        .filter(Boolean)
+        .slice(0, 3),
+      improvements: (Array.isArray(data.improvements) ? data.improvements : [])
+        .map(String)
+        .filter(Boolean)
+        .slice(0, 3),
     };
   } catch (err) {
     if (!(err instanceof AIError)) throw err;
@@ -183,26 +200,49 @@ export async function gradeTeaching(
       correctness: 55,
       completeness: 50,
       overall: 55,
-      verdict: "Automatic grading was unavailable, but teaching is still great practice — Pip appreciated it!",
+      verdict:
+        "Automatic grading was unavailable, but teaching is still great practice — Pip appreciated it!",
       strengths: ["You stuck with it and explained in your own words"],
       improvements: ["Try one concrete example next time", "Check Pip understood before moving on"],
     };
   }
 
   const xpAwarded = xpForGrade(grade.overall);
-  await addXp(userId, xpAwarded, "challenge").catch((e) => console.error("[apprentice] XP payout failed:", e));
+  await addXp(userId, xpAwarded, "challenge").catch((e) =>
+    console.error("[apprentice] XP payout failed:", e),
+  );
 
   // Feed the learning loop: a confident, accurate teach-back is mastery evidence.
   let masteryBoosted = false;
-  const course = courseSlug ? await prisma.course.findUnique({ where: { slug: courseSlug } }) : null;
+  const course = courseSlug
+    ? await prisma.course.findUnique({ where: { slug: courseSlug } })
+    : null;
   if (course) {
-    await recordEvent(userId, course.id, null, "teach_back", { topic, topicKey, overall: grade.overall }).catch(() => {});
-    if (grade.overall >= 65 && topicKey && (COURSE_TOPICS[courseSlug!] || []).some((t) => t.key === topicKey)) {
-      masteryBoosted = await boostTopicMastery(userId, course.id, courseSlug!, topicKey, grade.overall).catch(() => false);
+    await recordEvent(userId, course.id, null, "teach_back", {
+      topic,
+      topicKey,
+      overall: grade.overall,
+    }).catch(() => {});
+    if (
+      grade.overall >= 65 &&
+      topicKey &&
+      (COURSE_TOPICS[courseSlug!] || []).some((t) => t.key === topicKey)
+    ) {
+      masteryBoosted = await boostTopicMastery(
+        userId,
+        course.id,
+        courseSlug!,
+        topicKey,
+        grade.overall,
+      ).catch(() => false);
     }
     // A reasonably good teach-back advances teach_back + topic_mastery missions.
     if (grade.overall >= 50) {
-      await syncMissionProgress(userId, { kind: "teach_back", courseSlug: courseSlug ?? undefined, topicKeys: topicKey ? [topicKey] : [] });
+      await syncMissionProgress(userId, {
+        kind: "teach_back",
+        courseSlug: courseSlug ?? undefined,
+        topicKeys: topicKey ? [topicKey] : [],
+      });
     }
   }
 
@@ -210,7 +250,13 @@ export async function gradeTeaching(
 }
 
 /** Blend a strong teach-back into the per-course SkillProfile (like a quiz signal). */
-async function boostTopicMastery(userId: string, courseId: string, courseSlug: string, topicKey: string, overall: number): Promise<boolean> {
+async function boostTopicMastery(
+  userId: string,
+  courseId: string,
+  courseSlug: string,
+  topicKey: string,
+  overall: number,
+): Promise<boolean> {
   const profile = await getProfile(userId, courseId);
   if (!profile) return false; // no assessment yet — XP only
   const mastery: MasteryMap = JSON.parse(profile.mastery || "{}");
@@ -219,19 +265,32 @@ async function boostTopicMastery(userId: string, courseId: string, courseSlug: s
   const score = Math.min(100, Math.round(current.score * 0.7 + overall * 0.3));
   mastery[topicKey] = { score, status: statusFor(score, true) };
   const level = classifyLevel(courseSlug, mastery);
-  await saveProfile(userId, courseId, level, mastery, JSON.parse(profile.strengths || "[]"), JSON.parse(profile.weaknesses || "[]"));
+  await saveProfile(
+    userId,
+    courseId,
+    level,
+    mastery,
+    JSON.parse(profile.strengths || "[]"),
+    JSON.parse(profile.weaknesses || "[]"),
+  );
   return true;
 }
 
 /* ── Topic catalog for the picker ──────────────────────────────────── */
 
 export async function teachableTopics() {
-  const courses = await prisma.course.findMany({ orderBy: { order: "asc" }, select: { slug: true, title: true } });
+  const courses = await prisma.course.findMany({
+    orderBy: { order: "asc" },
+    select: { slug: true, title: true },
+  });
   return courses
     .filter((c) => COURSE_TOPICS[c.slug])
     .map((c) => ({
       courseSlug: c.slug,
       courseTitle: c.title,
-      topics: (COURSE_TOPICS[c.slug] || []).map((t) => ({ key: t.key, label: topicLabel(c.slug, t.key) })),
+      topics: (COURSE_TOPICS[c.slug] || []).map((t) => ({
+        key: t.key,
+        label: topicLabel(c.slug, t.key),
+      })),
     }));
 }

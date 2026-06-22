@@ -11,8 +11,16 @@ import { fadeUp, staggerContainer, fastEaseTransition } from "@/lib/motion";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Lock, Unlock, Zap, GitBranch, X, Play, Bug,
-  CheckCircle2, Code2, Lightbulb,
+  Lock,
+  Unlock,
+  Zap,
+  GitBranch,
+  X,
+  Play,
+  Bug,
+  CheckCircle2,
+  Code2,
+  Lightbulb,
 } from "lucide-react";
 
 const BRANCH_NAMES: Record<string, string> = {
@@ -24,37 +32,44 @@ const BRANCH_NAMES: Record<string, string> = {
 
 const NODE_EXAMPLES: Record<string, { code: string; debug: string }> = {
   variables: {
-    code: "# Variables\nname = \"Alice\"\nage = 25\nprint(f\"{name} is {age} years old\")\n\n# Types\nprint(type(name))\nprint(type(age))",
-    debug: "# Fix the bugs\nname = \"Alice\nage = \"twenty five\"\nprint(name + \" is \" + age \" years old\")",
+    code: '# Variables\nname = "Alice"\nage = 25\nprint(f"{name} is {age} years old")\n\n# Types\nprint(type(name))\nprint(type(age))',
+    debug:
+      '# Fix the bugs\nname = "Alice\nage = "twenty five"\nprint(name + " is " + age " years old")',
   },
   loops: {
-    code: "# For loop\nfruits = [\"apple\", \"banana\", \"cherry\"]\nfor fruit in fruits:\n    print(fruit)\n\n# While loop\ncount = 0\nwhile count < 3:\n    print(count)\n    count += 1",
-    debug: "# Fix the infinite loop\ncount = 0\nwhile count < 5:\n    print(count)\n    # missing increment!",
+    code: '# For loop\nfruits = ["apple", "banana", "cherry"]\nfor fruit in fruits:\n    print(fruit)\n\n# While loop\ncount = 0\nwhile count < 3:\n    print(count)\n    count += 1',
+    debug:
+      "# Fix the infinite loop\ncount = 0\nwhile count < 5:\n    print(count)\n    # missing increment!",
   },
   functions: {
-    code: "# Function example\ndef greet(name):\n    return f\"Hello, {name}!\"\n\ndef add(a, b):\n    return a + b\n\nprint(greet(\"EduVerse\"))\nprint(add(10, 20))",
+    code: '# Function example\ndef greet(name):\n    return f"Hello, {name}!"\n\ndef add(a, b):\n    return a + b\n\nprint(greet("EduVerse"))\nprint(add(10, 20))',
     debug: "# Fix the function\nfunction double(x):\n    return x * 2\n\nprint(double(5))",
   },
   lists: {
     code: "# Lists\nnumbers = [3, 1, 4, 1, 5, 9]\nnumbers.append(2)\nnumbers.sort()\nprint(numbers)\n\n# List comprehension\nsquares = [x**2 for x in range(5)]\nprint(squares)",
-    debug: "# Fix the list code\nnums = [1, 2, 3, 4, 5]\nprint(nums[5])  # index error!\n\n# Add 6 to the end\nums.append(6)",
+    debug:
+      "# Fix the list code\nnums = [1, 2, 3, 4, 5]\nprint(nums[5])  # index error!\n\n# Add 6 to the end\nums.append(6)",
   },
   recursion: {
     code: "# Recursion\ndef factorial(n):\n    if n <= 1:\n        return 1\n    return n * factorial(n - 1)\n\ndef fibonacci(n):\n    if n <= 1:\n        return n\n    return fibonacci(n-1) + fibonacci(n-2)\n\nprint(factorial(5))\nprint(fibonacci(10))",
-    debug: "# Fix the recursion (missing base case!)\ndef sum_to_n(n):\n    return n + sum_to_n(n - 1)\n\nprint(sum_to_n(5))",
+    debug:
+      "# Fix the recursion (missing base case!)\ndef sum_to_n(n):\n    return n + sum_to_n(n - 1)\n\nprint(sum_to_n(5))",
   },
   debugging: {
-    code: "# Debug with print\nx = 10\ny = 0\nprint(f\"x={x}, y={y}\")\n\n# Watch variable changes\nresult = x / y if y != 0 else \"error: division by zero\"\nprint(result)",
-    debug: "# Find all bugs\ndef average(nums):\n    total = sum(nums)\n    return total / len(nums)\n\n# Edge cases\nprint(average([10, 20, 30]))\nprint(average([]))  # division by zero!",
+    code: '# Debug with print\nx = 10\ny = 0\nprint(f"x={x}, y={y}")\n\n# Watch variable changes\nresult = x / y if y != 0 else "error: division by zero"\nprint(result)',
+    debug:
+      "# Find all bugs\ndef average(nums):\n    total = sum(nums)\n    return total / len(nums)\n\n# Edge cases\nprint(average([10, 20, 30]))\nprint(average([]))  # division by zero!",
   },
 };
 
 function getExample(id: string) {
   const key = Object.keys(NODE_EXAMPLES).find((k) => id.includes(k));
-  return key ? NODE_EXAMPLES[key] : {
-    code: "# Write your code here\nprint(\"Hello, EduVerse!\")",
-    debug: "# Debug challenge\na = 5\nb = \"10\"\nprint(a + b)  # type error!",
-  };
+  return key
+    ? NODE_EXAMPLES[key]
+    : {
+        code: '# Write your code here\nprint("Hello, EduVerse!")',
+        debug: '# Debug challenge\na = 5\nb = "10"\nprint(a + b)  # type error!',
+      };
 }
 
 interface SkillNode extends MapNode {
@@ -64,7 +79,11 @@ interface SkillNode extends MapNode {
   effect?: { value: number; description: string };
 }
 
-function getStatus(node: MapNode, userLevel: number, userXp: number): "locked" | "available" | "completed" {
+function getStatus(
+  node: MapNode,
+  userLevel: number,
+  userXp: number,
+): "locked" | "available" | "completed" {
   if (node.unlocked) return "completed";
   if (userLevel >= node.levelRequired && userXp >= node.xpCost) return "available";
   return "locked";
@@ -84,7 +103,9 @@ export default function SkillTreePage() {
   const [unlockedInfo, setUnlockedInfo] = useState<{ name: string; cost: number } | null>(null);
 
   const openInCodeLab = (code: string) => {
-    try { localStorage.setItem("eduverse_codelab_code", code); } catch {}
+    try {
+      localStorage.setItem("eduverse_codelab_code", code);
+    } catch {}
     router.push("/codelab");
   };
 
@@ -96,7 +117,9 @@ export default function SkillTreePage() {
     setLoading(false);
   };
 
-  useEffect(() => { loadTree(); }, []);
+  useEffect(() => {
+    loadTree();
+  }, []);
 
   const handleUnlock = async (nodeId: string) => {
     setUnlocking(nodeId);
@@ -106,13 +129,16 @@ export default function SkillTreePage() {
       api.clearCache();
       await loadTree();
       setJustUnlocked(nodeId);
-      setSelectedNode((prev) => prev && prev.id === nodeId ? { ...prev, unlocked: true } : prev);
+      setSelectedNode((prev) => (prev && prev.id === nodeId ? { ...prev, unlocked: true } : prev));
       if (unlockedNode) {
         setUnlockedInfo({ name: unlockedNode.name, cost: unlockedNode.xpCost });
         setCelebrate(true);
         setTimeout(() => setCelebrate(false), 1800);
       }
-      setTimeout(() => { setJustUnlocked(null); setUnlockedInfo(null); }, 2600);
+      setTimeout(() => {
+        setJustUnlocked(null);
+        setUnlockedInfo(null);
+      }, 2600);
       if (user) {
         const profileRes = await api.getProfile();
         updateXp(profileRes.data.xp, profileRes.data.level);
@@ -129,7 +155,7 @@ export default function SkillTreePage() {
 
   const statusFor = useCallback(
     (node: MapNode) => getStatus(node, user?.level || 0, user?.xp || 0),
-    [user?.level, user?.xp]
+    [user?.level, user?.xp],
   );
 
   if (loading) {
@@ -145,7 +171,12 @@ export default function SkillTreePage() {
   const selectedStatus = selectedNode ? statusFor(selectedNode) : null;
 
   return (
-    <motion.div className="flex gap-6" initial="hidden" animate="visible" variants={staggerContainer}>
+    <motion.div
+      className="flex gap-6"
+      initial="hidden"
+      animate="visible"
+      variants={staggerContainer}
+    >
       <Confetti active={celebrate} count={48} />
       <AnimatePresence>
         {unlockedInfo && (
@@ -165,7 +196,9 @@ export default function SkillTreePage() {
           </motion.div>
         )}
       </AnimatePresence>
-      <div className={`flex-1 min-w-0 space-y-6 transition-[max-width] duration-300 ${selectedNode ? "lg:max-w-[calc(100%-380px)]" : ""}`}>
+      <div
+        className={`flex-1 min-w-0 space-y-6 transition-[max-width] duration-300 ${selectedNode ? "lg:max-w-[calc(100%-380px)]" : ""}`}
+      >
         <motion.div variants={fadeUp} transition={fastEaseTransition}>
           <div className="flex items-end justify-between gap-4 flex-wrap">
             <div>
@@ -176,7 +209,9 @@ export default function SkillTreePage() {
                 <GitBranch className="w-7 h-7 text-eduverse-accent" aria-hidden="true" />
                 Skill Map
               </h1>
-              <p className="text-eduverse-text-muted">Chart your territory. Click a sigil to inspect it, drag to explore.</p>
+              <p className="text-eduverse-text-muted">
+                Chart your territory. Click a sigil to inspect it, drag to explore.
+              </p>
             </div>
             {user && (
               <div className="flex items-center gap-2 text-sm font-mono text-eduverse-text-muted">
@@ -212,7 +247,11 @@ export default function SkillTreePage() {
               {/* Header */}
               <div className="flex items-start justify-between mb-1">
                 <h3 className="font-bold text-lg font-display">{selectedNode.name}</h3>
-                <button onClick={() => handleSelect(null)} className="p-1 rounded hover:bg-white/10 transition-colors" aria-label="Close panel">
+                <button
+                  onClick={() => handleSelect(null)}
+                  className="p-1 rounded hover:bg-white/10 transition-colors"
+                  aria-label="Close panel"
+                >
                   <X className="w-4 h-4" />
                 </button>
               </div>
@@ -222,15 +261,27 @@ export default function SkillTreePage() {
               </div>
 
               {/* Status */}
-              <div className={`text-xs px-2 py-1 rounded inline-flex items-center gap-1 mb-4 font-mono ${
-                selectedStatus === "completed"
-                  ? "bg-eduverse-success/15 text-eduverse-success"
+              <div
+                className={`text-xs px-2 py-1 rounded inline-flex items-center gap-1 mb-4 font-mono ${
+                  selectedStatus === "completed"
+                    ? "bg-eduverse-success/15 text-eduverse-success"
+                    : selectedStatus === "available"
+                      ? "bg-eduverse-accent-soft text-eduverse-accent"
+                      : "bg-white/5 text-eduverse-text-muted"
+                }`}
+              >
+                {selectedStatus === "completed" ? (
+                  <CheckCircle2 className="w-3 h-3" aria-hidden="true" />
+                ) : selectedStatus === "available" ? (
+                  <Zap className="w-3 h-3" aria-hidden="true" />
+                ) : (
+                  <Lock className="w-3 h-3" aria-hidden="true" />
+                )}
+                {selectedStatus === "completed"
+                  ? "Unlocked"
                   : selectedStatus === "available"
-                  ? "bg-eduverse-accent-soft text-eduverse-accent"
-                  : "bg-white/5 text-eduverse-text-muted"
-              }`}>
-                {selectedStatus === "completed" ? <CheckCircle2 className="w-3 h-3" aria-hidden="true" /> : selectedStatus === "available" ? <Zap className="w-3 h-3" aria-hidden="true" /> : <Lock className="w-3 h-3" aria-hidden="true" />}
-                {selectedStatus === "completed" ? "Unlocked" : selectedStatus === "available" ? "Ready to unlock" : "Locked"}
+                    ? "Ready to unlock"
+                    : "Locked"}
               </div>
 
               {/* Unlock action */}
@@ -240,26 +291,34 @@ export default function SkillTreePage() {
                   loading={unlocking === selectedNode.id}
                   className="w-full mb-4 text-sm py-2.5"
                 >
-                  <Unlock className="w-4 h-4" aria-hidden="true" /> Unlock for {selectedNode.xpCost} XP
+                  <Unlock className="w-4 h-4" aria-hidden="true" /> Unlock for {selectedNode.xpCost}{" "}
+                  XP
                 </GradientButton>
               )}
               {selectedStatus === "locked" && (
                 <div className="mb-4 text-xs text-eduverse-text-muted p-3 rounded border border-eduverse-border bg-white/[0.02] leading-relaxed">
-                  Requires level {selectedNode.levelRequired} and {selectedNode.xpCost.toLocaleString()} XP
-                  {(selectedNode.prerequisites?.length ?? 0) > 0 && <> · complete the routes leading here first</>}
+                  Requires level {selectedNode.levelRequired} and{" "}
+                  {selectedNode.xpCost.toLocaleString()} XP
+                  {(selectedNode.prerequisites?.length ?? 0) > 0 && (
+                    <> · complete the routes leading here first</>
+                  )}
                 </div>
               )}
 
               {/* Description */}
               <div className="mb-4">
-                <div className="text-xs uppercase tracking-wider text-eduverse-text-muted mb-1 font-mono">Description</div>
+                <div className="text-xs uppercase tracking-wider text-eduverse-text-muted mb-1 font-mono">
+                  Description
+                </div>
                 <p className="text-sm leading-relaxed">{selectedNode.description}</p>
               </div>
 
               {/* Effect */}
               {selectedNode.effect && (
                 <div className="mb-4 p-3 rounded bg-eduverse-accent-soft border border-eduverse-border">
-                  <div className="text-xs uppercase tracking-wider text-eduverse-text-muted mb-1 font-mono">Effect</div>
+                  <div className="text-xs uppercase tracking-wider text-eduverse-text-muted mb-1 font-mono">
+                    Effect
+                  </div>
                   <div className="text-sm font-semibold text-eduverse-accent">
                     +{selectedNode.effect.value}% {selectedNode.effect.description}
                   </div>
@@ -314,13 +373,16 @@ export default function SkillTreePage() {
               <div className="mb-4">
                 <div className="bg-black/40 rounded overflow-hidden">
                   <div className="flex items-center justify-between px-3 py-1.5 border-b border-white/5">
-                    <span className="text-[10px] text-eduverse-text-muted uppercase tracking-wider font-mono">Python</span>
+                    <span className="text-[10px] text-eduverse-text-muted uppercase tracking-wider font-mono">
+                      Python
+                    </span>
                     <button
                       className="text-[10px] text-eduverse-text-muted hover:text-eduverse-text transition-colors flex items-center gap-1 font-mono"
                       onClick={() => {
-                        const code = tab === "example"
-                          ? getExample(selectedNode.id).code
-                          : getExample(selectedNode.id).debug;
+                        const code =
+                          tab === "example"
+                            ? getExample(selectedNode.id).code
+                            : getExample(selectedNode.id).debug;
                         navigator.clipboard.writeText(code);
                       }}
                     >
@@ -341,9 +403,10 @@ export default function SkillTreePage() {
                   variant="ghost"
                   className="w-full text-xs py-2 flex items-center justify-center gap-1.5"
                   onClick={() => {
-                    const code = tab === "example"
-                      ? getExample(selectedNode.id).code
-                      : getExample(selectedNode.id).debug;
+                    const code =
+                      tab === "example"
+                        ? getExample(selectedNode.id).code
+                        : getExample(selectedNode.id).debug;
                     openInCodeLab(code);
                   }}
                 >
@@ -357,12 +420,13 @@ export default function SkillTreePage() {
                       aria-expanded={showHint}
                       className="w-full text-xs py-2 rounded border border-eduverse-border-mid text-eduverse-text-muted hover:text-eduverse-text hover:bg-eduverse-accent-soft transition-colors flex items-center justify-center gap-1.5"
                     >
-                      <Lightbulb className="w-3 h-3" aria-hidden="true" /> {showHint ? "Hide Hint" : "Show Hint"}
+                      <Lightbulb className="w-3 h-3" aria-hidden="true" />{" "}
+                      {showHint ? "Hide Hint" : "Show Hint"}
                     </button>
                     {showHint && (
                       <div className="text-xs p-3 rounded bg-eduverse-accent-soft border border-eduverse-border text-eduverse-text-body leading-relaxed">
-                        {getExample(selectedNode.id).debug
-                          .split("\n")
+                        {getExample(selectedNode.id)
+                          .debug.split("\n")
                           .filter((l) => l.trim().startsWith("#"))
                           .map((l) => l.replace(/^\s*#\s*/, ""))
                           .join(" · ") || "Read the error message carefully and check each line."}

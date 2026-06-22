@@ -100,9 +100,17 @@ export function LessonAITools({ title, content, language }: LessonAIToolsProps) 
         <div>
           {!summary && !summaryLoading && (
             <div className="text-sm text-eduverse-text-muted">
-              <p className="mb-3">Get an AI summary of this lesson with the key points to remember.</p>
-              <button className="ai-panel-action-btn" onClick={loadSummary}>Summarize Lesson</button>
-              {summaryError && <p className="mt-3" role="alert">Error: {summaryError}</p>}
+              <p className="mb-3">
+                Get an AI summary of this lesson with the key points to remember.
+              </p>
+              <button className="ai-panel-action-btn" onClick={loadSummary}>
+                Summarize Lesson
+              </button>
+              {summaryError && (
+                <p className="mt-3" role="alert">
+                  Error: {summaryError}
+                </p>
+              )}
             </div>
           )}
           {summaryLoading && (
@@ -114,18 +122,28 @@ export function LessonAITools({ title, content, language }: LessonAIToolsProps) 
           )}
           {summary && !summaryLoading && (
             <div>
-              <p className="text-sm leading-relaxed text-eduverse-text-body mb-4">{summary.summary}</p>
+              <p className="text-sm leading-relaxed text-eduverse-text-body mb-4">
+                {summary.summary}
+              </p>
               {summary.keyPoints.length > 0 && (
                 <ul className="space-y-1.5 mb-4">
                   {summary.keyPoints.map((kp, i) => (
                     <li key={i} className="flex items-start gap-2 text-sm text-eduverse-text-body">
-                      <CheckCircle size={14} className="text-eduverse-success mt-0.5 shrink-0" aria-hidden="true" />
+                      <CheckCircle
+                        size={14}
+                        className="text-eduverse-success mt-0.5 shrink-0"
+                        aria-hidden="true"
+                      />
                       {kp}
                     </li>
                   ))}
                 </ul>
               )}
-              <button className="ai-panel-action-btn ai-panel-action-sm ai-panel-action-ghost" onClick={loadSummary} disabled={summaryLoading}>
+              <button
+                className="ai-panel-action-btn ai-panel-action-sm ai-panel-action-ghost"
+                onClick={loadSummary}
+                disabled={summaryLoading}
+              >
                 <RefreshCw size={12} aria-hidden="true" /> Regenerate
               </button>
             </div>
@@ -138,8 +156,14 @@ export function LessonAITools({ title, content, language }: LessonAIToolsProps) 
           {!questions && !quizLoading && (
             <div className="text-sm text-eduverse-text-muted">
               <p className="mb-3">Test yourself with 4 AI-generated questions about this lesson.</p>
-              <button className="ai-panel-action-btn" onClick={loadQuiz}>Generate Quiz</button>
-              {quizError && <p className="mt-3" role="alert">Error: {quizError}</p>}
+              <button className="ai-panel-action-btn" onClick={loadQuiz}>
+                Generate Quiz
+              </button>
+              {quizError && (
+                <p className="mt-3" role="alert">
+                  Error: {quizError}
+                </p>
+              )}
             </div>
           )}
           {quizLoading && (
@@ -159,8 +183,20 @@ export function LessonAITools({ title, content, language }: LessonAIToolsProps) 
                     <div className="text-sm font-semibold text-eduverse-text mb-2 flex items-start gap-2">
                       <span className="font-mono text-eduverse-accent shrink-0">{qi + 1}.</span>
                       <span>{q.question}</span>
-                      {isCorrect && <CheckCircle size={15} className="text-eduverse-success mt-0.5 shrink-0" aria-label="Correct" />}
-                      {isWrong && <XCircle size={15} className="text-eduverse-danger mt-0.5 shrink-0" aria-label="Incorrect" />}
+                      {isCorrect && (
+                        <CheckCircle
+                          size={15}
+                          className="text-eduverse-success mt-0.5 shrink-0"
+                          aria-label="Correct"
+                        />
+                      )}
+                      {isWrong && (
+                        <XCircle
+                          size={15}
+                          className="text-eduverse-danger mt-0.5 shrink-0"
+                          aria-label="Incorrect"
+                        />
+                      )}
                     </div>
                     <div className="space-y-1.5">
                       {q.options.map((opt, oi) => {
@@ -183,7 +219,10 @@ export function LessonAITools({ title, content, language }: LessonAIToolsProps) 
                                   : chosen
                                     ? "var(--color-eduverse-accent)"
                                     : "var(--color-eduverse-border)",
-                              background: chosen || showCorrect ? "var(--color-eduverse-accent-soft)" : "transparent",
+                              background:
+                                chosen || showCorrect
+                                  ? "var(--color-eduverse-accent-soft)"
+                                  : "transparent",
                               color: "var(--color-eduverse-text-body)",
                               cursor: checked ? "default" : "pointer",
                             }}
@@ -204,7 +243,11 @@ export function LessonAITools({ title, content, language }: LessonAIToolsProps) 
               })}
               <div className="flex items-center gap-3 flex-wrap">
                 {!checked ? (
-                  <button className="ai-panel-action-btn" onClick={() => setChecked(true)} disabled={!allAnswered}>
+                  <button
+                    className="ai-panel-action-btn"
+                    onClick={() => setChecked(true)}
+                    disabled={!allAnswered}
+                  >
                     {allAnswered ? "Check Answers" : "Answer all questions first"}
                   </button>
                 ) : (
@@ -212,13 +255,20 @@ export function LessonAITools({ title, content, language }: LessonAIToolsProps) 
                     <span className="text-sm font-bold font-mono text-eduverse-text">
                       {correctCount}/{questions.length} correct
                     </span>
-                    <button className="ai-panel-action-btn ai-panel-action-sm ai-panel-action-ghost" onClick={loadQuiz}>
+                    <button
+                      className="ai-panel-action-btn ai-panel-action-sm ai-panel-action-ghost"
+                      onClick={loadQuiz}
+                    >
                       <RefreshCw size={12} aria-hidden="true" /> New Quiz
                     </button>
                   </>
                 )}
               </div>
-              {quizError && <p className="text-sm text-eduverse-text-muted" role="alert">Error: {quizError}</p>}
+              {quizError && (
+                <p className="text-sm text-eduverse-text-muted" role="alert">
+                  Error: {quizError}
+                </p>
+              )}
             </div>
           )}
         </div>

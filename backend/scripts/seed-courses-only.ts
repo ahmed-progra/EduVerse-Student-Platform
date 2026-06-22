@@ -23,4 +23,6 @@ async function main() {
   console.log("Courses seeded!");
 }
 
-main().catch(console.error).finally(() => prisma.$disconnect());
+main()
+  .catch(console.error)
+  .finally(() => prisma.$disconnect());

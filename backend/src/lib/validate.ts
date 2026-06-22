@@ -21,5 +21,7 @@ export function validBio(bio: unknown): bio is string {
 
 /* Data-URL avatars only, capped at ~2 MB of encoded text. */
 export function validAvatar(avatar: unknown): avatar is string {
-  return typeof avatar === "string" && avatar.startsWith("data:image/") && avatar.length <= 2_800_000;
+  return (
+    typeof avatar === "string" && avatar.startsWith("data:image/") && avatar.length <= 2_800_000
+  );
 }

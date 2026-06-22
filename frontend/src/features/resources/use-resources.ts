@@ -57,7 +57,10 @@ export function useResources() {
   };
 
   const add = (r: Omit<Resource, "id" | "createdAt">) => {
-    const id = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : String(Math.random());
+    const id =
+      typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : String(Math.random());
     persist([{ ...r, id, createdAt: Date.now() }, ...items]);
   };
 

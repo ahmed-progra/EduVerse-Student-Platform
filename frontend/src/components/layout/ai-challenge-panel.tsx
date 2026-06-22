@@ -54,21 +54,40 @@ export function ChallengePanel({ onClose }: { onClose: () => void }) {
       localStorage.setItem("eduverse_my_challenges", JSON.stringify(existing));
       setSaved(true);
     } catch {
-      localStorage.setItem("eduverse_my_challenges", JSON.stringify([{ ...challenge, topic, difficulty, added: Date.now() }]));
+      localStorage.setItem(
+        "eduverse_my_challenges",
+        JSON.stringify([{ ...challenge, topic, difficulty, added: Date.now() }]),
+      );
       setSaved(true);
     }
   };
 
   return (
-    <AIPanelShell title="Challenge Generator" subtitle="AI generates problems for your level" onClose={onClose} icon={Sparkles}>
+    <AIPanelShell
+      title="Challenge Generator"
+      subtitle="AI generates problems for your level"
+      onClose={onClose}
+      icon={Sparkles}
+    >
       <div className="ai-panel-gen">
         <div className="ai-panel-gen-row">
-          <select className="ai-panel-select" value={topic} onChange={(e) => setTopic(e.target.value)} aria-label="Challenge topic">
+          <select
+            className="ai-panel-select"
+            value={topic}
+            onChange={(e) => setTopic(e.target.value)}
+            aria-label="Challenge topic"
+          >
             {topicOptions.map((o) => (
-              <option key={o.value} value={o.value}>{o.label}</option>
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
             ))}
           </select>
-          <select className="ai-panel-select" value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
+          <select
+            className="ai-panel-select"
+            value={difficulty}
+            onChange={(e) => setDifficulty(e.target.value)}
+          >
             <option value="easy">Easy</option>
             <option value="medium">Medium</option>
             <option value="hard">Hard</option>
@@ -77,22 +96,36 @@ export function ChallengePanel({ onClose }: { onClose: () => void }) {
         <button className="ai-panel-action-btn" onClick={generate} disabled={loading}>
           {loading ? "Generating..." : "Generate Challenge"}
         </button>
-        {error && <div className="ai-panel-empty" role="alert">Error: {error}</div>}
+        {error && (
+          <div className="ai-panel-empty" role="alert">
+            Error: {error}
+          </div>
+        )}
         {challenge && (
           <div className="ai-panel-challenge-card">
             <div className={`ai-panel-diff ai-panel-diff-${difficulty}`}>
-              {difficulty === "easy" ? "Easy — great to start" : difficulty === "medium" ? "Medium — think harder" : "Hard — you'll earn this one"}
+              {difficulty === "easy"
+                ? "Easy — great to start"
+                : difficulty === "medium"
+                  ? "Medium — think harder"
+                  : "Hard — you'll earn this one"}
             </div>
             <div className="ai-panel-challenge-title">{challenge.title}</div>
             <div className="ai-panel-challenge-desc">{challenge.description}</div>
             {challenge.example && (
-              <pre className="ai-panel-exam-text" style={{ marginTop: 8 }}>{challenge.example}</pre>
+              <pre className="ai-panel-exam-text" style={{ marginTop: 8 }}>
+                {challenge.example}
+              </pre>
             )}
             <div className="ai-panel-meta">
               <span className="ai-panel-tag">{responseLabel}</span>
               <button
                 className="ai-panel-copy"
-                onClick={() => navigator.clipboard.writeText(`${challenge.title}\n\n${challenge.description}${challenge.example ? `\n\nExample:\n${challenge.example}` : ""}`)}
+                onClick={() =>
+                  navigator.clipboard.writeText(
+                    `${challenge.title}\n\n${challenge.description}${challenge.example ? `\n\nExample:\n${challenge.example}` : ""}`,
+                  )
+                }
                 title="Copy challenge"
               >
                 <Copy size={12} />

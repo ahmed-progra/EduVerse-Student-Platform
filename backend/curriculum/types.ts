@@ -29,20 +29,24 @@ export interface LessonDef {
   topics: string[];
   difficulty: Difficulty;
   estMinutes: number;
-  intro: string;            // plain HTML paragraph(s)
-  concepts: string[];       // bullet points (HTML allowed)
+  intro: string; // plain HTML paragraph(s)
+  concepts: string[]; // bullet points (HTML allowed)
   examples: Example[];
-  realWorld: string;        // where this is used in real software
-  practice: string;         // practice task description
-  mistakes: string[];       // common mistakes
-  best: string[];           // best practices
-  template: string;         // starter code for the interactive visualizer
-  quiz: QuizQ[];            // checkpoint questions (stored separately in DB)
+  realWorld: string; // where this is used in real software
+  practice: string; // practice task description
+  mistakes: string[]; // common mistakes
+  best: string[]; // best practices
+  template: string; // starter code for the interactive visualizer
+  quiz: QuizQ[]; // checkpoint questions (stored separately in DB)
 }
 
 /** Escape code for safe embedding inside <pre> blocks. */
 export function esc(t: string): string {
-  return t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  return t
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 function codeBlock(code: string): string {
@@ -63,7 +67,7 @@ export function renderLesson(def: LessonDef): string {
       (ex) =>
         `<p><strong>${ex.label}</strong></p>${codeBlock(ex.code)}${ex.output !== undefined ? outputBlock(ex.output) : ""}${
           ex.note ? `<p class="lesson-note">${ex.note}</p>` : ""
-        }`
+        }`,
     )
     .join("");
 
@@ -135,7 +139,7 @@ export function L(
     best: string[];
     template: string;
     quiz: QuizQ[];
-  }
+  },
 ): LessonDef {
   return { title, topics, difficulty, estMinutes, ...parts };
 }

@@ -67,11 +67,18 @@ export function AICoachCard() {
 
       {!recs && !loading && (
         <div className="text-sm text-eduverse-text-muted">
-          <p className="mb-3">Ask the AI coach what to work on next — it reads your actual progress and suggests the highest-impact next steps.</p>
+          <p className="mb-3">
+            Ask the AI coach what to work on next — it reads your actual progress and suggests the
+            highest-impact next steps.
+          </p>
           <button className="ai-panel-action-btn" onClick={load}>
             <Compass size={14} aria-hidden="true" /> Get My Plan
           </button>
-          {error && <p className="mt-3" role="alert">Error: {error}</p>}
+          {error && (
+            <p className="mt-3" role="alert">
+              Error: {error}
+            </p>
+          )}
         </div>
       )}
 
@@ -98,11 +105,19 @@ export function AICoachCard() {
                   <div className="text-sm font-semibold text-eduverse-text">{r.title}</div>
                   <div className="text-xs text-eduverse-text-muted mt-0.5">{r.reason}</div>
                 </div>
-                <ArrowRight size={16} className="text-eduverse-text-muted group-hover:text-eduverse-accent shrink-0 transition-colors" aria-hidden="true" />
+                <ArrowRight
+                  size={16}
+                  className="text-eduverse-text-muted group-hover:text-eduverse-accent shrink-0 transition-colors"
+                  aria-hidden="true"
+                />
               </Link>
             ))}
           </div>
-          {error && <p className="text-sm text-eduverse-text-muted mt-3" role="alert">Error: {error}</p>}
+          {error && (
+            <p className="text-sm text-eduverse-text-muted mt-3" role="alert">
+              Error: {error}
+            </p>
+          )}
         </div>
       )}
     </GlassCard>

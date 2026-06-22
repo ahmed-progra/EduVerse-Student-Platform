@@ -2,7 +2,16 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Target, Zap, CheckCircle2, RefreshCw, Hammer, Calendar, CalendarDays, Sprout } from "lucide-react";
+import {
+  Target,
+  Zap,
+  CheckCircle2,
+  RefreshCw,
+  Hammer,
+  Calendar,
+  CalendarDays,
+  Sprout,
+} from "lucide-react";
 import type { Mission } from "@/types/mentor";
 import { api } from "@/services/api-client";
 
@@ -24,8 +33,20 @@ interface MissionsBoardProps {
 export function MissionsBoard({ daily, weekly, onChange }: MissionsBoardProps) {
   return (
     <div className="grid lg:grid-cols-2 gap-4">
-      <MissionGroup scope="daily" label="Daily Missions" icon={Calendar} missions={daily} onChange={onChange} />
-      <MissionGroup scope="weekly" label="Weekly Missions" icon={CalendarDays} missions={weekly} onChange={onChange} />
+      <MissionGroup
+        scope="daily"
+        label="Daily Missions"
+        icon={Calendar}
+        missions={daily}
+        onChange={onChange}
+      />
+      <MissionGroup
+        scope="weekly"
+        label="Weekly Missions"
+        icon={CalendarDays}
+        missions={weekly}
+        onChange={onChange}
+      />
     </div>
   );
 }
@@ -63,7 +84,9 @@ function MissionGroup({
     setErr("");
     try {
       await api.mentorCompleteMission(id);
-      const next = missions.map((m) => (m.id === id ? { ...m, status: "completed" as const, progress: m.target } : m));
+      const next = missions.map((m) =>
+        m.id === id ? { ...m, status: "completed" as const, progress: m.target } : m,
+      );
       onChange(scope === "daily" ? { daily: next } : { weekly: next });
     } catch (e: unknown) {
       setErr(e instanceof Error ? e.message : "Could not complete mission.");
@@ -93,7 +116,9 @@ function MissionGroup({
       </div>
 
       <div className="space-y-2.5">
-        {missions.length === 0 && <p className="text-xs text-eduverse-text-muted">No missions yet.</p>}
+        {missions.length === 0 && (
+          <p className="text-xs text-eduverse-text-muted">No missions yet.</p>
+        )}
         {missions.map((m) => (
           <MissionCard key={m.id} mission={m} onCompleteProject={completeProject} />
         ))}
@@ -107,7 +132,13 @@ function MissionGroup({
   );
 }
 
-function MissionCard({ mission, onCompleteProject }: { mission: Mission; onCompleteProject: (id: string) => void }) {
+function MissionCard({
+  mission,
+  onCompleteProject,
+}: {
+  mission: Mission;
+  onCompleteProject: (id: string) => void;
+}) {
   const done = mission.status === "completed";
   const pct = Math.min(100, Math.round((mission.progress / Math.max(1, mission.target)) * 100));
   const isProject = mission.type === "project";
@@ -125,7 +156,11 @@ function MissionCard({ mission, onCompleteProject }: { mission: Mission; onCompl
         <div className="min-w-0">
           <div className="flex items-center gap-1.5 text-sm font-semibold text-eduverse-text">
             {done ? (
-              <CheckCircle2 size={14} className="text-eduverse-success shrink-0" aria-hidden="true" />
+              <CheckCircle2
+                size={14}
+                className="text-eduverse-success shrink-0"
+                aria-hidden="true"
+              />
             ) : isTeach ? (
               <Sprout size={14} className="text-eduverse-accent shrink-0" aria-hidden="true" />
             ) : isProject ? (
@@ -146,7 +181,10 @@ function MissionCard({ mission, onCompleteProject }: { mission: Mission; onCompl
         <div className="flex-1 h-1.5 rounded-full overflow-hidden bg-eduverse-raised">
           <div
             className="h-full rounded-full transition-[width] duration-500"
-            style={{ width: `${pct}%`, background: done ? "var(--color-eduverse-success)" : "var(--color-eduverse-accent)" }}
+            style={{
+              width: `${pct}%`,
+              background: done ? "var(--color-eduverse-success)" : "var(--color-eduverse-accent)",
+            }}
           />
         </div>
         <span className="text-[11px] font-mono text-eduverse-text-muted shrink-0">
@@ -162,7 +200,11 @@ function MissionCard({ mission, onCompleteProject }: { mission: Mission; onCompl
           </button>
         )}
         {isTeach && !done && (
-          <Link className="ai-panel-action-btn ai-panel-action-sm" href={teachHref(mission)} aria-label="Teach this topic to Pip">
+          <Link
+            className="ai-panel-action-btn ai-panel-action-sm"
+            href={teachHref(mission)}
+            aria-label="Teach this topic to Pip"
+          >
             <Sprout size={12} aria-hidden="true" /> Teach now
           </Link>
         )}

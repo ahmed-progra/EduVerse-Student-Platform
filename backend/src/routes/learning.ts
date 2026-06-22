@@ -137,7 +137,10 @@ router.post("/:courseId/assessment/submit", aiLimiter, async (req: Request, res:
       return;
     }
     const userId = req.userId!;
-    const { assessmentId, answers } = req.body as { assessmentId?: string; answers?: Record<string, number | string | null> };
+    const { assessmentId, answers } = req.body as {
+      assessmentId?: string;
+      answers?: Record<string, number | string | null>;
+    };
     if (!answers || typeof answers !== "object") {
       res.status(400).json({ success: false, error: "Answers are required" });
       return;
@@ -146,7 +149,9 @@ router.post("/:courseId/assessment/submit", aiLimiter, async (req: Request, res:
       ? await prisma.assessment.findUnique({ where: { id: assessmentId } })
       : null;
     if (!assessment || assessment.userId !== userId || assessment.courseId !== course.id) {
-      res.status(404).json({ success: false, error: "Assessment session not found — start it first" });
+      res
+        .status(404)
+        .json({ success: false, error: "Assessment session not found — start it first" });
       return;
     }
     if (assessment.status === "completed") {
@@ -169,11 +174,18 @@ router.post("/:courseId/assessment/submit", aiLimiter, async (req: Request, res:
     // 2) Deterministic aggregation → mastery map → tier-based level.
     const { stats, correct, gradable } = aggregateTopics(bank, answers, codeScores);
     const mastery = buildMastery(course.slug, stats);
-    const scorePct = Math.round((Object.values(mastery).reduce((a, m) => a + m.score, 0) / (Object.keys(mastery).length * 100)) * 100);
+    const scorePct = Math.round(
+      (Object.values(mastery).reduce((a, m) => a + m.score, 0) /
+        (Object.keys(mastery).length * 100)) *
+        100,
+    );
     const ruleLevel = classifyLevel(course.slug, mastery);
 
     // 3) One AI call: confirm level, narrate strengths/weaknesses, justify skips.
-    const lessons = await prisma.lesson.findMany({ where: { courseId: course.id }, orderBy: { order: "asc" } });
+    const lessons = await prisma.lesson.findMany({
+      where: { courseId: course.id },
+      orderBy: { order: "asc" },
+    });
     const lites = lessons.map((l) => ({
       id: l.id,
       order: l.order,
@@ -183,14 +195,31 @@ router.post("/:courseId/assessment/submit", aiLimiter, async (req: Request, res:
       topics: JSON.parse(l.topics || "[]") as string[],
     }));
     const plannedSkips = ruleSkips(ruleLevel, lites, mastery);
-    const analysis = await aiAnalyzeAndPlan(course.slug, course.title, mastery, scorePct, ruleLevel, lites, plannedSkips, []);
+    const analysis = await aiAnalyzeAndPlan(
+      course.slug,
+      course.title,
+      mastery,
+      scorePct,
+      ruleLevel,
+      lites,
+      plannedSkips,
+      [],
+    );
 
     // If the AI adjusted the level, recompute the skips for the final level.
     const finalLevel = analysis.level;
-    const finalSkips = finalLevel === ruleLevel ? plannedSkips : ruleSkips(finalLevel, lites, mastery);
+    const finalSkips =
+      finalLevel === ruleLevel ? plannedSkips : ruleSkips(finalLevel, lites, mastery);
 
     // 4) Persist: profile, assessment, roadmap, XP, event.
-    await saveProfile(userId, course.id, finalLevel, mastery, analysis.strengths, analysis.weaknesses);
+    await saveProfile(
+      userId,
+      course.id,
+      finalLevel,
+      mastery,
+      analysis.strengths,
+      analysis.weaknesses,
+    );
     const roadmap = await buildAndSaveRoadmap(userId, course.id, course.slug, mastery, finalLevel, {
       ...analysis,
       skipReasons: analysis.skipReasons,
@@ -217,12 +246,19 @@ router.post("/:courseId/assessment/submit", aiLimiter, async (req: Request, res:
       },
     });
     await prisma.user.update({ where: { id: userId }, data: { placementLevel: finalLevel } });
-    await recordEvent(userId, course.id, null, "assessment_complete", { scorePct, level: finalLevel });
+    await recordEvent(userId, course.id, null, "assessment_complete", {
+      scorePct,
+      level: finalLevel,
+    });
     const xpResult = await addXp(userId, 75, "placement");
     await syncMissionProgress(userId, { kind: "assessment", courseSlug: course.slug });
 
-    const masteredTopics = Object.entries(mastery).filter(([, m]) => m.status === "mastered").map(([k]) => topicLabel(course.slug, k));
-    const missingTopics = Object.entries(mastery).filter(([, m]) => m.status === "missing" || m.status === "weak").map(([k]) => topicLabel(course.slug, k));
+    const masteredTopics = Object.entries(mastery)
+      .filter(([, m]) => m.status === "mastered")
+      .map(([k]) => topicLabel(course.slug, k));
+    const missingTopics = Object.entries(mastery)
+      .filter(([, m]) => m.status === "missing" || m.status === "weak")
+      .map(([k]) => topicLabel(course.slug, k));
 
     res.json({
       success: true,
@@ -249,7 +285,9 @@ router.post("/:courseId/assessment/submit", aiLimiter, async (req: Request, res:
     });
   } catch (err) {
     console.error("[learning] submit error:", err);
-    res.status(500).json({ success: false, error: "Failed to grade the assessment. Please try again." });
+    res
+      .status(500)
+      .json({ success: false, error: "Failed to grade the assessment. Please try again." });
   }
 });
 
@@ -270,12 +308,19 @@ router.post("/:courseId/refresh", aiLimiter, async (req: Request, res: Response)
     }
 
     const mastery: MasteryMap = JSON.parse(profile.mastery || "{}");
-    const scorePct = Math.round(Object.values(mastery).reduce((a, m) => a + m.score, 0) / Math.max(1, Object.keys(mastery).length));
+    const scorePct = Math.round(
+      Object.values(mastery).reduce((a, m) => a + m.score, 0) /
+        Math.max(1, Object.keys(mastery).length),
+    );
     const ruleLevel = classifyLevel(course.slug, mastery);
 
     const [lessons, events] = await Promise.all([
       prisma.lesson.findMany({ where: { courseId: course.id }, orderBy: { order: "asc" } }),
-      prisma.learningEvent.findMany({ where: { userId, courseId: course.id }, orderBy: { createdAt: "desc" }, take: 12 }),
+      prisma.learningEvent.findMany({
+        where: { userId, courseId: course.id },
+        orderBy: { createdAt: "desc" },
+        take: 12,
+      }),
     ]);
     const lites = lessons.map((l) => ({
       id: l.id,
@@ -285,12 +330,37 @@ router.post("/:courseId/refresh", aiLimiter, async (req: Request, res: Response)
       estMinutes: l.estMinutes,
       topics: JSON.parse(l.topics || "[]") as string[],
     }));
-    const recentEvents = events.map((e) => `${e.type} ${e.createdAt.toISOString().slice(0, 10)} ${e.payload}`);
+    const recentEvents = events.map(
+      (e) => `${e.type} ${e.createdAt.toISOString().slice(0, 10)} ${e.payload}`,
+    );
     const plannedSkips = ruleSkips(ruleLevel, lites, mastery);
-    const analysis = await aiAnalyzeAndPlan(course.slug, course.title, mastery, scorePct, ruleLevel, lites, plannedSkips, recentEvents);
+    const analysis = await aiAnalyzeAndPlan(
+      course.slug,
+      course.title,
+      mastery,
+      scorePct,
+      ruleLevel,
+      lites,
+      plannedSkips,
+      recentEvents,
+    );
 
-    await saveProfile(userId, course.id, analysis.level, mastery, analysis.strengths, analysis.weaknesses);
-    const roadmap = await buildAndSaveRoadmap(userId, course.id, course.slug, mastery, analysis.level, analysis);
+    await saveProfile(
+      userId,
+      course.id,
+      analysis.level,
+      mastery,
+      analysis.strengths,
+      analysis.weaknesses,
+    );
+    const roadmap = await buildAndSaveRoadmap(
+      userId,
+      course.id,
+      course.slug,
+      mastery,
+      analysis.level,
+      analysis,
+    );
 
     res.json({
       success: true,
@@ -299,7 +369,12 @@ router.post("/:courseId/refresh", aiLimiter, async (req: Request, res: Response)
         summary: analysis.summary,
         strengths: analysis.strengths,
         weaknesses: analysis.weaknesses,
-        roadmap: { items: roadmap.items, focus: roadmap.focus, estMinutes: roadmap.estMinutes, version: roadmap.version },
+        roadmap: {
+          items: roadmap.items,
+          focus: roadmap.focus,
+          estMinutes: roadmap.estMinutes,
+          version: roadmap.version,
+        },
       },
     });
   } catch (err) {

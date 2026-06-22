@@ -4,7 +4,17 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { fadeUp, staggerContainer, fastEaseTransition } from "@/lib/motion";
-import { Sparkles, RefreshCw, TrendingUp, Target, Compass, MessageSquare, WifiOff, Rocket, ArrowRight } from "lucide-react";
+import {
+  Sparkles,
+  RefreshCw,
+  TrendingUp,
+  Target,
+  Compass,
+  MessageSquare,
+  WifiOff,
+  Rocket,
+  ArrowRight,
+} from "lucide-react";
 import { GlassCard } from "@/components/ui/glass-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useAuthStore } from "@/stores/auth-store";
@@ -18,7 +28,17 @@ import { WeeklyReport } from "@/features/mentor/weekly-report";
 import { InsightsList } from "@/features/mentor/insights-list";
 import { MentorChat } from "@/features/mentor/mentor-chat";
 
-function Section({ title, icon: Icon, children, delay = 0 }: { title: string; icon: typeof Target; children: React.ReactNode; delay?: number }) {
+function Section({
+  title,
+  icon: Icon,
+  children,
+  delay = 0,
+}: {
+  title: string;
+  icon: typeof Target;
+  children: React.ReactNode;
+  delay?: number;
+}) {
   return (
     <motion.section variants={fadeUp} transition={{ ...fastEaseTransition, delay }}>
       <h2 className="flex items-center gap-2 text-sm font-mono text-eduverse-text-muted mb-3">
@@ -30,7 +50,11 @@ function Section({ title, icon: Icon, children, delay = 0 }: { title: string; ic
 }
 
 function SkeletonCard() {
-  return <GlassCard><div className="sk-card" style={{ height: "80px" }} /></GlassCard>;
+  return (
+    <GlassCard>
+      <div className="sk-card" style={{ height: "80px" }} />
+    </GlassCard>
+  );
 }
 
 export default function MentorPage() {
@@ -103,13 +127,23 @@ export default function MentorPage() {
   for (const w of metrics?.weakTopics || []) {
     const slug = titleToSlug.get(w.course);
     if (slug) {
-      const q = new URLSearchParams({ topic: w.label, topicKey: w.key, course: slug, courseLabel: w.course });
+      const q = new URLSearchParams({
+        topic: w.label,
+        topicKey: w.key,
+        course: slug,
+        courseLabel: w.course,
+      });
       weakLinks[w.label] = `/apprentice?${q.toString()}`;
     }
   }
 
   return (
-    <motion.div className="space-y-8" initial="hidden" animate="visible" variants={staggerContainer}>
+    <motion.div
+      className="space-y-8"
+      initial="hidden"
+      animate="visible"
+      variants={staggerContainer}
+    >
       {/* ── Header ── */}
       <motion.div variants={fadeUp} transition={fastEaseTransition}>
         <div className="section-label">
@@ -120,9 +154,15 @@ export default function MentorPage() {
             <h1 className="text-3xl font-bold mb-1 font-display flex items-center gap-2 tracking-tight">
               <Sparkles className="w-7 h-7 text-eduverse-accent" aria-hidden="true" /> AI Coach
             </h1>
-            <p className="text-eduverse-text-muted">Your personal programming mentor — it learns you and adapts.</p>
+            <p className="text-eduverse-text-muted">
+              Your personal programming mentor — it learns you and adapts.
+            </p>
           </div>
-          <button className="ai-panel-action-btn" onClick={() => loadProfile(true)} disabled={syncing}>
+          <button
+            className="ai-panel-action-btn"
+            onClick={() => loadProfile(true)}
+            disabled={syncing}
+          >
             <RefreshCw size={14} className={syncing ? "animate-spin" : ""} aria-hidden="true" />
             {syncing ? "Syncing…" : "Sync Mentor"}
           </button>
@@ -148,7 +188,8 @@ export default function MentorPage() {
               <p className="text-base leading-relaxed text-eduverse-text-body">{profile.summary}</p>
               {profile.motivation && (
                 <p className="mt-3 text-sm text-eduverse-accent flex items-start gap-2">
-                  <Sparkles size={15} className="mt-0.5 shrink-0" aria-hidden="true" /> {profile.motivation}
+                  <Sparkles size={15} className="mt-0.5 shrink-0" aria-hidden="true" />{" "}
+                  {profile.motivation}
                 </p>
               )}
               {profile.focus && (
@@ -198,7 +239,11 @@ export default function MentorPage() {
         {profileLoading ? (
           <SkeletonCard />
         ) : profile ? (
-          <TopicColumns strengths={profile.strengths} weaknesses={profile.weaknesses} weakLinks={weakLinks} />
+          <TopicColumns
+            strengths={profile.strengths}
+            weaknesses={profile.weaknesses}
+            weakLinks={weakLinks}
+          />
         ) : null}
       </Section>
 
@@ -210,7 +255,12 @@ export default function MentorPage() {
       {/* ── Weekly report ── */}
       <Section title="Weekly Learning Report" icon={TrendingUp} delay={0.22}>
         <GlassCard>
-          <WeeklyReport report={report} loading={reportLoading} error={reportError} onRefresh={() => loadReport(true)} />
+          <WeeklyReport
+            report={report}
+            loading={reportLoading}
+            error={reportError}
+            onRefresh={() => loadReport(true)}
+          />
         </GlassCard>
       </Section>
 
@@ -230,7 +280,8 @@ export default function MentorPage() {
             {profile.projects.length > 0 ? (
               <>
                 <p className="text-sm text-eduverse-text-muted mb-3">
-                  Turn your learning into proof. Build one of these in the Project Studio — it gets AI-reviewed and added to your portfolio.
+                  Turn your learning into proof. Build one of these in the Project Studio — it gets
+                  AI-reviewed and added to your portfolio.
                 </p>
                 <div className="grid sm:grid-cols-2 gap-3 mb-4">
                   {profile.projects.map((p, i) => (
@@ -240,19 +291,32 @@ export default function MentorPage() {
                       {p.skills.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-2">
                           {p.skills.map((s) => (
-                            <span key={s} className="text-[10px] px-1.5 py-0.5 rounded bg-eduverse-raised text-eduverse-text-muted">{s}</span>
+                            <span
+                              key={s}
+                              className="text-[10px] px-1.5 py-0.5 rounded bg-eduverse-raised text-eduverse-text-muted"
+                            >
+                              {s}
+                            </span>
                           ))}
                         </div>
                       )}
                     </div>
                   ))}
                 </div>
-                <Link href="/projects" className="ai-panel-action-btn ai-panel-action-sm inline-flex">
-                  <Rocket size={13} aria-hidden="true" /> Open Project Studio <ArrowRight size={13} aria-hidden="true" />
+                <Link
+                  href="/projects"
+                  className="ai-panel-action-btn ai-panel-action-sm inline-flex"
+                >
+                  <Rocket size={13} aria-hidden="true" /> Open Project Studio{" "}
+                  <ArrowRight size={13} aria-hidden="true" />
                 </Link>
               </>
             ) : (
-              <EmptyState icon={Rocket} title="No project ideas yet" message="Complete more lessons and assessments to unlock personalized project ideas." />
+              <EmptyState
+                icon={Rocket}
+                title="No project ideas yet"
+                message="Complete more lessons and assessments to unlock personalized project ideas."
+              />
             )}
           </GlassCard>
         </Section>

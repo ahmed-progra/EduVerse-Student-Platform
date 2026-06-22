@@ -25,8 +25,8 @@ persistence and AI orchestration; the frontend is a pure client of the REST API.
 │  ├─ routes/*           14 routers under /api/*                    │
 │  ├─ services/*         business logic + AI orchestration          │
 │  ├─ learning/*         topic catalogs, assessment banks           │
-│  ├─ curriculum/*       124+ authored lessons (seed source)        │
-│  └─ lib/*              prisma client, jwt, zod validate           │
+│  ├─ curriculum/*       172 authored lessons, 7 courses (seed)     │
+│  └─ lib/*              prisma client, jwt, validate, cache         │
 └──────┬───────────────────────────────┬───────────────────────────┘
        │ Prisma ORM                    │ HTTPS
        ▼                               ▼
@@ -39,11 +39,11 @@ persistence and AI orchestration; the frontend is a pure client of the REST API.
 
 ## Workspaces
 
-| Workspace | Package | Responsibility |
-| --- | --- | --- |
-| `frontend/` | `@eduverse/frontend` | Next.js App Router UI, client-side code execution |
-| `backend/` | `@eduverse/backend` | REST API, persistence, AI orchestration |
-| `shared/` | `@eduverse/shared` | Types shared across the boundary (`User`, `Course`, `Lesson`, `Battle`, etc.) |
+| Workspace   | Package              | Responsibility                                                                |
+| ----------- | -------------------- | ----------------------------------------------------------------------------- |
+| `frontend/` | `@eduverse/frontend` | Next.js App Router UI, client-side code execution                             |
+| `backend/`  | `@eduverse/backend`  | REST API, persistence, AI orchestration                                       |
+| `shared/`   | `@eduverse/shared`   | Types shared across the boundary (`User`, `Course`, `Lesson`, `Battle`, etc.) |
 
 The root `package.json` ties them together with npm workspaces and orchestrates
 dev/build via `concurrently`. The shared package is built first, then backend
@@ -113,11 +113,11 @@ and error explanations. Each endpoint has a dedicated system prompt.
 
 ## Code execution
 
-| Language | Where it runs | How |
-| --- | --- | --- |
-| Python | Browser | Skulpt — stepped execution with live variable/heap state |
-| HTML / CSS | Browser | Sandboxed `<iframe>` live preview |
-| C++ | Backend → Judge0 | `services/judge0.ts` submits to the Judge0 CE API |
+| Language   | Where it runs    | How                                                      |
+| ---------- | ---------------- | -------------------------------------------------------- |
+| Python     | Browser          | Skulpt — stepped execution with live variable/heap state |
+| HTML / CSS | Browser          | Sandboxed `<iframe>` live preview                        |
+| C++        | Backend → Judge0 | `services/judge0.ts` submits to the Judge0 CE API        |
 
 ## Authentication
 
@@ -159,17 +159,20 @@ npm run db:seed        # seeds courses, 124+ lessons, shop items, skill tree, de
 ## Key design decisions
 
 ### Why a monorepo?
+
 Three workspaces let the shared types package be a single source of truth across
 the boundary. Shared types, not shared runtime code — each service compiles
 independently and can be deployed separately.
 
 ### Why PostgreSQL?
+
 Relational integrity matters for a gamified learning platform: XP must not
 double-spend, leaderboard ranks must be consistent, and composite keys across
 join tables enforce referential constraints. Prisma abstracts the dialect and
 provides type-safe queries.
 
 ### Why Google AI Studio (Gemini)?
+
 Gemini offers a generous free tier, low-latency responses, and structured JSON
 output. The ai-service layer abstracts the provider behind a stable interface,
 making it straightforward to swap providers if needed.

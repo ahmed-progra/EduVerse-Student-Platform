@@ -125,7 +125,10 @@ router.post("/sync", aiLimiter, async (req: Request, res: Response) => {
 router.get("/missions", aiLimiter, async (req: Request, res: Response) => {
   try {
     const { daily, weekly } = await getActiveMissions(req.userId!);
-    res.json({ success: true, data: { daily: daily.map(serializeMission), weekly: weekly.map(serializeMission) } });
+    res.json({
+      success: true,
+      data: { daily: daily.map(serializeMission), weekly: weekly.map(serializeMission) },
+    });
   } catch (err) {
     sendErr(res, err, "missions");
   }
@@ -133,7 +136,8 @@ router.get("/missions", aiLimiter, async (req: Request, res: Response) => {
 
 router.post("/missions/generate", aiLimiter, async (req: Request, res: Response) => {
   try {
-    const scope = req.query.scope === "weekly" ? "weekly" : req.query.scope === "daily" ? "daily" : null;
+    const scope =
+      req.query.scope === "weekly" ? "weekly" : req.query.scope === "daily" ? "daily" : null;
     if (scope) {
       const missions = await generateMissions(req.userId!, scope, { force: true });
       res.json({ success: true, data: { [scope]: missions.map(serializeMission) } });
@@ -143,7 +147,10 @@ router.post("/missions/generate", aiLimiter, async (req: Request, res: Response)
       generateMissions(req.userId!, "daily", { force: true }),
       generateMissions(req.userId!, "weekly", { force: true }),
     ]);
-    res.json({ success: true, data: { daily: daily.map(serializeMission), weekly: weekly.map(serializeMission) } });
+    res.json({
+      success: true,
+      data: { daily: daily.map(serializeMission), weekly: weekly.map(serializeMission) },
+    });
   } catch (err) {
     sendErr(res, err, "missions-generate");
   }
@@ -190,9 +197,15 @@ router.post("/chat", aiLimiter, async (req: Request, res: Response) => {
   try {
     const rawHistory = Array.isArray(req.body?.history) ? req.body.history : [];
     const history: ChatTurn[] = rawHistory
-      .filter((t: unknown): t is { role: string; text: string } => !!t && typeof (t as { text?: unknown }).text === "string")
+      .filter(
+        (t: unknown): t is { role: string; text: string } =>
+          !!t && typeof (t as { text?: unknown }).text === "string",
+      )
       .slice(-12)
-      .map((t: { role: string; text: string }) => ({ role: t.role === "model" || t.role === "assistant" ? "model" : "user", text: t.text }));
+      .map((t: { role: string; text: string }) => ({
+        role: t.role === "model" || t.role === "assistant" ? "model" : "user",
+        text: t.text,
+      }));
     const { text, model } = await mentorChat(req.userId!, message, history);
     res.json({ success: true, data: { text, model } });
   } catch (err) {

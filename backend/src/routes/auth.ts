@@ -21,7 +21,10 @@ router.post("/register", authLimiter, async (req: Request, res: Response) => {
       return;
     }
     if (!validUsername(username)) {
-      res.status(400).json({ success: false, error: "Username must be 3-20 characters (letters, numbers, underscore)" });
+      res.status(400).json({
+        success: false,
+        error: "Username must be 3-20 characters (letters, numbers, underscore)",
+      });
       return;
     }
     if (!validPassword(password)) {

@@ -14,7 +14,14 @@ interface DebuggerPanelProps {
   code?: string;
 }
 
-export const DebuggerPanel = memo(function DebuggerPanel({ frames, currentIdx, status, error, output, code }: DebuggerPanelProps) {
+export const DebuggerPanel = memo(function DebuggerPanel({
+  frames,
+  currentIdx,
+  status,
+  error,
+  output,
+  code,
+}: DebuggerPanelProps) {
   const [diagnosis, setDiagnosis] = useState<string | null>(null);
   const [diagnosing, setDiagnosing] = useState(false);
   const frame = currentIdx >= 0 && currentIdx < frames.length ? frames[currentIdx] : null;
@@ -23,28 +30,32 @@ export const DebuggerPanel = memo(function DebuggerPanel({ frames, currentIdx, s
     <div className="visualizer-panel debugger-panel">
       <div className="panel-header">
         <span className="panel-title">Debugger</span>
-        <span className={`panel-badge ${
-          status === "error" ? "badge-error" :
-          status === "finished" ? "badge-done" :
-          status === "paused" ? "badge-paused" : "badge-idle"
-        }`}>{status}</span>
+        <span
+          className={`panel-badge ${
+            status === "error"
+              ? "badge-error"
+              : status === "finished"
+                ? "badge-done"
+                : status === "paused"
+                  ? "badge-paused"
+                  : "badge-idle"
+          }`}
+        >
+          {status}
+        </span>
       </div>
 
       <div className="panel-body">
         {/* Current Line */}
         <div className="debug-section">
           <div className="debug-label">Current Line</div>
-          <div className="debug-value">
-            {frame ? `#${frame.lineNumber}` : "—"}
-          </div>
+          <div className="debug-value">{frame ? `#${frame.lineNumber}` : "—"}</div>
         </div>
 
         {/* Current Scope */}
         <div className="debug-section">
           <div className="debug-label">Scope</div>
-          <div className="debug-value">
-            {frame?.scopes?.[frame.scopes.length - 1] || "global"}
-          </div>
+          <div className="debug-value">{frame?.scopes?.[frame.scopes.length - 1] || "global"}</div>
         </div>
 
         {/* Call Stack */}
@@ -96,7 +107,10 @@ export const DebuggerPanel = memo(function DebuggerPanel({ frames, currentIdx, s
             <div className="error-message">{error.message}</div>
             <div className="error-hint">
               <Info className="w-3 h-3" />
-              <span>Check the highlighted line. Look for syntax issues, undefined variables, or type mismatches.</span>
+              <span>
+                Check the highlighted line. Look for syntax issues, undefined variables, or type
+                mismatches.
+              </span>
             </div>
             <button
               className="error-diagnose-btn"

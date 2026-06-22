@@ -46,10 +46,23 @@ export function LessonMentor({ title, content, language }: LessonMentorProps) {
   };
 
   const actions: { label: string; message: string }[] = [
-    { label: "Explain differently", message: "Re-explain the core idea of this lesson in a different way, using a fresh analogy." },
-    { label: "Simplify", message: "Explain this lesson as simply as possible, like I'm a complete beginner." },
-    { label: "Another example", message: "Give me one more worked example that illustrates this lesson's main concept." },
-    { label: "Practice exercise", message: "Create one short practice exercise based on this lesson. Give the task only — do NOT include the solution." },
+    {
+      label: "Explain differently",
+      message: "Re-explain the core idea of this lesson in a different way, using a fresh analogy.",
+    },
+    {
+      label: "Simplify",
+      message: "Explain this lesson as simply as possible, like I'm a complete beginner.",
+    },
+    {
+      label: "Another example",
+      message: "Give me one more worked example that illustrates this lesson's main concept.",
+    },
+    {
+      label: "Practice exercise",
+      message:
+        "Create one short practice exercise based on this lesson. Give the task only — do NOT include the solution.",
+    },
   ];
 
   const runReview = async () => {
@@ -144,8 +157,12 @@ export function LessonMentor({ title, content, language }: LessonMentorProps) {
           )}
           {answer && !loading && (
             <div>
-              {activeAction && <div className="text-xs font-mono text-eduverse-accent mb-1.5">{activeAction}</div>}
-              <p className="text-sm leading-relaxed text-eduverse-text-body whitespace-pre-wrap">{answer}</p>
+              {activeAction && (
+                <div className="text-xs font-mono text-eduverse-accent mb-1.5">{activeAction}</div>
+              )}
+              <p className="text-sm leading-relaxed text-eduverse-text-body whitespace-pre-wrap">
+                {answer}
+              </p>
             </div>
           )}
           {!answer && !loading && !error && (
@@ -159,7 +176,9 @@ export function LessonMentor({ title, content, language }: LessonMentorProps) {
 
       {tab === "review" && (
         <div>
-          <p className="text-sm text-eduverse-text-muted mb-2">Paste your code and get focused feedback for this lesson.</p>
+          <p className="text-sm text-eduverse-text-muted mb-2">
+            Paste your code and get focused feedback for this lesson.
+          </p>
           <textarea
             className="w-full h-40 px-3 py-2 rounded border border-eduverse-border bg-transparent text-sm font-mono text-eduverse-text focus:border-eduverse-accent outline-none transition-colors resize-y"
             placeholder={`Paste your ${language} code here…`}
@@ -168,8 +187,16 @@ export function LessonMentor({ title, content, language }: LessonMentorProps) {
             aria-label="Code to review"
           />
           <div className="flex items-center gap-3 mt-3">
-            <button className="ai-panel-action-btn" onClick={runReview} disabled={!code.trim() || reviewLoading}>
-              {reviewLoading ? <RefreshCw size={14} className="animate-spin" aria-hidden="true" /> : <Code2 size={14} aria-hidden="true" />}
+            <button
+              className="ai-panel-action-btn"
+              onClick={runReview}
+              disabled={!code.trim() || reviewLoading}
+            >
+              {reviewLoading ? (
+                <RefreshCw size={14} className="animate-spin" aria-hidden="true" />
+              ) : (
+                <Code2 size={14} aria-hidden="true" />
+              )}
               {reviewLoading ? "Reviewing…" : "Review Code"}
             </button>
           </div>
@@ -179,7 +206,9 @@ export function LessonMentor({ title, content, language }: LessonMentorProps) {
             </p>
           )}
           {review && !reviewLoading && (
-            <p className="text-sm leading-relaxed text-eduverse-text-body whitespace-pre-wrap mt-3">{review}</p>
+            <p className="text-sm leading-relaxed text-eduverse-text-body whitespace-pre-wrap mt-3">
+              {review}
+            </p>
           )}
         </div>
       )}

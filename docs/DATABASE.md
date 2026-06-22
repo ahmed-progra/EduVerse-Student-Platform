@@ -7,10 +7,10 @@ single source of truth: [`backend/prisma/schema.prisma`](../backend/prisma/schem
 
 Two URLs are configured (Supabase-compatible pattern):
 
-| Variable | Port | Used for |
-| --- | --- | --- |
-| `DATABASE_URL` | `6543` (transaction pooler, `pgbouncer=true`) | The running app |
-| `DIRECT_URL` | `5432` (session pooler) | Migrations (`prisma migrate`) |
+| Variable       | Port                                          | Used for                      |
+| -------------- | --------------------------------------------- | ----------------------------- |
+| `DATABASE_URL` | `6543` (transaction pooler, `pgbouncer=true`) | The running app               |
+| `DIRECT_URL`   | `5432` (session pooler)                       | Migrations (`prisma migrate`) |
 
 ```prisma
 datasource db {
@@ -46,14 +46,14 @@ default as "not yet computed."
 
 Join and ownership tables use composite primary keys instead of surrogate IDs:
 
-| Table | Composite key |
-| --- | --- |
-| `UserProgress` | `(userId, lessonId)` |
-| `UserSkill` | `(userId, skillId)` |
-| `UserInventory` | `(userId, itemId)` |
+| Table             | Composite key        |
+| ----------------- | -------------------- |
+| `UserProgress`    | `(userId, lessonId)` |
+| `UserSkill`       | `(userId, skillId)`  |
+| `UserInventory`   | `(userId, itemId)`   |
 | `CoursePlacement` | `(userId, courseId)` |
-| `SkillProfile` | `(userId, courseId)` |
-| `Roadmap` | `(userId, courseId)` |
+| `SkillProfile`    | `(userId, courseId)` |
+| `Roadmap`         | `(userId, courseId)` |
 
 ### Currencies
 
@@ -72,49 +72,49 @@ Every model includes `createdAt` and `updatedAt` (where mutable) via Prisma's
 
 ### Identity & progression
 
-| Model | Purpose |
-| --- | --- |
-| `User` | Account, profile, level/xp/coins, placement level, OAuth link |
-| `UserProgress` | Per-lesson completion + score |
-| `XpLog` | Append-only XP history (source-tagged: lesson, battle, challenge, placement) |
+| Model          | Purpose                                                                      |
+| -------------- | ---------------------------------------------------------------------------- |
+| `User`         | Account, profile, level/xp/coins, placement level, OAuth link                |
+| `UserProgress` | Per-lesson completion + score                                                |
+| `XpLog`        | Append-only XP history (source-tagged: lesson, battle, challenge, placement) |
 
 ### Content
 
-| Model | Purpose |
-| --- | --- |
-| `Course` | A language course (Python, HTML, CSS, C++) with slug, icon, and order |
+| Model    | Purpose                                                                      |
+| -------- | ---------------------------------------------------------------------------- |
+| `Course` | A language course (Python, HTML, CSS, C++) with slug, icon, and order        |
 | `Lesson` | Lesson content, code template, topics, quiz questions, difficulty, XP reward |
 
 ### Adaptive learning
 
-| Model | Purpose |
-| --- | --- |
-| `CoursePlacement` | Per-course placement result (level + score) — composite key |
-| `Assessment` | One placement-assessment attempt with question snapshot + AI analysis |
-| `SkillProfile` | Living per-course topic → mastery profile — composite key |
-| `Roadmap` | Personalized lesson plan with per-skip justification — composite key |
-| `LearningEvent` | Analytics trail feeding continuous adaptation |
+| Model             | Purpose                                                               |
+| ----------------- | --------------------------------------------------------------------- |
+| `CoursePlacement` | Per-course placement result (level + score) — composite key           |
+| `Assessment`      | One placement-assessment attempt with question snapshot + AI analysis |
+| `SkillProfile`    | Living per-course topic → mastery profile — composite key             |
+| `Roadmap`         | Personalized lesson plan with per-skip justification — composite key  |
+| `LearningEvent`   | Analytics trail feeding continuous adaptation                         |
 
 ### AI mentor system
 
-| Model | Purpose |
-| --- | --- |
-| `MentorProfile` | Global cross-course coach profile — one per user, 1-1 with `User` |
-| `Mission` | AI-generated daily/weekly missions with auto-tracked progress |
-| `MentorReport` | Weekly learning-report snapshots — unique per `(userId, periodKey)` |
-| `Project` | AI Project Studio entries (brief, code, AI rubric, portfolio visibility) |
+| Model           | Purpose                                                                  |
+| --------------- | ------------------------------------------------------------------------ |
+| `MentorProfile` | Global cross-course coach profile — one per user, 1-1 with `User`        |
+| `Mission`       | AI-generated daily/weekly missions with auto-tracked progress            |
+| `MentorReport`  | Weekly learning-report snapshots — unique per `(userId, periodKey)`      |
+| `Project`       | AI Project Studio entries (brief, code, AI rubric, portfolio visibility) |
 
 ### Gamification
 
-| Model | Purpose |
-| --- | --- |
-| `SkillTreeNode` | Skill tree definitions (branches: python_mastery, frontend_mastery, algorithms, debugging) |
-| `UserSkill` | Per-user skill unlock state — composite key |
-| `Battle` | Coding duels (player1, player2, winner, challenge, difficulty, time limit) |
-| `BattleSubmission` | Per-player battle submissions (code + score) |
-| `LeaderboardEntry` | Per-user leaderboard standing with weekly scoping |
-| `ShopItem` | Cosmetics catalog (avatar, frame, animation, title, theme, effect) |
-| `UserInventory` | Ownership + equip state — composite key |
+| Model              | Purpose                                                                                    |
+| ------------------ | ------------------------------------------------------------------------------------------ |
+| `SkillTreeNode`    | Skill tree definitions (branches: python_mastery, frontend_mastery, algorithms, debugging) |
+| `UserSkill`        | Per-user skill unlock state — composite key                                                |
+| `Battle`           | Coding duels (player1, player2, winner, challenge, difficulty, time limit)                 |
+| `BattleSubmission` | Per-player battle submissions (code + score)                                               |
+| `LeaderboardEntry` | Per-user leaderboard standing with weekly scoping                                          |
+| `ShopItem`         | Cosmetics catalog (avatar, frame, animation, title, theme, effect)                         |
+| `UserInventory`    | Ownership + equip state — composite key                                                    |
 
 ---
 
@@ -166,7 +166,7 @@ npx prisma migrate dev
 # Push schema without a migration (quick setup)
 npx prisma db push
 
-# Seed courses, 124+ lessons, shop items, skill tree, and demo user
+# Seed courses, 172 lessons, shop items, skill tree, and demo user
 npm run db:seed
 
 # Reset database and reseed (destructive)

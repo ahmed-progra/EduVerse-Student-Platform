@@ -35,7 +35,7 @@ export function Confetti({ active, count = 28 }: { active: boolean; count?: numb
             size: Math.random() * 4 + 3,
           }))
         : [],
-    [active, count]
+    [active, count],
   );
   if (!active) return null;
   return (

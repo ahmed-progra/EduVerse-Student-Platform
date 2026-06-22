@@ -82,21 +82,28 @@ export function SkillMap({
     return { placed: byId, branches: branchKeys, worldW: w, worldH: h };
   }, [nodes]);
 
-  const clampView = useCallback((next: { s: number; tx: number; ty: number }) => {
-    const vp = viewportRef.current;
-    if (!vp) return next;
-    const pad = 90;
-    return {
-      s: next.s,
-      tx: clamp(next.tx, vp.clientWidth - worldW * next.s - pad, pad),
-      ty: clamp(next.ty, vp.clientHeight - worldH * next.s - pad, pad),
-    };
-  }, [worldW, worldH]);
+  const clampView = useCallback(
+    (next: { s: number; tx: number; ty: number }) => {
+      const vp = viewportRef.current;
+      if (!vp) return next;
+      const pad = 90;
+      return {
+        s: next.s,
+        tx: clamp(next.tx, vp.clientWidth - worldW * next.s - pad, pad),
+        ty: clamp(next.ty, vp.clientHeight - worldH * next.s - pad, pad),
+      };
+    },
+    [worldW, worldH],
+  );
 
   const fit = useCallback(() => {
     const vp = viewportRef.current;
     if (!vp) return;
-    const s = clamp(Math.min((vp.clientWidth - 48) / worldW, (vp.clientHeight - 48) / worldH), 0.42, 1.1);
+    const s = clamp(
+      Math.min((vp.clientWidth - 48) / worldW, (vp.clientHeight - 48) / worldH),
+      0.42,
+      1.1,
+    );
     setView({
       s,
       tx: (vp.clientWidth - worldW * s) / 2,
@@ -125,7 +132,14 @@ export function SkillMap({
   /* ── Pan (pointer capture, multi-touch ignored, click-vs-drag threshold) ── */
   const onPointerDown = (e: React.PointerEvent) => {
     if (dragRef.current.active) return;
-    dragRef.current = { active: true, moved: false, startX: e.clientX, startY: e.clientY, tx: view.tx, ty: view.ty };
+    dragRef.current = {
+      active: true,
+      moved: false,
+      startX: e.clientX,
+      startY: e.clientY,
+      tx: view.tx,
+      ty: view.ty,
+    };
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
   };
 
@@ -195,29 +209,88 @@ export function SkillMap({
     >
       {/* map key */}
       <div className="sm-key" aria-hidden="true">
-        <span><i style={{ background: "var(--color-eduverse-accent)" }} />unlocked</span>
-        <span><i style={{ border: "1px solid var(--color-eduverse-accent)", background: "transparent" }} />ready</span>
-        <span><i style={{ border: "1px solid var(--color-eduverse-text-muted)", background: "transparent", opacity: 0.6 }} />locked</span>
+        <span>
+          <i style={{ background: "var(--color-eduverse-accent)" }} />
+          unlocked
+        </span>
+        <span>
+          <i
+            style={{ border: "1px solid var(--color-eduverse-accent)", background: "transparent" }}
+          />
+          ready
+        </span>
+        <span>
+          <i
+            style={{
+              border: "1px solid var(--color-eduverse-text-muted)",
+              background: "transparent",
+              opacity: 0.6,
+            }}
+          />
+          locked
+        </span>
       </div>
 
       {/* zoom controls */}
       <div className="sm-controls">
-        <button className="sm-ctrl" onClick={() => zoom(1)} aria-label="Zoom in"><Plus size={15} /></button>
-        <button className="sm-ctrl" onClick={() => zoom(-1)} aria-label="Zoom out"><Minus size={15} /></button>
-        <button className="sm-ctrl" onClick={fit} aria-label="Fit map to view"><Maximize2 size={13} /></button>
+        <button className="sm-ctrl" onClick={() => zoom(1)} aria-label="Zoom in">
+          <Plus size={15} />
+        </button>
+        <button className="sm-ctrl" onClick={() => zoom(-1)} aria-label="Zoom out">
+          <Minus size={15} />
+        </button>
+        <button className="sm-ctrl" onClick={fit} aria-label="Fit map to view">
+          <Maximize2 size={13} />
+        </button>
       </div>
 
       <div
         className={`skill-map-world ${dragging ? "" : "smooth"}`}
-        style={{ transform: `translate(${view.tx}px, ${view.ty}px) scale(${view.s})`, width: worldW, height: worldH }}
+        style={{
+          transform: `translate(${view.tx}px, ${view.ty}px) scale(${view.s})`,
+          width: worldW,
+          height: worldH,
+        }}
       >
-        <svg width={worldW} height={worldH} viewBox={`0 0 ${worldW} ${worldH}`} role="group" aria-label="Skill map">
+        <svg
+          width={worldW}
+          height={worldH}
+          viewBox={`0 0 ${worldW} ${worldH}`}
+          role="group"
+          aria-label="Skill map"
+        >
           {/* cartographic contours */}
           <g aria-hidden="true" opacity="0.35">
-            <circle cx={worldW * 0.22} cy={worldH * 0.3} r={170} fill="none" stroke="var(--color-eduverse-border)" />
-            <circle cx={worldW * 0.22} cy={worldH * 0.3} r={250} fill="none" stroke="var(--color-eduverse-border)" strokeDasharray="2 7" />
-            <circle cx={worldW * 0.8} cy={worldH * 0.75} r={200} fill="none" stroke="var(--color-eduverse-border)" />
-            <circle cx={worldW * 0.8} cy={worldH * 0.75} r={290} fill="none" stroke="var(--color-eduverse-border)" strokeDasharray="2 7" />
+            <circle
+              cx={worldW * 0.22}
+              cy={worldH * 0.3}
+              r={170}
+              fill="none"
+              stroke="var(--color-eduverse-border)"
+            />
+            <circle
+              cx={worldW * 0.22}
+              cy={worldH * 0.3}
+              r={250}
+              fill="none"
+              stroke="var(--color-eduverse-border)"
+              strokeDasharray="2 7"
+            />
+            <circle
+              cx={worldW * 0.8}
+              cy={worldH * 0.75}
+              r={200}
+              fill="none"
+              stroke="var(--color-eduverse-border)"
+            />
+            <circle
+              cx={worldW * 0.8}
+              cy={worldH * 0.75}
+              r={290}
+              fill="none"
+              stroke="var(--color-eduverse-border)"
+              strokeDasharray="2 7"
+            />
           </g>
 
           {/* branch toponymy */}
@@ -253,7 +326,7 @@ export function SkillMap({
                 strokeDasharray="4 5"
                 style={{ "--d": `${0.15 + i * 0.08}s` } as React.CSSProperties}
               />
-            )
+            ),
           )}
 
           {/* sigils */}
@@ -278,37 +351,64 @@ export function SkillMap({
               >
                 {/* selection halo */}
                 {selected && (
-                  <circle r={NODE_R + 9} fill="none" stroke="var(--color-eduverse-accent)" strokeWidth={1} strokeDasharray="3 4" opacity={0.9} />
+                  <circle
+                    r={NODE_R + 9}
+                    fill="none"
+                    stroke="var(--color-eduverse-accent)"
+                    strokeWidth={1}
+                    strokeDasharray="3 4"
+                    opacity={0.9}
+                  />
                 )}
 
                 {/* ready beacon */}
                 {status === "available" && (
-                  <circle className="sm-pulse" r={NODE_R + 5} fill="none" stroke="var(--color-eduverse-accent)" strokeWidth={1.2} />
+                  <circle
+                    className="sm-pulse"
+                    r={NODE_R + 5}
+                    fill="none"
+                    stroke="var(--color-eduverse-accent)"
+                    strokeWidth={1.2}
+                  />
                 )}
 
                 {/* unlock celebration */}
                 {justUnlocked === node.id && (
-                  <circle className="sm-burst" r={NODE_R} fill="none" stroke="var(--color-eduverse-accent)" strokeWidth={2} />
+                  <circle
+                    className="sm-burst"
+                    r={NODE_R}
+                    fill="none"
+                    stroke="var(--color-eduverse-accent)"
+                    strokeWidth={2}
+                  />
                 )}
 
                 {/* sigil body */}
                 <circle
                   className="ring"
                   r={NODE_R}
-                  fill={status === "completed" ? "var(--color-eduverse-accent)" : "var(--color-eduverse-surface)"}
+                  fill={
+                    status === "completed"
+                      ? "var(--color-eduverse-accent)"
+                      : "var(--color-eduverse-surface)"
+                  }
                   stroke={
                     status === "completed"
                       ? "var(--color-eduverse-accent)"
                       : status === "available"
-                      ? "var(--color-eduverse-accent-strong)"
-                      : "var(--color-eduverse-border-mid)"
+                        ? "var(--color-eduverse-accent-strong)"
+                        : "var(--color-eduverse-border-mid)"
                   }
                   strokeWidth={1.5}
                   opacity={status === "locked" ? 0.65 : 1}
                 />
 
                 {/* glyph */}
-                <g transform="translate(-8, -8)" opacity={status === "locked" ? 0.6 : 1} aria-hidden="true">
+                <g
+                  transform="translate(-8, -8)"
+                  opacity={status === "locked" ? 0.6 : 1}
+                  aria-hidden="true"
+                >
                   {status === "completed" ? (
                     <Check size={16} color="oklch(12% 0.02 55)" strokeWidth={3} />
                   ) : status === "available" ? (
@@ -319,7 +419,12 @@ export function SkillMap({
                 </g>
 
                 {/* labels */}
-                <text className="sm-name" textAnchor="middle" y={NODE_R + 20} opacity={status === "locked" ? 0.7 : 1}>
+                <text
+                  className="sm-name"
+                  textAnchor="middle"
+                  y={NODE_R + 20}
+                  opacity={status === "locked" ? 0.7 : 1}
+                >
                   {node.name}
                 </text>
                 <text className="sm-meta" textAnchor="middle" y={NODE_R + 35}>

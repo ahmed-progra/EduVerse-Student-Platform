@@ -2,7 +2,12 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { COURSES } from "../curriculum";
 import { calculateLevel } from "../src/services/xp-service";
-import { classifyLevel, saveProfile, buildAndSaveRoadmap, type MasteryMap } from "../src/services/learning-service";
+import {
+  classifyLevel,
+  saveProfile,
+  buildAndSaveRoadmap,
+  type MasteryMap,
+} from "../src/services/learning-service";
 
 const prisma = new PrismaClient();
 
@@ -245,36 +250,176 @@ async function main() {
   // ==================== SHOP ITEMS ====================
   const shopItems = [
     // Avatars
-    { name: "Wizard Avatar", type: "avatar", description: "A mystical wizard persona", price: 500, levelRequired: 2, imageUrl: "/avatars/wizard.png" },
-    { name: "Knight Avatar", type: "avatar", description: "Brave knight in shining armor", price: 500, levelRequired: 2, imageUrl: "/avatars/knight.png" },
-    { name: "Cyborg Avatar", type: "avatar", description: "Half-human, half-machine", price: 800, levelRequired: 4, imageUrl: "/avatars/cyborg.png" },
-    { name: "Ninja Avatar", type: "avatar", description: "Stealthy ninja warrior", price: 800, levelRequired: 4, imageUrl: "/avatars/ninja.png" },
-    { name: "Mage Avatar", type: "avatar", description: "Powerful mage with arcane powers", price: 1200, levelRequired: 7, imageUrl: "/avatars/mage.png" },
+    {
+      name: "Wizard Avatar",
+      type: "avatar",
+      description: "A mystical wizard persona",
+      price: 500,
+      levelRequired: 2,
+      imageUrl: "/avatars/wizard.png",
+    },
+    {
+      name: "Knight Avatar",
+      type: "avatar",
+      description: "Brave knight in shining armor",
+      price: 500,
+      levelRequired: 2,
+      imageUrl: "/avatars/knight.png",
+    },
+    {
+      name: "Cyborg Avatar",
+      type: "avatar",
+      description: "Half-human, half-machine",
+      price: 800,
+      levelRequired: 4,
+      imageUrl: "/avatars/cyborg.png",
+    },
+    {
+      name: "Ninja Avatar",
+      type: "avatar",
+      description: "Stealthy ninja warrior",
+      price: 800,
+      levelRequired: 4,
+      imageUrl: "/avatars/ninja.png",
+    },
+    {
+      name: "Mage Avatar",
+      type: "avatar",
+      description: "Powerful mage with arcane powers",
+      price: 1200,
+      levelRequired: 7,
+      imageUrl: "/avatars/mage.png",
+    },
 
     // Frames
-    { name: "Gold Frame", type: "frame", description: "Shiny golden profile frame", price: 300, levelRequired: 1, imageUrl: "/frames/gold.png" },
-    { name: "Ruby Frame", type: "frame", description: "Deep red ruby-encrusted frame", price: 600, levelRequired: 3, imageUrl: "/frames/ruby.png" },
-    { name: "Obsidian Frame", type: "frame", description: "Dark obsidian crystal frame", price: 600, levelRequired: 3, imageUrl: "/frames/obsidian.png" },
-    { name: "Crystal Frame", type: "frame", description: "Ethereal crystal clear frame", price: 1000, levelRequired: 6, imageUrl: "/frames/crystal.png" },
-    { name: "Void Frame", type: "frame", description: "Mysterious void-themed frame", price: 1500, levelRequired: 10, imageUrl: "/frames/void.png" },
+    {
+      name: "Gold Frame",
+      type: "frame",
+      description: "Shiny golden profile frame",
+      price: 300,
+      levelRequired: 1,
+      imageUrl: "/frames/gold.png",
+    },
+    {
+      name: "Ruby Frame",
+      type: "frame",
+      description: "Deep red ruby-encrusted frame",
+      price: 600,
+      levelRequired: 3,
+      imageUrl: "/frames/ruby.png",
+    },
+    {
+      name: "Obsidian Frame",
+      type: "frame",
+      description: "Dark obsidian crystal frame",
+      price: 600,
+      levelRequired: 3,
+      imageUrl: "/frames/obsidian.png",
+    },
+    {
+      name: "Crystal Frame",
+      type: "frame",
+      description: "Ethereal crystal clear frame",
+      price: 1000,
+      levelRequired: 6,
+      imageUrl: "/frames/crystal.png",
+    },
+    {
+      name: "Void Frame",
+      type: "frame",
+      description: "Mysterious void-themed frame",
+      price: 1500,
+      levelRequired: 10,
+      imageUrl: "/frames/void.png",
+    },
 
     // Animations
-    { name: "Level-Up Burst", type: "animation", description: "Explosive level-up animation", price: 400, levelRequired: 2, imageUrl: "/animations/levelup.png" },
-    { name: "Lightning Strike", type: "animation", description: "Electric lightning effect", price: 700, levelRequired: 4, imageUrl: "/animations/lightning.png" },
-    { name: "Aura Glow", type: "animation", description: "Soft glowing aura around profile", price: 1000, levelRequired: 6, imageUrl: "/animations/aura.png" },
+    {
+      name: "Level-Up Burst",
+      type: "animation",
+      description: "Explosive level-up animation",
+      price: 400,
+      levelRequired: 2,
+      imageUrl: "/animations/levelup.png",
+    },
+    {
+      name: "Lightning Strike",
+      type: "animation",
+      description: "Electric lightning effect",
+      price: 700,
+      levelRequired: 4,
+      imageUrl: "/animations/lightning.png",
+    },
+    {
+      name: "Aura Glow",
+      type: "animation",
+      description: "Soft glowing aura around profile",
+      price: 1000,
+      levelRequired: 6,
+      imageUrl: "/animations/aura.png",
+    },
 
     // Titles
-    { name: "Code Master", type: "title", description: "Title: Code Master", price: 2000, levelRequired: 15, imageUrl: "/titles/code-master.png" },
-    { name: "Bug Hunter", type: "title", description: "Title: Bug Hunter", price: 1500, levelRequired: 10, imageUrl: "/titles/bug-hunter.png" },
-    { name: "Algorithm King", type: "title", description: "Title: Algorithm King", price: 2500, levelRequired: 18, imageUrl: "/titles/algorithm-king.png" },
+    {
+      name: "Code Master",
+      type: "title",
+      description: "Title: Code Master",
+      price: 2000,
+      levelRequired: 15,
+      imageUrl: "/titles/code-master.png",
+    },
+    {
+      name: "Bug Hunter",
+      type: "title",
+      description: "Title: Bug Hunter",
+      price: 1500,
+      levelRequired: 10,
+      imageUrl: "/titles/bug-hunter.png",
+    },
+    {
+      name: "Algorithm King",
+      type: "title",
+      description: "Title: Algorithm King",
+      price: 2500,
+      levelRequired: 18,
+      imageUrl: "/titles/algorithm-king.png",
+    },
 
     // Editor Themes
-    { name: "Matrix Theme", type: "theme", description: "Green-on-black Matrix editor theme", price: 800, levelRequired: 5, imageUrl: "/themes/matrix.png" },
-    { name: "Sunset Theme", type: "theme", description: "Warm sunset-colored editor theme", price: 800, levelRequired: 5, imageUrl: "/themes/sunset.png" },
+    {
+      name: "Matrix Theme",
+      type: "theme",
+      description: "Green-on-black Matrix editor theme",
+      price: 800,
+      levelRequired: 5,
+      imageUrl: "/themes/matrix.png",
+    },
+    {
+      name: "Sunset Theme",
+      type: "theme",
+      description: "Warm sunset-colored editor theme",
+      price: 800,
+      levelRequired: 5,
+      imageUrl: "/themes/sunset.png",
+    },
 
     // Effects
-    { name: "Particle Trail", type: "effect", description: "Particles follow your cursor", price: 600, levelRequired: 3, imageUrl: "/effects/particles.png" },
-    { name: "Neon Glow", type: "effect", description: "Neon glow effect on profile", price: 900, levelRequired: 5, imageUrl: "/effects/neon.png" },
+    {
+      name: "Particle Trail",
+      type: "effect",
+      description: "Particles follow your cursor",
+      price: 600,
+      levelRequired: 3,
+      imageUrl: "/effects/particles.png",
+    },
+    {
+      name: "Neon Glow",
+      type: "effect",
+      description: "Neon glow effect on profile",
+      price: 900,
+      levelRequired: 5,
+      imageUrl: "/effects/neon.png",
+    },
   ];
 
   for (const item of shopItems) {
@@ -295,7 +440,12 @@ async function seedDemoAccount() {
   const demo = await prisma.user.upsert({
     where: { email: "demo@eduverse.dev" },
     update: {},
-    create: { email: "demo@eduverse.dev", username: "demo", passwordHash, placementLevel: "intermediate" },
+    create: {
+      email: "demo@eduverse.dev",
+      username: "demo",
+      passwordHash,
+      placementLevel: "intermediate",
+    },
   });
 
   const python = await prisma.course.findUnique({ where: { slug: "python" } });
@@ -303,31 +453,55 @@ async function seedDemoAccount() {
 
   // Hand-built intermediate mastery: fundamentals solid, core mixed, advanced thin.
   const mastery: MasteryMap = {
-    variables: { status: "mastered", score: 95 }, "data-types": { status: "mastered", score: 90 },
-    io: { status: "mastered", score: 88 }, operators: { status: "mastered", score: 92 },
-    conditionals: { status: "mastered", score: 90 }, loops: { status: "mastered", score: 85 },
+    variables: { status: "mastered", score: 95 },
+    "data-types": { status: "mastered", score: 90 },
+    io: { status: "mastered", score: 88 },
+    operators: { status: "mastered", score: 92 },
+    conditionals: { status: "mastered", score: 90 },
+    loops: { status: "mastered", score: 85 },
     strings: { status: "mastered", score: 82 },
-    functions: { status: "mastered", score: 80 }, lists: { status: "mastered", score: 84 },
-    tuples: { status: "partial", score: 60 }, dictionaries: { status: "mastered", score: 78 },
-    sets: { status: "partial", score: 55 }, modules: { status: "partial", score: 50 },
-    "file-handling": { status: "weak", score: 30 }, exceptions: { status: "partial", score: 58 },
-    oop: { status: "weak", score: 35 }, generators: { status: "missing", score: 0 },
-    decorators: { status: "missing", score: 0 }, lambdas: { status: "partial", score: 48 },
-    apis: { status: "missing", score: 0 }, "advanced-python": { status: "weak", score: 32 },
+    functions: { status: "mastered", score: 80 },
+    lists: { status: "mastered", score: 84 },
+    tuples: { status: "partial", score: 60 },
+    dictionaries: { status: "mastered", score: 78 },
+    sets: { status: "partial", score: 55 },
+    modules: { status: "partial", score: 50 },
+    "file-handling": { status: "weak", score: 30 },
+    exceptions: { status: "partial", score: 58 },
+    oop: { status: "weak", score: 35 },
+    generators: { status: "missing", score: 0 },
+    decorators: { status: "missing", score: 0 },
+    lambdas: { status: "partial", score: 48 },
+    apis: { status: "missing", score: 0 },
+    "advanced-python": { status: "weak", score: 32 },
   };
   const level = classifyLevel("python", mastery); // → intermediate
   const strengths = ["Variables", "Operators", "Loops", "Lists"];
-  const weaknesses = ["File Handling", "Object-Oriented Programming", "Generators", "Working with APIs"];
+  const weaknesses = [
+    "File Handling",
+    "Object-Oriented Programming",
+    "Generators",
+    "Working with APIs",
+  ];
 
   // Completed placement assessment record (so the course page shows "assessed").
   await prisma.assessment.deleteMany({ where: { userId: demo.id, courseId: python.id } });
   await prisma.assessment.create({
     data: {
-      userId: demo.id, courseId: python.id, status: "completed",
-      questions: "[]", answers: "[]", score: 16, total: 23, level,
+      userId: demo.id,
+      courseId: python.id,
+      status: "completed",
+      questions: "[]",
+      answers: "[]",
+      score: 16,
+      total: 23,
+      level,
       analysis: JSON.stringify({
-        summary: "Strong command of Python fundamentals and core collections. The path ahead focuses on the gaps: file handling, OOP, and the advanced toolkit (generators, decorators, APIs).",
-        strengths, weaknesses, scorePct: 70,
+        summary:
+          "Strong command of Python fundamentals and core collections. The path ahead focuses on the gaps: file handling, OOP, and the advanced toolkit (generators, decorators, APIs).",
+        strengths,
+        weaknesses,
+        scorePct: 70,
       }),
       completedAt: new Date(),
     },
@@ -337,7 +511,9 @@ async function seedDemoAccount() {
   // First roadmap pass (no completions yet) so we can see which lessons are required.
   await buildAndSaveRoadmap(demo.id, python.id, "python", mastery, level, null);
 
-  const roadmap = await prisma.roadmap.findUnique({ where: { userId_courseId: { userId: demo.id, courseId: python.id } } });
+  const roadmap = await prisma.roadmap.findUnique({
+    where: { userId_courseId: { userId: demo.id, courseId: python.id } },
+  });
   const items: { lessonId: string; status: string }[] = roadmap ? JSON.parse(roadmap.items) : [];
   const requiredIds = items.filter((i) => i.status === "required").map((i) => i.lessonId);
 
@@ -351,7 +527,9 @@ async function seedDemoAccount() {
       create: { userId: demo.id, lessonId, completed: true, score: 100 },
       update: { completed: true, score: 100 },
     });
-    await prisma.xpLog.create({ data: { userId: demo.id, amount: lesson.xpReward, source: "lesson" } });
+    await prisma.xpLog.create({
+      data: { userId: demo.id, amount: lesson.xpReward, source: "lesson" },
+    });
     lessonXp += lesson.xpReward;
   }
   // Rebuild so the roadmap reflects the completed lessons.
@@ -368,7 +546,9 @@ async function seedDemoAccount() {
     data: { xp: totalXp, level: calculateLevel(totalXp), coins: totalXp },
   });
 
-  console.log(`  Created demo account (demo@eduverse.dev / demo1234) — ${level} Python learner, ${totalXp} XP`);
+  console.log(
+    `  Created demo account (demo@eduverse.dev / demo1234) — ${level} Python learner, ${totalXp} XP`,
+  );
 }
 
 main()

@@ -3,7 +3,16 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { fadeUp, staggerContainer, fastEaseTransition } from "@/lib/motion";
-import { Sprout, Send, GraduationCap, Sparkles, ChevronRight, Lightbulb, WifiOff, Compass } from "lucide-react";
+import {
+  Sprout,
+  Send,
+  GraduationCap,
+  Sparkles,
+  ChevronRight,
+  Lightbulb,
+  WifiOff,
+  Compass,
+} from "lucide-react";
 import { GlassCard } from "@/components/ui/glass-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useAuthStore } from "@/stores/auth-store";
@@ -49,7 +58,9 @@ export default function ApprenticePage() {
 
   const endRef = useRef<HTMLDivElement>(null);
   const autoStartedRef = useRef(false);
-  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, thinking]);
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, thinking]);
 
   const mentorTurns = messages.filter((m) => m.role === "mentor").length;
 
@@ -64,16 +75,25 @@ export default function ApprenticePage() {
         setMaxTurns(res.data.maxTurns);
         if (res.data.courses[0]) setSelCourse(res.data.courses[0].courseSlug);
         // Pull weak topics from the mentor profile (cached) and map them to the catalog.
-        api.mentorProfile().then((p) => {
-          const weak = p.data.metrics?.weakTopics || [];
-          const byTitle = new Map(res.data.courses.map((c) => [c.courseTitle, c]));
-          const targets: StartTarget[] = [];
-          for (const w of weak.slice(0, 5)) {
-            const course = byTitle.get(w.course);
-            if (course) targets.push({ topic: w.label, topicKey: w.key, courseSlug: course.courseSlug, courseLabel: course.courseTitle });
-          }
-          setSuggested(targets);
-        }).catch(() => {});
+        api
+          .mentorProfile()
+          .then((p) => {
+            const weak = p.data.metrics?.weakTopics || [];
+            const byTitle = new Map(res.data.courses.map((c) => [c.courseTitle, c]));
+            const targets: StartTarget[] = [];
+            for (const w of weak.slice(0, 5)) {
+              const course = byTitle.get(w.course);
+              if (course)
+                targets.push({
+                  topic: w.label,
+                  topicKey: w.key,
+                  courseSlug: course.courseSlug,
+                  courseLabel: course.courseTitle,
+                });
+            }
+            setSuggested(targets);
+          })
+          .catch(() => {});
       })
       .catch(() => {
         setCatalogOffline(true);
@@ -97,7 +117,12 @@ export default function ApprenticePage() {
       setUnderstanding(res.data.understanding);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Pip couldn't start the lesson. Try again.");
-      setMessages([{ role: "apprentice", text: "Hmm, I got distracted — could you start explaining and I'll catch up?" }]);
+      setMessages([
+        {
+          role: "apprentice",
+          text: "Hmm, I got distracted — could you start explaining and I'll catch up?",
+        },
+      ]);
     } finally {
       setThinking(false);
     }
@@ -115,7 +140,12 @@ export default function ApprenticePage() {
     const course = q.get("course");
     if (topic) {
       autoStartedRef.current = true;
-      startTeaching({ topic, topicKey, courseSlug: course, courseLabel: q.get("courseLabel") || undefined });
+      startTeaching({
+        topic,
+        topicKey,
+        courseSlug: course,
+        courseLabel: q.get("courseLabel") || undefined,
+      });
     } else if (topicKey && course && catalog.length) {
       const c = catalog.find((x) => x.courseSlug === course);
       const t = c?.topics.find((x) => x.key === topicKey);
@@ -152,11 +182,19 @@ export default function ApprenticePage() {
     setGrading(true);
     setError("");
     try {
-      const res = await api.apprenticeGrade({ topic: target.topic, topicKey: target.topicKey, courseSlug: target.courseSlug, turns: messages });
+      const res = await api.apprenticeGrade({
+        topic: target.topic,
+        topicKey: target.topicKey,
+        courseSlug: target.courseSlug,
+        turns: messages,
+      });
       setGrade(res.data);
       setPhase("graded");
       // Reflect awarded XP in the sidebar.
-      api.getProfile().then((p) => updateXp(p.data.xp, p.data.level)).catch(() => {});
+      api
+        .getProfile()
+        .then((p) => updateXp(p.data.xp, p.data.level))
+        .catch(() => {});
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Grading failed. Try again.");
     } finally {
@@ -178,7 +216,12 @@ export default function ApprenticePage() {
   const courseTopics = catalog.find((c) => c.courseSlug === selCourse)?.topics || [];
 
   return (
-    <motion.div className="space-y-6 max-w-3xl mx-auto" initial="hidden" animate="visible" variants={staggerContainer}>
+    <motion.div
+      className="space-y-6 max-w-3xl mx-auto"
+      initial="hidden"
+      animate="visible"
+      variants={staggerContainer}
+    >
       {/* ── Header ── */}
       <motion.div variants={fadeUp} transition={fastEaseTransition}>
         <div className="section-label">
@@ -188,25 +231,36 @@ export default function ApprenticePage() {
           <Sprout className="w-7 h-7 text-eduverse-accent" aria-hidden="true" /> Apprentice
         </h1>
         <p className="text-eduverse-text-muted">
-          Meet Pip — your AI apprentice. Teach Pip a topic and you&apos;ll learn it twice as deeply. <span className="text-eduverse-text-body">Teaching is the best way to learn.</span>
+          Meet Pip — your AI apprentice. Teach Pip a topic and you&apos;ll learn it twice as deeply.{" "}
+          <span className="text-eduverse-text-body">Teaching is the best way to learn.</span>
         </p>
       </motion.div>
 
       {error && phase === "pick" && catalogOffline && (
         <motion.div variants={fadeUp} transition={fastEaseTransition}>
-          <EmptyState icon={WifiOff} title="Can't reach the server" message="The EduVerse API isn't responding, so the topic catalog can't be loaded." />
+          <EmptyState
+            icon={WifiOff}
+            title="Can't reach the server"
+            message="The EduVerse API isn't responding, so the topic catalog can't be loaded."
+          />
         </motion.div>
       )}
 
       {error && phase === "pick" && !catalogOffline && (
         <motion.div variants={fadeUp} transition={fastEaseTransition}>
-          <p className="text-sm text-eduverse-text-muted" role="alert">Error: {error}</p>
+          <p className="text-sm text-eduverse-text-muted" role="alert">
+            Error: {error}
+          </p>
         </motion.div>
       )}
 
       {/* ── PICK ── */}
       {phase === "pick" && catalogLoading && (
-        <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.05 }} className="space-y-5">
+        <motion.div
+          variants={fadeUp}
+          transition={{ ...fastEaseTransition, delay: 0.05 }}
+          className="space-y-5"
+        >
           <div className="sk-card" style={{ height: "80px" }} />
           <div className="sk-card" style={{ height: "200px" }} />
         </motion.div>
@@ -214,18 +268,30 @@ export default function ApprenticePage() {
 
       {phase === "pick" && !catalogLoading && !catalogOffline && catalog.length === 0 && (
         <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.05 }}>
-          <EmptyState icon={Compass} title="No topics available" message="The topic catalog returned empty. Try again later or check with your instructor." />
+          <EmptyState
+            icon={Compass}
+            title="No topics available"
+            message="The topic catalog returned empty. Try again later or check with your instructor."
+          />
         </motion.div>
       )}
 
       {phase === "pick" && !catalogLoading && !catalogOffline && catalog.length > 0 && (
-        <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.05 }} className="space-y-5">
+        <motion.div
+          variants={fadeUp}
+          transition={{ ...fastEaseTransition, delay: 0.05 }}
+          className="space-y-5"
+        >
           {suggested.length > 0 && (
             <GlassCard>
               <h2 className="flex items-center gap-2 text-sm font-mono text-eduverse-text-muted mb-3">
-                <Lightbulb size={14} className="text-eduverse-accent" aria-hidden="true" /> Teach a weak topic (recommended)
+                <Lightbulb size={14} className="text-eduverse-accent" aria-hidden="true" /> Teach a
+                weak topic (recommended)
               </h2>
-              <p className="text-xs text-eduverse-text-muted mb-3">Your AI Coach flagged these gaps. Teaching them to Pip is the fastest way to close them.</p>
+              <p className="text-xs text-eduverse-text-muted mb-3">
+                Your AI Coach flagged these gaps. Teaching them to Pip is the fastest way to close
+                them.
+              </p>
               <div className="flex flex-wrap gap-2">
                 {suggested.map((s, i) => (
                   <button
@@ -233,7 +299,8 @@ export default function ApprenticePage() {
                     onClick={() => startTeaching(s)}
                     className="flex items-center gap-1.5 text-sm px-3 py-2 rounded-lg border border-eduverse-border hover:border-eduverse-accent text-eduverse-text-body transition-colors"
                   >
-                    {s.topic} <span className="text-[10px] text-eduverse-text-muted">· {s.courseLabel}</span>
+                    {s.topic}{" "}
+                    <span className="text-[10px] text-eduverse-text-muted">· {s.courseLabel}</span>
                     <ChevronRight size={13} className="text-eduverse-accent" aria-hidden="true" />
                   </button>
                 ))}
@@ -243,17 +310,23 @@ export default function ApprenticePage() {
 
           <GlassCard>
             <h2 className="flex items-center gap-2 text-sm font-mono text-eduverse-text-muted mb-4">
-              <GraduationCap size={14} className="text-eduverse-accent" aria-hidden="true" /> Pick a topic to teach
+              <GraduationCap size={14} className="text-eduverse-accent" aria-hidden="true" /> Pick a
+              topic to teach
             </h2>
             <div className="grid sm:grid-cols-2 gap-3 mb-3">
               <select
                 value={selCourse}
-                onChange={(e) => { setSelCourse(e.target.value); setSelTopic(""); }}
+                onChange={(e) => {
+                  setSelCourse(e.target.value);
+                  setSelTopic("");
+                }}
                 className="px-3 py-2 rounded border border-eduverse-border bg-eduverse-surface text-sm text-eduverse-text focus:border-eduverse-accent outline-none"
                 aria-label="Course"
               >
                 {catalog.map((c) => (
-                  <option key={c.courseSlug} value={c.courseSlug}>{c.courseTitle}</option>
+                  <option key={c.courseSlug} value={c.courseSlug}>
+                    {c.courseTitle}
+                  </option>
                 ))}
               </select>
               <select
@@ -264,7 +337,9 @@ export default function ApprenticePage() {
               >
                 <option value="">Choose a topic…</option>
                 {courseTopics.map((t) => (
-                  <option key={t.key} value={t.key}>{t.label}</option>
+                  <option key={t.key} value={t.key}>
+                    {t.label}
+                  </option>
                 ))}
               </select>
             </div>
@@ -274,7 +349,13 @@ export default function ApprenticePage() {
               onClick={() => {
                 const course = catalog.find((c) => c.courseSlug === selCourse);
                 const topic = courseTopics.find((t) => t.key === selTopic);
-                if (course && topic) startTeaching({ topic: topic.label, topicKey: topic.key, courseSlug: course.courseSlug, courseLabel: course.courseTitle });
+                if (course && topic)
+                  startTeaching({
+                    topic: topic.label,
+                    topicKey: topic.key,
+                    courseSlug: course.courseSlug,
+                    courseLabel: course.courseTitle,
+                  });
               }}
             >
               <Sprout size={14} aria-hidden="true" /> Start Teaching Pip
@@ -288,12 +369,19 @@ export default function ApprenticePage() {
                   placeholder="e.g. Recursion, REST APIs, the box model…"
                   value={customTopic}
                   onChange={(e) => setCustomTopic(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && customTopic.trim() && startTeaching({ topic: customTopic.trim(), topicKey: null, courseSlug: null })}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" &&
+                    customTopic.trim() &&
+                    startTeaching({ topic: customTopic.trim(), topicKey: null, courseSlug: null })
+                  }
                 />
                 <button
                   className="px-3 py-2 rounded bg-eduverse-accent-strong text-white text-sm font-semibold hover:brightness-110 active:scale-[0.97] transition-[filter,transform] duration-150 disabled:opacity-50"
                   disabled={!customTopic.trim()}
-                  onClick={() => customTopic.trim() && startTeaching({ topic: customTopic.trim(), topicKey: null, courseSlug: null })}
+                  onClick={() =>
+                    customTopic.trim() &&
+                    startTeaching({ topic: customTopic.trim(), topicKey: null, courseSlug: null })
+                  }
                 >
                   Teach
                 </button>
@@ -311,13 +399,20 @@ export default function ApprenticePage() {
               <div className="text-sm font-mono text-eduverse-text-muted">
                 Teaching: <span className="text-eduverse-accent">{target.topic}</span>
               </div>
-              <div className="text-xs font-mono text-eduverse-text-muted">Turn {Math.min(mentorTurns, maxTurns)} / {maxTurns}</div>
+              <div className="text-xs font-mono text-eduverse-text-muted">
+                Turn {Math.min(mentorTurns, maxTurns)} / {maxTurns}
+              </div>
             </div>
             <div className="py-3 border-b border-eduverse-border mb-4">
               <PipAvatar understanding={understanding} thinking={thinking} />
             </div>
 
-            <div className="space-y-3 max-h-[24rem] overflow-y-auto pr-1 mb-4" role="log" aria-live="polite" aria-label="Teaching conversation with Pip">
+            <div
+              className="space-y-3 max-h-[24rem] overflow-y-auto pr-1 mb-4"
+              role="log"
+              aria-live="polite"
+              aria-label="Teaching conversation with Pip"
+            >
               <AnimatePresence initial={false}>
                 {messages.map((m, i) => (
                   <motion.div
@@ -327,21 +422,33 @@ export default function ApprenticePage() {
                     transition={{ duration: 0.3, ease }}
                     className="text-sm leading-relaxed rounded-lg px-3 py-2 whitespace-pre-wrap"
                     style={{
-                      background: m.role === "mentor" ? "var(--color-eduverse-accent-soft)" : "var(--color-eduverse-raised)",
+                      background:
+                        m.role === "mentor"
+                          ? "var(--color-eduverse-accent-soft)"
+                          : "var(--color-eduverse-raised)",
                       color: "var(--color-eduverse-text-body)",
                       marginLeft: m.role === "mentor" ? "auto" : 0,
                       maxWidth: "90%",
                       width: "fit-content",
                     }}
                   >
-                    {m.role === "apprentice" && <span className="text-[11px] font-semibold text-eduverse-accent block mb-0.5">Pip</span>}
+                    {m.role === "apprentice" && (
+                      <span className="text-[11px] font-semibold text-eduverse-accent block mb-0.5">
+                        Pip
+                      </span>
+                    )}
                     {m.text}
                   </motion.div>
                 ))}
               </AnimatePresence>
               {thinking && (
                 <div className="flex items-center gap-2 text-sm text-eduverse-text-muted">
-                  <Sparkles size={14} className="text-eduverse-accent animate-pulse" aria-hidden="true" /> Pip is thinking…
+                  <Sparkles
+                    size={14}
+                    className="text-eduverse-accent animate-pulse"
+                    aria-hidden="true"
+                  />{" "}
+                  Pip is thinking…
                 </div>
               )}
               <div ref={endRef} />
@@ -349,7 +456,8 @@ export default function ApprenticePage() {
 
             {done && (
               <div className="text-xs text-eduverse-success mb-2 flex items-center gap-1.5">
-                <Sparkles size={12} aria-hidden="true" /> Pip feels ready — grade your teaching whenever you like!
+                <Sparkles size={12} aria-hidden="true" /> Pip feels ready — grade your teaching
+                whenever you like!
               </div>
             )}
 
@@ -359,7 +467,9 @@ export default function ApprenticePage() {
                 placeholder="Explain it to Pip in your own words…"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) sendExplanation(); }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) sendExplanation();
+                }}
                 disabled={thinking}
                 aria-label="Your explanation"
               />
@@ -376,15 +486,30 @@ export default function ApprenticePage() {
                 className="ai-panel-action-btn ai-panel-action-ghost"
                 onClick={finishAndGrade}
                 disabled={mentorTurns < 1 || grading || thinking}
-                style={done ? { borderColor: "var(--color-eduverse-success)", color: "var(--color-eduverse-success)" } : undefined}
+                style={
+                  done
+                    ? {
+                        borderColor: "var(--color-eduverse-success)",
+                        color: "var(--color-eduverse-success)",
+                      }
+                    : undefined
+                }
               >
-                <GraduationCap size={14} aria-hidden="true" /> {grading ? "Grading…" : "Finish & Get Graded"}
+                <GraduationCap size={14} aria-hidden="true" />{" "}
+                {grading ? "Grading…" : "Finish & Get Graded"}
               </button>
-              <button className="text-xs text-eduverse-text-muted hover:text-eduverse-accent transition-colors" onClick={reset}>
+              <button
+                className="text-xs text-eduverse-text-muted hover:text-eduverse-accent transition-colors"
+                onClick={reset}
+              >
                 Cancel
               </button>
             </div>
-            {error && <p className="text-sm text-eduverse-text-muted mt-3" role="alert">Error: {error}</p>}
+            {error && (
+              <p className="text-sm text-eduverse-text-muted mt-3" role="alert">
+                Error: {error}
+              </p>
+            )}
           </GlassCard>
         </motion.div>
       )}

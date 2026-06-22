@@ -27,10 +27,12 @@ router.get("/:id", requireAuth, async (req: Request, res: Response) => {
       : null;
 
     // Quiz answers stay server-side; ship only the questions and options.
-    const quiz = (JSON.parse(lesson.quiz || "[]") as Array<{ q: string; options: string[] }>).map((q) => ({
-      q: q.q,
-      options: q.options,
-    }));
+    const quiz = (JSON.parse(lesson.quiz || "[]") as Array<{ q: string; options: string[] }>).map(
+      (q) => ({
+        q: q.q,
+        options: q.options,
+      }),
+    );
 
     const { course, ...lessonData } = lesson;
     res.json({
@@ -92,13 +94,19 @@ router.post("/:id/complete", requireAuth, async (req: Request, res: Response) =>
     // Continuous adaptation: completion nudges this lesson's topics upward
     // and refreshes the roadmap (rule-based — no AI cost on the hot path).
     const topics = JSON.parse(lesson.topics || "[]") as string[];
-    await recordEvent(req.userId!, lesson.courseId, lesson.id, "lesson_complete", { title: lesson.title });
-    await adaptAfterEvent(req.userId!, lesson.courseId, lesson.course.slug, topics, { kind: "complete" }).catch((e) =>
-      console.error("[learning] adapt after complete failed:", e)
-    );
+    await recordEvent(req.userId!, lesson.courseId, lesson.id, "lesson_complete", {
+      title: lesson.title,
+    });
+    await adaptAfterEvent(req.userId!, lesson.courseId, lesson.course.slug, topics, {
+      kind: "complete",
+    }).catch((e) => console.error("[learning] adapt after complete failed:", e));
 
     // Advance any active mentor missions (lesson_complete / topic-scoped / xp_earn).
-    await syncMissionProgress(req.userId!, { kind: "lesson_complete", courseSlug: lesson.course.slug, topicKeys: topics });
+    await syncMissionProgress(req.userId!, {
+      kind: "lesson_complete",
+      courseSlug: lesson.course.slug,
+      topicKeys: topics,
+    });
 
     res.json({ success: true, data: xpResult });
   } catch (err) {
@@ -118,7 +126,12 @@ router.post("/:id/quiz", requireAuth, async (req: Request, res: Response) => {
       res.status(404).json({ success: false, error: "Lesson not found" });
       return;
     }
-    const quiz = JSON.parse(lesson.quiz || "[]") as Array<{ q: string; options: string[]; answer: number; explain: string }>;
+    const quiz = JSON.parse(lesson.quiz || "[]") as Array<{
+      q: string;
+      options: string[];
+      answer: number;
+      explain: string;
+    }>;
     if (quiz.length === 0) {
       res.status(404).json({ success: false, error: "This lesson has no quiz" });
       return;
@@ -145,9 +158,10 @@ router.post("/:id/quiz", requireAuth, async (req: Request, res: Response) => {
       correct,
       total: quiz.length,
     });
-    await adaptAfterEvent(req.userId!, lesson.courseId, lesson.course.slug, topics, { kind: "quiz", pct }).catch((e) =>
-      console.error("[learning] adapt after quiz failed:", e)
-    );
+    await adaptAfterEvent(req.userId!, lesson.courseId, lesson.course.slug, topics, {
+      kind: "quiz",
+      pct,
+    }).catch((e) => console.error("[learning] adapt after quiz failed:", e));
 
     // Bonus XP for first-class quiz performance (kept modest; main XP is completion).
     let xpGained = 0;
@@ -156,7 +170,11 @@ router.post("/:id/quiz", requireAuth, async (req: Request, res: Response) => {
       await addXp(req.userId!, bonus, "challenge");
       xpGained = bonus;
       // Advance mentor missions (quiz_pass / topic_mastery for these topics).
-      await syncMissionProgress(req.userId!, { kind: "quiz_pass", courseSlug: lesson.course.slug, topicKeys: topics });
+      await syncMissionProgress(req.userId!, {
+        kind: "quiz_pass",
+        courseSlug: lesson.course.slug,
+        topicKeys: topics,
+      });
     }
 
     res.json({

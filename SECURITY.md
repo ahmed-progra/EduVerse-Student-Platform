@@ -4,11 +4,11 @@
 
 EduVerse is under active development. Security fixes are applied to the `main` branch and the latest tagged release.
 
-| Version         | Supported |
-|-----------------|-----------|
-| `main` (bleeding edge) | ✅ |
-| Latest tagged release  | ✅ |
-| Older releases  | ❌ |
+| Version                | Supported |
+| ---------------------- | --------- |
+| `main` (bleeding edge) | ✅        |
+| Latest tagged release  | ✅        |
+| Older releases         | ❌        |
 
 If you are using an older release, we recommend upgrading to the latest version as soon as possible.
 
@@ -19,9 +19,10 @@ If you are using an older release, we recommend upgrading to the latest version 
 Instead, report it privately using one of these methods:
 
 1. **GitHub private vulnerability reporting** — navigate to the **Security** tab of the repository and click **Report a vulnerability**.
-2. **Email the maintainers** — if you do not have access to GitHub's private reporting, reach out to the project maintainers directly with a clear description and reproduction steps.
+2. **Email the maintainers** — if you do not have access to GitHub's private reporting, reach out to **eduverse@googlegroups.com** with a clear description and reproduction steps.
 
 We aim to:
+
 - Acknowledge receipt within **72 hours**
 - Provide an initial assessment and remediation timeline after triage
 - Keep you informed throughout the process
@@ -38,6 +39,7 @@ When reporting, please include:
 ## Disclosure policy
 
 We believe in coordinated disclosure. We will:
+
 1. Confirm the vulnerability and assess its severity
 2. Develop and test a fix
 3. Release the fix in a new version
@@ -55,6 +57,6 @@ We ask that reporters give us a reasonable window to address vulnerabilities bef
 
 - Passwords are hashed with `bcryptjs`; plaintext passwords are never stored.
 - Authentication uses signed JWTs (`jsonwebtoken`); protected routes pass through the `auth` middleware.
-- API input is validated with `zod` schemas.
+- API input is validated with custom validation utilities and `zod` schemas (where used).
 - Rate limiting (`express-rate-limit`) is applied globally to the API.
 - CORS is restricted to the configured `FRONTEND_URL` origin(s).

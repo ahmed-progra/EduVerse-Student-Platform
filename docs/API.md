@@ -23,9 +23,9 @@ All endpoints are served by the Express backend under the `/api` prefix
 
 ## Health
 
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| GET | `/api/health` | — | Liveness probe |
+| Method | Path          | Auth | Description    |
+| ------ | ------------- | ---- | -------------- |
+| GET    | `/api/health` | —    | Liveness probe |
 
 ```
 Response: { success: true, data: { status: "ok", timestamp: "<ISO>" } }
@@ -35,12 +35,12 @@ Response: { success: true, data: { status: "ok", timestamp: "<ISO>" } }
 
 ## Auth — `/api/auth`
 
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| POST | `/register` | — | Create an account, returns a JWT |
-| POST | `/login` | — | Email/password login, returns a JWT |
-| POST | `/google` | — | Google OAuth sign-in, returns a JWT |
-| GET | `/me` | 🔒 | Current authenticated user with inventory + skills |
+| Method | Path        | Auth | Description                                        |
+| ------ | ----------- | ---- | -------------------------------------------------- |
+| POST   | `/register` | —    | Create an account, returns a JWT                   |
+| POST   | `/login`    | —    | Email/password login, returns a JWT                |
+| POST   | `/google`   | —    | Google OAuth sign-in, returns a JWT                |
+| GET    | `/me`       | 🔒   | Current authenticated user with inventory + skills |
 
 ### POST /api/auth/register
 
@@ -76,10 +76,10 @@ Response: { success: true, data: User & { inventory: UserInventory[], skills: Us
 
 ## Courses — `/api/courses`
 
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| GET | `/` | 🔒 | List all courses with lesson outlines |
-| GET | `/:id` | 🔒 | Course detail with lessons + user completion state |
+| Method | Path   | Auth | Description                                        |
+| ------ | ------ | ---- | -------------------------------------------------- |
+| GET    | `/`    | 🔒   | List all courses with lesson outlines              |
+| GET    | `/:id` | 🔒   | Course detail with lessons + user completion state |
 
 ### GET /api/courses/:id
 
@@ -89,11 +89,11 @@ Each lesson includes `completed: boolean` merged from `UserProgress`.
 
 ## Lessons — `/api/lessons`
 
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| GET | `/:id` | 🔒 | Lesson detail (content, template, quiz without answers) |
-| POST | `/:id/complete` | 🔒 | Mark a lesson complete; awards XP/coins |
-| POST | `/:id/quiz` | 🔒 | Submit a quiz checkpoint |
+| Method | Path            | Auth | Description                                             |
+| ------ | --------------- | ---- | ------------------------------------------------------- |
+| GET    | `/:id`          | 🔒   | Lesson detail (content, template, quiz without answers) |
+| POST   | `/:id/complete` | 🔒   | Mark a lesson complete; awards XP/coins                 |
+| POST   | `/:id/quiz`     | 🔒   | Submit a quiz checkpoint                                |
 
 ### GET /api/lessons/:id
 
@@ -132,9 +132,9 @@ Passing threshold: 66%. Bonus XP for first-time passes (100% = 25, pass = 15).
 
 ## Submissions — `/api/submissions`
 
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| POST | `/execute` | 🔒 | Execute submitted code (C++ via Judge0) |
+| Method | Path       | Auth | Description                             |
+| ------ | ---------- | ---- | --------------------------------------- |
+| POST   | `/execute` | 🔒   | Execute submitted code (C++ via Judge0) |
 
 ```
 Request:  { code: string, language: string, stdin?: string }
@@ -147,12 +147,12 @@ Subject to code-execution rate limiter.
 
 ## Learning (adaptive) — `/api/learning`
 
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| GET | `/:courseId/state` | 🔒 | Skill profile + roadmap + assessment state for a course |
-| POST | `/:courseId/assessment/start` | 🔒 | Start a placement assessment |
-| POST | `/:courseId/assessment/submit` | 🔒 | Submit answers; builds mastery profile + roadmap |
-| POST | `/:courseId/refresh` | 🔒 | Regenerate the personalized roadmap |
+| Method | Path                           | Auth | Description                                             |
+| ------ | ------------------------------ | ---- | ------------------------------------------------------- |
+| GET    | `/:courseId/state`             | 🔒   | Skill profile + roadmap + assessment state for a course |
+| POST   | `/:courseId/assessment/start`  | 🔒   | Start a placement assessment                            |
+| POST   | `/:courseId/assessment/submit` | 🔒   | Submit answers; builds mastery profile + roadmap        |
+| POST   | `/:courseId/refresh`           | 🔒   | Regenerate the personalized roadmap                     |
 
 ### GET /api/learning/:courseId/state
 
@@ -197,16 +197,16 @@ assessment required.
 
 ## Mentor (AI Coach) — `/api/mentor`
 
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| GET | `/profile` | 🔒 | Cross-course mentor profile (cached; pass `?refresh=1` to force) |
-| POST | `/sync` | 🔒 | Force recompute the mentor profile |
-| GET | `/missions` | 🔒 | Active daily/weekly missions |
-| POST | `/missions/generate` | 🔒 | Generate new AI missions (`?scope=daily\|weekly`) |
-| POST | `/missions/:id/complete` | 🔒 | Manually complete a mission; awards XP |
-| GET | `/report` | 🔒 | Latest weekly report (`?refresh=1` to force) |
-| POST | `/report/generate` | 🔒 | Generate this week's report |
-| POST | `/chat` | 🔒 | Profile-aware mentor chat |
+| Method | Path                     | Auth | Description                                                      |
+| ------ | ------------------------ | ---- | ---------------------------------------------------------------- |
+| GET    | `/profile`               | 🔒   | Cross-course mentor profile (cached; pass `?refresh=1` to force) |
+| POST   | `/sync`                  | 🔒   | Force recompute the mentor profile                               |
+| GET    | `/missions`              | 🔒   | Active daily/weekly missions                                     |
+| POST   | `/missions/generate`     | 🔒   | Generate new AI missions (`?scope=daily\|weekly`)                |
+| POST   | `/missions/:id/complete` | 🔒   | Manually complete a mission; awards XP                           |
+| GET    | `/report`                | 🔒   | Latest weekly report (`?refresh=1` to force)                     |
+| POST   | `/report/generate`       | 🔒   | Generate this week's report                                      |
+| POST   | `/chat`                  | 🔒   | Profile-aware mentor chat                                        |
 
 ### GET /api/mentor/profile
 
@@ -241,12 +241,12 @@ Response: { success: true, data: { text: string, model: string } }
 
 The "protégé effect" feature — learners teach an AI named Pip.
 
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| GET | `/topics` | 🔒 | Topics available to teach, grouped by course |
-| POST | `/start` | 🔒 | Start a teaching session with Pip |
-| POST | `/reply` | 🔒 | Continue the dialogue |
-| POST | `/grade` | 🔒 | Grade how well the user taught; awards XP |
+| Method | Path      | Auth | Description                                  |
+| ------ | --------- | ---- | -------------------------------------------- |
+| GET    | `/topics` | 🔒   | Topics available to teach, grouped by course |
+| POST   | `/start`  | 🔒   | Start a teaching session with Pip            |
+| POST   | `/reply`  | 🔒   | Continue the dialogue                        |
+| POST   | `/grade`  | 🔒   | Grade how well the user taught; awards XP    |
 
 ### POST /api/apprentice/start
 
@@ -275,16 +275,16 @@ Maximum 20 turns per session. At least one mentor turn required before grading.
 
 ## Projects (Studio + Portfolio) — `/api/projects`
 
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| GET | `/portfolio/:username` | — | Public portfolio for a user |
-| GET | `/` | 🔒 | List the user's projects |
-| POST | `/suggest` | 🔒 | AI-suggest a project based on user's level |
-| POST | `/` | 🔒 | Create a custom project |
-| GET | `/:id` | 🔒 | Project detail |
-| PATCH | `/:id` | 🔒 | Update project code or milestones |
-| PATCH | `/:id/publish` | 🔒 | Toggle portfolio visibility |
-| POST | `/:id/submit` | 🔒 | Submit for AI review and grading |
+| Method | Path                   | Auth | Description                                |
+| ------ | ---------------------- | ---- | ------------------------------------------ |
+| GET    | `/portfolio/:username` | —    | Public portfolio for a user                |
+| GET    | `/`                    | 🔒   | List the user's projects                   |
+| POST   | `/suggest`             | 🔒   | AI-suggest a project based on user's level |
+| POST   | `/`                    | 🔒   | Create a custom project                    |
+| GET    | `/:id`                 | 🔒   | Project detail                             |
+| PATCH  | `/:id`                 | 🔒   | Update project code or milestones          |
+| PATCH  | `/:id/publish`         | 🔒   | Toggle portfolio visibility                |
+| POST   | `/:id/submit`          | 🔒   | Submit for AI review and grading           |
 
 ### POST /api/projects (create custom)
 
@@ -313,18 +313,18 @@ and XP award.
 Lower-level AI utilities consumed by lesson and codelab panels. All require
 authentication and use the AI rate limiter.
 
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| GET | `/status` | 🔒 | AI service availability + provider name |
-| POST | `/mentor` | 🔒 | One-off mentor prompt with optional context |
-| POST | `/review` | 🔒 | AI code review (score + line-level issues) |
-| POST | `/hints` | 🔒 | 3 progressive hints for a challenge |
-| POST | `/challenge` | 🔒 | Generate a coding challenge |
-| POST | `/exam/grade` | 🔒 | Grade an exam answer (0-10 score) |
-| POST | `/summary` | 🔒 | Summarize lesson content |
-| POST | `/quiz` | 🔒 | Generate multiple-choice quiz questions |
-| POST | `/recommend` | 🔒 | Personalized next-step recommendations |
-| POST | `/explain-error` | 🔒 | Explain a runtime/compile error |
+| Method | Path             | Auth | Description                                 |
+| ------ | ---------------- | ---- | ------------------------------------------- |
+| GET    | `/status`        | 🔒   | AI service availability + provider name     |
+| POST   | `/mentor`        | 🔒   | One-off mentor prompt with optional context |
+| POST   | `/review`        | 🔒   | AI code review (score + line-level issues)  |
+| POST   | `/hints`         | 🔒   | 3 progressive hints for a challenge         |
+| POST   | `/challenge`     | 🔒   | Generate a coding challenge                 |
+| POST   | `/exam/grade`    | 🔒   | Grade an exam answer (0-10 score)           |
+| POST   | `/summary`       | 🔒   | Summarize lesson content                    |
+| POST   | `/quiz`          | 🔒   | Generate multiple-choice quiz questions     |
+| POST   | `/recommend`     | 🔒   | Personalized next-step recommendations      |
+| POST   | `/explain-error` | 🔒   | Explain a runtime/compile error             |
 
 ### GET /api/ai/status
 
@@ -385,13 +385,13 @@ Response: { success: true, data: { text: string, model: string } }
 
 ## Battles — `/api/battles`
 
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| POST | `/create` | 🔒 | Create a battle (waiting for opponent) |
-| POST | `/join/:id` | 🔒 | Join a waiting battle |
-| POST | `/submit` | 🔒 | Submit a battle solution |
-| GET | `/active` | 🔒 | Active/waiting battles for the current user |
-| GET | `/history` | 🔒 | Past battles (last 20) |
+| Method | Path        | Auth | Description                                 |
+| ------ | ----------- | ---- | ------------------------------------------- |
+| POST   | `/create`   | 🔒   | Create a battle (waiting for opponent)      |
+| POST   | `/join/:id` | 🔒   | Join a waiting battle                       |
+| POST   | `/submit`   | 🔒   | Submit a battle solution                    |
+| GET    | `/active`   | 🔒   | Active/waiting battles for the current user |
+| GET    | `/history`  | 🔒   | Past battles (last 20)                      |
 
 ### POST /api/battles/create
 
@@ -417,10 +417,10 @@ Response: { success: true, data: { winner, score, xpGained } }
 
 ## Skill Tree — `/api/skilltree`
 
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| GET | `/` | 🔒 | All skill tree nodes + per-user unlock state |
-| POST | `/unlock/:nodeId` | 🔒 | Unlock a skill node (spends XP) |
+| Method | Path              | Auth | Description                                  |
+| ------ | ----------------- | ---- | -------------------------------------------- |
+| GET    | `/`               | 🔒   | All skill tree nodes + per-user unlock state |
+| POST   | `/unlock/:nodeId` | 🔒   | Unlock a skill node (spends XP)              |
 
 ### POST /api/skilltree/unlock/:nodeId
 
@@ -433,10 +433,10 @@ Errors: 400 (level too low, not enough XP, prerequisites not met, already unlock
 
 ## Leaderboard — `/api/leaderboard`
 
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| GET | `/` | — | Leaderboard standings (paginated) |
-| GET | `/rank` | 🔒 | The current user's rank + score |
+| Method | Path    | Auth | Description                       |
+| ------ | ------- | ---- | --------------------------------- |
+| GET    | `/`     | —    | Leaderboard standings (paginated) |
+| GET    | `/rank` | 🔒   | The current user's rank + score   |
 
 ### GET /api/leaderboard
 
@@ -458,12 +458,12 @@ Response: { success: true, data: { rank: number, score: number } }
 
 ## Shop — `/api/shop`
 
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| GET | `/items` | — | Available shop items (sorted by price) |
-| GET | `/inventory` | 🔒 | The user's owned items |
-| POST | `/buy/:itemId` | 🔒 | Buy an item (spends coins, not XP) |
-| POST | `/equip/:itemId` | 🔒 | Equip an owned item |
+| Method | Path             | Auth | Description                            |
+| ------ | ---------------- | ---- | -------------------------------------- |
+| GET    | `/items`         | —    | Available shop items (sorted by price) |
+| GET    | `/inventory`     | 🔒   | The user's owned items                 |
+| POST   | `/buy/:itemId`   | 🔒   | Buy an item (spends coins, not XP)     |
+| POST   | `/equip/:itemId` | 🔒   | Equip an owned item                    |
 
 ### POST /api/shop/buy/:itemId
 
@@ -483,11 +483,11 @@ one.
 
 ## User — `/api/user`
 
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| GET | `/profile` | 🔒 | Full user profile (progress, inventory, skills, XP logs) |
-| PUT | `/profile` | 🔒 | Update profile (username, bio, avatar) |
-| GET | `/xp-logs` | 🔒 | XP history (last 50 entries) |
+| Method | Path       | Auth | Description                                              |
+| ------ | ---------- | ---- | -------------------------------------------------------- |
+| GET    | `/profile` | 🔒   | Full user profile (progress, inventory, skills, XP logs) |
+| PUT    | `/profile` | 🔒   | Update profile (username, bio, avatar)                   |
+| GET    | `/xp-logs` | 🔒   | XP history (last 50 entries)                             |
 
 ### GET /api/user/profile
 

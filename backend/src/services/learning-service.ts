@@ -54,7 +54,7 @@ interface TopicStat {
 export function aggregateTopics(
   bank: BankQuestion[],
   answers: Record<string, number | string | null>,
-  codeScores: Record<string, number>
+  codeScores: Record<string, number>,
 ): { stats: Record<string, TopicStat>; correct: number; gradable: number } {
   const stats: Record<string, TopicStat> = {};
   let correct = 0;
@@ -103,7 +103,10 @@ export function buildMastery(courseSlug: string, stats: Record<string, TopicStat
 }
 
 /** Tier-based classification: performance per topic tier, not one raw cutoff. */
-export function classifyLevel(courseSlug: string, mastery: MasteryMap): "beginner" | "intermediate" | "advanced" {
+export function classifyLevel(
+  courseSlug: string,
+  mastery: MasteryMap,
+): "beginner" | "intermediate" | "advanced" {
   const tiers: Record<string, { mastered: number; partialUp: number; total: number }> = {
     fundamental: { mastered: 0, partialUp: 0, total: 0 },
     core: { mastered: 0, partialUp: 0, total: 0 },
@@ -126,7 +129,11 @@ export function classifyLevel(courseSlug: string, mastery: MasteryMap): "beginne
   const c = tiers.core;
   const a = tiers.advanced;
 
-  if (pct(f.mastered, f.total) >= 0.8 && pct(c.mastered, c.total) >= 0.6 && pct(a.partialUp, a.total) >= 0.5) {
+  if (
+    pct(f.mastered, f.total) >= 0.8 &&
+    pct(c.mastered, c.total) >= 0.6 &&
+    pct(a.partialUp, a.total) >= 0.5
+  ) {
     return "advanced";
   }
   if (pct(f.mastered, f.total) >= 0.6 && pct(c.partialUp, c.total) >= 0.4) {
@@ -140,7 +147,7 @@ export function classifyLevel(courseSlug: string, mastery: MasteryMap): "beginne
 export async function gradeCodeTask(
   courseSlug: string,
   question: BankQuestion,
-  answer: string
+  answer: string,
 ): Promise<{ score: number; feedback: string }> {
   if (!answer || !answer.trim()) return { score: 0, feedback: "Not attempted." };
   try {
@@ -160,7 +167,10 @@ Respond with JSON: {"score": number (integer 0-100), "feedback": string (1-2 sen
   } catch (err) {
     // Grading must not sink the whole assessment — fall back to a labeled neutral score.
     console.error("[learning] code grading failed:", err instanceof Error ? err.message : err);
-    return { score: 40, feedback: "Automatic grading was unavailable for this answer; a neutral score was applied." };
+    return {
+      score: 40,
+      feedback: "Automatic grading was unavailable for this answer; a neutral score was applied.",
+    };
   }
 }
 
@@ -186,7 +196,10 @@ export interface AIAnalysis {
 
 function masteryTable(courseSlug: string, mastery: MasteryMap): string {
   return (COURSE_TOPICS[courseSlug] || [])
-    .map((t) => `${t.label} [${topicTier(courseSlug, t.key)}]: ${mastery[t.key]?.status || "missing"} (${mastery[t.key]?.score ?? 0}/100)`)
+    .map(
+      (t) =>
+        `${t.label} [${topicTier(courseSlug, t.key)}]: ${mastery[t.key]?.status || "missing"} (${mastery[t.key]?.score ?? 0}/100)`,
+    )
     .join("\n");
 }
 
@@ -197,9 +210,12 @@ export function ruleSkips(level: string, lessons: LessonLite[], mastery: Mastery
   for (const lesson of lessons) {
     if (lesson.topics.length === 0) continue;
     const allMastered = lesson.topics.every((t) => mastery[t]?.status === "mastered");
-    const allPartialUp = lesson.topics.every((t) => mastery[t]?.status === "mastered" || mastery[t]?.status === "partial");
+    const allPartialUp = lesson.topics.every(
+      (t) => mastery[t]?.status === "mastered" || mastery[t]?.status === "partial",
+    );
     if (allMastered) skips.add(lesson.id);
-    else if (level === "advanced" && lesson.difficulty === "beginner" && allPartialUp) skips.add(lesson.id);
+    else if (level === "advanced" && lesson.difficulty === "beginner" && allPartialUp)
+      skips.add(lesson.id);
   }
   return skips;
 }
@@ -217,11 +233,14 @@ export async function aiAnalyzeAndPlan(
   ruleLevel: string,
   lessons: LessonLite[],
   skips: Set<string>,
-  recentEvents: string[]
+  recentEvents: string[],
 ): Promise<AIAnalysis> {
   const skippedLessons = lessons.filter((l) => skips.has(l.id));
   const lessonLines = lessons
-    .map((l) => `#${l.order} "${l.title}" [${l.difficulty}] topics: ${l.topics.join(", ")}${skips.has(l.id) ? " (PLANNED SKIP)" : ""}`)
+    .map(
+      (l) =>
+        `#${l.order} "${l.title}" [${l.difficulty}] topics: ${l.topics.join(", ")}${skips.has(l.id) ? " (PLANNED SKIP)" : ""}`,
+    )
     .join("\n");
 
   const fallback: AIAnalysis = {
@@ -235,7 +254,10 @@ export async function aiAnalyzeAndPlan(
       .filter(([, m]) => m.status === "weak" || m.status === "missing")
       .slice(0, 3)
       .map(([k]) => topicLabel(courseSlug, k)),
-    focus: ruleLevel === "beginner" ? "Build solid fundamentals from the start of the course." : "Close the identified gaps, then advance.",
+    focus:
+      ruleLevel === "beginner"
+        ? "Build solid fundamentals from the start of the course."
+        : "Close the identified gaps, then advance.",
     skipReasons: {},
   };
 
@@ -279,13 +301,18 @@ Produce the JSON analysis.`,
     const skipReasons: Record<number, string> = {};
     for (const r of Array.isArray(data.skipReasons) ? data.skipReasons : []) {
       const order = Math.round(Number(r.order));
-      if (order > 0 && typeof r.reason === "string" && r.reason.trim()) skipReasons[order] = r.reason.trim();
+      if (order > 0 && typeof r.reason === "string" && r.reason.trim())
+        skipReasons[order] = r.reason.trim();
     }
     return {
       level,
       summary: String(data.summary || fallback.summary),
-      strengths: (Array.isArray(data.strengths) ? data.strengths : fallback.strengths).map(String).slice(0, 4),
-      weaknesses: (Array.isArray(data.weaknesses) ? data.weaknesses : fallback.weaknesses).map(String).slice(0, 4),
+      strengths: (Array.isArray(data.strengths) ? data.strengths : fallback.strengths)
+        .map(String)
+        .slice(0, 4),
+      weaknesses: (Array.isArray(data.weaknesses) ? data.weaknesses : fallback.weaknesses)
+        .map(String)
+        .slice(0, 4),
       focus: String(data.focus || fallback.focus),
       skipReasons,
     };
@@ -306,11 +333,14 @@ export async function buildAndSaveRoadmap(
   courseSlug: string,
   mastery: MasteryMap,
   level: string,
-  analysis: AIAnalysis | null
+  analysis: AIAnalysis | null,
 ): Promise<{ items: RoadmapItem[]; estMinutes: number; focus: string; version: number }> {
   const [lessons, progress] = await Promise.all([
     prisma.lesson.findMany({ where: { courseId }, orderBy: { order: "asc" } }),
-    prisma.userProgress.findMany({ where: { userId, completed: true }, select: { lessonId: true } }),
+    prisma.userProgress.findMany({
+      where: { userId, completed: true },
+      select: { lessonId: true },
+    }),
   ]);
   const completedIds = new Set(progress.map((p) => p.lessonId));
 
@@ -335,19 +365,30 @@ export async function buildAndSaveRoadmap(
       estMinutes: l.estMinutes,
       status: skipped ? "skipped" : "required",
       completed: completedIds.has(l.id),
-      reason: skipped ? analysis?.skipReasons?.[l.order] || templateReason(l, courseSlug, mastery) : "",
+      reason: skipped
+        ? analysis?.skipReasons?.[l.order] || templateReason(l, courseSlug, mastery)
+        : "",
     };
   });
 
-  const estMinutes = items.filter((i) => i.status === "required" && !i.completed).reduce((acc, i) => acc + i.estMinutes, 0);
+  const estMinutes = items
+    .filter((i) => i.status === "required" && !i.completed)
+    .reduce((acc, i) => acc + i.estMinutes, 0);
   const focus = analysis?.focus || "";
 
-  const existing = await prisma.roadmap.findUnique({ where: { userId_courseId: { userId, courseId } } });
+  const existing = await prisma.roadmap.findUnique({
+    where: { userId_courseId: { userId, courseId } },
+  });
   const version = (existing?.version || 0) + 1;
   await prisma.roadmap.upsert({
     where: { userId_courseId: { userId, courseId } },
     create: { userId, courseId, items: JSON.stringify(items), focus, estMinutes, version: 1 },
-    update: { items: JSON.stringify(items), focus: focus || existing?.focus || "", estMinutes, version },
+    update: {
+      items: JSON.stringify(items),
+      focus: focus || existing?.focus || "",
+      estMinutes,
+      version,
+    },
   });
 
   return { items, estMinutes, focus, version };
@@ -365,16 +406,34 @@ export async function saveProfile(
   level: string,
   mastery: MasteryMap,
   strengths: string[],
-  weaknesses: string[]
+  weaknesses: string[],
 ) {
   await prisma.skillProfile.upsert({
     where: { userId_courseId: { userId, courseId } },
-    create: { userId, courseId, level, mastery: JSON.stringify(mastery), strengths: JSON.stringify(strengths), weaknesses: JSON.stringify(weaknesses) },
-    update: { level, mastery: JSON.stringify(mastery), strengths: JSON.stringify(strengths), weaknesses: JSON.stringify(weaknesses) },
+    create: {
+      userId,
+      courseId,
+      level,
+      mastery: JSON.stringify(mastery),
+      strengths: JSON.stringify(strengths),
+      weaknesses: JSON.stringify(weaknesses),
+    },
+    update: {
+      level,
+      mastery: JSON.stringify(mastery),
+      strengths: JSON.stringify(strengths),
+      weaknesses: JSON.stringify(weaknesses),
+    },
   });
 }
 
-export async function recordEvent(userId: string, courseId: string, lessonId: string | null, type: string, payload: object) {
+export async function recordEvent(
+  userId: string,
+  courseId: string,
+  lessonId: string | null,
+  type: string,
+  payload: object,
+) {
   await prisma.learningEvent.create({
     data: { userId, courseId, lessonId, type, payload: JSON.stringify(payload) },
   });
@@ -390,7 +449,7 @@ export async function adaptAfterEvent(
   courseId: string,
   courseSlug: string,
   lessonTopics: string[],
-  signal: { kind: "quiz"; pct: number } | { kind: "complete" }
+  signal: { kind: "quiz"; pct: number } | { kind: "complete" },
 ): Promise<void> {
   const profile = await getProfile(userId, courseId);
   if (!profile) return; // no assessment yet — nothing to adapt
@@ -410,6 +469,13 @@ export async function adaptAfterEvent(
   }
 
   const level = classifyLevel(courseSlug, mastery);
-  await saveProfile(userId, courseId, level, mastery, JSON.parse(profile.strengths || "[]"), JSON.parse(profile.weaknesses || "[]"));
+  await saveProfile(
+    userId,
+    courseId,
+    level,
+    mastery,
+    JSON.parse(profile.strengths || "[]"),
+    JSON.parse(profile.weaknesses || "[]"),
+  );
   await buildAndSaveRoadmap(userId, courseId, courseSlug, mastery, level, null);
 }

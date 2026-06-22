@@ -31,6 +31,9 @@ coverage/
 *.sqlite
 *.sqlite3
 
+# ───────────────────────── AI / agent tooling config ────────────
+.claude/
+
 # ───────────────────────── Logs ─────────────────────────────────
 *.log
 logs/

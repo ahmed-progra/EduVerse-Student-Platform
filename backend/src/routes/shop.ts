@@ -70,7 +70,10 @@ router.post("/buy/:itemId", requireAuth, async (req: Request, res: Response) => 
     });
     clearCache(`user:${user.id}`); // coins changed — invalidate cached /auth/me
 
-    res.json({ success: true, data: { message: "Purchased successfully", item, coins: user.coins - item.price } });
+    res.json({
+      success: true,
+      data: { message: "Purchased successfully", item, coins: user.coins - item.price },
+    });
   } catch (err) {
     if (err instanceof Error && err.message === "INSUFFICIENT_COINS") {
       res.status(400).json({ success: false, error: "Not enough coins" });

@@ -13,7 +13,9 @@ export function useLocalStorage<T>(key: string, defaultValue: T): [T, (v: T) => 
 
   const set = (v: T) => {
     setValue(v);
-    try { localStorage.setItem(key, JSON.stringify(v)); } catch {}
+    try {
+      localStorage.setItem(key, JSON.stringify(v));
+    } catch {}
   };
 
   return [value, set];

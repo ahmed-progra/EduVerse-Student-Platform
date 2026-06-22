@@ -24,7 +24,8 @@ export const COURSES: CourseDef[] = [
   {
     title: "Python",
     slug: "python",
-    description: "From your first print() to decorators, generators, and real APIs — a complete 36-lesson Python curriculum.",
+    description:
+      "From your first print() to decorators, generators, and real APIs — a complete 36-lesson Python curriculum.",
     icon: "🐍",
     order: 1,
     lessons: toLessonRows([...pythonA, ...pythonB], "python"),
@@ -32,7 +33,8 @@ export const COURSES: CourseDef[] = [
   {
     title: "HTML",
     slug: "html",
-    description: "Structure the web properly: semantics, forms, tables, media, accessibility, and modern HTML5 APIs in 26 lessons.",
+    description:
+      "Structure the web properly: semantics, forms, tables, media, accessibility, and modern HTML5 APIs in 26 lessons.",
     icon: "🌐",
     order: 2,
     lessons: toLessonRows([...htmlA, ...htmlB], "html"),
@@ -40,7 +42,8 @@ export const COURSES: CourseDef[] = [
   {
     title: "CSS",
     slug: "css",
-    description: "Selectors to stacking contexts, flexbox to fluid design — 28 lessons to master modern CSS layout and motion.",
+    description:
+      "Selectors to stacking contexts, flexbox to fluid design — 28 lessons to master modern CSS layout and motion.",
     icon: "🎨",
     order: 3,
     lessons: toLessonRows([...cssA, ...cssB], "css"),
@@ -48,7 +51,8 @@ export const COURSES: CourseDef[] = [
   {
     title: "C++",
     slug: "cpp",
-    description: "Pointers, RAII, the STL, and modern C++ practices — a rigorous 34-lesson path from hello world to smart pointers.",
+    description:
+      "Pointers, RAII, the STL, and modern C++ practices — a rigorous 34-lesson path from hello world to smart pointers.",
     icon: "⚡",
     order: 4,
     lessons: toLessonRows([...cppA, ...cppB], "cpp"),
@@ -56,7 +60,8 @@ export const COURSES: CourseDef[] = [
   {
     title: "Mathematics",
     slug: "mathematics",
-    description: "From basic algebra to calculus and statistics — a 16-lesson journey through the world of numbers, shapes, and data.",
+    description:
+      "From basic algebra to calculus and statistics — a 16-lesson journey through the world of numbers, shapes, and data.",
     icon: "➗",
     order: 5,
     lessons: toLessonRows(math, "python"),
@@ -64,7 +69,8 @@ export const COURSES: CourseDef[] = [
   {
     title: "Physics",
     slug: "physics",
-    description: "Newton's laws to quantum basics — 16 lessons exploring mechanics, waves, electricity, and modern physics.",
+    description:
+      "Newton's laws to quantum basics — 16 lessons exploring mechanics, waves, electricity, and modern physics.",
     icon: "⚛",
     order: 6,
     lessons: toLessonRows(physics, "python"),
@@ -72,7 +78,8 @@ export const COURSES: CourseDef[] = [
   {
     title: "Science",
     slug: "science",
-    description: "Cells to the cosmos — 16 lessons across biology, chemistry, earth science, and astronomy.",
+    description:
+      "Cells to the cosmos — 16 lessons across biology, chemistry, earth science, and astronomy.",
     icon: "🔬",
     order: 7,
     lessons: toLessonRows(science, "python"),

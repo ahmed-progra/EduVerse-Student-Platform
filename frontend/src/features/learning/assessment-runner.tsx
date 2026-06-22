@@ -30,7 +30,13 @@ interface AssessmentRunnerProps {
  * The placement assessment: an intro gate, a one-question-at-a-time runner
  * (MCQ, code-reading, and open code-writing tasks), and AI-graded submission.
  */
-export function AssessmentRunner({ courseId, courseTitle, questionCount, topics, onComplete }: AssessmentRunnerProps) {
+export function AssessmentRunner({
+  courseId,
+  courseTitle,
+  questionCount,
+  topics,
+  onComplete,
+}: AssessmentRunnerProps) {
   const [phase, setPhase] = useState<"intro" | "running" | "submitting">("intro");
   const [assessmentId, setAssessmentId] = useState("");
   const [questions, setQuestions] = useState<ServedQuestion[]>([]);
@@ -75,7 +81,11 @@ export function AssessmentRunner({ courseId, courseTitle, questionCount, topics,
       const res = await api.assessmentSubmit(courseId, { assessmentId, answers: normalized });
       onComplete(res.data);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Submission failed. Your answers are kept — try again.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Submission failed. Your answers are kept — try again.",
+      );
       setPhase("running");
     }
   };
@@ -84,27 +94,45 @@ export function AssessmentRunner({ courseId, courseTitle, questionCount, topics,
     return (
       <GlassCard>
         <div className="flex items-start gap-4">
-          <ClipboardCheck className="w-8 h-8 text-eduverse-accent shrink-0 mt-1" aria-hidden="true" />
+          <ClipboardCheck
+            className="w-8 h-8 text-eduverse-accent shrink-0 mt-1"
+            aria-hidden="true"
+          />
           <div className="min-w-0">
             <h2 className="text-xl font-bold font-display mb-2">Find your starting point</h2>
             <p className="text-sm text-eduverse-text-body mb-3">
-              Before the lessons begin, a placement assessment maps what you already know — so your {courseTitle} path
-              skips what you've mastered and focuses on your gaps. It mixes concept questions, code reading, and two
-              short coding tasks graded by AI. Skipping a question is fine: it simply marks that topic as untested.
+              Before the lessons begin, a placement assessment maps what you already know — so your{" "}
+              {courseTitle} path skips what you've mastered and focuses on your gaps. It mixes
+              concept questions, code reading, and two short coding tasks graded by AI. Skipping a
+              question is fine: it simply marks that topic as untested.
             </p>
             <div className="flex flex-wrap gap-1.5 mb-4">
               {topics.map((t) => (
-                <span key={t} className="px-2 py-0.5 rounded text-xs font-mono"
-                  style={{ background: "var(--color-eduverse-accent-soft)", color: "var(--color-eduverse-text-muted)" }}>
+                <span
+                  key={t}
+                  className="px-2 py-0.5 rounded text-xs font-mono"
+                  style={{
+                    background: "var(--color-eduverse-accent-soft)",
+                    color: "var(--color-eduverse-text-muted)",
+                  }}
+                >
                   {t}
                 </span>
               ))}
             </div>
             <div className="flex items-center gap-4 flex-wrap">
-              <GradientButton onClick={start}>Start assessment ({questionCount} questions)</GradientButton>
-              <span className="text-xs text-eduverse-text-muted">~10–15 minutes · earns +75 XP</span>
+              <GradientButton onClick={start}>
+                Start assessment ({questionCount} questions)
+              </GradientButton>
+              <span className="text-xs text-eduverse-text-muted">
+                ~10–15 minutes · earns +75 XP
+              </span>
             </div>
-            {error && <p className="text-sm mt-3 text-eduverse-danger" role="alert">{error}</p>}
+            {error && (
+              <p className="text-sm mt-3 text-eduverse-danger" role="alert">
+                {error}
+              </p>
+            )}
           </div>
         </div>
       </GlassCard>
@@ -118,7 +146,8 @@ export function AssessmentRunner({ courseId, courseTitle, questionCount, topics,
           <Loader2 className="w-8 h-8 text-eduverse-accent animate-spin mb-4" aria-hidden="true" />
           <h2 className="text-lg font-bold font-display mb-1">Analyzing your answers…</h2>
           <p className="text-sm text-eduverse-text-muted max-w-md">
-            Grading your code, mapping topic mastery, and building your personalized roadmap. This takes a few seconds.
+            Grading your code, mapping topic mastery, and building your personalized roadmap. This
+            takes a few seconds.
           </p>
         </div>
       </GlassCard>
@@ -126,9 +155,8 @@ export function AssessmentRunner({ courseId, courseTitle, questionCount, topics,
   }
 
   const q = questions[idx];
-  const answered = q.type === "code"
-    ? typeof answers[q.id] === "string"
-    : typeof answers[q.id] === "number";
+  const answered =
+    q.type === "code" ? typeof answers[q.id] === "string" : typeof answers[q.id] === "number";
   const isLast = idx === questions.length - 1;
   const progress = Math.round(((idx + 1) / questions.length) * 100);
 
@@ -186,13 +214,17 @@ export function AssessmentRunner({ courseId, courseTitle, questionCount, topics,
                     onClick={() => setAnswers((p) => ({ ...p, [q.id]: oi }))}
                     className="ai-choice w-full text-left text-sm px-3 py-2.5 rounded border transition-colors"
                     style={{
-                      borderColor: chosen ? "var(--color-eduverse-accent)" : "var(--color-eduverse-border)",
+                      borderColor: chosen
+                        ? "var(--color-eduverse-accent)"
+                        : "var(--color-eduverse-border)",
                       background: chosen ? "var(--color-eduverse-accent-soft)" : "transparent",
                       color: "var(--color-eduverse-text-body)",
                     }}
                     aria-pressed={chosen}
                   >
-                    <span className="font-mono mr-2 text-eduverse-text-muted">{String.fromCharCode(65 + oi)}.</span>
+                    <span className="font-mono mr-2 text-eduverse-text-muted">
+                      {String.fromCharCode(65 + oi)}.
+                    </span>
                     <span style={{ whiteSpace: "pre-wrap" }}>{opt}</span>
                   </button>
                 );
@@ -202,7 +234,11 @@ export function AssessmentRunner({ courseId, courseTitle, questionCount, topics,
         </motion.div>
       </AnimatePresence>
 
-      {error && <p className="text-sm mt-3 text-eduverse-danger" role="alert">{error}</p>}
+      {error && (
+        <p className="text-sm mt-3 text-eduverse-danger" role="alert">
+          {error}
+        </p>
+      )}
 
       {/* Nav */}
       <div className="flex items-center justify-between gap-3 mt-6 flex-wrap">
@@ -218,7 +254,8 @@ export function AssessmentRunner({ courseId, courseTitle, questionCount, topics,
             <button
               className="ai-panel-action-btn ai-panel-action-sm ai-panel-action-ghost"
               onClick={() => {
-                if (q.type !== "code" && answers[q.id] === undefined) setAnswers((p) => ({ ...p, [q.id]: null }));
+                if (q.type !== "code" && answers[q.id] === undefined)
+                  setAnswers((p) => ({ ...p, [q.id]: null }));
                 setIdx((i) => i + 1);
               }}
               title="Skip — counts as untested, not wrong"

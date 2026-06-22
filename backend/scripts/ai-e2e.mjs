@@ -7,7 +7,11 @@
  */
 
 const BASE = process.env.API_BASE || "http://localhost:4000/api";
-const CREDS = { email: "ai-e2e-test@eduverse.dev", username: "ai_e2e_tester", password: "test12345" };
+const CREDS = {
+  email: "ai-e2e-test@eduverse.dev",
+  username: "ai_e2e_tester",
+  password: "test12345",
+};
 
 let token = "";
 let passed = 0;
@@ -47,7 +51,10 @@ async function main() {
   console.log(`AI E2E suite → ${BASE}\n`);
 
   // ── Auth setup ──
-  let res = await call("/auth/login", { body: { email: CREDS.email, password: CREDS.password }, auth: false });
+  let res = await call("/auth/login", {
+    body: { email: CREDS.email, password: CREDS.password },
+    auth: false,
+  });
   if (res.status !== 200) {
     res = await call("/auth/register", { body: CREDS, auth: false });
   }
@@ -56,7 +63,11 @@ async function main() {
 
   // ── Status ──
   res = await call("/ai/status", { method: "GET" });
-  check("status: configured=true", res.status === 200 && res.data?.data?.configured === true, JSON.stringify(res.data?.data));
+  check(
+    "status: configured=true",
+    res.status === 200 && res.data?.data?.configured === true,
+    JSON.stringify(res.data?.data),
+  );
 
   // ── Auth enforcement ──
   const saved = token;
@@ -81,7 +92,11 @@ async function main() {
 
   // ── Happy paths (live Gemini) ──
   res = await call("/ai/mentor", { body: { message: "In one sentence: what is a Python list?" } });
-  check("mentor: live response", res.status === 200 && (res.data?.data?.text || "").length > 10, `${res.ms}ms model=${res.data?.data?.model}`);
+  check(
+    "mentor: live response",
+    res.status === 200 && (res.data?.data?.text || "").length > 10,
+    `${res.ms}ms model=${res.data?.data?.model}`,
+  );
 
   res = await call("/ai/mentor", {
     body: {
@@ -92,21 +107,37 @@ async function main() {
       ],
     },
   });
-  check("mentor: uses conversation history", res.status === 200 && (res.data?.data?.text || "").includes("7341"), `got: ${(res.data?.data?.text || "").slice(0, 60)}`);
+  check(
+    "mentor: uses conversation history",
+    res.status === 200 && (res.data?.data?.text || "").includes("7341"),
+    `got: ${(res.data?.data?.text || "").slice(0, 60)}`,
+  );
 
-  res = await call("/ai/review", { body: { code: "def add(a, b):\n    return a - b  # supposed to add", language: "python" } });
-  check("review: live response with score", res.status === 200 && /score/i.test(res.data?.data?.text || ""), `${res.ms}ms`);
+  res = await call("/ai/review", {
+    body: { code: "def add(a, b):\n    return a - b  # supposed to add", language: "python" },
+  });
+  check(
+    "review: live response with score",
+    res.status === 200 && /score/i.test(res.data?.data?.text || ""),
+    `${res.ms}ms`,
+  );
 
-  res = await call("/ai/hints", { body: { challenge: "Reverse a string in Python without using slicing" } });
+  res = await call("/ai/hints", {
+    body: { challenge: "Reverse a string in Python without using slicing" },
+  });
   const hints = res.data?.data?.hints;
-  check("hints: returns 3 progressive hints", res.status === 200 && Array.isArray(hints) && hints.length === 3, `${res.ms}ms`);
+  check(
+    "hints: returns 3 progressive hints",
+    res.status === 200 && Array.isArray(hints) && hints.length === 3,
+    `${res.ms}ms`,
+  );
 
   res = await call("/ai/challenge", { body: { topic: "python lists", difficulty: "easy" } });
   const ch = res.data?.data?.challenge;
   check(
     "challenge: structured JSON (title/description/example)",
     res.status === 200 && ch && ch.title && ch.description && typeof ch.example === "string",
-    `${res.ms}ms "${(ch?.title || "").slice(0, 40)}"`
+    `${res.ms}ms "${(ch?.title || "").slice(0, 40)}"`,
   );
 
   res = await call("/ai/exam/grade", {
@@ -120,8 +151,11 @@ async function main() {
   const grade = res.data?.data;
   check(
     "exam/grade: structured score for correct answer",
-    res.status === 200 && typeof grade?.score === "number" && grade.score >= 7 && grade.passed === true,
-    `${res.ms}ms score=${grade?.score}/10`
+    res.status === 200 &&
+      typeof grade?.score === "number" &&
+      grade.score >= 7 &&
+      grade.passed === true,
+    `${res.ms}ms score=${grade?.score}/10`,
   );
 
   res = await call("/ai/exam/grade", {
@@ -136,20 +170,25 @@ async function main() {
   check(
     "exam/grade: low score for wrong answer",
     res.status === 200 && typeof badGrade?.score === "number" && badGrade.score <= 4,
-    `score=${badGrade?.score}/10`
+    `score=${badGrade?.score}/10`,
   );
 
   // Large lesson content (~120 KB of HTML) — must clamp, not fail.
   const bigContent =
     "<h1>Loops in Python</h1>" +
-    "<p>For loops iterate over sequences. While loops repeat until a condition is false. ".repeat(1500) +
+    "<p>For loops iterate over sequences. While loops repeat until a condition is false. ".repeat(
+      1500,
+    ) +
     "</p><pre>for i in range(10): print(i)</pre>";
   res = await call("/ai/summary", { body: { title: "Loops in Python", content: bigContent } });
   const summary = res.data?.data;
   check(
     "summary: handles ~120KB lesson content",
-    res.status === 200 && (summary?.summary || "").length > 20 && Array.isArray(summary?.keyPoints) && summary.keyPoints.length >= 3,
-    `${res.ms}ms keyPoints=${summary?.keyPoints?.length}`
+    res.status === 200 &&
+      (summary?.summary || "").length > 20 &&
+      Array.isArray(summary?.keyPoints) &&
+      summary.keyPoints.length >= 3,
+    `${res.ms}ms keyPoints=${summary?.keyPoints?.length}`,
   );
 
   res = await call("/ai/quiz", { body: { topic: "Python dictionaries", count: 3 } });
@@ -158,15 +197,24 @@ async function main() {
     res.status === 200 &&
     Array.isArray(qs) &&
     qs.length === 3 &&
-    qs.every((q) => q.question && q.options.length >= 2 && q.answerIndex >= 0 && q.answerIndex < q.options.length);
+    qs.every(
+      (q) =>
+        q.question &&
+        q.options.length >= 2 &&
+        q.answerIndex >= 0 &&
+        q.answerIndex < q.options.length,
+    );
   check("quiz: 3 valid MCQs with answer indices", quizOk, `${res.ms}ms`);
 
   res = await call("/ai/recommend", { body: {} });
   const recs = res.data?.data?.recommendations;
   check(
     "recommend: 3 personalized recommendations",
-    res.status === 200 && Array.isArray(recs) && recs.length === 3 && recs.every((r) => r.title && r.href),
-    `${res.ms}ms focus="${(res.data?.data?.focus || "").slice(0, 50)}"`
+    res.status === 200 &&
+      Array.isArray(recs) &&
+      recs.length === 3 &&
+      recs.every((r) => r.title && r.href),
+    `${res.ms}ms focus="${(res.data?.data?.focus || "").slice(0, 50)}"`,
   );
 
   res = await call("/ai/explain-error", {
@@ -178,7 +226,11 @@ async function main() {
       language: "python",
     },
   });
-  check("explain-error: live diagnosis", res.status === 200 && (res.data?.data?.text || "").length > 30, `${res.ms}ms`);
+  check(
+    "explain-error: live diagnosis",
+    res.status === 200 && (res.data?.data?.text || "").length > 30,
+    `${res.ms}ms`,
+  );
 
   console.log(`\nResult: ${passed} passed, ${failed} failed`);
   process.exit(failed === 0 ? 0 : 1);

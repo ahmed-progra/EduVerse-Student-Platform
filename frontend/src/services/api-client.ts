@@ -20,9 +20,7 @@ function isCacheable(method: string | undefined, path: string): boolean {
   if (method && method !== "GET" && method !== "POST") return false;
   if (!method || method === "GET") return true;
   // Only cache POST endpoints known to be read-like, never mutations.
-  const readPostPatterns = [
-    "/learning/", "/auth/me",
-  ];
+  const readPostPatterns = ["/learning/", "/auth/me"];
   return readPostPatterns.some((p) => path.includes(p));
 }
 
@@ -69,7 +67,10 @@ async function fetchApi<T>(path: string, options: FetchOptions = {}): Promise<T>
         signal: timeoutMs ? AbortSignal.timeout(timeoutMs) : fetchOpts.signal,
       });
     } catch (err) {
-      if (err instanceof DOMException && (err.name === "TimeoutError" || err.name === "AbortError")) {
+      if (
+        err instanceof DOMException &&
+        (err.name === "TimeoutError" || err.name === "AbortError")
+      ) {
         throw new Error("Request timed out. Please try again.");
       }
       throw new Error("Can't reach the EduVerse server. Is the backend running?");
@@ -152,7 +153,12 @@ export const api = {
     }),
   joinBattle: (id: string) =>
     fetchApi<{ success: boolean; data: any }>(`/battles/join/${id}`, { method: "POST" }),
-  submitBattle: (body: { battleId: string; code: string; timeTakenMs: number; timeLimitMs: number }) =>
+  submitBattle: (body: {
+    battleId: string;
+    code: string;
+    timeTakenMs: number;
+    timeLimitMs: number;
+  }) =>
     fetchApi<{ success: boolean; data: any }>("/battles/submit", {
       method: "POST",
       body: JSON.stringify(body),
@@ -174,7 +180,10 @@ export const api = {
   // Shop
   getShopItems: () => fetchApi<{ success: boolean; data: any[] }>("/shop/items"),
   buyItem: (itemId: string) =>
-    fetchApi<{ success: boolean; data: { message: string; item: any; coins: number } }>(`/shop/buy/${itemId}`, { method: "POST" }),
+    fetchApi<{ success: boolean; data: { message: string; item: any; coins: number } }>(
+      `/shop/buy/${itemId}`,
+      { method: "POST" },
+    ),
   equipItem: (itemId: string) =>
     fetchApi<{ success: boolean; data: any }>(`/shop/equip/${itemId}`, { method: "POST" }),
   getInventory: () => fetchApi<{ success: boolean; data: any[] }>("/shop/inventory"),
@@ -199,9 +208,12 @@ export const api = {
   assessmentStart: (courseId: string) =>
     fetchApi<{ success: boolean; data: { assessmentId: string; questions: any[] } }>(
       `/learning/${courseId}/assessment/start`,
-      { method: "POST", body: JSON.stringify({}) }
+      { method: "POST", body: JSON.stringify({}) },
     ),
-  assessmentSubmit: (courseId: string, body: { assessmentId: string; answers: Record<string, number | string | null> }) =>
+  assessmentSubmit: (
+    courseId: string,
+    body: { assessmentId: string; answers: Record<string, number | string | null> },
+  ) =>
     fetchApi<{ success: boolean; data: any }>(`/learning/${courseId}/assessment/submit`, {
       method: "POST",
       body: JSON.stringify(body),
@@ -216,7 +228,14 @@ export const api = {
   lessonQuiz: (lessonId: string, answers: number[]) =>
     fetchApi<{
       success: boolean;
-      data: { correct: number; total: number; pct: number; passed: boolean; xpGained: number; results: { correct: boolean; answer: number; explain: string }[] };
+      data: {
+        correct: number;
+        total: number;
+        pct: number;
+        passed: boolean;
+        xpGained: number;
+        results: { correct: boolean; answer: number; explain: string }[];
+      };
     }>(`/lessons/${lessonId}/quiz`, {
       method: "POST",
       body: JSON.stringify({ answers }),
@@ -238,11 +257,14 @@ export const api = {
       timeoutMs: AI_TIMEOUT_MS,
     }),
   aiHints: (challenge?: string) =>
-    fetchApi<{ success: boolean; data: { hints: string[]; text: string; model: string } }>("/ai/hints", {
-      method: "POST",
-      body: JSON.stringify({ challenge }),
-      timeoutMs: AI_TIMEOUT_MS,
-    }),
+    fetchApi<{ success: boolean; data: { hints: string[]; text: string; model: string } }>(
+      "/ai/hints",
+      {
+        method: "POST",
+        body: JSON.stringify({ challenge }),
+        timeoutMs: AI_TIMEOUT_MS,
+      },
+    ),
   aiChallenge: (topic?: string, difficulty?: string) =>
     fetchApi<{ success: boolean; data: { challenge: any; model: string } }>("/ai/challenge", {
       method: "POST",
@@ -252,22 +274,40 @@ export const api = {
   aiExamGrade: (body: { question: string; answer: string; topic?: string; difficulty?: string }) =>
     fetchApi<{
       success: boolean;
-      data: { score: number; passed: boolean; feedback: string; strengths: string[]; improvements: string[]; model: string };
+      data: {
+        score: number;
+        passed: boolean;
+        feedback: string;
+        strengths: string[];
+        improvements: string[];
+        model: string;
+      };
     }>("/ai/exam/grade", {
       method: "POST",
       body: JSON.stringify(body),
       timeoutMs: AI_TIMEOUT_MS,
     }),
   aiSummary: (body: { title: string; content: string }) =>
-    fetchApi<{ success: boolean; data: { summary: string; keyPoints: string[]; model: string } }>("/ai/summary", {
-      method: "POST",
-      body: JSON.stringify(body),
-      timeoutMs: AI_TIMEOUT_MS,
-    }),
+    fetchApi<{ success: boolean; data: { summary: string; keyPoints: string[]; model: string } }>(
+      "/ai/summary",
+      {
+        method: "POST",
+        body: JSON.stringify(body),
+        timeoutMs: AI_TIMEOUT_MS,
+      },
+    ),
   aiQuiz: (body: { topic?: string; content?: string; count?: number }) =>
     fetchApi<{
       success: boolean;
-      data: { questions: { question: string; options: string[]; answerIndex: number; explanation: string }[]; model: string };
+      data: {
+        questions: {
+          question: string;
+          options: string[];
+          answerIndex: number;
+          explanation: string;
+        }[];
+        model: string;
+      };
     }>("/ai/quiz", {
       method: "POST",
       body: JSON.stringify(body),
@@ -276,13 +316,23 @@ export const api = {
   aiRecommend: () =>
     fetchApi<{
       success: boolean;
-      data: { focus: string; recommendations: { title: string; reason: string; area: string; href: string }[]; model: string };
+      data: {
+        focus: string;
+        recommendations: { title: string; reason: string; area: string; href: string }[];
+        model: string;
+      };
     }>("/ai/recommend", {
       method: "POST",
       body: JSON.stringify({}),
       timeoutMs: AI_TIMEOUT_MS,
     }),
-  aiExplainError: (body: { code: string; errorType: string; errorMessage: string; line?: number; language?: string }) =>
+  aiExplainError: (body: {
+    code: string;
+    errorType: string;
+    errorMessage: string;
+    line?: number;
+    language?: string;
+  }) =>
     fetchApi<{ success: boolean; data: { text: string; model: string } }>("/ai/explain-error", {
       method: "POST",
       body: JSON.stringify(body),
@@ -291,9 +341,12 @@ export const api = {
 
   // AI Mentor System — global, persistent, cross-course coach (Google AI Studio)
   mentorProfile: (refresh?: boolean) =>
-    fetchApi<{ success: boolean; data: MentorProfileData }>(`/mentor/profile${refresh ? "?refresh=1" : ""}`, {
-      timeoutMs: AI_TIMEOUT_MS,
-    }),
+    fetchApi<{ success: boolean; data: MentorProfileData }>(
+      `/mentor/profile${refresh ? "?refresh=1" : ""}`,
+      {
+        timeoutMs: AI_TIMEOUT_MS,
+      },
+    ),
   mentorSync: () =>
     fetchApi<{ success: boolean; data: MentorProfileData }>("/mentor/sync", {
       method: "POST",
@@ -301,13 +354,16 @@ export const api = {
       timeoutMs: AI_TIMEOUT_MS,
     }),
   mentorMissions: () =>
-    fetchApi<{ success: boolean; data: { daily: Mission[]; weekly: Mission[] } }>("/mentor/missions", {
-      timeoutMs: AI_TIMEOUT_MS,
-    }),
+    fetchApi<{ success: boolean; data: { daily: Mission[]; weekly: Mission[] } }>(
+      "/mentor/missions",
+      {
+        timeoutMs: AI_TIMEOUT_MS,
+      },
+    ),
   mentorGenerateMissions: (scope?: "daily" | "weekly") =>
     fetchApi<{ success: boolean; data: { daily?: Mission[]; weekly?: Mission[] } }>(
       `/mentor/missions/generate${scope ? `?scope=${scope}` : ""}`,
-      { method: "POST", body: JSON.stringify({}), timeoutMs: AI_TIMEOUT_MS }
+      { method: "POST", body: JSON.stringify({}), timeoutMs: AI_TIMEOUT_MS },
     ),
   mentorCompleteMission: (id: string) =>
     fetchApi<{ success: boolean; data: Mission }>(`/mentor/missions/${id}/complete`, {
@@ -315,9 +371,12 @@ export const api = {
       body: JSON.stringify({}),
     }),
   mentorReport: (refresh?: boolean) =>
-    fetchApi<{ success: boolean; data: MentorReportData }>(`/mentor/report${refresh ? "?refresh=1" : ""}`, {
-      timeoutMs: AI_TIMEOUT_MS,
-    }),
+    fetchApi<{ success: boolean; data: MentorReportData }>(
+      `/mentor/report${refresh ? "?refresh=1" : ""}`,
+      {
+        timeoutMs: AI_TIMEOUT_MS,
+      },
+    ),
   mentorChat: (message: string, history?: { role: string; text: string }[]) =>
     fetchApi<{ success: boolean; data: { text: string; model: string } }>("/mentor/chat", {
       method: "POST",
@@ -327,20 +386,31 @@ export const api = {
 
   // Apprentice Mode — teach the AI (protégé effect)
   apprenticeTopics: () =>
-    fetchApi<{ success: boolean; data: { maxTurns: number; courses: TeachableCourse[] } }>("/apprentice/topics"),
+    fetchApi<{ success: boolean; data: { maxTurns: number; courses: TeachableCourse[] } }>(
+      "/apprentice/topics",
+    ),
   apprenticeStart: (body: { topic: string; courseLabel?: string }) =>
     fetchApi<{ success: boolean; data: ApprenticeTurn }>("/apprentice/start", {
       method: "POST",
       body: JSON.stringify(body),
       timeoutMs: AI_TIMEOUT_MS,
     }),
-  apprenticeReply: (body: { topic: string; turns: { role: string; text: string }[]; turnIndex: number }) =>
+  apprenticeReply: (body: {
+    topic: string;
+    turns: { role: string; text: string }[];
+    turnIndex: number;
+  }) =>
     fetchApi<{ success: boolean; data: ApprenticeTurn }>("/apprentice/reply", {
       method: "POST",
       body: JSON.stringify(body),
       timeoutMs: AI_TIMEOUT_MS,
     }),
-  apprenticeGrade: (body: { topic: string; topicKey?: string | null; courseSlug?: string | null; turns: { role: string; text: string }[] }) =>
+  apprenticeGrade: (body: {
+    topic: string;
+    topicKey?: string | null;
+    courseSlug?: string | null;
+    turns: { role: string; text: string }[];
+  }) =>
     fetchApi<{ success: boolean; data: TeachGrade }>("/apprentice/grade", {
       method: "POST",
       body: JSON.stringify(body),
@@ -356,20 +426,57 @@ export const api = {
       body: JSON.stringify(body || {}),
       timeoutMs: AI_TIMEOUT_MS,
     }),
-  projectCreate: (body: { title: string; brief: string; language?: string; difficulty?: string; skills?: string[]; milestones?: string[]; starterCode?: string }) =>
-    fetchApi<{ success: boolean; data: Project }>("/projects", { method: "POST", body: JSON.stringify(body) }),
+  projectCreate: (body: {
+    title: string;
+    brief: string;
+    language?: string;
+    difficulty?: string;
+    skills?: string[];
+    milestones?: string[];
+    starterCode?: string;
+  }) =>
+    fetchApi<{ success: boolean; data: Project }>("/projects", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
   projectUpdate: (id: string, body: { code?: string; milestones?: ProjectMilestone[] }) =>
-    fetchApi<{ success: boolean; data: Project }>(`/projects/${id}`, { method: "PATCH", body: JSON.stringify(body) }),
+    fetchApi<{ success: boolean; data: Project }>(`/projects/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
   projectPublish: (id: string, published: boolean) =>
-    fetchApi<{ success: boolean; data: Project }>(`/projects/${id}/publish`, { method: "PATCH", body: JSON.stringify({ published }) }),
+    fetchApi<{ success: boolean; data: Project }>(`/projects/${id}/publish`, {
+      method: "PATCH",
+      body: JSON.stringify({ published }),
+    }),
   projectSubmit: (id: string) =>
-    fetchApi<{ success: boolean; data: { project: Project; grade: { score: number; feedback: string; rubric: ProjectRubric[]; strengths: string[]; improvements: string[]; xpAwarded: number } } }>(
-      `/projects/${id}/submit`,
-      { method: "POST", body: JSON.stringify({}), timeoutMs: AI_TIMEOUT_MS }
-    ),
+    fetchApi<{
+      success: boolean;
+      data: {
+        project: Project;
+        grade: {
+          score: number;
+          feedback: string;
+          rubric: ProjectRubric[];
+          strengths: string[];
+          improvements: string[];
+          xpAwarded: number;
+        };
+      };
+    }>(`/projects/${id}/submit`, {
+      method: "POST",
+      body: JSON.stringify({}),
+      timeoutMs: AI_TIMEOUT_MS,
+    }),
   portfolio: (username: string) =>
-    fetchApi<{ success: boolean; data: PortfolioData }>(`/projects/portfolio/${encodeURIComponent(username)}`, { skipAuth: true }),
+    fetchApi<{ success: boolean; data: PortfolioData }>(
+      `/projects/portfolio/${encodeURIComponent(username)}`,
+      { skipAuth: true },
+    ),
 
   /** Clear the in-memory response cache (call after mutations to force fresh data). */
-  clearCache: () => { cache.clear(); pending.clear(); },
+  clearCache: () => {
+    cache.clear();
+    pending.clear();
+  },
 };

@@ -31,7 +31,7 @@ If applicable, add screenshots, screen recordings, or console logs to help expla
 
 ## Environment
 
-- **Area:** [ ] frontend  [ ] backend  [ ] database  [ ] AI service  [ ] other
+- **Area:** [ ] frontend [ ] backend [ ] database [ ] AI service [ ] other
 - **OS:** (e.g. Windows 11, macOS 15, Ubuntu 24.04)
 - **Browser:** (e.g. Chrome 125, Firefox 130 — skip if backend-only)
 - **Node.js version:** (output of `node --version`)

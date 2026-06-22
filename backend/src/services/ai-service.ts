@@ -58,7 +58,9 @@ export function isConfigured(): boolean {
 
 function preferredModels(): string[] {
   const fromEnv = process.env.GOOGLE_AI_MODEL?.trim();
-  const list = fromEnv ? [fromEnv, ...MODEL_CANDIDATES.filter((m) => m !== fromEnv)] : [...MODEL_CANDIDATES];
+  const list = fromEnv
+    ? [fromEnv, ...MODEL_CANDIDATES.filter((m) => m !== fromEnv)]
+    : [...MODEL_CANDIDATES];
   if (activeModel) {
     return [activeModel, ...list.filter((m) => m !== activeModel)];
   }
@@ -87,7 +89,12 @@ interface GeminiResponse {
     finishReason?: string;
   }>;
   promptFeedback?: { blockReason?: string };
-  error?: { code?: number; message?: string; status?: string; details?: Array<Record<string, unknown>> };
+  error?: {
+    code?: number;
+    message?: string;
+    status?: string;
+    details?: Array<Record<string, unknown>>;
+  };
 }
 
 /** Models that do hidden "thinking" by default; we zero its budget so output tokens go to visible text. */
@@ -107,7 +114,11 @@ function parseRetryDelayMs(data: GeminiResponse): number | null {
   return null;
 }
 
-async function callGemini(model: string, body: unknown, timeoutMs: number): Promise<{ status: number; data: GeminiResponse }> {
+async function callGemini(
+  model: string,
+  body: unknown,
+  timeoutMs: number,
+): Promise<{ status: number; data: GeminiResponse }> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
@@ -141,7 +152,9 @@ function extractText(data: GeminiResponse): string {
  * Core text generation with retry, timeout, and model fallback.
  * Throws AIError with a user-presentable message on failure.
  */
-export async function generateText(opts: GenerateOptions): Promise<{ text: string; model: string }> {
+export async function generateText(
+  opts: GenerateOptions,
+): Promise<{ text: string; model: string }> {
   const op = opts.op || "generate";
 
   if (!isConfigured()) {
@@ -190,13 +203,19 @@ export async function generateText(opts: GenerateOptions): Promise<{ text: strin
             const block = data.promptFeedback?.blockReason;
             if (block || finish === "SAFETY") {
               logError(op, `model=${model} blocked reason=${block || finish} ms=${ms}`);
-              throw new AIError("The AI declined this request (safety filter). Try rephrasing.", 422);
+              throw new AIError(
+                "The AI declined this request (safety filter). Try rephrasing.",
+                422,
+              );
             }
             logError(op, `model=${model} empty response finish=${finish} ms=${ms}`);
             throw new AIError("The AI returned an empty response. Please try again.", 502);
           }
           activeModel = model;
-          log(op, `model=${model} ok ms=${ms} chars=${text.length}${finish && finish !== "STOP" ? ` finish=${finish}` : ""}`);
+          log(
+            op,
+            `model=${model} ok ms=${ms} chars=${text.length}${finish && finish !== "STOP" ? ` finish=${finish}` : ""}`,
+          );
           return { text, model };
         }
 
@@ -213,9 +232,15 @@ export async function generateText(opts: GenerateOptions): Promise<{ text: strin
           throw new AIError("AI authentication failed. Check GOOGLE_AI_API_KEY in .env.", 503);
         }
         if (status === 429) {
-          lastError = new AIError("AI service is rate-limited right now. Wait a few seconds and retry.", 429);
+          lastError = new AIError(
+            "AI service is rate-limited right now. Wait a few seconds and retry.",
+            429,
+          );
           const hinted = parseRetryDelayMs(data);
-          logError(op, `model=${model} rate limited (attempt ${attempt + 1})${hinted ? ` retryDelay=${hinted}ms` : ""}`);
+          logError(
+            op,
+            `model=${model} rate limited (attempt ${attempt + 1})${hinted ? ` retryDelay=${hinted}ms` : ""}`,
+          );
           if (attempt < MAX_RETRIES) {
             // Per-minute quota windows need longer waits than transient errors.
             await sleep(hinted ?? 2_500 * (attempt + 1) + Math.floor(Math.random() * 500));
@@ -237,8 +262,14 @@ export async function generateText(opts: GenerateOptions): Promise<{ text: strin
           lastError = new AIError("AI request timed out. Please try again.", 504);
           logError(op, `model=${model} timeout after ${ms}ms (attempt ${attempt + 1})`);
         } else {
-          lastError = new AIError("Could not reach the AI service. Check your network connection.", 502);
-          logError(op, `model=${model} network error (attempt ${attempt + 1}): ${err instanceof Error ? err.message : err}`);
+          lastError = new AIError(
+            "Could not reach the AI service. Check your network connection.",
+            502,
+          );
+          logError(
+            op,
+            `model=${model} network error (attempt ${attempt + 1}): ${err instanceof Error ? err.message : err}`,
+          );
         }
       }
 
@@ -260,7 +291,10 @@ export function parseJsonLoose<T>(text: string): T {
   } catch {
     /* fall through to extraction */
   }
-  const unfenced = direct.replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/, "").trim();
+  const unfenced = direct
+    .replace(/^```(?:json)?\s*/i, "")
+    .replace(/```\s*$/, "")
+    .trim();
   try {
     return JSON.parse(unfenced) as T;
   } catch {
@@ -268,7 +302,8 @@ export function parseJsonLoose<T>(text: string): T {
   }
   const firstObj = unfenced.indexOf("{");
   const firstArr = unfenced.indexOf("[");
-  const start = firstObj === -1 ? firstArr : firstArr === -1 ? firstObj : Math.min(firstObj, firstArr);
+  const start =
+    firstObj === -1 ? firstArr : firstArr === -1 ? firstObj : Math.min(firstObj, firstArr);
   if (start !== -1) {
     const open = unfenced[start];
     const close = open === "{" ? "}" : "]";
@@ -282,7 +317,11 @@ export function parseJsonLoose<T>(text: string): T {
 
 /** JSON-mode generation: returns the parsed object, with one repair retry. */
 export async function generateJSON<T>(opts: GenerateOptions): Promise<{ data: T; model: string }> {
-  const { text, model } = await generateText({ ...opts, json: true, temperature: opts.temperature ?? 0.5 });
+  const { text, model } = await generateText({
+    ...opts,
+    json: true,
+    temperature: opts.temperature ?? 0.5,
+  });
   try {
     return { data: parseJsonLoose<T>(text), model };
   } catch {

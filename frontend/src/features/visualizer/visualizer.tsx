@@ -7,8 +7,17 @@ import { DebuggerPanel } from "./debugger-panel";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { api } from "@/services/api-client";
 import {
-  Play, StepForward, Pause, RotateCcw,
-  FastForward, Clock, Code2, SkipForward, Copy, Terminal, Eye
+  Play,
+  StepForward,
+  Pause,
+  RotateCcw,
+  FastForward,
+  Clock,
+  Code2,
+  SkipForward,
+  Copy,
+  Terminal,
+  Eye,
 } from "lucide-react";
 import { ASTViewer } from "./ast-viewer";
 
@@ -47,7 +56,7 @@ function buildPreviewDoc(language: string, code: string): string {
   const customBlocks = [...classes]
     .map(
       (c) =>
-        `<div class="${c}"><span>.${c}</span><div>one</div><div>two</div><div>three</div></div>`
+        `<div class="${c}"><span>.${c}</span><div>one</div><div>two</div><div>three</div></div>`,
     )
     .join("\n      ");
 
@@ -92,19 +101,27 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
     return initialCode;
   });
   const [currentLine, setCurrentLine] = useState(-1);
-  const [status, setStatus] = useState<"idle" | "running" | "paused" | "finished" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "running" | "paused" | "finished" | "error">(
+    "idle",
+  );
   const [frames, setFrames] = useState<StepFrame[]>([]);
   const [currentFrameIdx, setCurrentFrameIdx] = useState(-1);
   const [output, setOutput] = useState("");
   const [speed, setSpeed] = useState(800);
   const [autoPlay, setAutoPlay] = useState(false);
   const [skStatus, setSkStatus] = useState<"loading" | "ready" | "failed">("loading");
-  const [errorInfo, setErrorInfo] = useState<{ line: number; message: string; type: string } | null>(null);
+  const [errorInfo, setErrorInfo] = useState<{
+    line: number;
+    message: string;
+    type: string;
+  } | null>(null);
   const [showAST, setShowAST] = useState(false);
   const [runningDirect, setRunningDirect] = useState(false);
 
   // Debounced document for the live HTML/CSS preview iframe.
-  const [previewDoc, setPreviewDoc] = useState(() => (isPreviewable ? buildPreviewDoc(language, code) : ""));
+  const [previewDoc, setPreviewDoc] = useState(() =>
+    isPreviewable ? buildPreviewDoc(language, code) : "",
+  );
   useEffect(() => {
     if (!isPreviewable) return;
     const t = setTimeout(() => setPreviewDoc(buildPreviewDoc(language, code)), 250);
@@ -116,10 +133,18 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
   const statusRef = useRef(status);
   const codeRef = useRef(code);
 
-  useEffect(() => { autoPlayRef.current = autoPlay; }, [autoPlay]);
-  useEffect(() => { speedRef.current = speed; }, [speed]);
-  useEffect(() => { statusRef.current = status; }, [status]);
-  useEffect(() => { codeRef.current = code; }, [code]);
+  useEffect(() => {
+    autoPlayRef.current = autoPlay;
+  }, [autoPlay]);
+  useEffect(() => {
+    speedRef.current = speed;
+  }, [speed]);
+  useEffect(() => {
+    statusRef.current = status;
+  }, [status]);
+  useEffect(() => {
+    codeRef.current = code;
+  }, [code]);
   useEffect(() => {
     if (!code || code === initialCode) return;
     const timer = setTimeout(() => {
@@ -129,7 +154,9 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
   }, [code, initialCode]);
 
   const framesRef = useRef<StepFrame[]>([]);
-  useEffect(() => { framesRef.current = frames; }, [frames]);
+  useEffect(() => {
+    framesRef.current = frames;
+  }, [frames]);
 
   useEffect(() => {
     initSkulpt().then((ok) => setSkStatus(ok ? "ready" : "failed"));
@@ -282,12 +309,15 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
     return () => window.removeEventListener("keydown", handler);
   }, [handleNextStep, handleRunAll, handleReset]);
 
-  const goToFrame = useCallback((idx: number) => {
-    if (idx >= 0 && idx < frames.length) {
-      setCurrentFrameIdx(idx);
-      setCurrentLine(frames[idx].lineNumber);
-    }
-  }, [frames]);
+  const goToFrame = useCallback(
+    (idx: number) => {
+      if (idx >= 0 && idx < frames.length) {
+        setCurrentFrameIdx(idx);
+        setCurrentLine(frames[idx].lineNumber);
+      }
+    },
+    [frames],
+  );
 
   const highlightedLines = useRef<Set<number>>(new Set());
   frames.forEach((f) => highlightedLines.current.add(f.lineNumber));
@@ -306,14 +336,20 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
             <div className="flex items-center justify-between px-4 py-2 border-b border-white/10 bg-black/20">
               <div className="flex items-center gap-1.5">
                 <Code2 className="w-3.5 h-3.5 text-eduverse-text-muted" />
-                <span className="text-xs font-semibold text-eduverse-text-muted uppercase tracking-wider">{langLabel}</span>
+                <span className="text-xs font-semibold text-eduverse-text-muted uppercase tracking-wider">
+                  {langLabel}
+                </span>
               </div>
-              <span className="text-[10px] text-eduverse-text-muted">{code.split("\n").length} lines</span>
+              <span className="text-[10px] text-eduverse-text-muted">
+                {code.split("\n").length} lines
+              </span>
             </div>
             <div className="code-editor-wrap">
               <div className="code-editor-gutter">
                 {Array.from({ length: lineCount }, (_, i) => (
-                  <div key={i} className="code-editor-line-num">{i + 1}</div>
+                  <div key={i} className="code-editor-line-num">
+                    {i + 1}
+                  </div>
                 ))}
               </div>
               <textarea
@@ -357,7 +393,10 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
             <Copy className="w-3.5 h-3.5" /> Copy
           </button>
           <button
-            onClick={() => { setCode(initialCode); localStorage.removeItem(STORAGE_PREFIX + initialCode.slice(0, 32)); }}
+            onClick={() => {
+              setCode(initialCode);
+              localStorage.removeItem(STORAGE_PREFIX + initialCode.slice(0, 32));
+            }}
             className="px-3 py-2 rounded-xl border border-white/10 text-eduverse-text-muted hover:text-white hover:bg-white/5 transition-colors text-xs flex items-center gap-1.5"
           >
             <RotateCcw className="w-3.5 h-3.5" /> Reset
@@ -374,14 +413,20 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
           <div className="flex items-center justify-between px-4 py-2 border-b border-white/10 bg-black/20">
             <div className="flex items-center gap-1.5">
               <Terminal className="w-3.5 h-3.5 text-eduverse-text-muted" />
-              <span className="text-xs font-semibold text-eduverse-text-muted uppercase tracking-wider">{langLabel}</span>
+              <span className="text-xs font-semibold text-eduverse-text-muted uppercase tracking-wider">
+                {langLabel}
+              </span>
             </div>
-            <span className="text-[10px] text-eduverse-text-muted">{code.split("\n").length} lines</span>
+            <span className="text-[10px] text-eduverse-text-muted">
+              {code.split("\n").length} lines
+            </span>
           </div>
           <div className="code-editor-wrap">
             <div className="code-editor-gutter">
               {Array.from({ length: lineCount }, (_, i) => (
-                <div key={i} className="code-editor-line-num">{i + 1}</div>
+                <div key={i} className="code-editor-line-num">
+                  {i + 1}
+                </div>
               ))}
             </div>
             <textarea
@@ -398,7 +443,11 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
           </div>
         </div>
         <div className="flex gap-2">
-          <GradientButton onClick={handleDirectRun} loading={runningDirect} className="flex items-center gap-2">
+          <GradientButton
+            onClick={handleDirectRun}
+            loading={runningDirect}
+            className="flex items-center gap-2"
+          >
             <Play className="w-4 h-4" /> Run
           </GradientButton>
           <button
@@ -424,7 +473,6 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
 
   return (
     <div className="visualizer-wrap">
-
       {/* ── Execution Controls ── */}
       <div className="visualizer-controls">
         <div className="flex items-center gap-1.5">
@@ -439,7 +487,9 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
           </button>
           <button
             onClick={handleNextStep}
-            disabled={(status === "running" && !isPaused()) || (!isPreviewable && skStatus !== "ready")}
+            disabled={
+              (status === "running" && !isPaused()) || (!isPreviewable && skStatus !== "ready")
+            }
             className="visualizer-btn visualizer-btn-primary"
             aria-label="Next step"
             title="Next Step (Ctrl+Enter)"
@@ -458,7 +508,11 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
           </button>
           <button
             onClick={handleRunAll}
-            disabled={status === "running" || status === "paused" || (!isPreviewable && skStatus !== "ready")}
+            disabled={
+              status === "running" ||
+              status === "paused" ||
+              (!isPreviewable && skStatus !== "ready")
+            }
             className="visualizer-btn"
             aria-label="Run all"
             title="Run All (Ctrl+Shift+Enter)"
@@ -477,16 +531,20 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
           >
             <Code2 className="w-3.5 h-3.5" />
           </button>
-          <div className="text-[10px] text-eduverse-text-muted">
-            Step {frames.length}
-          </div>
+          <div className="text-[10px] text-eduverse-text-muted">Step {frames.length}</div>
           {!isPreviewable && skStatus !== "ready" && (
             <span
               className="text-[10px] font-mono px-2 py-0.5 rounded"
               role="status"
               style={{
-                color: skStatus === "failed" ? "var(--color-eduverse-danger)" : "var(--color-eduverse-text-muted)",
-                background: skStatus === "failed" ? "oklch(66% 0.19 25 / 0.12)" : "var(--color-eduverse-accent-soft)",
+                color:
+                  skStatus === "failed"
+                    ? "var(--color-eduverse-danger)"
+                    : "var(--color-eduverse-text-muted)",
+                background:
+                  skStatus === "failed"
+                    ? "oklch(66% 0.19 25 / 0.12)"
+                    : "var(--color-eduverse-accent-soft)",
               }}
             >
               {skStatus === "failed" ? "Runtime failed — refresh" : "Initializing Python…"}
@@ -512,7 +570,6 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
             {speed < 500 ? "Fast" : speed < 1200 ? "Normal" : "Slow"}
           </span>
         </div>
-
       </div>
 
       {/* ── Code Editor Area ── */}
@@ -520,14 +577,20 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
         <div className="flex items-center justify-between px-4 py-2 border-b border-white/10 bg-black/20">
           <div className="flex items-center gap-1.5">
             <Terminal className="w-3.5 h-3.5 text-eduverse-text-muted" />
-            <span className="text-xs font-semibold text-eduverse-text-muted uppercase tracking-wider">{langLabel}</span>
+            <span className="text-xs font-semibold text-eduverse-text-muted uppercase tracking-wider">
+              {langLabel}
+            </span>
           </div>
-          <span className="text-[10px] text-eduverse-text-muted">{code.split("\n").length} lines</span>
+          <span className="text-[10px] text-eduverse-text-muted">
+            {code.split("\n").length} lines
+          </span>
         </div>
         <div className="code-editor-wrap" style={{ position: "relative" }}>
           <div className="code-editor-gutter">
             {Array.from({ length: lineCount }, (_, i) => (
-              <div key={i} className="code-editor-line-num">{i + 1}</div>
+              <div key={i} className="code-editor-line-num">
+                {i + 1}
+              </div>
             ))}
           </div>
           <textarea
@@ -544,15 +607,15 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
           />
           {/* Overlay line highlights */}
           {status !== "idle" && currentLine > 0 && (
-            <div 
-              className="visualizer-line-highlight" 
-              style={{ top: `calc(${(currentLine - 1) * 1.65}em + 14px)` }} 
+            <div
+              className="visualizer-line-highlight"
+              style={{ top: `calc(${(currentLine - 1) * 1.65}em + 14px)` }}
             />
           )}
           {status === "error" && errorInfo && errorInfo.line > 0 && (
-            <div 
-              className="visualizer-error-line" 
-              style={{ top: `calc(${(errorInfo.line - 1) * 1.65}em + 14px)` }} 
+            <div
+              className="visualizer-error-line"
+              style={{ top: `calc(${(errorInfo.line - 1) * 1.65}em + 14px)` }}
             />
           )}
         </div>
@@ -564,7 +627,9 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
           <div className="visualizer-badge condition-badge">
             <span className="badge-label">Condition:</span>
             <code>{frames[currentFrameIdx].condition!.text}</code>
-            <span className={`badge-result ${frames[currentFrameIdx].condition!.result ? "true" : "false"}`}>
+            <span
+              className={`badge-result ${frames[currentFrameIdx].condition!.result ? "true" : "false"}`}
+            >
               {frames[currentFrameIdx].condition!.result ? "True" : "False"}
             </span>
           </div>
@@ -575,11 +640,17 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
         <div className="visualizer-badge-track">
           <div className="visualizer-badge loop-badge">
             <span className="badge-label">Loop:</span>
-            <span>Iteration {frames[currentFrameIdx].loopInfo!.iteration}/{frames[currentFrameIdx].loopInfo!.total || "?"}</span>
+            <span>
+              Iteration {frames[currentFrameIdx].loopInfo!.iteration}/
+              {frames[currentFrameIdx].loopInfo!.total || "?"}
+            </span>
             {frames[currentFrameIdx].loopInfo!.varName && (
               <>
                 <span className="badge-sep">|</span>
-                <span>{frames[currentFrameIdx].loopInfo!.varName} = {String(frames[currentFrameIdx].loopInfo!.varValue)}</span>
+                <span>
+                  {frames[currentFrameIdx].loopInfo!.varName} ={" "}
+                  {String(frames[currentFrameIdx].loopInfo!.varValue)}
+                </span>
               </>
             )}
           </div>
@@ -588,11 +659,7 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
 
       {/* ── Bottom panels: Memory + Debugger ── */}
       <div className="visualizer-panels">
-        <MemoryPanel
-          frames={frames}
-          currentIdx={currentFrameIdx}
-          onFrameSeek={goToFrame}
-        />
+        <MemoryPanel frames={frames} currentIdx={currentFrameIdx} onFrameSeek={goToFrame} />
         <DebuggerPanel
           frames={frames}
           currentIdx={currentFrameIdx}

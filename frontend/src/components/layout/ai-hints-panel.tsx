@@ -9,7 +9,9 @@ export function HintsPanel({ onClose }: { onClose: () => void }) {
   const [unlocked, setUnlocked] = useState(0);
   const [revealed, setRevealed] = useState<number[]>([]);
   const [challenge, setChallenge] = useState("");
-  const [hints, setHints] = useState<string[]>(["Describe your challenge above, then generate AI-powered progressive hints."]);
+  const [hints, setHints] = useState<string[]>([
+    "Describe your challenge above, then generate AI-powered progressive hints.",
+  ]);
   const [loadingHints, setLoadingHints] = useState(false);
   const [error, setError] = useState("");
 
@@ -20,7 +22,10 @@ export function HintsPanel({ onClose }: { onClose: () => void }) {
       const res = await api.aiHints(challenge.trim() || undefined);
       const parts = res.data.hints?.length
         ? res.data.hints
-        : res.data.text.split("|||").map((s: string) => s.trim()).filter(Boolean);
+        : res.data.text
+            .split("|||")
+            .map((s: string) => s.trim())
+            .filter(Boolean);
       setHints(parts.length >= 1 ? parts : ["No hints returned — try again."]);
       setUnlocked(0);
       setRevealed([]);
@@ -38,7 +43,12 @@ export function HintsPanel({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <AIPanelShell title="Hints" subtitle="AI-powered progressive hints" onClose={onClose} icon={Lightbulb}>
+    <AIPanelShell
+      title="Hints"
+      subtitle="AI-powered progressive hints"
+      onClose={onClose}
+      icon={Lightbulb}
+    >
       <div className="ai-panel-hints">
         <textarea
           className="ai-panel-textarea"
@@ -50,7 +60,11 @@ export function HintsPanel({ onClose }: { onClose: () => void }) {
         <button className="ai-panel-action-btn" onClick={generateHints} disabled={loadingHints}>
           {loadingHints ? "Generating..." : "Generate Hints"}
         </button>
-        {error && <div className="ai-panel-empty" role="alert">{error}</div>}
+        {error && (
+          <div className="ai-panel-empty" role="alert">
+            {error}
+          </div>
+        )}
         <div className="ai-panel-hint-btns">
           {hints.map((_, i) => (
             <button

@@ -34,10 +34,6 @@ export const HERO_STATS = [
   { number: "10K+", label: "Challenges" },
 ];
 
-export const INTEGRATIONS = [
-  "Python", "JavaScript", "HTML/CSS", "C++", "TypeScript",
-];
+export const INTEGRATIONS = ["Python", "JavaScript", "HTML/CSS", "C++", "TypeScript"];
 
-export const CHALLENGE_CATEGORIES = [
-  "All", "Python", "JavaScript", "HTML", "CSS", "C++",
-];
+export const CHALLENGE_CATEGORIES = ["All", "Python", "JavaScript", "HTML", "CSS", "C++"];

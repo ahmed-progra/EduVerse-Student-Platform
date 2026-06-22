@@ -99,10 +99,16 @@ function sanitizeHistory(raw: unknown): ChatTurn[] {
   return raw
     .filter(
       (t): t is { role: string; text: string } =>
-        !!t && typeof t === "object" && typeof (t as any).text === "string" && (t as any).text.trim().length > 0
+        !!t &&
+        typeof t === "object" &&
+        typeof (t as any).text === "string" &&
+        (t as any).text.trim().length > 0,
     )
     .slice(-12)
-    .map((t) => ({ role: t.role === "model" || t.role === "assistant" ? "model" : "user", text: t.text }));
+    .map((t) => ({
+      role: t.role === "model" || t.role === "assistant" ? "model" : "user",
+      text: t.text,
+    }));
 }
 
 /** Strip HTML tags from lesson content so we send clean text to the model. */
@@ -181,14 +187,18 @@ router.post("/review", async (req: Request, res: Response) => {
 
 router.post("/hints", async (req: Request, res: Response) => {
   try {
-    const challenge = asString(req.body?.challenge).trim() || "a general Python programming challenge";
+    const challenge =
+      asString(req.body?.challenge).trim() || "a general Python programming challenge";
     const { data, model } = await generateJSON<{ hints: string[] }>({
       system: HINTS_SYSTEM,
       prompt: `The student is working on this challenge: "${clampText(challenge, MAX_MESSAGE)}"\n\nGenerate the 3 progressive hints as JSON.`,
       op: "hints",
       maxOutputTokens: 512,
     });
-    const hints = (Array.isArray(data.hints) ? data.hints : []).map((h) => String(h)).filter(Boolean).slice(0, 3);
+    const hints = (Array.isArray(data.hints) ? data.hints : [])
+      .map((h) => String(h))
+      .filter(Boolean)
+      .slice(0, 3);
     if (hints.length === 0) throw new AIError("AI returned no hints. Please try again.", 502);
     res.json({
       success: true,
@@ -268,7 +278,9 @@ router.post("/exam/grade", async (req: Request, res: Response) => {
         passed: score >= 7,
         feedback: String(data.feedback || ""),
         strengths: Array.isArray(data.strengths) ? data.strengths.map(String).slice(0, 3) : [],
-        improvements: Array.isArray(data.improvements) ? data.improvements.map(String).slice(0, 3) : [],
+        improvements: Array.isArray(data.improvements)
+          ? data.improvements.map(String).slice(0, 3)
+          : [],
         model,
       },
     });
@@ -339,15 +351,22 @@ router.post("/quiz", async (req: Request, res: Response) => {
       temperature: 0.6,
     });
     const questions = (Array.isArray(data.questions) ? data.questions : [])
-      .filter((q) => q && typeof q.question === "string" && Array.isArray(q.options) && q.options.length >= 2)
+      .filter(
+        (q) =>
+          q && typeof q.question === "string" && Array.isArray(q.options) && q.options.length >= 2,
+      )
       .slice(0, count)
       .map((q) => ({
         question: String(q.question),
         options: q.options.map(String).slice(0, 4),
-        answerIndex: Math.max(0, Math.min(q.options.length - 1, Math.round(Number(q.answerIndex) || 0))),
+        answerIndex: Math.max(
+          0,
+          Math.min(q.options.length - 1, Math.round(Number(q.answerIndex) || 0)),
+        ),
         explanation: String(q.explanation || ""),
       }));
-    if (questions.length === 0) throw new AIError("AI returned no quiz questions. Please try again.", 502);
+    if (questions.length === 0)
+      throw new AIError("AI returned no quiz questions. Please try again.", 502);
     res.json({ success: true, data: { questions, model } });
   } catch (err) {
     sendAIError(res, err, "quiz");
@@ -361,10 +380,18 @@ router.post("/recommend", async (req: Request, res: Response) => {
     const userId = req.userId!;
     const [user, courses, progress, skills, battles] = await Promise.all([
       prisma.user.findUnique({ where: { id: userId } }),
-      prisma.course.findMany({ include: { lessons: { select: { id: true } } }, orderBy: { order: "asc" } }),
-      prisma.userProgress.findMany({ where: { userId, completed: true }, include: { lesson: { select: { courseId: true, title: true } } } }),
+      prisma.course.findMany({
+        include: { lessons: { select: { id: true } } },
+        orderBy: { order: "asc" },
+      }),
+      prisma.userProgress.findMany({
+        where: { userId, completed: true },
+        include: { lesson: { select: { courseId: true, title: true } } },
+      }),
       prisma.userSkill.count({ where: { userId, unlocked: true } }),
-      prisma.battle.count({ where: { OR: [{ player1Id: userId }, { player2Id: userId }], status: "completed" } }),
+      prisma.battle.count({
+        where: { OR: [{ player1Id: userId }, { player2Id: userId }], status: "completed" },
+      }),
     ]);
     if (!user) {
       res.status(404).json({ success: false, error: "User not found" });
@@ -411,7 +438,8 @@ router.post("/recommend", async (req: Request, res: Response) => {
         href: areaToHref[String(r.area)] || "/courses",
       }))
       .filter((r) => r.title);
-    if (recommendations.length === 0) throw new AIError("AI returned no recommendations. Please try again.", 502);
+    if (recommendations.length === 0)
+      throw new AIError("AI returned no recommendations. Please try again.", 502);
     res.json({ success: true, data: { focus: String(data.focus || ""), recommendations, model } });
   } catch (err) {
     sendAIError(res, err, "recommend");

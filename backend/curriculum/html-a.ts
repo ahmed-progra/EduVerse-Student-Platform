@@ -11,7 +11,12 @@ export const htmlA: LessonDef[] = [
       `<strong>&lt;body&gt;</strong> — everything the user actually sees`,
     ],
     examples: [
-      ex("The complete scaffold", `<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <title>My First Page</title>\n</head>\n<body>\n    <h1>Hello, web!</h1>\n    <p>This page is mine.</p>\n</body>\n</html>`, undefined, `The browser tab shows "My First Page"; the body renders the heading and paragraph.`),
+      ex(
+        "The complete scaffold",
+        `<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <title>My First Page</title>\n</head>\n<body>\n    <h1>Hello, web!</h1>\n    <p>This page is mine.</p>\n</body>\n</html>`,
+        undefined,
+        `The browser tab shows "My First Page"; the body renders the heading and paragraph.`,
+      ),
     ],
     realWorld: `Every one of the billions of web pages online starts from exactly this scaffold — view-source on any site and you'll find it. Editors and frameworks generate it, but professionals must know what each line does.`,
     practice: `Build a page with the full scaffold: a title of your choice, one h1 with your name, and a paragraph about why you're learning HTML. Validate the nesting: head before body, both inside html.`,
@@ -25,9 +30,29 @@ export const htmlA: LessonDef[] = [
     ],
     template: `<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <title>About Me</title>\n</head>\n<body>\n    <h1>Your Name</h1>\n    <p>I'm learning HTML because...</p>\n</body>\n</html>`,
     quiz: [
-      q("Where does the <title> element belong?", ["<body>", "<head>", "<html> directly", "Anywhere"], 1, `title is metadata — it lives in head and appears in the browser tab.`),
-      q("What does <!DOCTYPE html> do?", ["Imports HTML", "Declares the document as HTML5 so browsers render in standards mode", "Adds a title", "Nothing"], 1, `Without it browsers fall into quirks mode with legacy behavior.`),
-      q("Which element contains everything the user sees?", ["<head>", "<meta>", "<body>", "<html>"], 2, `body holds the rendered content; head holds invisible metadata.`),
+      q(
+        "Where does the <title> element belong?",
+        ["<body>", "<head>", "<html> directly", "Anywhere"],
+        1,
+        `title is metadata — it lives in head and appears in the browser tab.`,
+      ),
+      q(
+        "What does <!DOCTYPE html> do?",
+        [
+          "Imports HTML",
+          "Declares the document as HTML5 so browsers render in standards mode",
+          "Adds a title",
+          "Nothing",
+        ],
+        1,
+        `Without it browsers fall into quirks mode with legacy behavior.`,
+      ),
+      q(
+        "Which element contains everything the user sees?",
+        ["<head>", "<meta>", "<body>", "<html>"],
+        2,
+        `body holds the rendered content; head holds invisible metadata.`,
+      ),
     ],
   }),
 
@@ -40,7 +65,12 @@ export const htmlA: LessonDef[] = [
       `<strong>link / script</strong> — attach CSS and JavaScript files`,
     ],
     examples: [
-      ex("A production-grade head", `<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1">\n    <meta name="description" content="Learn programming with interactive lessons.">\n    <title>EduVerse — Learn by Doing</title>\n    <link rel="stylesheet" href="styles.css">\n    <link rel="icon" href="favicon.ico">\n</head>`, undefined, `Title and description are what Google shows; viewport is why the page isn't tiny on a phone.`),
+      ex(
+        "A production-grade head",
+        `<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1">\n    <meta name="description" content="Learn programming with interactive lessons.">\n    <title>EduVerse — Learn by Doing</title>\n    <link rel="stylesheet" href="styles.css">\n    <link rel="icon" href="favicon.ico">\n</head>`,
+        undefined,
+        `Title and description are what Google shows; viewport is why the page isn't tiny on a phone.`,
+      ),
     ],
     realWorld: `Forgot the viewport meta? Your site renders desktop-width on phones — unreadable. Weak description? Google writes its own, often badly. Marketing teams literally A/B test these two lines.`,
     practice: `Write a head for a recipe site page: charset, viewport, a compelling 150-character description, a title under 60 characters, and a stylesheet link.`,
@@ -54,9 +84,24 @@ export const htmlA: LessonDef[] = [
     ],
     template: `<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1">\n    <meta name="description" content="Fresh 20-minute pasta recipes for busy weeknights.">\n    <title>Weeknight Pasta — Quick Recipes</title>\n</head>`,
     quiz: [
-      q("Which meta tag makes a page mobile-friendly?", ["charset", "viewport", "description", "robots"], 1, `viewport tells the browser to match the device width instead of pretending to be a desktop.`),
-      q("Where does the meta description appear?", ["On the page", "In search engine result snippets", "In the tab", "In the console"], 1, `It's invisible on the page but drives click-through from search results.`),
-      q("How do you attach an external stylesheet?", ["<style src>", "<link rel=\"stylesheet\" href=\"...\">", "<css href>", "<script css>"], 1, `link with rel=stylesheet in the head loads external CSS.`),
+      q(
+        "Which meta tag makes a page mobile-friendly?",
+        ["charset", "viewport", "description", "robots"],
+        1,
+        `viewport tells the browser to match the device width instead of pretending to be a desktop.`,
+      ),
+      q(
+        "Where does the meta description appear?",
+        ["On the page", "In search engine result snippets", "In the tab", "In the console"],
+        1,
+        `It's invisible on the page but drives click-through from search results.`,
+      ),
+      q(
+        "How do you attach an external stylesheet?",
+        ["<style src>", '<link rel="stylesheet" href="...">', "<css href>", "<script css>"],
+        1,
+        `link with rel=stylesheet in the head loads external CSS.`,
+      ),
     ],
   }),
 
@@ -69,7 +114,12 @@ export const htmlA: LessonDef[] = [
       `<strong>&lt;p&gt;</strong> — a block of body text`,
     ],
     examples: [
-      ex("A proper outline", `<h1>Coffee Brewing Guide</h1>\n<p>Everything you need for a great cup.</p>\n\n<h2>Equipment</h2>\n<p>A grinder, a scale, and a kettle.</p>\n\n<h2>Methods</h2>\n<h3>Pour Over</h3>\n<p>Clean and bright flavors.</p>\n<h3>French Press</h3>\n<p>Rich and full-bodied.</p>`, undefined, `Read the headings alone — they summarize the page. That's the test of good structure.`),
+      ex(
+        "A proper outline",
+        `<h1>Coffee Brewing Guide</h1>\n<p>Everything you need for a great cup.</p>\n\n<h2>Equipment</h2>\n<p>A grinder, a scale, and a kettle.</p>\n\n<h2>Methods</h2>\n<h3>Pour Over</h3>\n<p>Clean and bright flavors.</p>\n<h3>French Press</h3>\n<p>Rich and full-bodied.</p>`,
+        undefined,
+        `Read the headings alone — they summarize the page. That's the test of good structure.`,
+      ),
     ],
     realWorld: `Screen-reader users jump heading-to-heading to scan pages — broken hierarchies strand them. Search engines weight heading text heavily. Docs sites generate their sidebar navigation directly from this outline.`,
     practice: `Structure a "My Favorite Games" page: one h1, two h2 genre sections, each with one h3 game title and a paragraph review. Then read just the headings — do they make sense alone?`,
@@ -83,9 +133,29 @@ export const htmlA: LessonDef[] = [
     ],
     template: `<h1>My Favorite Games</h1>\n<h2>Strategy</h2>\n<h3>Chess</h3>\n<p>The classic. Easy to learn, impossible to master.</p>\n<h2>Puzzle</h2>\n<h3>Tetris</h3>\n<p>Still perfect after four decades.</p>`,
     quiz: [
-      q("How many h1 elements should a page have?", ["As many as you like", "One", "Two", "Zero"], 1, `One h1 announces the page topic; everything else nests beneath.`),
-      q("Why not pick <h4> just because you like its size?", ["You can", "Heading levels are structure for readers and machines; size is CSS's job", "h4 is deprecated", "It's slower"], 1, `Levels build the document outline — styling is a separate concern.`),
-      q("Which element holds a block of body text?", ["<text>", "<p>", "<span>", "<block>"], 1, `p is the paragraph element.`),
+      q(
+        "How many h1 elements should a page have?",
+        ["As many as you like", "One", "Two", "Zero"],
+        1,
+        `One h1 announces the page topic; everything else nests beneath.`,
+      ),
+      q(
+        "Why not pick <h4> just because you like its size?",
+        [
+          "You can",
+          "Heading levels are structure for readers and machines; size is CSS's job",
+          "h4 is deprecated",
+          "It's slower",
+        ],
+        1,
+        `Levels build the document outline — styling is a separate concern.`,
+      ),
+      q(
+        "Which element holds a block of body text?",
+        ["<text>", "<p>", "<span>", "<block>"],
+        1,
+        `p is the paragraph element.`,
+      ),
     ],
   }),
 
@@ -98,7 +168,12 @@ export const htmlA: LessonDef[] = [
       `<strong>&lt;mark&gt;, &lt;small&gt;, &lt;del&gt;/&lt;ins&gt;</strong> — highlight, fine print, edits`,
     ],
     examples: [
-      ex("Meaningful markup", `<p><strong>Warning:</strong> this action <em>cannot</em> be undone.</p>\n<p>Run <code>npm install</code> before starting.</p>\n<p>Price: <del>$50</del> <ins>$35</ins> <small>(tax included)</small></p>`, undefined, `Screen readers can stress strong/em; styling-only b/i say nothing.`),
+      ex(
+        "Meaningful markup",
+        `<p><strong>Warning:</strong> this action <em>cannot</em> be undone.</p>\n<p>Run <code>npm install</code> before starting.</p>\n<p>Price: <del>$50</del> <ins>$35</ins> <small>(tax included)</small></p>`,
+        undefined,
+        `Screen readers can stress strong/em; styling-only b/i say nothing.`,
+      ),
     ],
     realWorld: `Documentation sites mark every command with &lt;code&gt;, store fronts mark price cuts with del/ins (search engines understand the discount), and accessibility audits flag b/i misuse in legal or safety text.`,
     practice: `Mark up a short product update note: one critical warning (strong), one stressed word (em), one terminal command (code), and an old vs new price (del/ins).`,
@@ -112,9 +187,24 @@ export const htmlA: LessonDef[] = [
     ],
     template: `<p><strong>Heads up:</strong> the API <em>will</em> change next week.</p>\n<p>Update with <code>git pull</code> first.</p>\n<p>Pro plan: <del>$12</del> <ins>$9</ins>/month</p>`,
     quiz: [
-      q("Which element marks text as important?", ["<b>", "<strong>", "<big>", "<bold>"], 1, `strong carries semantic weight; b is styling only.`),
-      q("Best element for the command 'git status'?", ["<em>", "<kbd>", "<code>", "<pre> alone"], 2, `Inline code belongs in code; kbd is for keyboard input, pre for blocks.`),
-      q("What does <del> communicate?", ["Deleted/removed content", "Danger", "A link", "Emphasis"], 0, `del (paired with ins) marks edits — like a visible price change.`),
+      q(
+        "Which element marks text as important?",
+        ["<b>", "<strong>", "<big>", "<bold>"],
+        1,
+        `strong carries semantic weight; b is styling only.`,
+      ),
+      q(
+        "Best element for the command 'git status'?",
+        ["<em>", "<kbd>", "<code>", "<pre> alone"],
+        2,
+        `Inline code belongs in code; kbd is for keyboard input, pre for blocks.`,
+      ),
+      q(
+        "What does <del> communicate?",
+        ["Deleted/removed content", "Danger", "A link", "Emphasis"],
+        0,
+        `del (paired with ins) marks edits — like a visible price change.`,
+      ),
     ],
   }),
 
@@ -127,7 +217,12 @@ export const htmlA: LessonDef[] = [
       `<strong>target="_blank"</strong> — new tab; pair with <code>rel="noopener"</code>`,
     ],
     examples: [
-      ex("The link toolkit", `<a href="https://developer.mozilla.org">MDN Web Docs</a>\n<a href="/courses">Our courses</a>\n<a href="#pricing">Jump to pricing</a>\n<a href="mailto:team@example.com">Email us</a>\n<a href="https://example.com" target="_blank" rel="noopener">Opens in new tab</a>`, undefined, `Relative links survive domain moves; fragment links need an element with id="pricing".`),
+      ex(
+        "The link toolkit",
+        `<a href="https://developer.mozilla.org">MDN Web Docs</a>\n<a href="/courses">Our courses</a>\n<a href="#pricing">Jump to pricing</a>\n<a href="mailto:team@example.com">Email us</a>\n<a href="https://example.com" target="_blank" rel="noopener">Opens in new tab</a>`,
+        undefined,
+        `Relative links survive domain moves; fragment links need an element with id="pricing".`,
+      ),
     ],
     realWorld: `Navigation menus, "skip to content" accessibility links, table-of-contents jumps in documentation, and email CTAs in marketing pages — every interaction path on the web routes through anchors.`,
     practice: `Build a mini nav: three relative links (home, blog, contact), one external link opening in a new tab with rel="noopener", and one fragment link to a #footer section on the same page.`,
@@ -141,9 +236,29 @@ export const htmlA: LessonDef[] = [
     ],
     template: `<nav>\n    <a href="/">Home</a>\n    <a href="/blog">Blog</a>\n    <a href="/contact">Contact</a>\n    <a href="https://developer.mozilla.org" target="_blank" rel="noopener">MDN</a>\n</nav>\n<p><a href="#footer">Skip to footer</a></p>\n<footer id="footer">© 2026</footer>`,
     quiz: [
-      q("What does href=\"#faq\" do?", ["Opens faq.html", "Scrolls to the element with id=\"faq\"", "Downloads a file", "Nothing"], 1, `Fragment links target an id on the page.`),
-      q("Why is 'click here' bad link text?", ["Too short", "Out of context it says nothing about the destination", "It's slower", "Browsers block it"], 1, `Assistive tech and scanners read link text in isolation.`),
-      q("What should accompany target=\"_blank\"?", ["rel=\"noopener\"", "id", "class=\"new\"", "download"], 0, `noopener severs the new page's handle on your window — a security baseline.`),
+      q(
+        'What does href="#faq" do?',
+        ["Opens faq.html", 'Scrolls to the element with id="faq"', "Downloads a file", "Nothing"],
+        1,
+        `Fragment links target an id on the page.`,
+      ),
+      q(
+        "Why is 'click here' bad link text?",
+        [
+          "Too short",
+          "Out of context it says nothing about the destination",
+          "It's slower",
+          "Browsers block it",
+        ],
+        1,
+        `Assistive tech and scanners read link text in isolation.`,
+      ),
+      q(
+        'What should accompany target="_blank"?',
+        ['rel="noopener"', "id", 'class="new"', "download"],
+        0,
+        `noopener severs the new page's handle on your window — a security baseline.`,
+      ),
     ],
   }),
 
@@ -156,8 +271,16 @@ export const htmlA: LessonDef[] = [
       `<strong>&lt;figure&gt; + &lt;figcaption&gt;</strong> — images with captions`,
     ],
     examples: [
-      ex("A responsible image", `<img src="trail.jpg"\n     alt="Hikers on a pine forest trail at sunrise"\n     width="800" height="533"\n     loading="lazy">`, undefined, `The alt text paints the picture in words; width/height stop the page from jumping as it loads.`),
-      ex("Captioned figure", `<figure>\n    <img src="chart.png" alt="Sales rising 40% from January to June" width="600" height="400">\n    <figcaption>Figure 1: H1 2026 sales growth.</figcaption>\n</figure>`),
+      ex(
+        "A responsible image",
+        `<img src="trail.jpg"\n     alt="Hikers on a pine forest trail at sunrise"\n     width="800" height="533"\n     loading="lazy">`,
+        undefined,
+        `The alt text paints the picture in words; width/height stop the page from jumping as it loads.`,
+      ),
+      ex(
+        "Captioned figure",
+        `<figure>\n    <img src="chart.png" alt="Sales rising 40% from January to June" width="600" height="400">\n    <figcaption>Figure 1: H1 2026 sales growth.</figcaption>\n</figure>`,
+      ),
     ],
     realWorld: `Images are the heaviest part of most pages — lazy loading and sized images are core web performance work. Meanwhile alt text is both an accessibility legal requirement in many sectors and what search engines index.`,
     practice: `Embed two images: a content photo with descriptive alt, sizes, and lazy loading; and a decorative divider with empty alt="" (so screen readers skip it). Wrap the first in a captioned figure.`,
@@ -171,9 +294,34 @@ export const htmlA: LessonDef[] = [
     ],
     template: `<figure>\n    <img src="https://placehold.co/600x400" \n         alt="A placeholder landscape image"\n         width="600" height="400" loading="lazy">\n    <figcaption>A captioned demo image.</figcaption>\n</figure>`,
     quiz: [
-      q("What happens when an image lacks alt and fails to load?", ["Nothing shows", "Browsers/screen readers fall back to the filename — useless noise", "It retries", "Error page"], 1, `alt is the graceful fallback for both failures and non-visual users.`),
-      q("Correct alt for a purely decorative swirl?", ["\"decorative swirl image\"", "alt=\"\" (empty)", "Omit the attribute", "\"swirl.png\""], 1, `Empty alt explicitly tells assistive tech to skip; omitting it does not.`),
-      q("Why set width and height attributes?", ["Required by HTML5", "The browser reserves space, preventing layout shift", "They compress the image", "SEO keywords"], 1, `Reserved space means content doesn't jump when images arrive.`),
+      q(
+        "What happens when an image lacks alt and fails to load?",
+        [
+          "Nothing shows",
+          "Browsers/screen readers fall back to the filename — useless noise",
+          "It retries",
+          "Error page",
+        ],
+        1,
+        `alt is the graceful fallback for both failures and non-visual users.`,
+      ),
+      q(
+        "Correct alt for a purely decorative swirl?",
+        ['"decorative swirl image"', 'alt="" (empty)', "Omit the attribute", '"swirl.png"'],
+        1,
+        `Empty alt explicitly tells assistive tech to skip; omitting it does not.`,
+      ),
+      q(
+        "Why set width and height attributes?",
+        [
+          "Required by HTML5",
+          "The browser reserves space, preventing layout shift",
+          "They compress the image",
+          "SEO keywords",
+        ],
+        1,
+        `Reserved space means content doesn't jump when images arrive.`,
+      ),
     ],
   }),
 
@@ -186,8 +334,14 @@ export const htmlA: LessonDef[] = [
       `<strong>&lt;dl&gt;, &lt;dt&gt;, &lt;dd&gt;</strong> — glossaries and key–value displays`,
     ],
     examples: [
-      ex("Ordered steps with nesting", `<ol>\n    <li>Preheat the oven</li>\n    <li>Mix the batter\n        <ul>\n            <li>Dry ingredients first</li>\n            <li>Then fold in the wet</li>\n        </ul>\n    </li>\n    <li>Bake 25 minutes</li>\n</ol>`),
-      ex("A description list", `<dl>\n    <dt>HTML</dt>\n    <dd>Structures content</dd>\n    <dt>CSS</dt>\n    <dd>Styles it</dd>\n</dl>`),
+      ex(
+        "Ordered steps with nesting",
+        `<ol>\n    <li>Preheat the oven</li>\n    <li>Mix the batter\n        <ul>\n            <li>Dry ingredients first</li>\n            <li>Then fold in the wet</li>\n        </ul>\n    </li>\n    <li>Bake 25 minutes</li>\n</ol>`,
+      ),
+      ex(
+        "A description list",
+        `<dl>\n    <dt>HTML</dt>\n    <dd>Structures content</dd>\n    <dt>CSS</dt>\n    <dd>Styles it</dd>\n</dl>`,
+      ),
     ],
     realWorld: `Site navs are ul + CSS. Checkout steps, rankings, and recipes are ol (sequence matters — search engines show numbered rich results). API docs use dl for parameter tables.`,
     practice: `Write your morning routine as an ordered list of 4 steps, where one step contains a nested unordered list of 2 options. Add a 2-term description list defining "frontend" and "backend".`,
@@ -201,9 +355,24 @@ export const htmlA: LessonDef[] = [
     ],
     template: `<ol>\n    <li>Wake up</li>\n    <li>Breakfast\n        <ul>\n            <li>Coffee</li>\n            <li>Oats</li>\n        </ul>\n    </li>\n    <li>Stretch</li>\n    <li>Code</li>\n</ol>`,
     quiz: [
-      q("Recipe steps belong in…", ["<ul>", "<ol>", "<dl>", "<div>s"], 1, `Order matters — that's exactly what ol communicates.`),
-      q("Where does a nested list go?", ["After the parent </ul>", "Inside the parent <li>", "Inside <head>", "Anywhere"], 1, `The sub-list is part of its parent item, so it lives within that li.`),
-      q("Which trio builds a description list?", ["dl, dt, dd", "ul, ol, li", "table, tr, td", "div, span, p"], 0, `dl wraps; dt is the term; dd is the description.`),
+      q(
+        "Recipe steps belong in…",
+        ["<ul>", "<ol>", "<dl>", "<div>s"],
+        1,
+        `Order matters — that's exactly what ol communicates.`,
+      ),
+      q(
+        "Where does a nested list go?",
+        ["After the parent </ul>", "Inside the parent <li>", "Inside <head>", "Anywhere"],
+        1,
+        `The sub-list is part of its parent item, so it lives within that li.`,
+      ),
+      q(
+        "Which trio builds a description list?",
+        ["dl, dt, dd", "ul, ol, li", "table, tr, td", "div, span, p"],
+        0,
+        `dl wraps; dt is the term; dd is the description.`,
+      ),
     ],
   }),
 
@@ -216,8 +385,16 @@ export const htmlA: LessonDef[] = [
       `<strong>&lt;caption&gt;</strong> — the table's accessible title`,
     ],
     examples: [
-      ex("A data table", `<table>\n    <caption>Q1 Sales by Region</caption>\n    <tr>\n        <th>Region</th>\n        <th>Sales</th>\n    </tr>\n    <tr>\n        <td>North</td>\n        <td>$42,000</td>\n    </tr>\n    <tr>\n        <td>South</td>\n        <td>$38,500</td>\n    </tr>\n</table>`),
-      ex("Spanning cells", `<table>\n    <tr>\n        <th colspan="2">Server Status</th>\n    </tr>\n    <tr>\n        <td>API</td>\n        <td>✅ online</td>\n    </tr>\n</table>`, undefined, `colspan="2" stretches the header across both columns.`),
+      ex(
+        "A data table",
+        `<table>\n    <caption>Q1 Sales by Region</caption>\n    <tr>\n        <th>Region</th>\n        <th>Sales</th>\n    </tr>\n    <tr>\n        <td>North</td>\n        <td>$42,000</td>\n    </tr>\n    <tr>\n        <td>South</td>\n        <td>$38,500</td>\n    </tr>\n</table>`,
+      ),
+      ex(
+        "Spanning cells",
+        `<table>\n    <tr>\n        <th colspan="2">Server Status</th>\n    </tr>\n    <tr>\n        <td>API</td>\n        <td>✅ online</td>\n    </tr>\n</table>`,
+        undefined,
+        `colspan="2" stretches the header across both columns.`,
+      ),
     ],
     realWorld: `Pricing comparisons, sports standings, financial reports, admin dashboards — anywhere data has two axes, tables are correct and unmatched. Spreadsheet exports render straight into them.`,
     practice: `Build a 3-row class schedule table: caption "My Schedule", header row (Day, Subject, Time), and two data rows. Make the caption render above the grid.`,
@@ -231,9 +408,29 @@ export const htmlA: LessonDef[] = [
     ],
     template: `<table>\n    <caption>My Schedule</caption>\n    <tr>\n        <th>Day</th><th>Subject</th><th>Time</th>\n    </tr>\n    <tr>\n        <td>Mon</td><td>Math</td><td>09:00</td>\n    </tr>\n    <tr>\n        <td>Tue</td><td>CS</td><td>11:00</td>\n    </tr>\n</table>`,
     quiz: [
-      q("Which element is a header cell?", ["<td>", "<th>", "<header>", "<hd>"], 1, `th = table header; browsers bold/center it and screen readers announce it.`),
-      q("What does colspan=\"3\" do?", ["Creates 3 columns", "Makes one cell span across 3 columns", "Repeats the cell 3 times", "Adds 3px spacing"], 1, `The cell stretches over three column slots.`),
-      q("Tables should be used for…", ["Page layout", "Two-dimensional data", "Navigation", "Image grids"], 1, `Layout belongs to CSS; tables are for data with rows-and-columns meaning.`),
+      q(
+        "Which element is a header cell?",
+        ["<td>", "<th>", "<header>", "<hd>"],
+        1,
+        `th = table header; browsers bold/center it and screen readers announce it.`,
+      ),
+      q(
+        'What does colspan="3" do?',
+        [
+          "Creates 3 columns",
+          "Makes one cell span across 3 columns",
+          "Repeats the cell 3 times",
+          "Adds 3px spacing",
+        ],
+        1,
+        `The cell stretches over three column slots.`,
+      ),
+      q(
+        "Tables should be used for…",
+        ["Page layout", "Two-dimensional data", "Navigation", "Image grids"],
+        1,
+        `Layout belongs to CSS; tables are for data with rows-and-columns meaning.`,
+      ),
     ],
   }),
 
@@ -246,7 +443,12 @@ export const htmlA: LessonDef[] = [
       `<strong>Avoid merged-cell mazes</strong> — complex spans confuse navigation`,
     ],
     examples: [
-      ex("Fully structured table", `<table>\n    <caption>Monthly Budget</caption>\n    <thead>\n        <tr>\n            <th scope="col">Category</th>\n            <th scope="col">Planned</th>\n            <th scope="col">Actual</th>\n        </tr>\n    </thead>\n    <tbody>\n        <tr>\n            <th scope="row">Food</th>\n            <td>$300</td>\n            <td>$342</td>\n        </tr>\n        <tr>\n            <th scope="row">Transport</th>\n            <td>$120</td>\n            <td>$98</td>\n        </tr>\n    </tbody>\n    <tfoot>\n        <tr>\n            <th scope="row">Total</th>\n            <td>$420</td>\n            <td>$440</td>\n        </tr>\n    </tfoot>\n</table>`, undefined, `A screen reader on "$342" announces: "Food, Actual, $342" — scope makes that mapping.`),
+      ex(
+        "Fully structured table",
+        `<table>\n    <caption>Monthly Budget</caption>\n    <thead>\n        <tr>\n            <th scope="col">Category</th>\n            <th scope="col">Planned</th>\n            <th scope="col">Actual</th>\n        </tr>\n    </thead>\n    <tbody>\n        <tr>\n            <th scope="row">Food</th>\n            <td>$300</td>\n            <td>$342</td>\n        </tr>\n        <tr>\n            <th scope="row">Transport</th>\n            <td>$120</td>\n            <td>$98</td>\n        </tr>\n    </tbody>\n    <tfoot>\n        <tr>\n            <th scope="row">Total</th>\n            <td>$420</td>\n            <td>$440</td>\n        </tr>\n    </tfoot>\n</table>`,
+        undefined,
+        `A screen reader on "$342" announces: "Food, Actual, $342" — scope makes that mapping.`,
+      ),
     ],
     realWorld: `Government and banking sites are legally required (WCAG) to ship tables like this. Bonus: thead/tbody enable sticky headers and printable repeating headers — accessibility work pays UX dividends.`,
     practice: `Upgrade your schedule table from the last lesson: wrap rows in thead/tbody, set scope="col" on column headers, make the first cell of each body row a th with scope="row".`,
@@ -260,9 +462,34 @@ export const htmlA: LessonDef[] = [
     ],
     template: `<table>\n    <caption>Workouts</caption>\n    <thead>\n        <tr><th scope="col">Day</th><th scope="col">Focus</th></tr>\n    </thead>\n    <tbody>\n        <tr><th scope="row">Mon</th><td>Push</td></tr>\n        <tr><th scope="row">Wed</th><td>Pull</td></tr>\n    </tbody>\n</table>`,
     quiz: [
-      q("What does scope=\"row\" on a th mean?", ["The cell spans the row", "This header describes the cells of its row", "Style the row", "Nothing"], 1, `scope binds headers to the cells they label for assistive tech.`),
-      q("Which element groups the header row(s)?", ["<header>", "<thead>", "<th>", "<top>"], 1, `thead wraps header rows; tbody holds the data rows.`),
-      q("Why do screen readers need table structure?", ["They don't", "They read cell-by-cell and rely on header mappings for context", "For speed", "To skip tables"], 1, `Without scope/structure, a cell is just a floating number with no meaning.`),
+      q(
+        'What does scope="row" on a th mean?',
+        [
+          "The cell spans the row",
+          "This header describes the cells of its row",
+          "Style the row",
+          "Nothing",
+        ],
+        1,
+        `scope binds headers to the cells they label for assistive tech.`,
+      ),
+      q(
+        "Which element groups the header row(s)?",
+        ["<header>", "<thead>", "<th>", "<top>"],
+        1,
+        `thead wraps header rows; tbody holds the data rows.`,
+      ),
+      q(
+        "Why do screen readers need table structure?",
+        [
+          "They don't",
+          "They read cell-by-cell and rely on header mappings for context",
+          "For speed",
+          "To skip tables",
+        ],
+        1,
+        `Without scope/structure, a cell is just a floating number with no meaning.`,
+      ),
     ],
   }),
 
@@ -275,8 +502,18 @@ export const htmlA: LessonDef[] = [
       `<strong>Submit</strong> — a button inside the form sends it`,
     ],
     examples: [
-      ex("A minimal working form", `<form action="/search" method="get">\n    <input type="text" name="q" placeholder="Search courses...">\n    <button type="submit">Search</button>\n</form>`, undefined, `Submitting navigates to /search?q=whatever-you-typed — name=\"q\" became the parameter.`),
-      ex("Login form (POST)", `<form action="/login" method="post">\n    <input type="email" name="email" placeholder="Email">\n    <input type="password" name="password" placeholder="Password">\n    <button type="submit">Log in</button>\n</form>`, undefined, `Credentials go in the request body with POST — never in a URL.`),
+      ex(
+        "A minimal working form",
+        `<form action="/search" method="get">\n    <input type="text" name="q" placeholder="Search courses...">\n    <button type="submit">Search</button>\n</form>`,
+        undefined,
+        `Submitting navigates to /search?q=whatever-you-typed — name=\"q\" became the parameter.`,
+      ),
+      ex(
+        "Login form (POST)",
+        `<form action="/login" method="post">\n    <input type="email" name="email" placeholder="Email">\n    <input type="password" name="password" placeholder="Password">\n    <button type="submit">Log in</button>\n</form>`,
+        undefined,
+        `Credentials go in the request body with POST — never in a URL.`,
+      ),
     ],
     realWorld: `Every signup you've completed was this exact machinery. Even modern JavaScript apps build on form semantics — and when JS fails, a real form still works. EduVerse's own login page is one.`,
     practice: `Build a newsletter form: an email input named "email", a select named "frequency" (weekly/monthly), and a submit button. Choose GET or POST and justify your choice in a comment.`,
@@ -290,9 +527,24 @@ export const htmlA: LessonDef[] = [
     ],
     template: `<form action="/subscribe" method="post">\n    <input type="email" name="email" placeholder="you@example.com">\n    <select name="frequency">\n        <option value="weekly">Weekly</option>\n        <option value="monthly">Monthly</option>\n    </select>\n    <button type="submit">Subscribe</button>\n</form>`,
     quiz: [
-      q("A form input has no name attribute. What happens on submit?", ["Error", "Its value is not sent at all", "It sends as 'unnamed'", "The form won't submit"], 1, `name is the data key — without it the field is invisible to the server.`),
-      q("Which method should a login form use?", ["GET", "POST", "PUT", "Either"], 1, `POST keeps credentials out of URLs, history, and logs.`),
-      q("Where does method=\"get\" put the form data?", ["Request body", "URL query string", "Cookies", "Headers"], 1, `GET serializes fields into ?key=value pairs on the URL.`),
+      q(
+        "A form input has no name attribute. What happens on submit?",
+        ["Error", "Its value is not sent at all", "It sends as 'unnamed'", "The form won't submit"],
+        1,
+        `name is the data key — without it the field is invisible to the server.`,
+      ),
+      q(
+        "Which method should a login form use?",
+        ["GET", "POST", "PUT", "Either"],
+        1,
+        `POST keeps credentials out of URLs, history, and logs.`,
+      ),
+      q(
+        'Where does method="get" put the form data?',
+        ["Request body", "URL query string", "Cookies", "Headers"],
+        1,
+        `GET serializes fields into ?key=value pairs on the URL.`,
+      ),
     ],
   }),
 
@@ -305,8 +557,18 @@ export const htmlA: LessonDef[] = [
       `<strong>Choices</strong> — checkbox (many) vs radio (one of a group)`,
     ],
     examples: [
-      ex("Types in action", `<input type="email" name="email" placeholder="you@site.com">\n<input type="number" name="age" min="13" max="120">\n<input type="date" name="birthday">\n<input type="range" name="volume" min="0" max="100" value="60">\n<input type="color" name="theme" value="#7c5cff">`, undefined, `On phones, email type shows the @-keyboard; number shows digits — small types, big UX.`),
-      ex("Radio groups share a name", `<label><input type="radio" name="plan" value="free" checked> Free</label>\n<label><input type="radio" name="plan" value="pro"> Pro</label>\n<label><input type="checkbox" name="newsletter" value="yes"> Send me tips</label>`, undefined, `Radios with the same name are one group — selecting one deselects the others.`),
+      ex(
+        "Types in action",
+        `<input type="email" name="email" placeholder="you@site.com">\n<input type="number" name="age" min="13" max="120">\n<input type="date" name="birthday">\n<input type="range" name="volume" min="0" max="100" value="60">\n<input type="color" name="theme" value="#7c5cff">`,
+        undefined,
+        `On phones, email type shows the @-keyboard; number shows digits — small types, big UX.`,
+      ),
+      ex(
+        "Radio groups share a name",
+        `<label><input type="radio" name="plan" value="free" checked> Free</label>\n<label><input type="radio" name="plan" value="pro"> Pro</label>\n<label><input type="checkbox" name="newsletter" value="yes"> Send me tips</label>`,
+        undefined,
+        `Radios with the same name are one group — selecting one deselects the others.`,
+      ),
     ],
     realWorld: `Checkout forms live and die by input types: tel keyboards for phone fields, date pickers for delivery, number steppers for quantity. Wrong types measurably increase form abandonment on mobile.`,
     practice: `Build an event RSVP: name (text), email, number of guests (number 1–10), event date (date), dietary preference (3 radios), and a checkbox for "+1 parking". Test what your browser validates for free.`,
@@ -320,9 +582,24 @@ export const htmlA: LessonDef[] = [
     ],
     template: `<form>\n    <input type="text" name="name" placeholder="Full name">\n    <input type="email" name="email" placeholder="Email">\n    <input type="number" name="guests" min="1" max="10" value="1">\n    <input type="date" name="when">\n    <label><input type="radio" name="diet" value="any" checked> Any</label>\n    <label><input type="radio" name="diet" value="veg"> Vegetarian</label>\n    <button type="submit">RSVP</button>\n</form>`,
     quiz: [
-      q("How do radio buttons form an exclusive group?", ["Same id", "Same name attribute", "Same value", "Inside one div"], 1, `The shared name makes the browser enforce single selection.`),
-      q("Best input type for a phone number?", ["number", "tel", "text", "phone"], 1, `tel gives the phone keyboard without number's formatting problems.`),
-      q("What does <input type=\"range\"> render?", ["A text box", "A slider", "A progress bar", "A spinner"], 1, `range is the built-in slider control.`),
+      q(
+        "How do radio buttons form an exclusive group?",
+        ["Same id", "Same name attribute", "Same value", "Inside one div"],
+        1,
+        `The shared name makes the browser enforce single selection.`,
+      ),
+      q(
+        "Best input type for a phone number?",
+        ["number", "tel", "text", "phone"],
+        1,
+        `tel gives the phone keyboard without number's formatting problems.`,
+      ),
+      q(
+        'What does <input type="range"> render?',
+        ["A text box", "A slider", "A progress bar", "A spinner"],
+        1,
+        `range is the built-in slider control.`,
+      ),
     ],
   }),
 
@@ -335,8 +612,18 @@ export const htmlA: LessonDef[] = [
       `<strong>Placeholders are NOT labels</strong> — they vanish on typing`,
     ],
     examples: [
-      ex("Two binding styles", `<label for="email">Email address</label>\n<input id="email" type="email" name="email">\n\n<label>\n    Password\n    <input type="password" name="password">\n</label>`, undefined, `Click either label text — the input focuses. That's the binding working.`),
-      ex("Grouping with fieldset", `<fieldset>\n    <legend>Shipping speed</legend>\n    <label><input type="radio" name="speed" value="std" checked> Standard</label>\n    <label><input type="radio" name="speed" value="exp"> Express</label>\n</fieldset>`, undefined, `Screen readers announce "Shipping speed" before each option — context that placeholders can't give.`),
+      ex(
+        "Two binding styles",
+        `<label for="email">Email address</label>\n<input id="email" type="email" name="email">\n\n<label>\n    Password\n    <input type="password" name="password">\n</label>`,
+        undefined,
+        `Click either label text — the input focuses. That's the binding working.`,
+      ),
+      ex(
+        "Grouping with fieldset",
+        `<fieldset>\n    <legend>Shipping speed</legend>\n    <label><input type="radio" name="speed" value="std" checked> Standard</label>\n    <label><input type="radio" name="speed" value="exp"> Express</label>\n</fieldset>`,
+        undefined,
+        `Screen readers announce "Shipping speed" before each option — context that placeholders can't give.`,
+      ),
     ],
     realWorld: `Accessibility lawsuits over forms are routine (retail, banking, government). Beyond compliance: labeled forms convert better — bigger click targets and no "what was this field?" amnesia after autofill.`,
     practice: `Take your RSVP form from last lesson and label every control properly: explicit for/id on text inputs, wrapped labels on radios/checkboxes, and a fieldset+legend around the dietary radios.`,
@@ -350,9 +637,34 @@ export const htmlA: LessonDef[] = [
     ],
     template: `<form>\n    <label for="name">Name</label>\n    <input id="name" type="text" name="name">\n\n    <fieldset>\n        <legend>Contact preference</legend>\n        <label><input type="radio" name="contact" value="email" checked> Email</label>\n        <label><input type="radio" name="contact" value="sms"> SMS</label>\n    </fieldset>\n    <button type="submit">Save</button>\n</form>`,
     quiz: [
-      q("What connects <label for=\"x\"> to an input?", ["name=\"x\"", "id=\"x\"", "class=\"x\"", "value=\"x\""], 1, `for matches the input's id — that's the explicit association.`),
-      q("Why can't placeholder replace a label?", ["It can", "It disappears while typing and isn't reliably announced", "It's too long", "Styling limits"], 1, `Placeholders are hints, not names — they fail users mid-entry.`),
-      q("What do fieldset and legend provide?", ["Styling only", "A grouped, captioned context announced with each control", "Validation", "Layout"], 1, `The legend gives every control inside the group its shared context.`),
+      q(
+        'What connects <label for="x"> to an input?',
+        ['name="x"', 'id="x"', 'class="x"', 'value="x"'],
+        1,
+        `for matches the input's id — that's the explicit association.`,
+      ),
+      q(
+        "Why can't placeholder replace a label?",
+        [
+          "It can",
+          "It disappears while typing and isn't reliably announced",
+          "It's too long",
+          "Styling limits",
+        ],
+        1,
+        `Placeholders are hints, not names — they fail users mid-entry.`,
+      ),
+      q(
+        "What do fieldset and legend provide?",
+        [
+          "Styling only",
+          "A grouped, captioned context announced with each control",
+          "Validation",
+          "Layout",
+        ],
+        1,
+        `The legend gives every control inside the group its shared context.`,
+      ),
     ],
   }),
 
@@ -365,8 +677,16 @@ export const htmlA: LessonDef[] = [
       `<strong>input + datalist</strong> — free text with autocompletion suggestions`,
     ],
     examples: [
-      ex("Select with groups", `<label for="course">Course</label>\n<select id="course" name="course">\n    <optgroup label="Frontend">\n        <option value="html">HTML</option>\n        <option value="css">CSS</option>\n    </optgroup>\n    <optgroup label="Systems">\n        <option value="cpp" selected>C++</option>\n    </optgroup>\n</select>`),
-      ex("Textarea and datalist", `<label for="bio">Bio</label>\n<textarea id="bio" name="bio" rows="4" placeholder="A sentence about you..."></textarea>\n\n<label for="city">City</label>\n<input id="city" name="city" list="cities">\n<datalist id="cities">\n    <option value="Cairo">\n    <option value="Oslo">\n    <option value="Tokyo">\n</datalist>`, undefined, `datalist suggests but doesn't restrict — users may type any city.`),
+      ex(
+        "Select with groups",
+        `<label for="course">Course</label>\n<select id="course" name="course">\n    <optgroup label="Frontend">\n        <option value="html">HTML</option>\n        <option value="css">CSS</option>\n    </optgroup>\n    <optgroup label="Systems">\n        <option value="cpp" selected>C++</option>\n    </optgroup>\n</select>`,
+      ),
+      ex(
+        "Textarea and datalist",
+        `<label for="bio">Bio</label>\n<textarea id="bio" name="bio" rows="4" placeholder="A sentence about you..."></textarea>\n\n<label for="city">City</label>\n<input id="city" name="city" list="cities">\n<datalist id="cities">\n    <option value="Cairo">\n    <option value="Oslo">\n    <option value="Tokyo">\n</datalist>`,
+        undefined,
+        `datalist suggests but doesn't restrict — users may type any city.`,
+      ),
     ],
     realWorld: `Country pickers (select), support-ticket descriptions (textarea), and search boxes with suggestions (datalist pattern) appear in virtually every product. Choosing select vs datalist is the "closed set vs open set" decision.`,
     practice: `Build a feedback widget: a select with 3 grouped topics, a textarea for details (4 rows), and a datalist-backed input suggesting 3 "how did you find us?" options.`,
@@ -380,9 +700,29 @@ export const htmlA: LessonDef[] = [
     ],
     template: `<label for="topic">Topic</label>\n<select id="topic" name="topic">\n    <option value="bug">Bug report</option>\n    <option value="idea">Feature idea</option>\n</select>\n\n<label for="details">Details</label>\n<textarea id="details" name="details" rows="4"></textarea>\n\n<button type="submit">Send</button>`,
     quiz: [
-      q("Where does a textarea's initial content go?", ["value attribute", "Between <textarea> and </textarea>", "placeholder", "data-value"], 1, `Unlike input, textarea content is its children.`),
-      q("datalist differs from select because…", ["It looks nicer", "Users can type values beyond the suggestions", "It's required", "It submits twice"], 1, `datalist augments a free-text input; select restricts to its options.`),
-      q("What does optgroup provide?", ["Multiple selection", "Labeled sections inside a dropdown", "Validation", "Sorting"], 1, `optgroup visually and semantically groups related options.`),
+      q(
+        "Where does a textarea's initial content go?",
+        ["value attribute", "Between <textarea> and </textarea>", "placeholder", "data-value"],
+        1,
+        `Unlike input, textarea content is its children.`,
+      ),
+      q(
+        "datalist differs from select because…",
+        [
+          "It looks nicer",
+          "Users can type values beyond the suggestions",
+          "It's required",
+          "It submits twice",
+        ],
+        1,
+        `datalist augments a free-text input; select restricts to its options.`,
+      ),
+      q(
+        "What does optgroup provide?",
+        ["Multiple selection", "Labeled sections inside a dropdown", "Validation", "Sorting"],
+        1,
+        `optgroup visually and semantically groups related options.`,
+      ),
     ],
   }),
 ];

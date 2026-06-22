@@ -50,7 +50,10 @@ export function useAnnouncements() {
   };
 
   const add = (a: Pick<Announcement, "title" | "body" | "tag">) => {
-    const id = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : String(Math.random());
+    const id =
+      typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : String(Math.random());
     persist([{ ...a, id, pinned: false, createdAt: Date.now() }, ...items]);
   };
 

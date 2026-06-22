@@ -34,16 +34,27 @@ const asString = (v: unknown) => (typeof v === "string" ? v : "");
 function sanitizeTurns(raw: unknown): TeachTurn[] {
   if (!Array.isArray(raw)) return [];
   return raw
-    .filter((t): t is { role: string; text: string } => !!t && typeof (t as { text?: unknown }).text === "string" && (t as { text: string }).text.trim().length > 0)
+    .filter(
+      (t): t is { role: string; text: string } =>
+        !!t &&
+        typeof (t as { text?: unknown }).text === "string" &&
+        (t as { text: string }).text.trim().length > 0,
+    )
     .slice(-20)
-    .map((t) => ({ role: t.role === "apprentice" || t.role === "model" ? "apprentice" : "mentor", text: t.text }));
+    .map((t) => ({
+      role: t.role === "apprentice" || t.role === "model" ? "apprentice" : "mentor",
+      text: t.text,
+    }));
 }
 
 /* ── Topic catalog for the picker ──────────────────────────────────── */
 
 router.get("/topics", async (_req: Request, res: Response) => {
   try {
-    res.json({ success: true, data: { maxTurns: MAX_TEACH_TURNS, courses: await teachableTopics() } });
+    res.json({
+      success: true,
+      data: { maxTurns: MAX_TEACH_TURNS, courses: await teachableTopics() },
+    });
   } catch (err) {
     sendErr(res, err, "topics");
   }
@@ -76,7 +87,10 @@ router.post("/reply", aiLimiter, async (req: Request, res: Response) => {
     return;
   }
   try {
-    const turnIndex = Math.max(0, Math.min(MAX_TEACH_TURNS, Math.round(Number(req.body?.turnIndex) || 0)));
+    const turnIndex = Math.max(
+      0,
+      Math.min(MAX_TEACH_TURNS, Math.round(Number(req.body?.turnIndex) || 0)),
+    );
     const reply = await apprenticeReply(topic.slice(0, 120), turns, turnIndex);
     res.json({ success: true, data: reply });
   } catch (err) {
@@ -95,13 +109,21 @@ router.post("/grade", aiLimiter, async (req: Request, res: Response) => {
   }
   // Require at least one real explanation from the mentor before grading.
   if (!turns.some((t) => t.role === "mentor")) {
-    res.status(400).json({ success: false, error: "Teach Pip something first, then ask to be graded" });
+    res
+      .status(400)
+      .json({ success: false, error: "Teach Pip something first, then ask to be graded" });
     return;
   }
   try {
     const topicKey = asString(req.body?.topicKey).trim() || null;
     const courseSlug = asString(req.body?.courseSlug).trim() || null;
-    const grade = await gradeTeaching(req.userId!, topic.slice(0, 120), topicKey, courseSlug, turns);
+    const grade = await gradeTeaching(
+      req.userId!,
+      topic.slice(0, 120),
+      topicKey,
+      courseSlug,
+      turns,
+    );
     res.json({ success: true, data: grade });
   } catch (err) {
     sendErr(res, err, "grade");

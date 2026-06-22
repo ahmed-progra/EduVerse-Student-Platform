@@ -15,7 +15,9 @@ export default function LabSubjectPage() {
       <div className="empty-state page-enter">
         <h3>Lab not found</h3>
         <p>That experiment doesn&apos;t exist yet.</p>
-        <Link href="/lab" className="btn-primary mt-4 inline-flex">Back to 3D Lab</Link>
+        <Link href="/lab" className="btn-primary mt-4 inline-flex">
+          Back to 3D Lab
+        </Link>
       </div>
     );
   }

@@ -38,8 +38,14 @@ router.get("/:id", requireAuth, async (req: Request, res: Response) => {
         lessons: {
           orderBy: { order: "asc" },
           select: {
-            id: true, title: true, order: true, xpReward: true,
-            difficulty: true, estMinutes: true, topics: true, language: true,
+            id: true,
+            title: true,
+            order: true,
+            xpReward: true,
+            difficulty: true,
+            estMinutes: true,
+            topics: true,
+            language: true,
           },
         },
       },

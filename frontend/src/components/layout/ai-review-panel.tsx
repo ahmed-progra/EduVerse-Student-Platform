@@ -28,14 +28,25 @@ export function CodeReviewPanel({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <AIPanelShell title="Code Review" subtitle="Get AI feedback on your code" onClose={onClose} icon={Code2}>
+    <AIPanelShell
+      title="Code Review"
+      subtitle="Get AI feedback on your code"
+      onClose={onClose}
+      icon={Code2}
+    >
       <div className="ai-panel-review">
         <select className="ai-panel-select" value={lang} onChange={(e) => setLang(e.target.value)}>
           <option value="python">Python</option>
           <option value="javascript">JavaScript</option>
           <option value="other">Other</option>
         </select>
-        <textarea className="ai-panel-textarea" placeholder="Paste your code here..." value={code} onChange={(e) => setCode(e.target.value)} rows={8} />
+        <textarea
+          className="ai-panel-textarea"
+          placeholder="Paste your code here..."
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          rows={8}
+        />
         <button className="ai-panel-action-btn" onClick={review} disabled={!code.trim() || loading}>
           {loading ? "Analyzing..." : "Review Code"}
         </button>
@@ -44,7 +55,11 @@ export function CodeReviewPanel({ onClose }: { onClose: () => void }) {
             <div className="ai-panel-result-text">{result}</div>
             <div className="ai-panel-meta">
               <span className="ai-panel-tag">{responseLabel}</span>
-              <button className="ai-panel-copy" onClick={() => navigator.clipboard.writeText(result)} title="Copy review">
+              <button
+                className="ai-panel-copy"
+                onClick={() => navigator.clipboard.writeText(result)}
+                title="Copy review"
+              >
                 <Copy size={12} />
               </button>
             </div>

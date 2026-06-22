@@ -11,7 +11,11 @@
 
 const BASE = process.env.API_BASE || "http://localhost:4000/api";
 const STAMP = Date.now().toString(36);
-const CREDS = { email: `proj-e2e-${STAMP}@eduverse.dev`, username: `proj_${STAMP}`, password: "test12345" };
+const CREDS = {
+  email: `proj-e2e-${STAMP}@eduverse.dev`,
+  username: `proj_${STAMP}`,
+  password: "test12345",
+};
 
 let token = "";
 let passed = 0;
@@ -21,18 +25,28 @@ async function call(path, { method = "GET", body, auth = true, timeoutMs = 120_0
   const headers = { "Content-Type": "application/json" };
   if (auth && token) headers.Authorization = `Bearer ${token}`;
   const res = await fetch(`${BASE}${path}`, {
-    method, headers,
+    method,
+    headers,
     body: body === undefined ? undefined : JSON.stringify(body),
     signal: AbortSignal.timeout(timeoutMs),
   });
   let data = {};
-  try { data = await res.json(); } catch { /* empty */ }
+  try {
+    data = await res.json();
+  } catch {
+    /* empty */
+  }
   return { status: res.status, data };
 }
 
 function check(name, cond, detail = "") {
-  if (cond) { passed++; console.log(`  PASS  ${name}${detail ? ` — ${detail}` : ""}`); }
-  else { failed++; console.log(`  FAIL  ${name}${detail ? ` — ${detail}` : ""}`); }
+  if (cond) {
+    passed++;
+    console.log(`  PASS  ${name}${detail ? ` — ${detail}` : ""}`);
+  } else {
+    failed++;
+    console.log(`  FAIL  ${name}${detail ? ` — ${detail}` : ""}`);
+  }
 }
 
 // A complete, correct Python solution to the fallback "number guessing game"-style
@@ -72,18 +86,40 @@ async function main() {
   console.log("  ... AI designing a tailored project (live)");
   res = await call("/projects/suggest", { method: "POST", body: { language: "python" } });
   const project = res.data?.data;
-  check("suggest: AI created a python project", res.status === 200 && !!project?.id && project.language === "python", `"${(project?.title || "").slice(0, 50)}"`);
-  check("suggest: has a brief + milestones + starter code", (project?.brief?.length || 0) > 20 && Array.isArray(project?.milestones) && project.milestones.length > 0 && (project?.starterCode?.length || 0) > 0, `${project?.milestones?.length} milestones`);
+  check(
+    "suggest: AI created a python project",
+    res.status === 200 && !!project?.id && project.language === "python",
+    `"${(project?.title || "").slice(0, 50)}"`,
+  );
+  check(
+    "suggest: has a brief + milestones + starter code",
+    (project?.brief?.length || 0) > 20 &&
+      Array.isArray(project?.milestones) &&
+      project.milestones.length > 0 &&
+      (project?.starterCode?.length || 0) > 0,
+    `${project?.milestones?.length} milestones`,
+  );
   check("suggest: starts in progress", project?.status === "in_progress");
   const pid = project.id;
 
   // ── Save real code + tick a milestone ──
   const ms = project.milestones.map((m, i) => ({ text: m.text, done: i === 0 }));
-  res = await call(`/projects/${pid}`, { method: "PATCH", body: { code: SOLUTION, milestones: ms } });
-  check("save: code + milestone persisted", res.status === 200 && res.data?.data?.code?.includes("random.randint") && res.data.data.milestones[0]?.done === true);
+  res = await call(`/projects/${pid}`, {
+    method: "PATCH",
+    body: { code: SOLUTION, milestones: ms },
+  });
+  check(
+    "save: code + milestone persisted",
+    res.status === 200 &&
+      res.data?.data?.code?.includes("random.randint") &&
+      res.data.data.milestones[0]?.done === true,
+  );
 
   // ── Negative: submitting with no real code is rejected ──
-  res = await call("/projects", { method: "POST", body: { title: "Empty", brief: "nothing yet", language: "python" } });
+  res = await call("/projects", {
+    method: "POST",
+    body: { title: "Empty", brief: "nothing yet", language: "python" },
+  });
   const emptyId = res.data?.data?.id;
   await call(`/projects/${emptyId}`, { method: "PATCH", body: { code: "" } }); // clear the starter scaffold
   res = await call(`/projects/${emptyId}/submit`, { method: "POST", body: {} });
@@ -93,10 +129,26 @@ async function main() {
   console.log("  ... AI reviewing the submission (live)");
   res = await call(`/projects/${pid}/submit`, { method: "POST", body: {} });
   const graded = res.data?.data;
-  check("submit: graded with a score", res.status === 200 && typeof graded?.grade?.score === "number" && graded.grade.score >= 0, `score=${graded?.grade?.score}/100`);
-  check("submit: rubric + feedback returned", Array.isArray(graded?.grade?.rubric) && graded.grade.rubric.length > 0 && (graded?.grade?.feedback?.length || 0) > 20);
-  check("submit: marked completed", graded?.project?.status === "completed" && !!graded.project.completedAt);
-  check("submit: XP awarded for the project", (graded?.grade?.xpAwarded || 0) > 0, `+${graded?.grade?.xpAwarded} XP`);
+  check(
+    "submit: graded with a score",
+    res.status === 200 && typeof graded?.grade?.score === "number" && graded.grade.score >= 0,
+    `score=${graded?.grade?.score}/100`,
+  );
+  check(
+    "submit: rubric + feedback returned",
+    Array.isArray(graded?.grade?.rubric) &&
+      graded.grade.rubric.length > 0 &&
+      (graded?.grade?.feedback?.length || 0) > 20,
+  );
+  check(
+    "submit: marked completed",
+    graded?.project?.status === "completed" && !!graded.project.completedAt,
+  );
+  check(
+    "submit: XP awarded for the project",
+    (graded?.grade?.xpAwarded || 0) > 0,
+    `+${graded?.grade?.xpAwarded} XP`,
+  );
 
   // ── XP + coins credited ──
   res = await call("/auth/me");
@@ -108,16 +160,27 @@ async function main() {
   // ── Public portfolio (NO auth) shows the completed project ──
   res = await call(`/projects/portfolio/${CREDS.username}`, { auth: false });
   const portfolio = res.data?.data;
-  check("portfolio: public endpoint works without auth", res.status === 200 && portfolio?.user?.username === CREDS.username);
-  check("portfolio: lists the completed project", Array.isArray(portfolio?.projects) && portfolio.projects.some((p) => p.id === pid), `${portfolio?.projects?.length} published`);
+  check(
+    "portfolio: public endpoint works without auth",
+    res.status === 200 && portfolio?.user?.username === CREDS.username,
+  );
+  check(
+    "portfolio: lists the completed project",
+    Array.isArray(portfolio?.projects) && portfolio.projects.some((p) => p.id === pid),
+    `${portfolio?.projects?.length} published`,
+  );
 
   // ── Unpublish hides it from the portfolio ──
   await call(`/projects/${pid}/publish`, { method: "PATCH", body: { published: false } });
   res = await call(`/projects/portfolio/${CREDS.username}`, { auth: false });
-  check("portfolio: unpublish removes it", !(res.data?.data?.projects || []).some((p) => p.id === pid));
+  check(
+    "portfolio: unpublish removes it",
+    !(res.data?.data?.projects || []).some((p) => p.id === pid),
+  );
 
   // ── Auth guard on the studio ──
-  const saved = token; token = "";
+  const saved = token;
+  token = "";
   res = await call("/projects");
   check("auth: studio endpoints require auth", res.status === 401 || res.status === 403);
   token = saved;

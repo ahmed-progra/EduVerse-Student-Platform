@@ -57,7 +57,8 @@ const CHALLENGES: ChallengeData[] = [
     id: "max-three",
     type: "debug",
     title: "Largest of Three (fix the bug)",
-    description: "This should print the largest of three space-separated integers, but it's wrong. Fix it.",
+    description:
+      "This should print the largest of three space-separated integers, but it's wrong. Fix it.",
     starterCode: "a, b, c = map(int, input().split())\nprint(min(a, b, c))",
     solution: "a, b, c = map(int, input().split())\nprint(max(a, b, c))",
     testCases: [
@@ -73,9 +74,11 @@ const CHALLENGES: ChallengeData[] = [
     id: "fizzbuzz",
     type: "write_function",
     title: "FizzBuzz",
-    description: "Read N. Print 1..N one per line, but 'Fizz' for multiples of 3, 'Buzz' for multiples of 5, and 'FizzBuzz' for multiples of both.",
+    description:
+      "Read N. Print 1..N one per line, but 'Fizz' for multiples of 3, 'Buzz' for multiples of 5, and 'FizzBuzz' for multiples of both.",
     starterCode: "n = int(input())\n# loop from 1 to n applying the FizzBuzz rules\n",
-    solution: "n = int(input())\nfor i in range(1, n + 1):\n    if i % 15 == 0:\n        print('FizzBuzz')\n    elif i % 3 == 0:\n        print('Fizz')\n    elif i % 5 == 0:\n        print('Buzz')\n    else:\n        print(i)",
+    solution:
+      "n = int(input())\nfor i in range(1, n + 1):\n    if i % 15 == 0:\n        print('FizzBuzz')\n    elif i % 3 == 0:\n        print('Fizz')\n    elif i % 5 == 0:\n        print('Buzz')\n    else:\n        print(i)",
     testCases: [
       { input: "5", expectedOutput: "1\n2\nFizz\n4\nBuzz" },
       { input: "3", expectedOutput: "1\n2\nFizz" },
@@ -116,9 +119,11 @@ const CHALLENGES: ChallengeData[] = [
     id: "fib-nth",
     type: "write_function",
     title: "Nth Fibonacci",
-    description: "Read N and print the Nth Fibonacci number, where fib(1)=1, fib(2)=1, fib(3)=2, and so on.",
+    description:
+      "Read N and print the Nth Fibonacci number, where fib(1)=1, fib(2)=1, fib(3)=2, and so on.",
     starterCode: "n = int(input())\n# print the nth Fibonacci number\n",
-    solution: "n = int(input())\na, b = 1, 1\nfor _ in range(n - 1):\n    a, b = b, a + b\nprint(a)",
+    solution:
+      "n = int(input())\na, b = 1, 1\nfor _ in range(n - 1):\n    a, b = b, a + b\nprint(a)",
     testCases: [
       { input: "1", expectedOutput: "1" },
       { input: "7", expectedOutput: "13" },
@@ -130,7 +135,8 @@ const CHALLENGES: ChallengeData[] = [
     id: "palindrome",
     type: "write_function",
     title: "Palindrome Check",
-    description: "Read a string and print 'yes' if it reads the same forwards and backwards, otherwise 'no'.",
+    description:
+      "Read a string and print 'yes' if it reads the same forwards and backwards, otherwise 'no'.",
     starterCode: "s = input()\n# print 'yes' if s is a palindrome, else 'no'\n",
     solution: "s = input()\nprint('yes' if s == s[::-1] else 'no')",
     testCases: [
@@ -144,8 +150,10 @@ const CHALLENGES: ChallengeData[] = [
     id: "digital-root",
     type: "write_function",
     title: "Digital Root",
-    description: "Read a non-negative integer. Repeatedly sum its digits until a single digit remains, then print that digit.",
-    starterCode: "n = int(input())\n# reduce n to a single digit by summing its digits repeatedly\n",
+    description:
+      "Read a non-negative integer. Repeatedly sum its digits until a single digit remains, then print that digit.",
+    starterCode:
+      "n = int(input())\n# reduce n to a single digit by summing its digits repeatedly\n",
     solution: "n = int(input())\nwhile n >= 10:\n    n = sum(int(d) for d in str(n))\nprint(n)",
     testCases: [
       { input: "9875", expectedOutput: "2" },
@@ -166,7 +174,7 @@ export async function calculateBattleScore(
   code: string,
   challenge: ChallengeData,
   timeTakenMs: number,
-  timeLimitMs: number
+  timeLimitMs: number,
 ): Promise<number> {
   let passed = 0;
   for (const tc of challenge.testCases) {
@@ -214,7 +222,7 @@ export async function submitBattleSolution(
   userId: string,
   code: string,
   timeTakenMs: number,
-  timeLimitMs: number
+  timeLimitMs: number,
 ) {
   const battle = await prisma.battle.findUnique({ where: { id: battleId } });
   if (!battle) throw new Error("Battle not found");
@@ -245,7 +253,8 @@ export async function submitBattleSolution(
     if (battle.player2Id && submissions.length === 2) {
       const p1Score = submissions.find((s) => s.userId === battle.player1Id)?.score || 0;
       const p2Score = submissions.find((s) => s.userId === battle.player2Id)?.score || 0;
-      const winnerId = p1Score > p2Score ? battle.player1Id : p1Score < p2Score ? (battle.player2Id || null) : null;
+      const winnerId =
+        p1Score > p2Score ? battle.player1Id : p1Score < p2Score ? battle.player2Id || null : null;
 
       const xpReward = winnerId ? 200 : 100;
 
@@ -281,7 +290,8 @@ export async function submitBattleSolution(
       });
 
       await addXp(userId, xpReward, "battle");
-      if (win) await syncMissionProgress(userId, { kind: "battle_win", difficulty: battle.difficulty });
+      if (win)
+        await syncMissionProgress(userId, { kind: "battle_win", difficulty: battle.difficulty });
 
       return { battle, winnerId: win ? userId : null, xpReward };
     }

@@ -46,7 +46,9 @@ export default function CourseDetailPage() {
     }
   }, [courseId]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const handleAssessmentComplete = async (result: unknown) => {
     setJustCompleted(result as { xp?: { xpGained?: number } });
@@ -55,7 +57,9 @@ export default function CourseDetailPage() {
     try {
       const stateRes = await api.learningState(courseId);
       setState(stateRes.data);
-    } catch { /* keep current view */ }
+    } catch {
+      /* keep current view */
+    }
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -64,15 +68,24 @@ export default function CourseDetailPage() {
       <div className="space-y-4 animate-pulse" aria-hidden="true">
         <div className="h-8 w-64 rounded bg-eduverse-surface" />
         <div className="h-20 rounded bg-eduverse-surface" />
-        {[1, 2, 3, 4].map((i) => <div key={i} className="h-16 rounded bg-eduverse-surface" />)}
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="h-16 rounded bg-eduverse-surface" />
+        ))}
       </div>
     );
   }
 
   if (offline) {
     return (
-      <EmptyState icon={WifiOff} title="Can't reach the server" message="The EduVerse API isn't responding. Start the backend, then refresh.">
-        <Link href="/courses" className="px-4 py-2 rounded-lg text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]">
+      <EmptyState
+        icon={WifiOff}
+        title="Can't reach the server"
+        message="The EduVerse API isn't responding. Start the backend, then refresh."
+      >
+        <Link
+          href="/courses"
+          className="px-4 py-2 rounded-lg text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]"
+        >
           Back to Courses
         </Link>
       </EmptyState>
@@ -81,8 +94,15 @@ export default function CourseDetailPage() {
 
   if (!course || !state) {
     return (
-      <EmptyState icon={BookOpen} title="Course not found" message="This course doesn't exist or has been removed.">
-        <Link href="/courses" className="px-4 py-2 rounded-lg text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]">
+      <EmptyState
+        icon={BookOpen}
+        title="Course not found"
+        message="This course doesn't exist or has been removed."
+      >
+        <Link
+          href="/courses"
+          className="px-4 py-2 rounded-lg text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]"
+        >
           Back to Courses
         </Link>
       </EmptyState>
@@ -93,15 +113,19 @@ export default function CourseDetailPage() {
 
   return (
     <div className="space-y-6">
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
-        <Link href="/courses" className="text-sm text-eduverse-text-muted hover:text-eduverse-accent mb-4 inline-flex items-center gap-1 transition-colors">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <Link
+          href="/courses"
+          className="text-sm text-eduverse-text-muted hover:text-eduverse-accent mb-4 inline-flex items-center gap-1 transition-colors"
+        >
           <ChevronLeft className="w-4 h-4" aria-hidden="true" /> Back to Courses
         </Link>
         <div className="flex items-center gap-4 mb-2">
-          <span
-            className="text-3xl leading-none shrink-0"
-            aria-hidden="true"
-          >
+          <span className="text-3xl leading-none shrink-0" aria-hidden="true">
             {course.icon}
           </span>
           <div className="min-w-0">
@@ -113,24 +137,46 @@ export default function CourseDetailPage() {
 
       {/* One-time celebration after submitting an assessment */}
       {justCompleted && !showRunner && (
-        <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
           <div
             className="px-4 py-3 text-sm flex items-center gap-2.5 flex-wrap rounded-[var(--radius-card)]"
             role="status"
-            style={{ background: "oklch(76% 0.14 165 / 0.08)", border: "1px solid oklch(76% 0.14 165 / 0.22)" }}
+            style={{
+              background: "oklch(76% 0.14 165 / 0.08)",
+              border: "1px solid oklch(76% 0.14 165 / 0.22)",
+            }}
           >
             <Zap size={15} style={{ color: "var(--color-eduverse-success)" }} aria-hidden="true" />
-            <span className="text-eduverse-text">Assessment complete — your personalized path is ready{justCompleted?.xp?.xpGained ? ` (+${justCompleted.xp.xpGained} XP)` : ""}.</span>
-            <button className="ml-auto text-xs underline opacity-70 hover:opacity-100 transition-opacity" onClick={() => setJustCompleted(null)}>dismiss</button>
+            <span className="text-eduverse-text">
+              Assessment complete — your personalized path is ready
+              {justCompleted?.xp?.xpGained ? ` (+${justCompleted.xp.xpGained} XP)` : ""}.
+            </span>
+            <button
+              className="ml-auto text-xs underline opacity-70 hover:opacity-100 transition-opacity"
+              onClick={() => setJustCompleted(null)}
+            >
+              dismiss
+            </button>
           </div>
         </motion.div>
       )}
 
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      >
         {showRunner ? (
           <div className="space-y-3">
             {retaking && (
-              <button className="text-xs text-eduverse-text-muted hover:text-eduverse-accent transition-colors" onClick={() => setRetaking(false)}>
+              <button
+                className="text-xs text-eduverse-text-muted hover:text-eduverse-accent transition-colors"
+                onClick={() => setRetaking(false)}
+              >
                 ← Back to my current path
               </button>
             )}

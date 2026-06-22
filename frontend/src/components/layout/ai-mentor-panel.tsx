@@ -12,7 +12,9 @@ export function AIMentorPanel({ onClose, context }: { onClose: () => void; conte
   const [responseLabel, setResponseLabel] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [msgs]);
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [msgs]);
 
   const send = useCallback(async () => {
     if (!input.trim() || loading) return;
@@ -39,7 +41,12 @@ export function AIMentorPanel({ onClose, context }: { onClose: () => void; conte
   const copyText = (text: string) => navigator.clipboard.writeText(text);
 
   return (
-    <AIPanelShell title="AI Mentor" subtitle="Ask any programming question" onClose={onClose} icon={Brain}>
+    <AIPanelShell
+      title="AI Mentor"
+      subtitle="Ask any programming question"
+      onClose={onClose}
+      icon={Brain}
+    >
       <div className="ai-panel-chat">
         {msgs.length === 0 && !loading && (
           <div className="ai-panel-empty">Ask a programming question and get guidance.</div>
@@ -50,7 +57,11 @@ export function AIMentorPanel({ onClose, context }: { onClose: () => void; conte
             {m.role === "assistant" && (
               <div className="ai-panel-meta">
                 <span className="ai-panel-tag">{responseLabel}</span>
-                <button className="ai-panel-copy" onClick={() => copyText(m.text)} title="Copy response">
+                <button
+                  className="ai-panel-copy"
+                  onClick={() => copyText(m.text)}
+                  title="Copy response"
+                >
                   <Copy size={12} />
                 </button>
               </div>
@@ -65,8 +76,18 @@ export function AIMentorPanel({ onClose, context }: { onClose: () => void; conte
         <div ref={endRef} />
       </div>
       <div className="ai-panel-input-row">
-        <input className="ai-panel-input" data-ai-shortcut placeholder="Ask a question..." value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()} disabled={loading} />
-        <button className="ai-panel-send" onClick={send} disabled={!input.trim() || loading}>Send</button>
+        <input
+          className="ai-panel-input"
+          data-ai-shortcut
+          placeholder="Ask a question..."
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && send()}
+          disabled={loading}
+        />
+        <button className="ai-panel-send" onClick={send} disabled={!input.trim() || loading}>
+          Send
+        </button>
       </div>
     </AIPanelShell>
   );

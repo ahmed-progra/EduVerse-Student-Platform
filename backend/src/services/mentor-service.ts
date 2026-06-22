@@ -62,7 +62,13 @@ export interface Signals {
     battlesPlayed: number;
     assessmentsTaken: number;
   };
-  perCourse: Array<{ slug: string; title: string; level: string; completed: number; total: number }>;
+  perCourse: Array<{
+    slug: string;
+    title: string;
+    level: string;
+    completed: number;
+    total: number;
+  }>;
   strongTopics: TopicRef[];
   weakTopics: TopicRef[];
   strengths: string[]; // deduped labels for the profile
@@ -92,19 +98,40 @@ function computeGrowth(xpLogs: Array<{ amount: number; createdAt: Date }>): Grow
 }
 
 export async function gatherSignals(userId: string): Promise<Signals> {
-  const [user, profiles, progress, events, xpLogs, skillsUnlocked, battlesPlayed, battlesWon, courses, assessmentsTaken] =
-    await Promise.all([
-      prisma.user.findUnique({ where: { id: userId } }),
-      prisma.skillProfile.findMany({ where: { userId }, include: { course: { select: { slug: true, title: true } } } }),
-      prisma.userProgress.findMany({ where: { userId, completed: true }, include: { lesson: { select: { courseId: true } } } }),
-      prisma.learningEvent.findMany({ where: { userId }, orderBy: { createdAt: "desc" }, take: 100 }),
-      prisma.xpLog.findMany({ where: { userId }, orderBy: { createdAt: "asc" } }),
-      prisma.userSkill.count({ where: { userId, unlocked: true } }),
-      prisma.battle.count({ where: { OR: [{ player1Id: userId }, { player2Id: userId }], status: "completed" } }),
-      prisma.battle.count({ where: { winnerId: userId } }),
-      prisma.course.findMany({ include: { lessons: { select: { id: true } } }, orderBy: { order: "asc" } }),
-      prisma.assessment.count({ where: { userId, status: "completed" } }),
-    ]);
+  const [
+    user,
+    profiles,
+    progress,
+    events,
+    xpLogs,
+    skillsUnlocked,
+    battlesPlayed,
+    battlesWon,
+    courses,
+    assessmentsTaken,
+  ] = await Promise.all([
+    prisma.user.findUnique({ where: { id: userId } }),
+    prisma.skillProfile.findMany({
+      where: { userId },
+      include: { course: { select: { slug: true, title: true } } },
+    }),
+    prisma.userProgress.findMany({
+      where: { userId, completed: true },
+      include: { lesson: { select: { courseId: true } } },
+    }),
+    prisma.learningEvent.findMany({ where: { userId }, orderBy: { createdAt: "desc" }, take: 100 }),
+    prisma.xpLog.findMany({ where: { userId }, orderBy: { createdAt: "asc" } }),
+    prisma.userSkill.count({ where: { userId, unlocked: true } }),
+    prisma.battle.count({
+      where: { OR: [{ player1Id: userId }, { player2Id: userId }], status: "completed" },
+    }),
+    prisma.battle.count({ where: { winnerId: userId } }),
+    prisma.course.findMany({
+      include: { lessons: { select: { id: true } } },
+      orderBy: { order: "asc" },
+    }),
+    prisma.assessment.count({ where: { userId, status: "completed" } }),
+  ]);
 
   if (!user) throw new Error("User not found");
 
@@ -125,7 +152,12 @@ export async function gatherSignals(userId: string): Promise<Signals> {
   for (const p of profiles) {
     const mastery = safeJson<Record<string, { status: string; score: number }>>(p.mastery, {});
     for (const [key, m] of Object.entries(mastery)) {
-      const ref: TopicRef = { key, label: topicLabel(p.course.slug, key), course: p.course.title, score: m.score ?? 0 };
+      const ref: TopicRef = {
+        key,
+        label: topicLabel(p.course.slug, key),
+        course: p.course.title,
+        score: m.score ?? 0,
+      };
       if (m.status === "mastered") strong.push(ref);
       else if (m.status === "weak" || m.status === "missing") weak.push(ref);
     }
@@ -140,12 +172,14 @@ export async function gatherSignals(userId: string): Promise<Signals> {
   // Retention: share of quiz attempts passed (recent window).
   const quizPass = events.filter((e) => e.type === "quiz_pass").length;
   const quizFail = events.filter((e) => e.type === "quiz_fail").length;
-  const retention = quizPass + quizFail > 0 ? Math.round((quizPass / (quizPass + quizFail)) * 100) : 0;
+  const retention =
+    quizPass + quizFail > 0 ? Math.round((quizPass / (quizPass + quizFail)) * 100) : 0;
 
   // Learning speed: lessons completed per active day.
   const activeDays = new Set(xpLogs.map((l) => dayKey(l.createdAt))).size;
   const rate = activeDays > 0 ? progress.length / activeDays : 0;
-  const learningSpeed: LearningSpeed = progress.length === 0 ? "steady" : rate >= 3 ? "fast" : rate >= 1.2 ? "steady" : "slow";
+  const learningSpeed: LearningSpeed =
+    progress.length === 0 ? "steady" : rate >= 3 ? "fast" : rate >= 1.2 ? "steady" : "slow";
 
   // Momentum: activity density over the last 7 days.
   const weekAgo = Date.now() - 7 * DAY_MS;
@@ -160,7 +194,13 @@ export async function gatherSignals(userId: string): Promise<Signals> {
   });
 
   return {
-    user: { id: user.id, username: user.username, level: user.level, xp: user.xp, placementLevel: user.placementLevel },
+    user: {
+      id: user.id,
+      username: user.username,
+      level: user.level,
+      xp: user.xp,
+      placementLevel: user.placementLevel,
+    },
     totals: {
       lessonsCompleted: progress.length,
       coursesStarted,
@@ -206,9 +246,19 @@ function safeJson<T>(raw: string | null | undefined, fallback: T): T {
 /* ── AI prompt grounding ───────────────────────────────────────────── */
 
 function signalsTable(s: Signals): string {
-  const courses = s.perCourse.map((c) => `  ${c.title}: ${c.completed}/${c.total} lessons (level: ${c.level})`).join("\n");
-  const strong = s.strongTopics.slice(0, 8).map((t) => `${t.label} (${t.course} ${t.score}%)`).join(", ") || "none yet";
-  const weak = s.weakTopics.slice(0, 8).map((t) => `${t.label} (${t.course})`).join(", ") || "none identified";
+  const courses = s.perCourse
+    .map((c) => `  ${c.title}: ${c.completed}/${c.total} lessons (level: ${c.level})`)
+    .join("\n");
+  const strong =
+    s.strongTopics
+      .slice(0, 8)
+      .map((t) => `${t.label} (${t.course} ${t.score}%)`)
+      .join(", ") || "none yet";
+  const weak =
+    s.weakTopics
+      .slice(0, 8)
+      .map((t) => `${t.label} (${t.course})`)
+      .join(", ") || "none identified";
   return [
     `Learner: ${s.user.username}`,
     `Overall: level ${s.user.level}, ${s.user.xp} XP, placement ${s.user.placementLevel}`,
@@ -220,7 +270,12 @@ function signalsTable(s: Signals): string {
     ``,
     `Strong topics: ${strong}`,
     `Weak / missing topics: ${weak}`,
-    s.recentActivity.length ? `\nRecent activity:\n${s.recentActivity.slice(0, 10).map((a) => `  ${a}`).join("\n")}` : "",
+    s.recentActivity.length
+      ? `\nRecent activity:\n${s.recentActivity
+          .slice(0, 10)
+          .map((a) => `  ${a}`)
+          .join("\n")}`
+      : "",
   ].join("\n");
 }
 
@@ -257,26 +312,80 @@ const AREA_HREF: Record<string, string> = {
 
 function profileFallback(s: Signals): AIProfile {
   const topGap = s.weakTopics[0]?.label;
-  const topCourse = [...s.perCourse].sort((a, b) => a.completed / Math.max(1, a.total) - b.completed / Math.max(1, b.total))[0];
+  const topCourse = [...s.perCourse].sort(
+    (a, b) => a.completed / Math.max(1, a.total) - b.completed / Math.max(1, b.total),
+  )[0];
   return {
     summary: `You're a level ${s.user.level} learner with ${s.totals.lessonsCompleted} lessons completed and ${s.user.xp} XP. ${
-      s.strengths.length ? `You're strongest in ${s.strengths.slice(0, 2).join(" and ")}.` : "You're just getting started — every lesson counts."
+      s.strengths.length
+        ? `You're strongest in ${s.strengths.slice(0, 2).join(" and ")}.`
+        : "You're just getting started — every lesson counts."
     }`,
-    motivation: s.momentum >= 40 ? "You've built real momentum this week — keep the streak alive!" : "Small daily steps compound fast. Let's get one win today.",
-    focus: topGap ? `Shore up ${topGap} — it's your biggest current gap.` : "Build solid fundamentals across your active course.",
+    motivation:
+      s.momentum >= 40
+        ? "You've built real momentum this week — keep the streak alive!"
+        : "Small daily steps compound fast. Let's get one win today.",
+    focus: topGap
+      ? `Shore up ${topGap} — it's your biggest current gap.`
+      : "Build solid fundamentals across your active course.",
     insights: [
-      ...(s.strengths.length ? [{ title: "Clear strengths", body: `You're performing well in ${s.strengths.slice(0, 3).join(", ")}.`, kind: "strength" }] : []),
-      ...(s.weaknesses.length ? [{ title: "Focus areas", body: `${s.weaknesses.slice(0, 3).join(", ")} need more practice.`, kind: "gap" }] : []),
-      { title: "Retention", body: `Your quiz pass rate is ${s.retention}%. ${s.retention >= 70 ? "Solid recall." : "Revisit lessons before quizzes to lift this."}`, kind: "habit" },
+      ...(s.strengths.length
+        ? [
+            {
+              title: "Clear strengths",
+              body: `You're performing well in ${s.strengths.slice(0, 3).join(", ")}.`,
+              kind: "strength",
+            },
+          ]
+        : []),
+      ...(s.weaknesses.length
+        ? [
+            {
+              title: "Focus areas",
+              body: `${s.weaknesses.slice(0, 3).join(", ")} need more practice.`,
+              kind: "gap",
+            },
+          ]
+        : []),
+      {
+        title: "Retention",
+        body: `Your quiz pass rate is ${s.retention}%. ${s.retention >= 70 ? "Solid recall." : "Revisit lessons before quizzes to lift this."}`,
+        kind: "habit",
+      },
     ].slice(0, 4),
     recommendations: [
-      { title: topCourse ? `Continue ${topCourse.title}` : "Start a course", reason: "Move your least-finished course forward.", area: "courses", href: "/courses" },
-      { title: "Try a coding battle", reason: "Apply what you know under time pressure.", area: "battle", href: "/battle" },
-      { title: "Ask your mentor", reason: "Get unstuck on your weakest topic.", area: "mentor", href: "/mentor" },
+      {
+        title: topCourse ? `Continue ${topCourse.title}` : "Start a course",
+        reason: "Move your least-finished course forward.",
+        area: "courses",
+        href: "/courses",
+      },
+      {
+        title: "Try a coding battle",
+        reason: "Apply what you know under time pressure.",
+        area: "battle",
+        href: "/battle",
+      },
+      {
+        title: "Ask your mentor",
+        reason: "Get unstuck on your weakest topic.",
+        area: "mentor",
+        href: "/mentor",
+      },
     ],
     projects: [
-      { title: "Mini practice project", brief: "Build a small program that exercises your current course's core skills.", skills: s.strengths.slice(0, 3).length ? s.strengths.slice(0, 3) : ["fundamentals"] },
-      { title: "Gap-closer challenge", brief: topGap ? `Write something that forces you to use ${topGap}.` : "Pick a weak topic and build a tiny demo around it.", skills: s.weaknesses.slice(0, 3).length ? s.weaknesses.slice(0, 3) : ["practice"] },
+      {
+        title: "Mini practice project",
+        brief: "Build a small program that exercises your current course's core skills.",
+        skills: s.strengths.slice(0, 3).length ? s.strengths.slice(0, 3) : ["fundamentals"],
+      },
+      {
+        title: "Gap-closer challenge",
+        brief: topGap
+          ? `Write something that forces you to use ${topGap}.`
+          : "Pick a weak topic and build a tiny demo around it.",
+        skills: s.weaknesses.slice(0, 3).length ? s.weaknesses.slice(0, 3) : ["practice"],
+      },
     ],
   };
 }
@@ -305,15 +414,28 @@ async function aiProfile(s: Signals): Promise<AIProfile> {
       insights: (Array.isArray(data.insights) ? data.insights : [])
         .filter((i) => i && i.title)
         .slice(0, 4)
-        .map((i) => ({ title: String(i.title), body: String(i.body || ""), kind: ["strength", "gap", "habit", "tip"].includes(i.kind) ? i.kind : "tip" })),
+        .map((i) => ({
+          title: String(i.title),
+          body: String(i.body || ""),
+          kind: ["strength", "gap", "habit", "tip"].includes(i.kind) ? i.kind : "tip",
+        })),
       recommendations: (Array.isArray(data.recommendations) ? data.recommendations : [])
         .filter((r) => r && r.title)
         .slice(0, 3)
-        .map((r) => ({ title: String(r.title), reason: String(r.reason || ""), area: String(r.area || "courses"), href: AREA_HREF[String(r.area)] || "/courses" })),
+        .map((r) => ({
+          title: String(r.title),
+          reason: String(r.reason || ""),
+          area: String(r.area || "courses"),
+          href: AREA_HREF[String(r.area)] || "/courses",
+        })),
       projects: (Array.isArray(data.projects) ? data.projects : [])
         .filter((p) => p && p.title)
         .slice(0, 2)
-        .map((p) => ({ title: String(p.title), brief: String(p.brief || ""), skills: (Array.isArray(p.skills) ? p.skills : []).map(String).slice(0, 4) })),
+        .map((p) => ({
+          title: String(p.title),
+          brief: String(p.brief || ""),
+          skills: (Array.isArray(p.skills) ? p.skills : []).map(String).slice(0, 4),
+        })),
     };
   } catch (err) {
     if (err instanceof AIError) {
@@ -326,7 +448,11 @@ async function aiProfile(s: Signals): Promise<AIProfile> {
 
 export async function buildProfile(userId: string, opts: { force?: boolean } = {}) {
   const existing = await prisma.mentorProfile.findUnique({ where: { userId } });
-  if (!opts.force && existing?.lastSyncedAt && Date.now() - existing.lastSyncedAt.getTime() < PROFILE_CACHE_MS) {
+  if (
+    !opts.force &&
+    existing?.lastSyncedAt &&
+    Date.now() - existing.lastSyncedAt.getTime() < PROFILE_CACHE_MS
+  ) {
     return existing;
   }
   const signals = await gatherSignals(userId);
@@ -368,7 +494,16 @@ export async function buildProfile(userId: string, opts: { force?: boolean } = {
 
 /* ── Missions ──────────────────────────────────────────────────────── */
 
-const MISSION_TYPES = new Set(["lesson_complete", "quiz_pass", "battle_win", "topic_mastery", "assessment", "project", "xp_earn", "teach_back"]);
+const MISSION_TYPES = new Set([
+  "lesson_complete",
+  "quiz_pass",
+  "battle_win",
+  "topic_mastery",
+  "assessment",
+  "project",
+  "xp_earn",
+  "teach_back",
+]);
 const DAILY_COUNT = 3;
 const WEEKLY_COUNT = 4;
 
@@ -416,23 +551,107 @@ function clampTarget(type: string, n: number): number {
 }
 
 function missionsFallback(s: Signals, scope: "daily" | "weekly"): MissionSpec[] {
-  const weakCourse = [...s.perCourse].filter((c) => c.total > 0).sort((a, b) => a.completed / a.total - b.completed / b.total)[0];
+  const weakCourse = [...s.perCourse]
+    .filter((c) => c.total > 0)
+    .sort((a, b) => a.completed / a.total - b.completed / b.total)[0];
   const weakTopic = s.weakTopics[0];
-  const weakSlug = weakTopic ? s.perCourse.find((c) => c.title === weakTopic.course)?.slug ?? null : null;
+  const weakSlug = weakTopic
+    ? (s.perCourse.find((c) => c.title === weakTopic.course)?.slug ?? null)
+    : null;
   if (scope === "daily") {
     return [
-      { type: "lesson_complete", title: "Complete 2 lessons", description: "Finish two lessons in any course today.", rationale: "Steady daily practice builds momentum.", target: 2, xpReward: 40, courseSlug: weakCourse?.slug || null, topicKey: null, difficulty: null },
-      { type: "quiz_pass", title: "Ace a quiz", description: "Pass one lesson quiz to lock in what you learned.", rationale: "Quizzes strengthen retention.", target: 1, xpReward: 30, courseSlug: null, topicKey: null, difficulty: null },
-      { type: "xp_earn", title: "Earn 100 XP", description: "Rack up 100 XP from any activity.", rationale: "Keep your growth curve climbing.", target: 100, xpReward: 50, courseSlug: null, topicKey: null, difficulty: null },
+      {
+        type: "lesson_complete",
+        title: "Complete 2 lessons",
+        description: "Finish two lessons in any course today.",
+        rationale: "Steady daily practice builds momentum.",
+        target: 2,
+        xpReward: 40,
+        courseSlug: weakCourse?.slug || null,
+        topicKey: null,
+        difficulty: null,
+      },
+      {
+        type: "quiz_pass",
+        title: "Ace a quiz",
+        description: "Pass one lesson quiz to lock in what you learned.",
+        rationale: "Quizzes strengthen retention.",
+        target: 1,
+        xpReward: 30,
+        courseSlug: null,
+        topicKey: null,
+        difficulty: null,
+      },
+      {
+        type: "xp_earn",
+        title: "Earn 100 XP",
+        description: "Rack up 100 XP from any activity.",
+        rationale: "Keep your growth curve climbing.",
+        target: 100,
+        xpReward: 50,
+        courseSlug: null,
+        topicKey: null,
+        difficulty: null,
+      },
     ];
   }
   return [
-    { type: "lesson_complete", title: "Finish 5 lessons", description: "Complete five lessons this week.", rationale: "Consistent volume drives progress.", target: 5, xpReward: 80, courseSlug: weakCourse?.slug || null, topicKey: null, difficulty: null },
-    { type: "battle_win", title: "Win 2 battles", description: "Win two coding battles this week.", rationale: "Battles sharpen applied skills.", target: 2, xpReward: 90, courseSlug: null, topicKey: null, difficulty: null },
+    {
+      type: "lesson_complete",
+      title: "Finish 5 lessons",
+      description: "Complete five lessons this week.",
+      rationale: "Consistent volume drives progress.",
+      target: 5,
+      xpReward: 80,
+      courseSlug: weakCourse?.slug || null,
+      topicKey: null,
+      difficulty: null,
+    },
+    {
+      type: "battle_win",
+      title: "Win 2 battles",
+      description: "Win two coding battles this week.",
+      rationale: "Battles sharpen applied skills.",
+      target: 2,
+      xpReward: 90,
+      courseSlug: null,
+      topicKey: null,
+      difficulty: null,
+    },
     weakTopic
-      ? { type: "teach_back", title: `Teach ${weakTopic.label} to Pip`, description: `Teach ${weakTopic.label} to your AI apprentice to lock it in.`, rationale: `${weakTopic.label} is one of your weakest topics — teaching it is the fastest way to master it.`, target: 1, xpReward: 80, courseSlug: weakSlug, topicKey: weakTopic.key, difficulty: null }
-      : { type: "quiz_pass", title: "Pass 3 quizzes", description: "Pass three lesson quizzes this week.", rationale: "Reinforce what you've studied.", target: 3, xpReward: 70, courseSlug: null, topicKey: null, difficulty: null },
-    { type: "project", title: "Build a mini project", description: "Apply your skills in a small self-chosen project.", rationale: "Projects turn knowledge into ability.", target: 1, xpReward: 100, courseSlug: null, topicKey: null, difficulty: null },
+      ? {
+          type: "teach_back",
+          title: `Teach ${weakTopic.label} to Pip`,
+          description: `Teach ${weakTopic.label} to your AI apprentice to lock it in.`,
+          rationale: `${weakTopic.label} is one of your weakest topics — teaching it is the fastest way to master it.`,
+          target: 1,
+          xpReward: 80,
+          courseSlug: weakSlug,
+          topicKey: weakTopic.key,
+          difficulty: null,
+        }
+      : {
+          type: "quiz_pass",
+          title: "Pass 3 quizzes",
+          description: "Pass three lesson quizzes this week.",
+          rationale: "Reinforce what you've studied.",
+          target: 3,
+          xpReward: 70,
+          courseSlug: null,
+          topicKey: null,
+          difficulty: null,
+        },
+    {
+      type: "project",
+      title: "Build a mini project",
+      description: "Apply your skills in a small self-chosen project.",
+      rationale: "Projects turn knowledge into ability.",
+      target: 1,
+      xpReward: 100,
+      courseSlug: null,
+      topicKey: null,
+      difficulty: null,
+    },
   ];
 }
 
@@ -447,10 +666,16 @@ function topicExists(courseSlug: string | null, topicKey: string | null): boolea
  * the model omitted one, and guarantee a weekly teach-back when the learner has
  * a clear gap (teaching is EduVerse's differentiator — it should always surface).
  */
-function normalizeTopicScoped(s: Signals, scope: "daily" | "weekly", specs: MissionSpec[], count: number): void {
+function normalizeTopicScoped(
+  s: Signals,
+  scope: "daily" | "weekly",
+  specs: MissionSpec[],
+  count: number,
+): void {
   const weakest = s.weakTopics[0];
   if (!weakest) return;
-  const slugFor = (courseTitle: string) => s.perCourse.find((c) => c.title === courseTitle)?.slug ?? null;
+  const slugFor = (courseTitle: string) =>
+    s.perCourse.find((c) => c.title === courseTitle)?.slug ?? null;
 
   for (const m of specs) {
     if ((m.type === "topic_mastery" || m.type === "teach_back") && !m.topicKey) {
@@ -478,10 +703,17 @@ function normalizeTopicScoped(s: Signals, scope: "daily" | "weekly", specs: Miss
   }
 }
 
-async function aiMissions(s: Signals, scope: "daily" | "weekly", count: number): Promise<MissionSpec[]> {
+async function aiMissions(
+  s: Signals,
+  scope: "daily" | "weekly",
+  count: number,
+): Promise<MissionSpec[]> {
   try {
     const { data } = await generateJSON<{ missions: Array<Record<string, unknown>> }>({
-      system: MISSIONS_SYSTEM.replace("the given window", scope === "daily" ? "a single day" : "one week"),
+      system: MISSIONS_SYSTEM.replace(
+        "the given window",
+        scope === "daily" ? "a single day" : "one week",
+      ),
       prompt: `Window: ${scope}. Generate exactly ${count} missions.\n\nStudent data:\n${clampText(signalsTable(s), 10_000)}`,
       op: `mentor-missions-${scope}`,
       maxOutputTokens: 1536,
@@ -497,7 +729,9 @@ async function aiMissions(s: Signals, scope: "daily" | "weekly", count: number):
       const topicScoped = type === "topic_mastery" || type === "teach_back";
       if (topicScoped && !topicExists(courseSlug, topicKey)) topicKey = null;
       if (!topicScoped) topicKey = null;
-      const difficulty = ["easy", "medium", "hard"].includes(String(m.difficulty)) ? String(m.difficulty) : null;
+      const difficulty = ["easy", "medium", "hard"].includes(String(m.difficulty))
+        ? String(m.difficulty)
+        : null;
       specs.push({
         type,
         title: clampText(String(m.title || "Mission"), 80),
@@ -523,9 +757,16 @@ async function aiMissions(s: Signals, scope: "daily" | "weekly", count: number):
   }
 }
 
-export async function generateMissions(userId: string, scope: "daily" | "weekly", opts: { force?: boolean } = {}) {
+export async function generateMissions(
+  userId: string,
+  scope: "daily" | "weekly",
+  opts: { force?: boolean } = {},
+) {
   const periodKey = scope === "daily" ? dayKey() : isoWeekKey();
-  const existing = await prisma.mission.findMany({ where: { userId, scope, periodKey }, orderBy: { createdAt: "asc" } });
+  const existing = await prisma.mission.findMany({
+    where: { userId, scope, periodKey },
+    orderBy: { createdAt: "asc" },
+  });
   if (existing.length > 0 && !opts.force) return existing;
   if (opts.force) await prisma.mission.deleteMany({ where: { userId, scope, periodKey } });
 
@@ -533,14 +774,21 @@ export async function generateMissions(userId: string, scope: "daily" | "weekly"
   const specs = await aiMissions(signals, scope, scope === "daily" ? DAILY_COUNT : WEEKLY_COUNT);
   const created = [];
   for (const spec of specs) {
-    created.push(await prisma.mission.create({ data: { userId, scope, periodKey, status: "active", progress: 0, ...spec } }));
+    created.push(
+      await prisma.mission.create({
+        data: { userId, scope, periodKey, status: "active", progress: 0, ...spec },
+      }),
+    );
   }
   return created;
 }
 
 /** Active daily + weekly missions for the current periods (generated if absent). */
 export async function getActiveMissions(userId: string) {
-  const [daily, weekly] = await Promise.all([generateMissions(userId, "daily"), generateMissions(userId, "weekly")]);
+  const [daily, weekly] = await Promise.all([
+    generateMissions(userId, "daily"),
+    generateMissions(userId, "weekly"),
+  ]);
   return { daily, weekly };
 }
 
@@ -610,7 +858,10 @@ export async function syncMissionProgress(userId: string, event: MissionEvent) {
     for (const m of missions) {
       let nextProgress = m.progress;
       if (m.type === "xp_earn") {
-        const agg = await prisma.xpLog.aggregate({ _sum: { amount: true }, where: { userId, createdAt: { gte: m.createdAt } } });
+        const agg = await prisma.xpLog.aggregate({
+          _sum: { amount: true },
+          where: { userId, createdAt: { gte: m.createdAt } },
+        });
         nextProgress = Math.min(m.target, agg._sum.amount || 0);
       } else if (matchesAction(m, event)) {
         nextProgress = Math.min(m.target, m.progress + 1);
@@ -620,10 +871,16 @@ export async function syncMissionProgress(userId: string, event: MissionEvent) {
       const done = nextProgress >= m.target;
       const updated = await prisma.mission.update({
         where: { id: m.id },
-        data: { progress: nextProgress, status: done ? "completed" : "active", completedAt: done ? new Date() : null },
+        data: {
+          progress: nextProgress,
+          status: done ? "completed" : "active",
+          completedAt: done ? new Date() : null,
+        },
       });
       if (done) {
-        await addXp(userId, m.xpReward, "challenge").catch((e) => console.error("[mentor] mission XP payout failed:", e));
+        await addXp(userId, m.xpReward, "challenge").catch((e) =>
+          console.error("[mentor] mission XP payout failed:", e),
+        );
         completed.push(updated);
       }
     }
@@ -639,12 +896,15 @@ export async function completeMissionManually(userId: string, missionId: string)
   const m = await prisma.mission.findFirst({ where: { id: missionId, userId } });
   if (!m) throw new AIError("Mission not found.", 404);
   if (m.status === "completed") return m;
-  if (m.type !== "project") throw new AIError("This mission completes automatically as you learn.", 400);
+  if (m.type !== "project")
+    throw new AIError("This mission completes automatically as you learn.", 400);
   const updated = await prisma.mission.update({
     where: { id: m.id },
     data: { progress: m.target, status: "completed", completedAt: new Date() },
   });
-  await addXp(userId, m.xpReward, "challenge").catch((e) => console.error("[mentor] project XP payout failed:", e));
+  await addXp(userId, m.xpReward, "challenge").catch((e) =>
+    console.error("[mentor] project XP payout failed:", e),
+  );
   return updated;
 }
 
@@ -675,7 +935,10 @@ function snapOf(s: Signals): MetricSnap {
   };
 }
 
-function diffMetrics(s: Signals, prev: MetricSnap | null): { improved: string[]; regressed: string[]; needsWork: string[] } {
+function diffMetrics(
+  s: Signals,
+  prev: MetricSnap | null,
+): { improved: string[]; regressed: string[]; needsWork: string[] } {
   const cur = snapOf(s);
   const improved: string[] = [];
   const regressed: string[] = [];
@@ -710,8 +973,11 @@ async function aiReport(
   s: Signals,
   improved: string[],
   regressed: string[],
-  needsWork: string[]
-): Promise<{ narrative: string; projects: Array<{ title: string; brief: string; skills: string[] }> }> {
+  needsWork: string[],
+): Promise<{
+  narrative: string;
+  projects: Array<{ title: string; brief: string; skills: string[] }>;
+}> {
   const fallback = {
     narrative: `This week you completed ${s.totals.lessonsCompleted} lessons total and reached level ${s.user.level}. ${
       improved.length ? `Wins: ${improved.slice(0, 3).join("; ")}. ` : ""
@@ -719,7 +985,10 @@ async function aiReport(
     projects: profileFallback(s).projects,
   };
   try {
-    const { data } = await generateJSON<{ narrative: string; projects: Array<{ title: string; brief: string; skills: string[] }> }>({
+    const { data } = await generateJSON<{
+      narrative: string;
+      projects: Array<{ title: string; brief: string; skills: string[] }>;
+    }>({
       system: REPORT_SYSTEM,
       prompt: `Student metrics:\n${clampText(signalsTable(s), 9_000)}\n\nThis week's deltas:\nImproved: ${improved.join("; ") || "—"}\nRegressed: ${regressed.join("; ") || "—"}\nNeeds work: ${needsWork.join("; ") || "—"}\n\nWrite the weekly report JSON.`,
       op: "mentor-report",
@@ -731,7 +1000,11 @@ async function aiReport(
       projects: (Array.isArray(data.projects) ? data.projects : fallback.projects)
         .filter((p) => p && p.title)
         .slice(0, 2)
-        .map((p) => ({ title: String(p.title), brief: String(p.brief || ""), skills: (Array.isArray(p.skills) ? p.skills : []).map(String).slice(0, 4) })),
+        .map((p) => ({
+          title: String(p.title),
+          brief: String(p.brief || ""),
+          skills: (Array.isArray(p.skills) ? p.skills : []).map(String).slice(0, 4),
+        })),
     };
   } catch (err) {
     if (err instanceof AIError) {
@@ -744,7 +1017,9 @@ async function aiReport(
 
 export async function buildReport(userId: string, opts: { force?: boolean } = {}) {
   const periodKey = isoWeekKey();
-  const existing = await prisma.mentorReport.findUnique({ where: { userId_periodKey: { userId, periodKey } } });
+  const existing = await prisma.mentorReport.findUnique({
+    where: { userId_periodKey: { userId, periodKey } },
+  });
   if (existing && !opts.force) return existing;
 
   const signals = await gatherSignals(userId);
@@ -797,7 +1072,9 @@ export async function mentorChat(userId: string, message: string, history: ChatT
       .filter(Boolean)
       .join("\n");
   }
-  const prompt = context ? `${context}\n\nThe student asks: "${clampText(message, 8_000)}"` : clampText(message, 8_000);
+  const prompt = context
+    ? `${context}\n\nThe student asks: "${clampText(message, 8_000)}"`
+    : clampText(message, 8_000);
   return generateText({
     system: MENTOR_CHAT_SYSTEM,
     prompt,

@@ -10,7 +10,15 @@ import { fadeUp, staggerContainer, fastEaseTransition } from "@/lib/motion";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { CheckCircle, ChevronLeft, Zap, Sparkles, BookOpen, WifiOff, ArrowRight } from "lucide-react";
+import {
+  CheckCircle,
+  ChevronLeft,
+  Zap,
+  Sparkles,
+  BookOpen,
+  WifiOff,
+  ArrowRight,
+} from "lucide-react";
 import dynamic from "next/dynamic";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { LessonAITools } from "@/features/lessons/lesson-ai-tools";
@@ -18,7 +26,10 @@ import { LessonMentor } from "@/features/lessons/lesson-mentor";
 import { QuizCheckpoint } from "@/features/lessons/quiz-checkpoint";
 import { Confetti } from "@/components/ui/confetti";
 
-const Visualizer = dynamic(() => import("@/features/visualizer/visualizer").then(m => ({ default: m.Visualizer })), { ssr: false });
+const Visualizer = dynamic(
+  () => import("@/features/visualizer/visualizer").then((m) => ({ default: m.Visualizer })),
+  { ssr: false },
+);
 
 interface LessonData {
   id: string;
@@ -50,15 +61,18 @@ export default function LessonPage() {
   const [newLevel, setNewLevel] = useState<number | null>(null);
 
   useEffect(() => {
-    api.getLesson(id as string).then((res) => {
-      setLesson(res.data);
-      setInitialCode(res.data.codeTemplate);
-      setCompleted(res.data.completed);
-      setLoading(false);
-    }).catch(() => {
-      setOffline(true);
-      setLoading(false);
-    });
+    api
+      .getLesson(id as string)
+      .then((res) => {
+        setLesson(res.data);
+        setInitialCode(res.data.codeTemplate);
+        setCompleted(res.data.completed);
+        setLoading(false);
+      })
+      .catch(() => {
+        setOffline(true);
+        setLoading(false);
+      });
   }, [id]);
 
   const handleComplete = async () => {
@@ -94,22 +108,45 @@ export default function LessonPage() {
 
   if (offline) {
     return (
-      <EmptyState icon={WifiOff} title="Can't reach the server" message="The EduVerse API isn't responding. Start the backend, then refresh.">
-        <Link href="/courses" className="inline-flex items-center gap-1.5 px-5 py-2 rounded-[var(--radius-button)] text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]">Back to Courses</Link>
+      <EmptyState
+        icon={WifiOff}
+        title="Can't reach the server"
+        message="The EduVerse API isn't responding. Start the backend, then refresh."
+      >
+        <Link
+          href="/courses"
+          className="inline-flex items-center gap-1.5 px-5 py-2 rounded-[var(--radius-button)] text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]"
+        >
+          Back to Courses
+        </Link>
       </EmptyState>
     );
   }
 
   if (!lesson) {
     return (
-      <EmptyState icon={BookOpen} title="Lesson not found" message="This lesson doesn't exist or has been removed.">
-        <Link href="/courses" className="inline-flex items-center gap-1.5 px-5 py-2 rounded-[var(--radius-button)] text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]">Back to Courses</Link>
+      <EmptyState
+        icon={BookOpen}
+        title="Lesson not found"
+        message="This lesson doesn't exist or has been removed."
+      >
+        <Link
+          href="/courses"
+          className="inline-flex items-center gap-1.5 px-5 py-2 rounded-[var(--radius-button)] text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]"
+        >
+          Back to Courses
+        </Link>
       </EmptyState>
     );
   }
 
   return (
-    <motion.div className="space-y-6 max-w-6xl mx-auto" initial="hidden" animate="visible" variants={staggerContainer}>
+    <motion.div
+      className="space-y-6 max-w-6xl mx-auto"
+      initial="hidden"
+      animate="visible"
+      variants={staggerContainer}
+    >
       <Confetti active={celebrate} count={leveledUp ? 64 : 28} />
 
       {/* XP gain toast */}
@@ -132,7 +169,9 @@ export default function LessonPage() {
               {leveledUp ? (
                 <>
                   <div className="font-bold text-eduverse-accent">Level {newLevel} reached!</div>
-                  <div className="text-xs text-eduverse-text-muted">+{xpGained} XP · lesson complete</div>
+                  <div className="text-xs text-eduverse-text-muted">
+                    +{xpGained} XP · lesson complete
+                  </div>
                 </>
               ) : (
                 <>
@@ -150,14 +189,22 @@ export default function LessonPage() {
         <div className="section-label">
           <span className="section-label-prefix">//</span> Lesson
         </div>
-        <Link href={`/courses/${lesson.courseId}`} className="text-sm text-eduverse-text-muted hover:text-eduverse-accent inline-flex items-center gap-1 mb-4 transition-colors">
+        <Link
+          href={`/courses/${lesson.courseId}`}
+          className="text-sm text-eduverse-text-muted hover:text-eduverse-accent inline-flex items-center gap-1 mb-4 transition-colors"
+        >
           <ChevronLeft className="w-4 h-4" aria-hidden="true" /> Back to Course
         </Link>
         <h1 className="text-2xl font-bold font-display tracking-tight">{lesson.title}</h1>
         <div className="flex items-center gap-4 mt-2 text-sm text-eduverse-text-muted">
           <span className="font-mono text-xs">{lesson.language.toUpperCase()}</span>
           <span>+{lesson.xpReward} XP</span>
-          {completed && <span className="text-eduverse-success flex items-center gap-1"><CheckCircle className="w-4 h-4" aria-hidden="true" />Completed</span>}
+          {completed && (
+            <span className="text-eduverse-success flex items-center gap-1">
+              <CheckCircle className="w-4 h-4" aria-hidden="true" />
+              Completed
+            </span>
+          )}
         </div>
       </motion.div>
 
@@ -202,9 +249,14 @@ export default function LessonPage() {
 
       {/* Complete button / next-best-action */}
       {!completed ? (
-        <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.3 }} className="flex justify-center">
+        <motion.div
+          variants={fadeUp}
+          transition={{ ...fastEaseTransition, delay: 0.3 }}
+          className="flex justify-center"
+        >
           <GradientButton onClick={handleComplete}>
-            <CheckCircle className="w-4 h-4" aria-hidden="true" /> Mark Complete (+{lesson.xpReward} XP)
+            <CheckCircle className="w-4 h-4" aria-hidden="true" /> Mark Complete (+{lesson.xpReward}{" "}
+            XP)
           </GradientButton>
         </motion.div>
       ) : (
@@ -218,10 +270,16 @@ export default function LessonPage() {
               Nice work — keep the momentum going. Your path picks the best next lesson for you.
             </p>
             <div className="flex items-center justify-center gap-3 flex-wrap">
-              <Link href={`/courses/${lesson.courseId}`} className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-[var(--radius-button)] text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]">
+              <Link
+                href={`/courses/${lesson.courseId}`}
+                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-[var(--radius-button)] text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]"
+              >
                 Continue your path <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </Link>
-              <Link href="/mentor" className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-[var(--radius-button)] text-sm font-medium border border-[var(--color-eduverse-border-mid)] text-eduverse-text hover:border-eduverse-accent transition-colors">
+              <Link
+                href="/mentor"
+                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-[var(--radius-button)] text-sm font-medium border border-[var(--color-eduverse-border-mid)] text-eduverse-text hover:border-eduverse-accent transition-colors"
+              >
                 Ask the AI Coach
               </Link>
             </div>

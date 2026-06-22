@@ -10,7 +10,11 @@ interface MemoryPanelProps {
   onFrameSeek: (idx: number) => void;
 }
 
-export const MemoryPanel = memo(function MemoryPanel({ frames, currentIdx, onFrameSeek }: MemoryPanelProps) {
+export const MemoryPanel = memo(function MemoryPanel({
+  frames,
+  currentIdx,
+  onFrameSeek,
+}: MemoryPanelProps) {
   const [expandedVars, setExpandedVars] = useState<Set<string>>(new Set());
 
   const currentFrame = currentIdx >= 0 && currentIdx < frames.length ? frames[currentIdx] : null;
@@ -52,7 +56,10 @@ export const MemoryPanel = memo(function MemoryPanel({ frames, currentIdx, onFra
       for (const [k, v] of Object.entries(frame.variables)) {
         if (!hist[k]) hist[k] = [];
         const val = v.value;
-        if (hist[k].length === 0 || JSON.stringify(hist[k][hist[k].length - 1]) !== JSON.stringify(val)) {
+        if (
+          hist[k].length === 0 ||
+          JSON.stringify(hist[k][hist[k].length - 1]) !== JSON.stringify(val)
+        ) {
           hist[k].push(val);
         }
       }
@@ -72,7 +79,8 @@ export const MemoryPanel = memo(function MemoryPanel({ frames, currentIdx, onFra
   const formatValue = (val: unknown, type: string): string => {
     if (type === "str") return `"${String(val)}"`;
     if (type === "NoneType") return "None";
-    if (type === "list") return `[${Array.isArray(val) ? val.map((v: unknown) => formatValue(v, typeof v)).join(", ") : "..."}]`;
+    if (type === "list")
+      return `[${Array.isArray(val) ? val.map((v: unknown) => formatValue(v, typeof v)).join(", ") : "..."}]`;
     if (type === "dict") return "{...}";
     return String(val);
   };
@@ -117,7 +125,11 @@ export const MemoryPanel = memo(function MemoryPanel({ frames, currentIdx, onFra
                           <span className="value-text">{formatValue(info.value, info.type)}</span>
                           {history.length > 1 && (
                             <span className="history-toggle">
-                              {isExpanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+                              {isExpanded ? (
+                                <ChevronDown className="w-3 h-3" />
+                              ) : (
+                                <ChevronRight className="w-3 h-3" />
+                              )}
                             </span>
                           )}
                         </td>
@@ -130,7 +142,9 @@ export const MemoryPanel = memo(function MemoryPanel({ frames, currentIdx, onFra
                               {history.map((h: unknown, i: number) => (
                                 <span key={i} className="history-val">
                                   {formatValue(h, typeof h === "string" ? "str" : typeof h)}
-                                  {i < history.length - 1 && <span className="history-arrow">→</span>}
+                                  {i < history.length - 1 && (
+                                    <span className="history-arrow">→</span>
+                                  )}
                                 </span>
                               ))}
                             </div>
@@ -153,15 +167,12 @@ export const MemoryPanel = memo(function MemoryPanel({ frames, currentIdx, onFra
             <div className="log-empty">No changes yet</div>
           ) : (
             changeLog.slice(-15).map((entry, i) => (
-              <div
-                key={i}
-                className="log-entry"
-                onClick={() => onFrameSeek(entry.step)}
-              >
+              <div key={i} className="log-entry" onClick={() => onFrameSeek(entry.step)}>
                 <span className="log-step">Step {entry.step}:</span>
                 <span className="log-var">{entry.varName}</span>
                 <span className="log-change">
-                  {formatValue(entry.from, typeof entry.from)} → {formatValue(entry.to, typeof entry.to)}
+                  {formatValue(entry.from, typeof entry.from)} →{" "}
+                  {formatValue(entry.to, typeof entry.to)}
                 </span>
               </div>
             ))

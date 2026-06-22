@@ -6,7 +6,9 @@ if (!SECRET) {
   if (process.env.NODE_ENV === "production") {
     throw new Error("JWT_SECRET must be set in production");
   }
-  console.warn("[security] JWT_SECRET is not set — using an insecure development fallback. Set it in backend/.env.");
+  console.warn(
+    "[security] JWT_SECRET is not set — using an insecure development fallback. Set it in backend/.env.",
+  );
 }
 
 const EFFECTIVE_SECRET = SECRET || "dev-secret-change-in-production";

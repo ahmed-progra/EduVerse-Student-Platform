@@ -15,8 +15,22 @@ import { fadeUp, staggerContainer, fastEaseTransition, cardHover } from "@/lib/m
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
-  BookOpen, Swords, GitBranch, ShoppingBag,
-  Zap, Code2, Flame, Trophy, Star, Clock, Target, Flag, WifiOff, Sparkles, ArrowRight, Rocket,
+  BookOpen,
+  Swords,
+  GitBranch,
+  ShoppingBag,
+  Zap,
+  Code2,
+  Flame,
+  Trophy,
+  Star,
+  Clock,
+  Target,
+  Flag,
+  WifiOff,
+  Sparkles,
+  ArrowRight,
+  Rocket,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -48,7 +62,12 @@ const sourceIcons: Record<string, LucideIcon> = {
 
 export default function DashboardPage() {
   const { user } = useAuthStore();
-  const [stats, setStats] = useState({ lessonsDone: 0, battlesWon: 0, skillsUnlocked: 0, totalXp: 0 });
+  const [stats, setStats] = useState({
+    lessonsDone: 0,
+    battlesWon: 0,
+    skillsUnlocked: 0,
+    totalXp: 0,
+  });
   const [recentActivity, setRecentActivity] = useState<XpLogEntry[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [offline, setOffline] = useState(false);
@@ -101,8 +120,12 @@ export default function DashboardPage() {
   ];
 
   return (
-    <motion.div className="space-y-8" initial="hidden" animate="visible" variants={staggerContainer}>
-
+    <motion.div
+      className="space-y-8"
+      initial="hidden"
+      animate="visible"
+      variants={staggerContainer}
+    >
       {/* ── Welcome Header ── */}
       <motion.div variants={fadeUp} transition={fastEaseTransition}>
         <div className="flex items-start justify-between gap-4 flex-wrap">
@@ -114,7 +137,11 @@ export default function DashboardPage() {
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             {rank > 0 && (
-              <Link href="/leaderboard" className="streak-badge hover:brightness-110 transition-[filter]" style={{ textDecoration: "none" }}>
+              <Link
+                href="/leaderboard"
+                className="streak-badge hover:brightness-110 transition-[filter]"
+                style={{ textDecoration: "none" }}
+              >
                 <Trophy className="w-4 h-4" aria-hidden="true" />
                 <span>Rank #{rank}</span>
               </Link>
@@ -122,7 +149,9 @@ export default function DashboardPage() {
             {streak > 0 && (
               <div className="streak-badge">
                 <Flame className="w-4 h-4" aria-hidden="true" />
-                <span>{streak} day streak{streak >= 7 ? " · On fire!" : ""}</span>
+                <span>
+                  {streak} day streak{streak >= 7 ? " · On fire!" : ""}
+                </span>
               </div>
             )}
           </div>
@@ -143,14 +172,14 @@ export default function DashboardPage() {
         <div className="section-label">
           <span className="section-label-prefix">//</span> Quick Actions
         </div>
-        <motion.div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4" variants={staggerContainer}>
+        <motion.div
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4"
+          variants={staggerContainer}
+        >
           {quickActions.map((action) => (
             <motion.div key={action.label} variants={fadeUp} transition={fastEaseTransition}>
               <Link href={action.href} className="block">
-                <motion.div
-                  {...cardHover}
-                  className="app-card quick-action-card app-card-link"
-                >
+                <motion.div {...cardHover} className="app-card quick-action-card app-card-link">
                   <div className="quick-action-icon">
                     <action.icon className={`w-5 h-5 ${action.color}`} aria-hidden="true" />
                   </div>
@@ -188,9 +217,15 @@ export default function DashboardPage() {
                     <stat.icon className="w-5 h-5 text-eduverse-accent" aria-hidden="true" />
                   </div>
                   <div className="stat-number">
-                    {loaded && !offline ? <AnimatedNumber value={stat.value} delay={i * 90} /> : "—"}
+                    {loaded && !offline ? (
+                      <AnimatedNumber value={stat.value} delay={i * 90} />
+                    ) : (
+                      "—"
+                    )}
                   </div>
-                  <div className="text-xs text-eduverse-text-muted mt-2 font-mono">{stat.label}</div>
+                  <div className="text-xs text-eduverse-text-muted mt-2 font-mono">
+                    {stat.label}
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -229,7 +264,10 @@ export default function DashboardPage() {
               title="No activity yet"
               message="Complete a lesson or win a battle to start your journey. Every action earns XP."
             >
-              <Link href="/courses" className="inline-flex items-center gap-2 px-5 py-3 rounded-[var(--radius-button)] text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-all">
+              <Link
+                href="/courses"
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-[var(--radius-button)] text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-all"
+              >
                 Start a course <ArrowRight className="w-4 h-4" />
               </Link>
             </EmptyState>
@@ -246,18 +284,29 @@ export default function DashboardPage() {
                     className="flex items-center justify-between py-3 px-3 rounded-[var(--radius-button)] border border-transparent hover:border-eduverse-border hover:bg-eduverse-accent-soft/40 transition-all"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: "var(--color-eduverse-accent-soft)" }}>
+                      <div
+                        className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                        style={{ background: "var(--color-eduverse-accent-soft)" }}
+                      >
                         <Icon className="w-3.5 h-3.5 text-eduverse-text-muted" aria-hidden="true" />
                       </div>
                       <div>
-                        <div className="text-sm font-medium text-eduverse-text capitalize">{log.source}</div>
+                        <div className="text-sm font-medium text-eduverse-text capitalize">
+                          {log.source}
+                        </div>
                         <div className="text-xs text-eduverse-text-muted flex items-center gap-1 mt-0.5">
                           <Clock className="w-2.5 h-2.5" aria-hidden="true" />
-                          {new Date(log.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                          {new Date(log.createdAt).toLocaleDateString(undefined, {
+                            month: "short",
+                            day: "numeric",
+                          })}
                         </div>
                       </div>
                     </div>
-                    <span className="text-sm font-bold font-mono text-eduverse-success px-2 py-0.5 rounded" style={{ background: "oklch(76% 0.14 165 / 0.1)" }}>
+                    <span
+                      className="text-sm font-bold font-mono text-eduverse-success px-2 py-0.5 rounded"
+                      style={{ background: "oklch(76% 0.14 165 / 0.1)" }}
+                    >
                       +{log.amount} XP
                     </span>
                   </motion.div>

@@ -23,8 +23,14 @@ export function AnnouncementsCard() {
 
       {!ready ? null : latest.length === 0 ? (
         <Link href="/announcements" className="ann-strip-item">
-          <span className="ann-strip-dot" style={{ background: "var(--color-eduverse-text-muted)", boxShadow: "none" }} />
-          <span className="ann-strip-title" style={{ color: "var(--color-eduverse-text-muted)", fontWeight: 400 }}>
+          <span
+            className="ann-strip-dot"
+            style={{ background: "var(--color-eduverse-text-muted)", boxShadow: "none" }}
+          />
+          <span
+            className="ann-strip-title"
+            style={{ color: "var(--color-eduverse-text-muted)", fontWeight: 400 }}
+          >
             No announcements yet — post your first update
           </span>
           <Plus size={14} aria-hidden="true" />
@@ -33,7 +39,14 @@ export function AnnouncementsCard() {
         <div className="ann-strip">
           {latest.map((a) => (
             <Link key={a.id} href="/announcements" className="ann-strip-item">
-              <span className="ann-strip-dot" style={a.pinned ? undefined : { background: "var(--color-eduverse-text-muted)", boxShadow: "none" }} />
+              <span
+                className="ann-strip-dot"
+                style={
+                  a.pinned
+                    ? undefined
+                    : { background: "var(--color-eduverse-text-muted)", boxShadow: "none" }
+                }
+              />
               <span className="ann-strip-title">{a.title}</span>
               <span className="ann-strip-tag">{a.tag}</span>
             </Link>

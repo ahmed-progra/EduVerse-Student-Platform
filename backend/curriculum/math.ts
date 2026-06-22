@@ -10,8 +10,16 @@ export const math: LessonDef[] = [
       `<strong>Order of operations</strong> — parentheses, exponents, multiplication/division, addition/subtraction (PEMDAS)`,
     ],
     examples: [
-      ex("Evaluating a simple expression", `x = 4\nresult = 2 * x + 3\nprint("2x + 3 =", result)`, `2x + 3 = 11`),
-      ex("Expression with two variables", `x = 5\ny = 2\nresult = 3 * x - 2 * y\nprint("3x - 2y =", result)`, `3x - 2y = 11`),
+      ex(
+        "Evaluating a simple expression",
+        `x = 4\nresult = 2 * x + 3\nprint("2x + 3 =", result)`,
+        `2x + 3 = 11`,
+      ),
+      ex(
+        "Expression with two variables",
+        `x = 5\ny = 2\nresult = 3 * x - 2 * y\nprint("3x - 2y =", result)`,
+        `3x - 2y = 11`,
+      ),
     ],
     realWorld: `Engineers use algebraic expressions to calculate stress on materials. Business analysts use them to model profit: <code>revenue - cost × quantity</code>. Every programming language evaluates expressions constantly.`,
     practice: `Evaluate <code>4a + 3b - c</code> when a = 6, b = 5, c = 7. Modify the template to compute it.`,
@@ -26,8 +34,18 @@ export const math: LessonDef[] = [
     template: `a = 6\nb = 5\nc = 7\nresult = 4 * a + 3 * b - c\nprint("4a + 3b - c =", result)`,
     quiz: [
       q("What is 3x + 2 when x = 7?", ["21", "23", "20", "17"], 1, `3 × 7 + 2 = 21 + 2 = 23.`),
-      q("Evaluate 2a − b when a = 8 and b = 3", ["13", "11", "5", "16"], 0, `2 × 8 − 3 = 16 − 3 = 13.`),
-      q("Which operation comes first in 3 + 4 × 2?", ["Addition", "Multiplication", "Either", "Subtraction"], 1, `Multiplication before addition: 4 × 2 = 8, then 3 + 8 = 11.`),
+      q(
+        "Evaluate 2a − b when a = 8 and b = 3",
+        ["13", "11", "5", "16"],
+        0,
+        `2 × 8 − 3 = 16 − 3 = 13.`,
+      ),
+      q(
+        "Which operation comes first in 3 + 4 × 2?",
+        ["Addition", "Multiplication", "Either", "Subtraction"],
+        1,
+        `Multiplication before addition: 4 × 2 = 8, then 3 + 8 = 11.`,
+      ),
     ],
   }),
 
@@ -40,8 +58,16 @@ export const math: LessonDef[] = [
       `<strong>Check your answer</strong> — substitute the solution back into the original equation`,
     ],
     examples: [
-      ex("Two-step equation", `# 2x + 3 = 7\n# Subtract 3: 2x = 4\n# Divide by 2: x = 2\nx = 2\ncheck = 2 * x + 3\nprint("x =", x)\nprint("Check: 2x + 3 =", check)`, `x = 2\nCheck: 2x + 3 = 7`),
-      ex("Variables on both sides", `# 5x - 3 = 2x + 9\n# Subtract 2x: 3x - 3 = 9\n# Add 3: 3x = 12\n# Divide: x = 4\nx = 4\nprint("x =", x)\nprint("Check LHS:", 5 * x - 3)\nprint("Check RHS:", 2 * x + 9)`, `x = 4\nCheck LHS: 17\nCheck RHS: 17`),
+      ex(
+        "Two-step equation",
+        `# 2x + 3 = 7\n# Subtract 3: 2x = 4\n# Divide by 2: x = 2\nx = 2\ncheck = 2 * x + 3\nprint("x =", x)\nprint("Check: 2x + 3 =", check)`,
+        `x = 2\nCheck: 2x + 3 = 7`,
+      ),
+      ex(
+        "Variables on both sides",
+        `# 5x - 3 = 2x + 9\n# Subtract 2x: 3x - 3 = 9\n# Add 3: 3x = 12\n# Divide: x = 4\nx = 4\nprint("x =", x)\nprint("Check LHS:", 5 * x - 3)\nprint("Check RHS:", 2 * x + 9)`,
+        `x = 4\nCheck LHS: 17\nCheck RHS: 17`,
+      ),
     ],
     realWorld: `Every "solve for x" in science, finance, and engineering is a linear equation. Calculating break-even points, converting temperatures (F = 1.8C + 32), and computing loan payments all use linear equations.`,
     practice: `Solve <code>3x - 7 = 14</code>. Modify the template to compute x and verify by checking both sides.`,
@@ -55,8 +81,18 @@ export const math: LessonDef[] = [
     ],
     template: `# Solve: 3x - 7 = 14\n# 3x = 14 + 7\n# 3x = 21\n# x = 21 / 3\nx = 21 // 3\nprint("x =", x)\nlhs = 3 * x - 7\nprint("Check:", lhs, "= 14")`,
     quiz: [
-      q("Solve 4x + 5 = 21", ["x = 4", "x = 5", "x = 6.5", "x = 3"], 0, `4x = 21 − 5 = 16, so x = 4.`),
-      q("What is the first step to solve 3x − 8 = 13?", ["Divide by 3", "Add 8 to both sides", "Subtract 13", "Multiply by 3"], 1, `Undo the subtraction first: add 8 to both sides.`),
+      q(
+        "Solve 4x + 5 = 21",
+        ["x = 4", "x = 5", "x = 6.5", "x = 3"],
+        0,
+        `4x = 21 − 5 = 16, so x = 4.`,
+      ),
+      q(
+        "What is the first step to solve 3x − 8 = 13?",
+        ["Divide by 3", "Add 8 to both sides", "Subtract 13", "Multiply by 3"],
+        1,
+        `Undo the subtraction first: add 8 to both sides.`,
+      ),
       q("Check which value satisfies 2x + 1 = 9", ["3", "4", "5", "6"], 1, `2 × 4 + 1 = 9 ✓`),
     ],
   }),
@@ -70,8 +106,16 @@ export const math: LessonDef[] = [
       `<strong>Factoring</strong> — when a = 1, find two numbers that multiply to c and add to b`,
     ],
     examples: [
-      ex("Using the quadratic formula", `import math\na, b, c = 1, -3, 2\nd = b**2 - 4*a*c\nroot1 = (-b + math.sqrt(d)) / (2*a)\nroot2 = (-b - math.sqrt(d)) / (2*a)\nprint("Roots:", root1, "and", root2)\nprint("Discriminant:", d)`, `Roots: 2.0 and 1.0\nDiscriminant: 1`),
-      ex("Negative discriminant (no real roots)", `import math\na, b, c = 1, 2, 5\nd = b**2 - 4*a*c\nprint("Discriminant:", d)\nif d < 0:\n    print("No real roots")`, `Discriminant: -16\nNo real roots`),
+      ex(
+        "Using the quadratic formula",
+        `import math\na, b, c = 1, -3, 2\nd = b**2 - 4*a*c\nroot1 = (-b + math.sqrt(d)) / (2*a)\nroot2 = (-b - math.sqrt(d)) / (2*a)\nprint("Roots:", root1, "and", root2)\nprint("Discriminant:", d)`,
+        `Roots: 2.0 and 1.0\nDiscriminant: 1`,
+      ),
+      ex(
+        "Negative discriminant (no real roots)",
+        `import math\na, b, c = 1, 2, 5\nd = b**2 - 4*a*c\nprint("Discriminant:", d)\nif d < 0:\n    print("No real roots")`,
+        `Discriminant: -16\nNo real roots`,
+      ),
     ],
     realWorld: `Quadratic equations model projectile motion (height of a ball over time), area optimization (maximizing a rectangle's area with fixed perimeter), and profit maximization in economics.`,
     practice: `Solve 2x² − 7x + 3 = 0 using the quadratic formula. Compute both roots and the discriminant.`,
@@ -85,9 +129,29 @@ export const math: LessonDef[] = [
     ],
     template: `import math\na, b, c = 2, -7, 3\nd = b**2 - 4*a*c\nroot1 = (-b + math.sqrt(d)) / (2*a)\nroot2 = (-b - math.sqrt(d)) / (2*a)\nprint("Roots:", root1, "and", root2)\nprint("Check root1:", a*root1**2 + b*root1 + c)\nprint("Check root2:", a*root2**2 + b*root2 + c)`,
     quiz: [
-      q("What does a positive discriminant tell you?", ["No real roots", "One real root", "Two real roots", "Three real roots"], 2, `Δ > 0 means two distinct real roots.`),
-      q("For x² − 5x + 6 = 0, what is the discriminant?", ["25", "1", "−1", "−11"], 1, `Δ = (−5)² − 4(1)(6) = 25 − 24 = 1.`),
-      q("What is the quadratic formula?", ["x = (-b ± √(b² - 4ac)) / 2a", "x = (-b ± √(b² + 4ac)) / 2a", "x = (b ± √(b² - 4ac)) / a", "x = -b/2a"], 0, `The ± and the discriminant under the square root are the key parts.`),
+      q(
+        "What does a positive discriminant tell you?",
+        ["No real roots", "One real root", "Two real roots", "Three real roots"],
+        2,
+        `Δ > 0 means two distinct real roots.`,
+      ),
+      q(
+        "For x² − 5x + 6 = 0, what is the discriminant?",
+        ["25", "1", "−1", "−11"],
+        1,
+        `Δ = (−5)² − 4(1)(6) = 25 − 24 = 1.`,
+      ),
+      q(
+        "What is the quadratic formula?",
+        [
+          "x = (-b ± √(b² - 4ac)) / 2a",
+          "x = (-b ± √(b² + 4ac)) / 2a",
+          "x = (b ± √(b² - 4ac)) / a",
+          "x = -b/2a",
+        ],
+        0,
+        `The ± and the discriminant under the square root are the key parts.`,
+      ),
     ],
   }),
 
@@ -100,8 +164,16 @@ export const math: LessonDef[] = [
       `<strong>Slope-intercept form</strong> — <code>y = mx + b</code> where m is slope and b is y-intercept`,
     ],
     examples: [
-      ex("Evaluating and plotting a function", `def f(x):\n    return 2 * x + 1\nfor x in range(-5, 6):\n    y = f(x)\n    print(f"x={x:2d}  y={y:2d}  {'#' * (y + 5)}")`, `x=-5  y=-9\nx=-4  y=-7\nx=-3  y=-5\nx=-2  y=-3\nx=-1  y=-1\nx= 0  y= 1  #\nx= 1  y= 3  ###\nx= 2  y= 5  #####\nx= 3  y= 7  #######\nx= 4  y= 9  #########\nx= 5  y=11  ###########`),
-      ex("Finding slope between two points", `x1, y1 = 1, 3\nx2, y2 = 4, 11\nslope = (y2 - y1) / (x2 - x1)\nprint("Slope:", slope)\nb = y1 - slope * x1\nprint("y-intercept:", b)\nprint("Equation: y =", slope, "x +", b)`, `Slope: 2.666...\ny-intercept: 0.333...\nEquation: y = 2.666... x + 0.333...`),
+      ex(
+        "Evaluating and plotting a function",
+        `def f(x):\n    return 2 * x + 1\nfor x in range(-5, 6):\n    y = f(x)\n    print(f"x={x:2d}  y={y:2d}  {'#' * (y + 5)}")`,
+        `x=-5  y=-9\nx=-4  y=-7\nx=-3  y=-5\nx=-2  y=-3\nx=-1  y=-1\nx= 0  y= 1  #\nx= 1  y= 3  ###\nx= 2  y= 5  #####\nx= 3  y= 7  #######\nx= 4  y= 9  #########\nx= 5  y=11  ###########`,
+      ),
+      ex(
+        "Finding slope between two points",
+        `x1, y1 = 1, 3\nx2, y2 = 4, 11\nslope = (y2 - y1) / (x2 - x1)\nprint("Slope:", slope)\nb = y1 - slope * x1\nprint("y-intercept:", b)\nprint("Equation: y =", slope, "x +", b)`,
+        `Slope: 2.666...\ny-intercept: 0.333...\nEquation: y = 2.666... x + 0.333...`,
+      ),
     ],
     realWorld: `Functions model relationships everywhere: distance over time at constant speed (d = vt), cost of a call with a fixed line fee plus per-minute charge, or converting currencies.`,
     practice: `Write a function <code>f(x) = 3x - 2</code> and compute its values at x = -2, 0, 2, 4. Find the slope and y-intercept.`,
@@ -116,8 +188,18 @@ export const math: LessonDef[] = [
     template: `def f(x):\n    return 3 * x - 2\nfor x in [-2, 0, 2, 4]:\n    print(f"f({x}) = {f(x)}")\nm = 3  # slope\nb = -2  # y-intercept\nprint("\\nSlope (m):", m)\nprint("Y-intercept (b):", b)\nprint("Equation: y = 3x - 2")`,
     quiz: [
       q("If f(x) = 3x − 1, what is f(4)?", ["7", "11", "12", "13"], 1, `3 × 4 − 1 = 12 − 1 = 11.`),
-      q("What is the slope of y = 5x + 2?", ["5", "2", "1", "7"], 0, `In y = mx + b, m is the slope. Here m = 5.`),
-      q("A line through (1, 3) and (3, 7) has slope...", ["1", "2", "3", "4"], 1, `(7 − 3) / (3 − 1) = 4 / 2 = 2.`),
+      q(
+        "What is the slope of y = 5x + 2?",
+        ["5", "2", "1", "7"],
+        0,
+        `In y = mx + b, m is the slope. Here m = 5.`,
+      ),
+      q(
+        "A line through (1, 3) and (3, 7) has slope...",
+        ["1", "2", "3", "4"],
+        1,
+        `(7 − 3) / (3 − 1) = 4 / 2 = 2.`,
+      ),
     ],
   }),
 
@@ -130,8 +212,16 @@ export const math: LessonDef[] = [
       `<strong>Types by angle</strong> — acute (all < 90°), right (one = 90°), obtuse (one > 90°)`,
     ],
     examples: [
-      ex("Finding the missing angle", `a, b = 50, 70\nc = 180 - a - b\nprint("Angles:", a, b, c)\nprint("Sum:", a + b + c)`, `Angles: 50 70 60\nSum: 180`),
-      ex("Using the Pythagorean theorem", `import math\na, b = 3, 4\nc = math.sqrt(a**2 + b**2)\nprint("Hypotenuse:", c)\nprint("Check:", a**2, "+", b**2, "=", c**2)`, `Hypotenuse: 5.0\nCheck: 9 + 16 = 25.0`),
+      ex(
+        "Finding the missing angle",
+        `a, b = 50, 70\nc = 180 - a - b\nprint("Angles:", a, b, c)\nprint("Sum:", a + b + c)`,
+        `Angles: 50 70 60\nSum: 180`,
+      ),
+      ex(
+        "Using the Pythagorean theorem",
+        `import math\na, b = 3, 4\nc = math.sqrt(a**2 + b**2)\nprint("Hypotenuse:", c)\nprint("Check:", a**2, "+", b**2, "=", c**2)`,
+        `Hypotenuse: 5.0\nCheck: 9 + 16 = 25.0`,
+      ),
     ],
     realWorld: `Triangles are the backbone of construction — roof trusses, bridges, and cranes all use triangles because they don't flex. Surveyors use triangulation to measure distances. Carpenters use the 3-4-5 rule to make square corners.`,
     practice: `A right triangle has legs of length 5 and 12. Compute the hypotenuse. Also, if two angles are 45° and 85°, find the third.`,
@@ -145,9 +235,24 @@ export const math: LessonDef[] = [
     ],
     template: `import math\na, b = 5, 12\nc = math.sqrt(a**2 + b**2)\nprint("Hypotenuse:", c)\nprint("Check: 5² + 12² =", a**2 + b**2, "=", round(c**2))\n\n# Missing angle\nang1, ang2 = 45, 85\nang3 = 180 - ang1 - ang2\nprint("\\nThird angle:", ang3, "degrees")`,
     quiz: [
-      q("Two angles of a triangle are 40° and 70°. What's the third?", ["60°", "70°", "80°", "90°"], 1, `180 − 40 − 70 = 70°.`),
-      q("A right triangle has legs 6 and 8. What's the hypotenuse?", ["10", "12", "14", "9"], 0, `√(6² + 8²) = √(36 + 64) = √100 = 10.`),
-      q("What kind of triangle has angles 120°, 30°, 30°?", ["Acute", "Right", "Obtuse", "Degenerate"], 2, `120° > 90°, so it's obtuse.`),
+      q(
+        "Two angles of a triangle are 40° and 70°. What's the third?",
+        ["60°", "70°", "80°", "90°"],
+        1,
+        `180 − 40 − 70 = 70°.`,
+      ),
+      q(
+        "A right triangle has legs 6 and 8. What's the hypotenuse?",
+        ["10", "12", "14", "9"],
+        0,
+        `√(6² + 8²) = √(36 + 64) = √100 = 10.`,
+      ),
+      q(
+        "What kind of triangle has angles 120°, 30°, 30°?",
+        ["Acute", "Right", "Obtuse", "Degenerate"],
+        2,
+        `120° > 90°, so it's obtuse.`,
+      ),
     ],
   }),
 
@@ -160,8 +265,16 @@ export const math: LessonDef[] = [
       `<strong>Area</strong> — <code>A = πr²</code>`,
     ],
     examples: [
-      ex("Circumference and area of a circle", `import math\nr = 7\nC = 2 * math.pi * r\nA = math.pi * r**2\nprint(f"Radius: {r}")\nprint(f"Circumference: {C:.2f}")\nprint(f"Area: {A:.2f}")`, `Radius: 7\nCircumference: 43.98\nArea: 153.94`),
-      ex("Working backwards from circumference", `import math\nC = 31.4\nr = C / (2 * math.pi)\nprint(f"Radius: {r:.2f}")\nprint(f"Area: {math.pi * r**2:.2f}")`, `Radius: 5.0\nArea: 78.54`),
+      ex(
+        "Circumference and area of a circle",
+        `import math\nr = 7\nC = 2 * math.pi * r\nA = math.pi * r**2\nprint(f"Radius: {r}")\nprint(f"Circumference: {C:.2f}")\nprint(f"Area: {A:.2f}")`,
+        `Radius: 7\nCircumference: 43.98\nArea: 153.94`,
+      ),
+      ex(
+        "Working backwards from circumference",
+        `import math\nC = 31.4\nr = C / (2 * math.pi)\nprint(f"Radius: {r:.2f}")\nprint(f"Area: {math.pi * r**2:.2f}")`,
+        `Radius: 5.0\nArea: 78.54`,
+      ),
     ],
     realWorld: `Pizza sizes (a 12-inch pie has area 113 in²), wheels (revolutions = distance / circumference), satellite dishes, and planetary orbits all involve circle geometry. Engineers calculate pipe cross-sections using πr².`,
     practice: `A pizza has diameter 16 inches. Compute its radius, circumference, and area.`,
@@ -175,9 +288,24 @@ export const math: LessonDef[] = [
     ],
     template: `import math\nd = 16\nr = d / 2\nC = 2 * math.pi * r\nA = math.pi * r**2\nprint(f"Radius: {r} inches")\nprint(f"Circumference: {C:.2f} inches")\nprint(f"Area: {A:.2f} square inches")`,
     quiz: [
-      q("What is the area of a circle with radius 3?", ["9π", "6π", "3π", "12π"], 0, `A = π × 3² = 9π.`),
-      q("If a circle has area 25π, what is its radius?", ["5", "10", "25", "12.5"], 0, `πr² = 25π → r² = 25 → r = 5.`),
-      q("A circle's circumference is 2πr. What is its diameter?", ["r", "2r", "πr", "r/2"], 1, `Diameter = 2r.`),
+      q(
+        "What is the area of a circle with radius 3?",
+        ["9π", "6π", "3π", "12π"],
+        0,
+        `A = π × 3² = 9π.`,
+      ),
+      q(
+        "If a circle has area 25π, what is its radius?",
+        ["5", "10", "25", "12.5"],
+        0,
+        `πr² = 25π → r² = 25 → r = 5.`,
+      ),
+      q(
+        "A circle's circumference is 2πr. What is its diameter?",
+        ["r", "2r", "πr", "r/2"],
+        1,
+        `Diameter = 2r.`,
+      ),
     ],
   }),
 
@@ -191,8 +319,16 @@ export const math: LessonDef[] = [
       `<strong>Rectangular prism</strong> — <code>V = lwh</code>, <code>SA = 2(lw + lh + wh)</code>`,
     ],
     examples: [
-      ex("Sphere volume and surface area", `import math\nr = 5\nV = 4/3 * math.pi * r**3\nSA = 4 * math.pi * r**2\nprint(f"Radius: {r}")\nprint(f"Volume: {V:.2f}")\nprint(f"Surface Area: {SA:.2f}")`, `Radius: 5\nVolume: 523.60\nSurface Area: 314.16`),
-      ex("Rectangular prism", `import math\nl, w, h = 4, 3, 6\nV = l * w * h\nSA = 2 * (l*w + l*h + w*h)\nprint(f"Dimensions: {l} x {w} x {h}")\nprint(f"Volume: {V}")\nprint(f"Surface Area: {SA}")`, `Dimensions: 4 x 3 x 6\nVolume: 72\nSurface Area: 108`),
+      ex(
+        "Sphere volume and surface area",
+        `import math\nr = 5\nV = 4/3 * math.pi * r**3\nSA = 4 * math.pi * r**2\nprint(f"Radius: {r}")\nprint(f"Volume: {V:.2f}")\nprint(f"Surface Area: {SA:.2f}")`,
+        `Radius: 5\nVolume: 523.60\nSurface Area: 314.16`,
+      ),
+      ex(
+        "Rectangular prism",
+        `import math\nl, w, h = 4, 3, 6\nV = l * w * h\nSA = 2 * (l*w + l*h + w*h)\nprint(f"Dimensions: {l} x {w} x {h}")\nprint(f"Volume: {V}")\nprint(f"Surface Area: {SA}")`,
+        `Dimensions: 4 x 3 x 6\nVolume: 72\nSurface Area: 108`,
+      ),
     ],
     realWorld: `Manufacturers calculate box volume for packaging. Painters estimate surface area for paint coverage. Architects use volume for HVAC sizing. Sphere volume formulas are used in medicine for tumor measurement from CT scans.`,
     practice: `A cylindrical water tank has radius 2.5 m and height 4 m. Compute its volume (<code>V = πr²h</code>) and surface area (<code>SA = 2πr² + 2πrh</code>).`,
@@ -206,9 +342,24 @@ export const math: LessonDef[] = [
     ],
     template: `import math\nr = 2.5\nh = 4\nV = math.pi * r**2 * h\nSA = 2 * math.pi * r**2 + 2 * math.pi * r * h\nprint(f"Tank radius: {r} m")\nprint(f"Tank height: {h} m")\nprint(f"Volume: {V:.2f} m³")\nprint(f"Surface Area: {SA:.2f} m²")`,
     quiz: [
-      q("What is the volume formula for a sphere?", ["(4/3)πr³", "πr²h", "4πr²", "lwh"], 0, `The sphere's volume is (4/3)π × radius cubed.`),
-      q("A cube has side length 3. What is its volume?", ["9", "18", "27", "36"], 2, `V = 3³ = 27.`),
-      q("Which has units of square meters?", ["Volume", "Surface area", "Both", "Neither"], 1, `Surface area is measured in square units; volume in cubic units.`),
+      q(
+        "What is the volume formula for a sphere?",
+        ["(4/3)πr³", "πr²h", "4πr²", "lwh"],
+        0,
+        `The sphere's volume is (4/3)π × radius cubed.`,
+      ),
+      q(
+        "A cube has side length 3. What is its volume?",
+        ["9", "18", "27", "36"],
+        2,
+        `V = 3³ = 27.`,
+      ),
+      q(
+        "Which has units of square meters?",
+        ["Volume", "Surface area", "Both", "Neither"],
+        1,
+        `Surface area is measured in square units; volume in cubic units.`,
+      ),
     ],
   }),
 
@@ -221,8 +372,16 @@ export const math: LessonDef[] = [
       `<strong>Quadrants</strong> — the axes divide the plane into 4 quadrants numbered counterclockwise from top-right`,
     ],
     examples: [
-      ex("Distance between two points", `import math\nx1, y1 = 1, 2\nx2, y2 = 4, 6\nd = math.sqrt((x2-x1)**2 + (y2-y1)**2)\nprint(f"Distance: {d:.2f}")`, `Distance: 5.0`),
-      ex("Midpoint and slope", `x1, y1 = 0, 0\nx2, y2 = 8, 6\nmx = (x1 + x2) / 2\nmy = (y1 + y2) / 2\nm = (y2 - y1) / (x2 - x1)\nprint(f"Midpoint: ({mx}, {my})")\nprint(f"Slope: {m}")`, `Midpoint: (4.0, 3.0)\nSlope: 0.75`),
+      ex(
+        "Distance between two points",
+        `import math\nx1, y1 = 1, 2\nx2, y2 = 4, 6\nd = math.sqrt((x2-x1)**2 + (y2-y1)**2)\nprint(f"Distance: {d:.2f}")`,
+        `Distance: 5.0`,
+      ),
+      ex(
+        "Midpoint and slope",
+        `x1, y1 = 0, 0\nx2, y2 = 8, 6\nmx = (x1 + x2) / 2\nmy = (y1 + y2) / 2\nm = (y2 - y1) / (x2 - x1)\nprint(f"Midpoint: ({mx}, {my})")\nprint(f"Slope: {m}")`,
+        `Midpoint: (4.0, 3.0)\nSlope: 0.75`,
+      ),
     ],
     realWorld: `GPS coordinates are (latitude, longitude) pairs. Maps use coordinate geometry for routing. Computer graphics place pixels on a coordinate grid. Game developers use distance formulas for collision detection.`,
     practice: `Points A(2, 3) and B(10, 9). Compute the distance between them, the midpoint, and the slope of line AB.`,
@@ -236,9 +395,24 @@ export const math: LessonDef[] = [
     ],
     template: `import math\nx1, y1 = 2, 3\nx2, y2 = 10, 9\nd = math.sqrt((x2-x1)**2 + (y2-y1)**2)\nmx = (x1 + x2) / 2\nmy = (y1 + y2) / 2\nm = (y2 - y1) / (x2 - x1)\nprint(f"Distance: {d:.2f}")\nprint(f"Midpoint: ({mx}, {my})")\nprint(f"Slope: {m:.2f}")`,
     quiz: [
-      q("What is the distance between (0, 0) and (3, 4)?", ["5", "7", "1", "25"], 0, `√((3)² + (4)²) = √(9 + 16) = √25 = 5.`),
-      q("What is the midpoint of (2, 4) and (6, 8)?", ["(4, 6)", "(8, 12)", "(3, 4)", "(4, 5)"], 0, `((2+6)/2, (4+8)/2) = (4, 6).`),
-      q("In which quadrant is the point (−3, 5)?", ["Quadrant I", "Quadrant II", "Quadrant III", "Quadrant IV"], 1, `Negative x, positive y → Quadrant II (top-left).`),
+      q(
+        "What is the distance between (0, 0) and (3, 4)?",
+        ["5", "7", "1", "25"],
+        0,
+        `√((3)² + (4)²) = √(9 + 16) = √25 = 5.`,
+      ),
+      q(
+        "What is the midpoint of (2, 4) and (6, 8)?",
+        ["(4, 6)", "(8, 12)", "(3, 4)", "(4, 5)"],
+        0,
+        `((2+6)/2, (4+8)/2) = (4, 6).`,
+      ),
+      q(
+        "In which quadrant is the point (−3, 5)?",
+        ["Quadrant I", "Quadrant II", "Quadrant III", "Quadrant IV"],
+        1,
+        `Negative x, positive y → Quadrant II (top-left).`,
+      ),
     ],
   }),
 
@@ -251,8 +425,16 @@ export const math: LessonDef[] = [
       `<strong>Discontinuities</strong> — jump (gap), removable (hole), infinite (vertical asymptote)`,
     ],
     examples: [
-      ex("Approaching a limit numerically", `def f(x):\n    return (x**2 - 1) / (x - 1)\nfor x in [1.5, 1.1, 1.01, 1.001]:\n    print(f"x={x:.3f}  f(x)={f(x):.5f}")`, `x=1.500  f(x)=2.50000\nx=1.100  f(x)=2.10000\nx=1.010  f(x)=2.01000\nx=1.001  f(x)=2.00100`),
-      ex("A limit that doesn't exist (jump)", `def f(x):\n    return 1 if x >= 0 else -1\nfor x in [-0.1, -0.01, 0, 0.01, 0.1]:\n    print(f"x={x:+.2f}  f(x)={f(x):+.0f}")`, `x=-0.10  f(x)=-1\nx=-0.01  f(x)=-1\nx=+0.00  f(x)=+1\nx=+0.01  f(x)=+1\nx=+0.10  f(x)=+1`),
+      ex(
+        "Approaching a limit numerically",
+        `def f(x):\n    return (x**2 - 1) / (x - 1)\nfor x in [1.5, 1.1, 1.01, 1.001]:\n    print(f"x={x:.3f}  f(x)={f(x):.5f}")`,
+        `x=1.500  f(x)=2.50000\nx=1.100  f(x)=2.10000\nx=1.010  f(x)=2.01000\nx=1.001  f(x)=2.00100`,
+      ),
+      ex(
+        "A limit that doesn't exist (jump)",
+        `def f(x):\n    return 1 if x >= 0 else -1\nfor x in [-0.1, -0.01, 0, 0.01, 0.1]:\n    print(f"x={x:+.2f}  f(x)={f(x):+.0f}")`,
+        `x=-0.10  f(x)=-1\nx=-0.01  f(x)=-1\nx=+0.00  f(x)=+1\nx=+0.01  f(x)=+1\nx=+0.10  f(x)=+1`,
+      ),
     ],
     realWorld: `Limits model instantaneous rates: the speedometer shows your car's speed at one exact moment — that's a limit. Economics uses limits for marginal cost. Physics uses limits for instantaneous velocity.`,
     practice: `Compute <code>lim (sin(x)/x)</code> as x → 0 numerically by evaluating at x = 0.1, 0.01, 0.001, 0.0001. What does it approach?`,
@@ -266,9 +448,29 @@ export const math: LessonDef[] = [
     ],
     template: `import math\ndef f(x):\n    return math.sin(x) / x\nfor x in [0.1, 0.01, 0.001, 0.0001]:\n    print(f"x={x:.6f}  f(x)={f(x):.8f}")\nprint("\\nAs x → 0, sin(x)/x → 1.0")`,
     quiz: [
-      q("What is lim (x² − 1)/(x − 1) as x → 1?", ["0", "1", "2", "Undefined"], 2, `Factoring gives (x-1)(x+1)/(x-1) = x+1, which approaches 2.`),
-      q("When does a limit NOT exist?", ["Left and right limits differ", "Function is always positive", "x is large", "Right limit equals left limit"], 0, `Different one-sided limits mean the overall limit doesn't exist.`),
-      q("A function is continuous at x = a if...", ["f(a) exists", "lim f(x) exists", "Both exist and are equal", "f(a) = 0"], 2, `Continuity requires f defined, limit exists, and they match.`),
+      q(
+        "What is lim (x² − 1)/(x − 1) as x → 1?",
+        ["0", "1", "2", "Undefined"],
+        2,
+        `Factoring gives (x-1)(x+1)/(x-1) = x+1, which approaches 2.`,
+      ),
+      q(
+        "When does a limit NOT exist?",
+        [
+          "Left and right limits differ",
+          "Function is always positive",
+          "x is large",
+          "Right limit equals left limit",
+        ],
+        0,
+        `Different one-sided limits mean the overall limit doesn't exist.`,
+      ),
+      q(
+        "A function is continuous at x = a if...",
+        ["f(a) exists", "lim f(x) exists", "Both exist and are equal", "f(a) = 0"],
+        2,
+        `Continuity requires f defined, limit exists, and they match.`,
+      ),
     ],
   }),
 
@@ -281,8 +483,16 @@ export const math: LessonDef[] = [
       `<strong>Tangent line</strong> — a line that touches the curve at exactly one point, slope = derivative`,
     ],
     examples: [
-      ex("Numerical derivative approximation", `def f(x):\n    return x**2\nh = 0.001\nx = 3\nslope = (f(x + h) - f(x)) / h\nprint(f"At x={x}, f'(x) ≈ {slope:.6f}")\nprint(f"Actual: 2x = {2*x}")`, `At x=3, f'(x) ≈ 6.001000\nActual: 2x = 6`),
-      ex("Power rule in action", `def derivative_of_x3(x):\n    return 3 * x**2\nfor x in [1, 2, 3, 4]:\n    print(f"x={x}: f'(x)={derivative_of_x3(x)}")`, `x=1: f'(x)=3\nx=2: f'(x)=12\nx=3: f'(x)=27\nx=4: f'(x)=48`),
+      ex(
+        "Numerical derivative approximation",
+        `def f(x):\n    return x**2\nh = 0.001\nx = 3\nslope = (f(x + h) - f(x)) / h\nprint(f"At x={x}, f'(x) ≈ {slope:.6f}")\nprint(f"Actual: 2x = {2*x}")`,
+        `At x=3, f'(x) ≈ 6.001000\nActual: 2x = 6`,
+      ),
+      ex(
+        "Power rule in action",
+        `def derivative_of_x3(x):\n    return 3 * x**2\nfor x in [1, 2, 3, 4]:\n    print(f"x={x}: f'(x)={derivative_of_x3(x)}")`,
+        `x=1: f'(x)=3\nx=2: f'(x)=12\nx=3: f'(x)=27\nx=4: f'(x)=48`,
+      ),
     ],
     realWorld: `Derivatives tell you how fast things change: speed (derivative of position), acceleration (derivative of velocity), marginal cost in economics, and population growth rate. Machine learning uses derivatives (gradients) to optimize models.`,
     practice: `Use the numerical method to approximate the derivative of <code>f(x) = x³</code> at x = 2. Compare with the power rule result (3 × 2² = 12).`,
@@ -296,9 +506,29 @@ export const math: LessonDef[] = [
     ],
     template: `def f(x):\n    return x**3\nh = 0.0001\nx = 2\nnumerical = (f(x + h) - f(x)) / h\npower_rule = 3 * x**2\nprint(f"Numerical: f'({x}) ≈ {numerical:.6f}")\nprint(f"Power rule: 3·{x}² = {power_rule}")`,
     quiz: [
-      q("What is the derivative of f(x) = x⁵?", ["5x⁴", "x⁴", "5x⁵", "4x⁵"], 0, `Power rule: n·xⁿ⁻¹ = 5x⁴.`),
-      q("The derivative represents...", ["Area under the curve", "Instantaneous rate of change", "Average value", "The y-intercept"], 1, `The derivative measures how fast f is changing at a specific x.`),
-      q("What does the limit (f(x+h) - f(x))/h as h→0 give you?", ["The integral", "The derivative", "The limit at infinity", "The absolute value"], 1, `This is the definition of the derivative.`),
+      q(
+        "What is the derivative of f(x) = x⁵?",
+        ["5x⁴", "x⁴", "5x⁵", "4x⁵"],
+        0,
+        `Power rule: n·xⁿ⁻¹ = 5x⁴.`,
+      ),
+      q(
+        "The derivative represents...",
+        [
+          "Area under the curve",
+          "Instantaneous rate of change",
+          "Average value",
+          "The y-intercept",
+        ],
+        1,
+        `The derivative measures how fast f is changing at a specific x.`,
+      ),
+      q(
+        "What does the limit (f(x+h) - f(x))/h as h→0 give you?",
+        ["The integral", "The derivative", "The limit at infinity", "The absolute value"],
+        1,
+        `This is the definition of the derivative.`,
+      ),
     ],
   }),
 
@@ -311,8 +541,16 @@ export const math: LessonDef[] = [
       `<strong>Definite vs indefinite</strong> — definite gives a number; indefinite gives a family of functions (+ C)`,
     ],
     examples: [
-      ex("Riemann sum approximation", `def f(x):\n    return x**2\na, b, n = 0, 2, 1000\ndx = (b - a) / n\narea = 0\nfor i in range(n):\n    x = a + i * dx\n    area += f(x) * dx\nprint(f"Riemann sum: {area:.6f}")\nprint(f"Actual ∫ x² dx from 0 to 2: {8/3:.6f}")`, `Riemann sum: 2.666668\nActual ∫ x² dx from 0 to 2: 2.666667`),
-      ex("Reverse power rule", `def indefinite_power(n):\n    return f"∫ x^{n} dx = x^{n+1} / {n+1} + C"\nfor n in [1, 2, 3]:\n    print(indefinite_power(n))`, `∫ x¹ dx = x² / 2 + C\n∫ x² dx = x³ / 3 + C\n∫ x³ dx = x⁴ / 4 + C`),
+      ex(
+        "Riemann sum approximation",
+        `def f(x):\n    return x**2\na, b, n = 0, 2, 1000\ndx = (b - a) / n\narea = 0\nfor i in range(n):\n    x = a + i * dx\n    area += f(x) * dx\nprint(f"Riemann sum: {area:.6f}")\nprint(f"Actual ∫ x² dx from 0 to 2: {8/3:.6f}")`,
+        `Riemann sum: 2.666668\nActual ∫ x² dx from 0 to 2: 2.666667`,
+      ),
+      ex(
+        "Reverse power rule",
+        `def indefinite_power(n):\n    return f"∫ x^{n} dx = x^{n+1} / {n+1} + C"\nfor n in [1, 2, 3]:\n    print(indefinite_power(n))`,
+        `∫ x¹ dx = x² / 2 + C\n∫ x² dx = x³ / 3 + C\n∫ x³ dx = x⁴ / 4 + C`,
+      ),
     ],
     realWorld: `Integrals compute distances from velocity data, areas of irregular shapes, total accumulated growth, energy consumption over time, and probabilities in statistics. Every time you aggregate a rate over time, you're integrating.`,
     practice: `Use a Riemann sum to approximate ∫₀³ x² dx with 1000 rectangles. The actual value is 9. How close do you get?`,
@@ -326,9 +564,24 @@ export const math: LessonDef[] = [
     ],
     template: `def f(x):\n    return x**2\na, b, n = 0, 3, 1000\ndx = (b - a) / n\narea = 0\nfor i in range(n):\n    x = a + i * dx\n    area += f(x) * dx\nprint(f"∫ x² dx from {a} to {b} ≈ {area:.6f}")\nprint(f"Actual: {b**3/3 - a**3/3:.6f}")`,
     quiz: [
-      q("What is ∫ x³ dx?", ["x⁴/4 + C", "3x² + C", "x⁴ + C", "x²/2 + C"], 0, `∫ x³ dx = x⁴/4 + C.`),
-      q("A Riemann sum approximates...", ["The derivative", "The area under a curve", "The slope", "The y-intercept"], 1, `Riemann sums approximate the definite integral (area).`),
-      q("More rectangles in a Riemann sum gives...", ["Less accuracy", "More accuracy", "No change", "More computation but same accuracy"], 1, `More narrower rectangles better approximate the true area.`),
+      q(
+        "What is ∫ x³ dx?",
+        ["x⁴/4 + C", "3x² + C", "x⁴ + C", "x²/2 + C"],
+        0,
+        `∫ x³ dx = x⁴/4 + C.`,
+      ),
+      q(
+        "A Riemann sum approximates...",
+        ["The derivative", "The area under a curve", "The slope", "The y-intercept"],
+        1,
+        `Riemann sums approximate the definite integral (area).`,
+      ),
+      q(
+        "More rectangles in a Riemann sum gives...",
+        ["Less accuracy", "More accuracy", "No change", "More computation but same accuracy"],
+        1,
+        `More narrower rectangles better approximate the true area.`,
+      ),
     ],
   }),
 
@@ -341,8 +594,16 @@ export const math: LessonDef[] = [
       `<strong>Fundamental Theorem</strong> — integration and differentiation are inverse operations`,
     ],
     examples: [
-      ex("Maximizing area with fixed perimeter", `# A farmer has 100m of fencing for a rectangular pen\n# Maximize area: A = l * w, with 2l + 2w = 100\n# A(l) = l * (50 - l) = 50l - l²\n# A'(l) = 50 - 2l = 0 → l = 25\nl = 25\nw = 50 - l\narea = l * w\nprint(f"Length: {l}m, Width: {w}m")\nprint(f"Maximum area: {area}m²")`, `Length: 25m, Width: 25m\nMaximum area: 625m²`),
-      ex("Rate of change (related rates)", `# A balloon's radius increases at 2 cm/s\n# How fast does volume increase when r = 10?\n# V = (4/3)πr³, dV/dt = 4πr² * dr/dt\nimport math\nr = 10\ndr_dt = 2\ndV_dt = 4 * math.pi * r**2 * dr_dt\nprint(f"At r={r}cm, volume increases at {dV_dt:.0f} cm³/s")`, `At r=10cm, volume increases at 2513 cm³/s`),
+      ex(
+        "Maximizing area with fixed perimeter",
+        `# A farmer has 100m of fencing for a rectangular pen\n# Maximize area: A = l * w, with 2l + 2w = 100\n# A(l) = l * (50 - l) = 50l - l²\n# A'(l) = 50 - 2l = 0 → l = 25\nl = 25\nw = 50 - l\narea = l * w\nprint(f"Length: {l}m, Width: {w}m")\nprint(f"Maximum area: {area}m²")`,
+        `Length: 25m, Width: 25m\nMaximum area: 625m²`,
+      ),
+      ex(
+        "Rate of change (related rates)",
+        `# A balloon's radius increases at 2 cm/s\n# How fast does volume increase when r = 10?\n# V = (4/3)πr³, dV/dt = 4πr² * dr/dt\nimport math\nr = 10\ndr_dt = 2\ndV_dt = 4 * math.pi * r**2 * dr_dt\nprint(f"At r={r}cm, volume increases at {dV_dt:.0f} cm³/s")`,
+        `At r=10cm, volume increases at 2513 cm³/s`,
+      ),
     ],
     realWorld: `Companies maximize profit by producing where marginal cost = marginal revenue (both derivatives). Package designers minimize surface area for a given volume. Epidemiologists model when an outbreak peaks.`,
     practice: `A rocket's height is h(t) = −5t² + 50t + 100. Find when it reaches maximum height (<code>h'(t) = 0</code>) and what that height is.`,
@@ -356,9 +617,29 @@ export const math: LessonDef[] = [
     ],
     template: `# h(t) = -5t² + 50t + 100 (missile height in meters after t seconds)\n# h'(t) = -10t + 50 = 0  →  t = 5\nt_max = 5\nh_max = -5 * t_max**2 + 50 * t_max + 100\nprint(f"Max height at t = {t_max}s")\nprint(f"Height: {h_max}m")`,
     quiz: [
-      q("At a maximum, the derivative is...", ["Positive", "Negative", "Zero", "Undefined"], 2, `At local max/min, the tangent line is horizontal → derivative = 0.`),
-      q("If f'(x) = 3x² − 12, what are the critical points?", ["x = 2, −2", "x = 0, 4", "x = 3, −3", "x = 6"], 0, `3x² − 12 = 0 → x² = 4 → x = ±2.`),
-      q("Optimization problems require...", ["Only the derivative", "Setting derivative to zero and checking", "Integrating twice", "Using Riemann sums"], 1, `Find f' = 0 (critical points) then verify which gives the best value.`),
+      q(
+        "At a maximum, the derivative is...",
+        ["Positive", "Negative", "Zero", "Undefined"],
+        2,
+        `At local max/min, the tangent line is horizontal → derivative = 0.`,
+      ),
+      q(
+        "If f'(x) = 3x² − 12, what are the critical points?",
+        ["x = 2, −2", "x = 0, 4", "x = 3, −3", "x = 6"],
+        0,
+        `3x² − 12 = 0 → x² = 4 → x = ±2.`,
+      ),
+      q(
+        "Optimization problems require...",
+        [
+          "Only the derivative",
+          "Setting derivative to zero and checking",
+          "Integrating twice",
+          "Using Riemann sums",
+        ],
+        1,
+        `Find f' = 0 (critical points) then verify which gives the best value.`,
+      ),
     ],
   }),
 
@@ -371,8 +652,16 @@ export const math: LessonDef[] = [
       `<strong>Outlier impact</strong> — a single extreme value can pull the mean significantly but barely affects the median`,
     ],
     examples: [
-      ex("Computing all three", `data = [15, 22, 18, 22, 30, 17, 22]\nmean = sum(data) / len(data)\nsorted_data = sorted(data)\nn = len(sorted_data)\nif n % 2 == 1:\n    median = sorted_data[n // 2]\nelse:\n    median = (sorted_data[n//2 - 1] + sorted_data[n//2]) / 2\nprint(f"Data: {data}")\nprint(f"Mean: {mean:.1f}")\nprint(f"Median: {median}")\nprint(f"Mode: 22 (appears 3 times)")`, `Data: [15, 22, 18, 22, 30, 17, 22]\nMean: 20.9\nMedian: 22\nMode: 22 (appears 3 times)`),
-      ex("Effect of an outlier", `data1 = [10, 12, 11, 13, 14]\ndata2 = [10, 12, 11, 13, 100]\nprint(f"Without outlier: mean={sum(data1)/len(data1):.1f}")\nprint(f"With outlier:    mean={sum(data2)/len(data2):.1f}")`, `Without outlier: mean=12.0\nWith outlier:    mean=29.2`),
+      ex(
+        "Computing all three",
+        `data = [15, 22, 18, 22, 30, 17, 22]\nmean = sum(data) / len(data)\nsorted_data = sorted(data)\nn = len(sorted_data)\nif n % 2 == 1:\n    median = sorted_data[n // 2]\nelse:\n    median = (sorted_data[n//2 - 1] + sorted_data[n//2]) / 2\nprint(f"Data: {data}")\nprint(f"Mean: {mean:.1f}")\nprint(f"Median: {median}")\nprint(f"Mode: 22 (appears 3 times)")`,
+        `Data: [15, 22, 18, 22, 30, 17, 22]\nMean: 20.9\nMedian: 22\nMode: 22 (appears 3 times)`,
+      ),
+      ex(
+        "Effect of an outlier",
+        `data1 = [10, 12, 11, 13, 14]\ndata2 = [10, 12, 11, 13, 100]\nprint(f"Without outlier: mean={sum(data1)/len(data1):.1f}")\nprint(f"With outlier:    mean={sum(data2)/len(data2):.1f}")`,
+        `Without outlier: mean=12.0\nWith outlier:    mean=29.2`,
+      ),
     ],
     realWorld: `Salaries: the median gives a better sense of typical pay since the mean is pulled up by executives. Teachers use the mean to compute grades. Retailers use the mode to find the most popular product size.`,
     practice: `For the data set [8, 3, 5, 9, 3, 7, 5, 5, 2], compute the mean, median, and mode.`,
@@ -386,9 +675,24 @@ export const math: LessonDef[] = [
     ],
     template: `data = [8, 3, 5, 9, 3, 7, 5, 5, 2]\nmean = sum(data) / len(data)\ns = sorted(data)\nn = len(s)\nif n % 2 == 1:\n    median = s[n // 2]\nelse:\n    median = (s[n//2 - 1] + s[n//2]) / 2\nprint(f"Data: {data}")\nprint(f"Mean: {mean:.1f}")\nprint(f"Median: {median}")`,
     quiz: [
-      q("What is the median of [3, 7, 2, 9, 5]? (sorted: 2, 3, 5, 7, 9)", ["5", "6", "4", "7"], 0, `The middle (3rd) value in sorted order is 5.`),
-      q("Adding an extreme outlier to a data set affects which most?", ["Median", "Mode", "Mean", "None of them"], 2, `The mean is pulled toward the outlier; median is barely affected.`),
-      q("What is the mode of [1, 2, 2, 3, 4, 4, 4, 5]?", ["2", "4", "3", "2 and 4"], 1, `4 appears 3 times — more than any other value.`),
+      q(
+        "What is the median of [3, 7, 2, 9, 5]? (sorted: 2, 3, 5, 7, 9)",
+        ["5", "6", "4", "7"],
+        0,
+        `The middle (3rd) value in sorted order is 5.`,
+      ),
+      q(
+        "Adding an extreme outlier to a data set affects which most?",
+        ["Median", "Mode", "Mean", "None of them"],
+        2,
+        `The mean is pulled toward the outlier; median is barely affected.`,
+      ),
+      q(
+        "What is the mode of [1, 2, 2, 3, 4, 4, 4, 5]?",
+        ["2", "4", "3", "2 and 4"],
+        1,
+        `4 appears 3 times — more than any other value.`,
+      ),
     ],
   }),
 
@@ -401,8 +705,16 @@ export const math: LessonDef[] = [
       `<strong>Independent events</strong> — P(A and B) = P(A) × P(B) when outcomes don't affect each other`,
     ],
     examples: [
-      ex("Coin flips and dice rolls", `import random\nflips = 10000\nheads = sum(1 for _ in range(flips) if random.random() < 0.5)\nprint(f"Heads in {flips} flips: {heads} ({heads/flips:.4f})")\nprint(f"Theoretical: 0.5000")`, `Heads in 10000 flips: 5023 (0.5023)\nTheoretical: 0.5000`),
-      ex("Probability of rolling a 6 twice", `total = 0\nsixes = 0\nfor _ in range(10000):\n    if random.randint(1,6) == 6:\n        total += 1\n    if random.randint(1,6) == 6:\n        total += 0\n# P(two sixes in a row)\nprob_theory = 1/36\nprint(f"P(two sixes) = {prob_theory:.4f} (theory)")`, `P(two sixes) = 0.0278 (theory)`),
+      ex(
+        "Coin flips and dice rolls",
+        `import random\nflips = 10000\nheads = sum(1 for _ in range(flips) if random.random() < 0.5)\nprint(f"Heads in {flips} flips: {heads} ({heads/flips:.4f})")\nprint(f"Theoretical: 0.5000")`,
+        `Heads in 10000 flips: 5023 (0.5023)\nTheoretical: 0.5000`,
+      ),
+      ex(
+        "Probability of rolling a 6 twice",
+        `total = 0\nsixes = 0\nfor _ in range(10000):\n    if random.randint(1,6) == 6:\n        total += 1\n    if random.randint(1,6) == 6:\n        total += 0\n# P(two sixes in a row)\nprob_theory = 1/36\nprint(f"P(two sixes) = {prob_theory:.4f} (theory)")`,
+        `P(two sixes) = 0.0278 (theory)`,
+      ),
     ],
     realWorld: `Weather forecasts (40% chance of rain), insurance premiums, medical test accuracy, and casino odds are all probability applications. Sports statistics use probability for win predictions.`,
     practice: `What is the probability of drawing a red card from a standard 52-card deck? (Hearts and diamonds are red — 26 red cards). Compute the theoretical value.`,
@@ -416,41 +728,85 @@ export const math: LessonDef[] = [
     ],
     template: `# Probability of drawing a red card from 52-card deck\nred = 26\ntotal = 52\np_red = red / total\nprint(f"P(red) = {red}/{total} = {p_red:.4f} = {p_red*100:.1f}%")`,
     quiz: [
-      q("What is P(rolling a 5 on a 6-sided die)?", ["1/5", "1/6", "5/6", "1/2"], 1, `One favorable outcome out of six possible.`),
-      q("P(heads on a coin AND rolling a 3 on a die)?", ["1/12", "1/8", "1/2", "2/3"], 0, `Independent: 1/2 × 1/6 = 1/12.`),
-      q("What is P(not rolling a 6)?", ["5/6", "1/6", "1/3", "5/36"], 0, `Complement: 1 − 1/6 = 5/6.`),
+      q(
+        "What is P(rolling a 5 on a 6-sided die)?",
+        ["1/5", "1/6", "5/6", "1/2"],
+        1,
+        `One favorable outcome out of six possible.`,
+      ),
+      q(
+        "P(heads on a coin AND rolling a 3 on a die)?",
+        ["1/12", "1/8", "1/2", "2/3"],
+        0,
+        `Independent: 1/2 × 1/6 = 1/12.`,
+      ),
+      q(
+        "What is P(not rolling a 6)?",
+        ["5/6", "1/6", "1/3", "5/36"],
+        0,
+        `Complement: 1 − 1/6 = 5/6.`,
+      ),
     ],
   }),
 
-  L("Normal Distribution", ["statistics", "probability", "normal-distribution"], "intermediate", 14, {
-    intro: `<p>The normal (bell-shaped) distribution is the most important distribution in statistics. It's symmetric around the mean, with 68% of data within 1 standard deviation, 95% within 2, and 99.7% within 3. The z-score measures how many standard deviations a value is from the mean: <code>z = (x − μ) / σ</code>.</p>`,
-    concepts: [
-      `<strong>Standard deviation (σ)</strong> — a measure of how spread out the data is`,
-      `<strong>Z-score</strong> — <code>z = (x - μ) / σ</code>: standardizes any normal value`,
-      `<strong>68-95-99.7 rule</strong> — the percentage of data within 1, 2, and 3 standard deviations`,
-      `<strong>Central Limit Theorem</strong> — averages of samples form a normal distribution, even if the population isn't normal`,
-    ],
-    examples: [
-      ex("Computing z-scores", `import math\nmu = 500  # mean SAT score\nsigma = 100  # standard deviation\nscore = 650\nz = (score - mu) / sigma\nprint(f"SAT score: {score}")\nprint(f"Mean: {mu}, SD: {sigma}")\nprint(f"Z-score: {z:.2f}")`, `SAT score: 650\nMean: 500, SD: 100\nZ-score: 1.50`),
-      ex("68-95-99.7 rule in action", `mu, sigma = 100, 15\nfor k, pct in [(1, 68), (2, 95), (3, 99.7)]:\n    lo = mu - k * sigma\n    hi = mu + k * sigma\n    print(f"Within {k}σ ({lo}-{hi}): {pct}% of data")`, `Within 1σ (85-115): 68% of data\nWithin 2σ (70-130): 95% of data\nWithin 3σ (55-145): 99.7% of data`),
-    ],
-    realWorld: `IQ scores (mean 100, SD 15), SAT scores, heights, measurement errors, and stock returns all follow (or are modeled by) normal distributions. Quality control uses the normal distribution to detect defective products.`,
-    practice: `Heights of adult women are normally distributed with mean 165 cm and SD 7 cm. What is the z-score of a woman who is 179 cm tall? What percentage of women are shorter than her?`,
-    mistakes: [
-      `Applying the normal distribution to data that's clearly skewed — check the shape first`,
-      `Confusing standard deviation with variance: σ, not σ², is the spread measure used in z-scores`,
-    ],
-    best: [
-      `Use z-scores to compare values from different normal distributions (e.g., test scores from different exams)`,
-      `The 68-95-99.7 rule only works for normal distributions — don't apply it blindly to non-normal data`,
-    ],
-    template: `mu = 165\nsigma = 7\nheight = 179\nz = (height - mu) / sigma\nprint(f"Height: {height} cm")\nprint(f"Z-score: {z:.2f}")\nprint(f"({height} is {z:.2f} SD above the mean)")`,
-    quiz: [
-      q("What percentage of data falls within 2 standard deviations of the mean in a normal distribution?", ["68%", "95%", "99.7%", "50%"], 1, `The 68-95-99.7 rule: 95% within 2σ.`),
-      q("A z-score of 0 means...", ["The value is 0", "The value equals the mean", "The value is 1 SD below mean", "Error"], 1, `z = (x − μ)/σ = 0 → x = μ.`),
-      q("IQ has μ = 100, σ = 15. What is the z-score of IQ = 130?", ["1.0", "2.0", "3.0", "0.5"], 1, `(130 − 100) / 15 = 30 / 15 = 2.0.`),
-    ],
-  }),
+  L(
+    "Normal Distribution",
+    ["statistics", "probability", "normal-distribution"],
+    "intermediate",
+    14,
+    {
+      intro: `<p>The normal (bell-shaped) distribution is the most important distribution in statistics. It's symmetric around the mean, with 68% of data within 1 standard deviation, 95% within 2, and 99.7% within 3. The z-score measures how many standard deviations a value is from the mean: <code>z = (x − μ) / σ</code>.</p>`,
+      concepts: [
+        `<strong>Standard deviation (σ)</strong> — a measure of how spread out the data is`,
+        `<strong>Z-score</strong> — <code>z = (x - μ) / σ</code>: standardizes any normal value`,
+        `<strong>68-95-99.7 rule</strong> — the percentage of data within 1, 2, and 3 standard deviations`,
+        `<strong>Central Limit Theorem</strong> — averages of samples form a normal distribution, even if the population isn't normal`,
+      ],
+      examples: [
+        ex(
+          "Computing z-scores",
+          `import math\nmu = 500  # mean SAT score\nsigma = 100  # standard deviation\nscore = 650\nz = (score - mu) / sigma\nprint(f"SAT score: {score}")\nprint(f"Mean: {mu}, SD: {sigma}")\nprint(f"Z-score: {z:.2f}")`,
+          `SAT score: 650\nMean: 500, SD: 100\nZ-score: 1.50`,
+        ),
+        ex(
+          "68-95-99.7 rule in action",
+          `mu, sigma = 100, 15\nfor k, pct in [(1, 68), (2, 95), (3, 99.7)]:\n    lo = mu - k * sigma\n    hi = mu + k * sigma\n    print(f"Within {k}σ ({lo}-{hi}): {pct}% of data")`,
+          `Within 1σ (85-115): 68% of data\nWithin 2σ (70-130): 95% of data\nWithin 3σ (55-145): 99.7% of data`,
+        ),
+      ],
+      realWorld: `IQ scores (mean 100, SD 15), SAT scores, heights, measurement errors, and stock returns all follow (or are modeled by) normal distributions. Quality control uses the normal distribution to detect defective products.`,
+      practice: `Heights of adult women are normally distributed with mean 165 cm and SD 7 cm. What is the z-score of a woman who is 179 cm tall? What percentage of women are shorter than her?`,
+      mistakes: [
+        `Applying the normal distribution to data that's clearly skewed — check the shape first`,
+        `Confusing standard deviation with variance: σ, not σ², is the spread measure used in z-scores`,
+      ],
+      best: [
+        `Use z-scores to compare values from different normal distributions (e.g., test scores from different exams)`,
+        `The 68-95-99.7 rule only works for normal distributions — don't apply it blindly to non-normal data`,
+      ],
+      template: `mu = 165\nsigma = 7\nheight = 179\nz = (height - mu) / sigma\nprint(f"Height: {height} cm")\nprint(f"Z-score: {z:.2f}")\nprint(f"({height} is {z:.2f} SD above the mean)")`,
+      quiz: [
+        q(
+          "What percentage of data falls within 2 standard deviations of the mean in a normal distribution?",
+          ["68%", "95%", "99.7%", "50%"],
+          1,
+          `The 68-95-99.7 rule: 95% within 2σ.`,
+        ),
+        q(
+          "A z-score of 0 means...",
+          ["The value is 0", "The value equals the mean", "The value is 1 SD below mean", "Error"],
+          1,
+          `z = (x − μ)/σ = 0 → x = μ.`,
+        ),
+        q(
+          "IQ has μ = 100, σ = 15. What is the z-score of IQ = 130?",
+          ["1.0", "2.0", "3.0", "0.5"],
+          1,
+          `(130 − 100) / 15 = 30 / 15 = 2.0.`,
+        ),
+      ],
+    },
+  ),
 
   L("Data Visualization", ["statistics", "visualization", "data"], "intermediate", 12, {
     intro: `<p>Data visualization turns numbers into pictures. A bar chart compares categories. A histogram shows the distribution of a single variable. A scatter plot reveals relationships between two variables. The best visualization depends on the type of data and the question you're trying to answer.</p>`,
@@ -461,8 +817,16 @@ export const math: LessonDef[] = [
       `<strong>Correlation vs causation</strong> — two variables moving together doesn't mean one causes the other`,
     ],
     examples: [
-      ex("Simple bar chart with text", `categories = ["Apples", "Bananas", "Cherries", "Dates"]\nvalues = [30, 45, 15, 25]\nfor cat, val in zip(categories, values):\n    print(f"{cat:10s} | {'#' * val} {val}")`, `Apples     | ############################## 30\nBananas    | ############################################ 45\nCherries   | ############### 15\nDates      | ######################### 25`),
-      ex("Histogram-like frequency table", `data = [3, 5, 4, 2, 5, 3, 4, 5, 1, 3, 4, 2, 5, 3]\nfrom collections import Counter\ncounts = Counter(data)\nfor val in sorted(counts):\n    print(f"Value {val}: {'#' * counts[val]} ({counts[val]})")`, `Value 1: # (1)\nValue 2: ## (2)\nValue 3: #### (4)\nValue 4: ### (3)\nValue 5: #### (4)`),
+      ex(
+        "Simple bar chart with text",
+        `categories = ["Apples", "Bananas", "Cherries", "Dates"]\nvalues = [30, 45, 15, 25]\nfor cat, val in zip(categories, values):\n    print(f"{cat:10s} | {'#' * val} {val}")`,
+        `Apples     | ############################## 30\nBananas    | ############################################ 45\nCherries   | ############### 15\nDates      | ######################### 25`,
+      ),
+      ex(
+        "Histogram-like frequency table",
+        `data = [3, 5, 4, 2, 5, 3, 4, 5, 1, 3, 4, 2, 5, 3]\nfrom collections import Counter\ncounts = Counter(data)\nfor val in sorted(counts):\n    print(f"Value {val}: {'#' * counts[val]} ({counts[val]})")`,
+        `Value 1: # (1)\nValue 2: ## (2)\nValue 3: #### (4)\nValue 4: ### (3)\nValue 5: #### (4)`,
+      ),
     ],
     realWorld: `News articles use charts to show trends. Scientists use scatter plots to find correlations. Business dashboards use bar charts for sales comparisons. Data journalists expose patterns through thoughtful visualization.`,
     practice: `Create a simple bar chart comparing the heights of 5 friends: [162, 175, 168, 180, 155] cm. Use '#' characters to represent each cm.`,
@@ -476,9 +840,29 @@ export const math: LessonDef[] = [
     ],
     template: `heights = [("Alice", 162), ("Bob", 175), ("Carol", 168), ("Dave", 180), ("Eve", 155)]\nfor name, h in heights:\n    bar = '#' * (h // 5)\n    print(f"{name:6s}: {bar} {h} cm")`,
     quiz: [
-      q("Which chart shows the relationship between two numerical variables?", ["Bar chart", "Histogram", "Scatter plot", "Pie chart"], 2, `Scatter plots show how two numeric variables relate.`),
-      q("A histogram shows...", ["Categories compared", "Distribution of one numeric variable", "Correlation", "Time trends"], 1, `Histograms group numbers into bins to show shape and spread.`),
-      q("Correlation between two variables means...", ["One causes the other", "They move together", "They are equal", "No relationship"], 1, `Correlation ≠ causation — they move together but something else may cause both.`),
+      q(
+        "Which chart shows the relationship between two numerical variables?",
+        ["Bar chart", "Histogram", "Scatter plot", "Pie chart"],
+        2,
+        `Scatter plots show how two numeric variables relate.`,
+      ),
+      q(
+        "A histogram shows...",
+        [
+          "Categories compared",
+          "Distribution of one numeric variable",
+          "Correlation",
+          "Time trends",
+        ],
+        1,
+        `Histograms group numbers into bins to show shape and spread.`,
+      ),
+      q(
+        "Correlation between two variables means...",
+        ["One causes the other", "They move together", "They are equal", "No relationship"],
+        1,
+        `Correlation ≠ causation — they move together but something else may cause both.`,
+      ),
     ],
   }),
 ];

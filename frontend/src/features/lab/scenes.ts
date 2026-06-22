@@ -88,7 +88,12 @@ export const mathScene: SceneInit = ({ group, camera, params }) => {
 
   const wire = new THREE.Mesh(
     geo,
-    new THREE.MeshBasicMaterial({ color: 0x0b0a14, wireframe: true, transparent: true, opacity: 0.22 }),
+    new THREE.MeshBasicMaterial({
+      color: 0x0b0a14,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.22,
+    }),
   );
   group.add(wire);
 
@@ -250,7 +255,12 @@ export const physicsScene: SceneInit = ({ group, camera, params }) => {
   const planets = ORBIT_DEFS.map((d, i) => {
     const ring = new THREE.Mesh(
       new THREE.RingGeometry(d.r - 0.015, d.r + 0.015, 140),
-      new THREE.MeshBasicMaterial({ color: 0x99a3c4, transparent: true, opacity: 0.13, side: THREE.DoubleSide }),
+      new THREE.MeshBasicMaterial({
+        color: 0x99a3c4,
+        transparent: true,
+        opacity: 0.13,
+        side: THREE.DoubleSide,
+      }),
     );
     ring.rotation.x = -Math.PI / 2;
     group.add(ring);
@@ -402,8 +412,16 @@ export const scienceScene: SceneInit = ({ group, camera, params }) => {
   const turns = Math.round(num(params, "turns", 3));
   const total = turns * DNA_PER_TURN;
 
-  const backboneA = new THREE.MeshStandardMaterial({ color: AMBER, roughness: 0.35, metalness: 0.25 });
-  const backboneB = new THREE.MeshStandardMaterial({ color: 0x6e8bff, roughness: 0.35, metalness: 0.25 });
+  const backboneA = new THREE.MeshStandardMaterial({
+    color: AMBER,
+    roughness: 0.35,
+    metalness: 0.25,
+  });
+  const backboneB = new THREE.MeshStandardMaterial({
+    color: 0x6e8bff,
+    roughness: 0.35,
+    metalness: 0.25,
+  });
   const nodeGeo = new THREE.SphereGeometry(0.23, 18, 18);
   const up = new THREE.Vector3(0, 1, 0);
 
@@ -422,7 +440,10 @@ export const scienceScene: SceneInit = ({ group, camera, params }) => {
     if (i % 2 === 0) {
       const rung = new THREE.Mesh(
         new THREE.CylinderGeometry(0.06, 0.06, 1, 10),
-        new THREE.MeshStandardMaterial({ color: DNA_BASE_COLORS[(i / 2) % DNA_BASE_COLORS.length], roughness: 0.5 }),
+        new THREE.MeshStandardMaterial({
+          color: DNA_BASE_COLORS[(i / 2) % DNA_BASE_COLORS.length],
+          roughness: 0.5,
+        }),
       );
       group.add(rung);
       rungs.push({ mesh: rung, frac });
@@ -494,7 +515,13 @@ function fillPath<T extends THREE.Path | THREE.Shape>(path: T, pts: [number, num
 }
 
 /** A solid extruded spur gear with a central bore and chamfered (bevelled) faces. */
-function makeGear(teeth: number, pitch: number, bore: number, thickness: number, color: number): THREE.Mesh {
+function makeGear(
+  teeth: number,
+  pitch: number,
+  bore: number,
+  thickness: number,
+  color: number,
+): THREE.Mesh {
   const shape = fillPath(new THREE.Shape(), gearProfile(teeth, pitch, false));
   if (bore > 0) {
     const hole = new THREE.Path();
@@ -512,7 +539,10 @@ function makeGear(teeth: number, pitch: number, bore: number, thickness: number,
   });
   geo.translate(0, 0, -thickness / 2);
   geo.computeVertexNormals();
-  return new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color, metalness: 0.92, roughness: 0.34 }));
+  return new THREE.Mesh(
+    geo,
+    new THREE.MeshStandardMaterial({ color, metalness: 0.92, roughness: 0.34 }),
+  );
 }
 
 /** A three-point key/fill/rim rig that flatters metals under the PBR env map. */
@@ -564,11 +594,21 @@ export const gearScene: SceneInit = ({ group, camera, params }) => {
   group.position.x = -(r1 + r2) / 2;
 
   // hub caps for a machined look
-  const hubMat = new THREE.MeshStandardMaterial({ color: 0x6b7682, metalness: 0.95, roughness: 0.3 });
-  const hub1 = new THREE.Mesh(new THREE.CylinderGeometry(r1 * 0.3, r1 * 0.3, thickness * 1.15, 24), hubMat);
+  const hubMat = new THREE.MeshStandardMaterial({
+    color: 0x6b7682,
+    metalness: 0.95,
+    roughness: 0.3,
+  });
+  const hub1 = new THREE.Mesh(
+    new THREE.CylinderGeometry(r1 * 0.3, r1 * 0.3, thickness * 1.15, 24),
+    hubMat,
+  );
   hub1.rotation.x = Math.PI / 2;
   driver.add(hub1);
-  const hub2 = new THREE.Mesh(new THREE.CylinderGeometry(r2 * 0.24, r2 * 0.24, thickness * 1.15, 24), hubMat);
+  const hub2 = new THREE.Mesh(
+    new THREE.CylinderGeometry(r2 * 0.24, r2 * 0.24, thickness * 1.15, 24),
+    hubMat,
+  );
   hub2.rotation.x = Math.PI / 2;
   driven.add(hub2);
 
@@ -669,9 +709,21 @@ export const cradleScene: SceneInit = ({ group, camera, params }) => {
   const L = 4.0;
   const topY = 3.6;
   const spacing = R * 2;
-  const frameMat = new THREE.MeshStandardMaterial({ color: 0x2a2f3d, metalness: 0.65, roughness: 0.45 });
-  const ballMat = new THREE.MeshStandardMaterial({ color: 0xd2d8de, metalness: 1.0, roughness: 0.07 });
-  const stringMat = new THREE.LineBasicMaterial({ color: 0x97a0b0, transparent: true, opacity: 0.6 });
+  const frameMat = new THREE.MeshStandardMaterial({
+    color: 0x2a2f3d,
+    metalness: 0.65,
+    roughness: 0.45,
+  });
+  const ballMat = new THREE.MeshStandardMaterial({
+    color: 0xd2d8de,
+    metalness: 1.0,
+    roughness: 0.07,
+  });
+  const stringMat = new THREE.LineBasicMaterial({
+    color: 0x97a0b0,
+    transparent: true,
+    opacity: 0.6,
+  });
 
   // frame: two top rails + four legs
   const railLen = CRADLE_MAX * spacing + 1.4;
@@ -681,7 +733,7 @@ export const cradleScene: SceneInit = ({ group, camera, params }) => {
     group.add(rail);
     for (const sx of [-1, 1]) {
       const leg = new THREE.Mesh(new THREE.BoxGeometry(0.16, topY + L + 0.6, 0.16), frameMat);
-      leg.position.set((sx * railLen) / 2, topY - (topY + L + 0.6) / 2 + topY * 0 + (L * 0), z);
+      leg.position.set((sx * railLen) / 2, topY - (topY + L + 0.6) / 2 + topY * 0 + L * 0, z);
       leg.position.y = topY - (L + 0.6) / 2;
       group.add(leg);
     }
@@ -723,7 +775,8 @@ export const cradleScene: SceneInit = ({ group, camera, params }) => {
       b.line.visible = active;
       if (!active) return;
       let ang = 0;
-      if (i < pull && s < 0) ang = s * lift; // left group lifts when s<0
+      if (i < pull && s < 0)
+        ang = s * lift; // left group lifts when s<0
       else if (i >= count - pull && s > 0) ang = s * lift; // right group lifts when s>0
       const bx = b.pivotX + Math.sin(ang) * L;
       const by = topY - Math.cos(ang) * L;
@@ -767,11 +820,18 @@ export const springScene: SceneInit = ({ group, camera, params }) => {
     pts.push(new THREE.Vector3(Math.cos(ang) * radius, -f * REST, Math.sin(ang) * radius));
   }
   const springGeo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), segs, 0.08, 10, false);
-  const spring = new THREE.Mesh(springGeo, new THREE.MeshStandardMaterial({ color: 0xb8c0c8, metalness: 0.9, roughness: 0.3 }));
+  const spring = new THREE.Mesh(
+    springGeo,
+    new THREE.MeshStandardMaterial({ color: 0xb8c0c8, metalness: 0.9, roughness: 0.3 }),
+  );
   spring.position.y = 4;
   group.add(spring);
 
-  const mountMat = new THREE.MeshStandardMaterial({ color: 0x39414f, metalness: 0.5, roughness: 0.6 });
+  const mountMat = new THREE.MeshStandardMaterial({
+    color: 0x39414f,
+    metalness: 0.5,
+    roughness: 0.6,
+  });
   const ceiling = new THREE.Mesh(new THREE.BoxGeometry(4, 0.3, 2), mountMat);
   ceiling.position.y = 4.2;
   group.add(ceiling);
@@ -782,7 +842,14 @@ export const springScene: SceneInit = ({ group, camera, params }) => {
   );
   group.add(mass);
 
-  const arrow = new THREE.ArrowHelper(new THREE.Vector3(0, -1, 0), new THREE.Vector3(0, 0, 0), 1, 0xff5a44, 0.32, 0.22);
+  const arrow = new THREE.ArrowHelper(
+    new THREE.Vector3(0, -1, 0),
+    new THREE.Vector3(0, 0, 0),
+    1,
+    0xff5a44,
+    0.32,
+    0.22,
+  );
   group.add(arrow);
 
   let time = 0;
@@ -810,8 +877,14 @@ export const springScene: SceneInit = ({ group, camera, params }) => {
    ════════════════════════════════════════════════════════════════ */
 export function doublePendulumReadouts(p: ParamValues) {
   return [
-    { label: "Arm 1", value: `${num(p, "len1", 1.6).toFixed(2)} m · ${num(p, "mass1", 1.4).toFixed(1)} kg` },
-    { label: "Arm 2", value: `${num(p, "len2", 1.6).toFixed(2)} m · ${num(p, "mass2", 1.0).toFixed(1)} kg` },
+    {
+      label: "Arm 1",
+      value: `${num(p, "len1", 1.6).toFixed(2)} m · ${num(p, "mass1", 1.4).toFixed(1)} kg`,
+    },
+    {
+      label: "Arm 2",
+      value: `${num(p, "len2", 1.6).toFixed(2)} m · ${num(p, "mass2", 1.0).toFixed(1)} kg`,
+    },
     { label: "Gravity", value: `${num(p, "gravity", 9.8).toFixed(1)} m/s²` },
     { label: "Behaviour", value: "chaotic" },
   ];
@@ -823,11 +896,21 @@ export const doublePendulumScene: SceneInit = ({ group, camera, params }) => {
   const up = new THREE.Vector3(0, 1, 0);
   const pivot = new THREE.Vector3(0, 3.4, 0);
 
-  const rodMat = new THREE.MeshStandardMaterial({ color: 0x9aa6b2, metalness: 0.85, roughness: 0.35 });
+  const rodMat = new THREE.MeshStandardMaterial({
+    color: 0x9aa6b2,
+    metalness: 0.85,
+    roughness: 0.35,
+  });
   const rod1 = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 1, 12), rodMat);
   const rod2 = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 1, 12), rodMat);
-  const bob1 = new THREE.Mesh(new THREE.SphereGeometry(0.4, 32, 32), new THREE.MeshStandardMaterial({ color: 0x6ec1ff, metalness: 0.6, roughness: 0.28 }));
-  const bob2 = new THREE.Mesh(new THREE.SphereGeometry(0.4, 32, 32), new THREE.MeshStandardMaterial({ color: 0xe2a43b, metalness: 0.6, roughness: 0.28 }));
+  const bob1 = new THREE.Mesh(
+    new THREE.SphereGeometry(0.4, 32, 32),
+    new THREE.MeshStandardMaterial({ color: 0x6ec1ff, metalness: 0.6, roughness: 0.28 }),
+  );
+  const bob2 = new THREE.Mesh(
+    new THREE.SphereGeometry(0.4, 32, 32),
+    new THREE.MeshStandardMaterial({ color: 0xe2a43b, metalness: 0.6, roughness: 0.28 }),
+  );
   const mount = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), rodMat);
   mount.position.copy(pivot);
   group.add(rod1, rod2, bob1, bob2, mount);
@@ -837,7 +920,10 @@ export const doublePendulumScene: SceneInit = ({ group, camera, params }) => {
   const traceGeo = new THREE.BufferGeometry();
   traceGeo.setAttribute("position", new THREE.BufferAttribute(tracePos, 3));
   traceGeo.setDrawRange(0, 0);
-  const trace = new THREE.Line(traceGeo, new THREE.LineBasicMaterial({ color: 0xffd166, transparent: true, opacity: 0.5 }));
+  const trace = new THREE.Line(
+    traceGeo,
+    new THREE.LineBasicMaterial({ color: 0xffd166, transparent: true, opacity: 0.5 }),
+  );
   group.add(trace);
   let traceN = 0;
 
@@ -873,7 +959,11 @@ export const doublePendulumScene: SceneInit = ({ group, camera, params }) => {
             2 * Math.sin(d) * m2 * (w2 * w2 * L2 + w1 * w1 * L1 * Math.cos(d))) /
           (L1 * den);
         const a2 =
-          (2 * Math.sin(d) * (w1 * w1 * L1 * (m1 + m2) + g * (m1 + m2) * Math.cos(th1) + w2 * w2 * L2 * m2 * Math.cos(d))) /
+          (2 *
+            Math.sin(d) *
+            (w1 * w1 * L1 * (m1 + m2) +
+              g * (m1 + m2) * Math.cos(th1) +
+              w2 * w2 * L2 * m2 * Math.cos(d))) /
           (L2 * den);
         w1 += a1 * dt;
         w2 += a2 * dt;
@@ -1184,7 +1274,11 @@ export const sortingScene: SceneInit = ({ group, camera, params }) => {
   const bars: THREE.Mesh[] = [];
   const geom = new THREE.BoxGeometry(barW, 1, barW);
   for (let i = 0; i < size; i++) {
-    const mat = new THREE.MeshStandardMaterial({ color: SORT_SLATE, metalness: 0.2, roughness: 0.55 });
+    const mat = new THREE.MeshStandardMaterial({
+      color: SORT_SLATE,
+      metalness: 0.2,
+      roughness: 0.55,
+    });
     const m = new THREE.Mesh(geom, mat);
     m.position.x = -W / 2 + (i + 0.5) * (W / size);
     bars.push(m);
@@ -1294,8 +1388,20 @@ export function sortingChart(p: ParamValues): LabChartData {
     xLabel: "array size n",
     yLabel: "comparisons",
     series: [
-      { points: quad, color: isQuad ? "accent" : "muted", dashed: !isQuad, area: isQuad, label: "O(n²)" },
-      { points: nlogn, color: !isQuad ? "accent" : "muted", dashed: isQuad, area: !isQuad, label: "O(n log n)" },
+      {
+        points: quad,
+        color: isQuad ? "accent" : "muted",
+        dashed: !isQuad,
+        area: isQuad,
+        label: "O(n²)",
+      },
+      {
+        points: nlogn,
+        color: !isQuad ? "accent" : "muted",
+        dashed: isQuad,
+        area: !isQuad,
+        label: "O(n log n)",
+      },
     ],
     markers: [{ x: size, y: chosen, color: "accent" }],
     xDomain: [4, 40],
@@ -1325,7 +1431,10 @@ const MOLECULES: Record<string, Molecule> = {
       { el: "H", p: [0.757, 0.586, 0] },
       { el: "H", p: [-0.757, 0.586, 0] },
     ],
-    bonds: [[0, 1], [0, 2]],
+    bonds: [
+      [0, 1],
+      [0, 2],
+    ],
   },
   methane: {
     name: "Methane",
@@ -1337,7 +1446,12 @@ const MOLECULES: Record<string, Molecule> = {
       { el: "H", p: [-0.629, 0.629, -0.629] },
       { el: "H", p: [0.629, -0.629, -0.629] },
     ],
-    bonds: [[0, 1], [0, 2], [0, 3], [0, 4]],
+    bonds: [
+      [0, 1],
+      [0, 2],
+      [0, 3],
+      [0, 4],
+    ],
   },
   ammonia: {
     name: "Ammonia",
@@ -1348,7 +1462,11 @@ const MOLECULES: Record<string, Molecule> = {
       { el: "H", p: [-0.47, -0.27, 0.814] },
       { el: "H", p: [-0.47, -0.27, -0.814] },
     ],
-    bonds: [[0, 1], [0, 2], [0, 3]],
+    bonds: [
+      [0, 1],
+      [0, 2],
+      [0, 3],
+    ],
   },
   co2: {
     name: "Carbon dioxide",
@@ -1358,7 +1476,10 @@ const MOLECULES: Record<string, Molecule> = {
       { el: "O", p: [1.16, 0, 0] },
       { el: "O", p: [-1.16, 0, 0] },
     ],
-    bonds: [[0, 1], [0, 2]],
+    bonds: [
+      [0, 1],
+      [0, 2],
+    ],
   },
   benzene: {
     name: "Benzene",
@@ -1378,8 +1499,18 @@ const MOLECULES: Record<string, Molecule> = {
       { el: "H", p: [1.245, -2.157, 0] },
     ],
     bonds: [
-      [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0],
-      [0, 6], [1, 7], [2, 8], [3, 9], [4, 10], [5, 11],
+      [0, 1],
+      [1, 2],
+      [2, 3],
+      [3, 4],
+      [4, 5],
+      [5, 0],
+      [0, 6],
+      [1, 7],
+      [2, 8],
+      [3, 9],
+      [4, 10],
+      [5, 11],
     ],
   },
 };
@@ -1401,7 +1532,8 @@ export const moleculeScene: SceneInit = ({ group, camera, params }) => {
   const cx = mol.atoms.reduce((s, a) => s + a.p[0], 0) / mol.atoms.length;
   const cy = mol.atoms.reduce((s, a) => s + a.p[1], 0) / mol.atoms.length;
   const cz = mol.atoms.reduce((s, a) => s + a.p[2], 0) / mol.atoms.length;
-  const pos = (a: Atom) => new THREE.Vector3((a.p[0] - cx) * S, (a.p[1] - cy) * S, (a.p[2] - cz) * S);
+  const pos = (a: Atom) =>
+    new THREE.Vector3((a.p[0] - cx) * S, (a.p[1] - cy) * S, (a.p[2] - cz) * S);
 
   for (const a of mol.atoms) {
     const e = ELEMENTS[a.el] ?? ELEMENTS.C;
@@ -1416,7 +1548,11 @@ export const moleculeScene: SceneInit = ({ group, camera, params }) => {
 
   if (!spaceFill) {
     const up = new THREE.Vector3(0, 1, 0);
-    const bondMat = new THREE.MeshStandardMaterial({ color: 0x9aa3b4, metalness: 0.4, roughness: 0.4 });
+    const bondMat = new THREE.MeshStandardMaterial({
+      color: 0x9aa3b4,
+      metalness: 0.4,
+      roughness: 0.4,
+    });
     for (const [i, j] of mol.bonds) {
       const a = pos(mol.atoms[i]);
       const b = pos(mol.atoms[j]);
@@ -1472,11 +1608,28 @@ export const matrixScene: SceneInit = ({ group, camera, params }) => {
   const pos = new Float32Array(segs.length * 2 * 3);
   const gridGeo = new THREE.BufferGeometry();
   gridGeo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-  const grid = new THREE.LineSegments(gridGeo, new THREE.LineBasicMaterial({ color: 0x46506c, transparent: true, opacity: 0.65 }));
+  const grid = new THREE.LineSegments(
+    gridGeo,
+    new THREE.LineBasicMaterial({ color: 0x46506c, transparent: true, opacity: 0.65 }),
+  );
   group.add(grid);
 
-  const iArrow = new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 0, 0), 1, AMBER, 0.35, 0.22);
-  const jArrow = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 0), 1, INDIGO, 0.35, 0.22);
+  const iArrow = new THREE.ArrowHelper(
+    new THREE.Vector3(1, 0, 0),
+    new THREE.Vector3(0, 0, 0),
+    1,
+    AMBER,
+    0.35,
+    0.22,
+  );
+  const jArrow = new THREE.ArrowHelper(
+    new THREE.Vector3(0, 1, 0),
+    new THREE.Vector3(0, 0, 0),
+    1,
+    INDIGO,
+    0.35,
+    0.22,
+  );
   group.add(iArrow, jArrow);
 
   const sqGeo = new THREE.BufferGeometry();
@@ -1486,16 +1639,26 @@ export const matrixScene: SceneInit = ({ group, camera, params }) => {
   group.add(sq);
 
   return (elapsed) => {
-    const a = num(params, "a", 1), b = num(params, "b", 0.5), c = num(params, "c", 0), d = num(params, "d", 1);
+    const a = num(params, "a", 1),
+      b = num(params, "b", 0.5),
+      c = num(params, "c", 0),
+      d = num(params, "d", 1);
     const morph = bool(params, "animate", true);
     const t = morph ? Math.sin(elapsed * 0.9) * 0.5 + 0.5 : 1;
-    const A = 1 + (a - 1) * t, B = b * t, C = c * t, D = 1 + (d - 1) * t;
+    const A = 1 + (a - 1) * t,
+      B = b * t,
+      C = c * t,
+      D = 1 + (d - 1) * t;
 
     for (let s = 0; s < segs.length; s++) {
       const [x0, y0, x1, y1] = segs[s];
       const o = s * 6;
-      pos[o] = A * x0 + B * y0; pos[o + 1] = C * x0 + D * y0; pos[o + 2] = 0;
-      pos[o + 3] = A * x1 + B * y1; pos[o + 4] = C * x1 + D * y1; pos[o + 5] = 0;
+      pos[o] = A * x0 + B * y0;
+      pos[o + 1] = C * x0 + D * y0;
+      pos[o + 2] = 0;
+      pos[o + 3] = A * x1 + B * y1;
+      pos[o + 4] = C * x1 + D * y1;
+      pos[o + 5] = 0;
     }
     (gridGeo.attributes.position as THREE.BufferAttribute).needsUpdate = true;
 
@@ -1506,7 +1669,13 @@ export const matrixScene: SceneInit = ({ group, camera, params }) => {
     jArrow.setDirection(new THREE.Vector3(B, D, 0).normalize());
     jArrow.setLength(jl, Math.min(0.35, jl * 0.3), 0.22);
 
-    const corners = [[0, 0], [A, C], [A + B, C + D], [B, D], [0, 0]];
+    const corners = [
+      [0, 0],
+      [A, C],
+      [A + B, C + D],
+      [B, D],
+      [0, 0],
+    ];
     for (let i = 0; i < 5; i++) {
       sqPos[i * 3] = corners[i][0];
       sqPos[i * 3 + 1] = corners[i][1];
@@ -1517,10 +1686,16 @@ export const matrixScene: SceneInit = ({ group, camera, params }) => {
 };
 
 export function matrixReadouts(p: ParamValues) {
-  const a = num(p, "a", 1), b = num(p, "b", 0.5), c = num(p, "c", 0), d = num(p, "d", 1);
+  const a = num(p, "a", 1),
+    b = num(p, "b", 0.5),
+    c = num(p, "c", 0),
+    d = num(p, "d", 1);
   const det = a * d - b * c;
   return [
-    { label: "Matrix", value: `[${a.toFixed(1)} ${b.toFixed(1)}; ${c.toFixed(1)} ${d.toFixed(1)}]` },
+    {
+      label: "Matrix",
+      value: `[${a.toFixed(1)} ${b.toFixed(1)}; ${c.toFixed(1)} ${d.toFixed(1)}]`,
+    },
     { label: "Determinant", value: det.toFixed(2) },
     { label: "Area scale", value: `×${Math.abs(det).toFixed(2)}` },
     { label: "Orientation", value: det < 0 ? "flipped" : det === 0 ? "collapsed" : "preserved" },
@@ -1528,9 +1703,24 @@ export function matrixReadouts(p: ParamValues) {
 }
 
 export function matrixChart(p: ParamValues): LabChartData {
-  const a = num(p, "a", 1), b = num(p, "b", 0.5), c = num(p, "c", 0), d = num(p, "d", 1);
-  const ref: [number, number][] = [[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]];
-  const tr: [number, number][] = [[0, 0], [a, c], [a + b, c + d], [b, d], [0, 0]];
+  const a = num(p, "a", 1),
+    b = num(p, "b", 0.5),
+    c = num(p, "c", 0),
+    d = num(p, "d", 1);
+  const ref: [number, number][] = [
+    [0, 0],
+    [1, 0],
+    [1, 1],
+    [0, 1],
+    [0, 0],
+  ];
+  const tr: [number, number][] = [
+    [0, 0],
+    [a, c],
+    [a + b, c + d],
+    [b, d],
+    [0, 0],
+  ];
   const all = [...ref, ...tr];
   const lo = Math.min(-0.2, ...all.map((q) => q[0]), ...all.map((q) => q[1])) - 0.3;
   const hi = Math.max(1.2, ...all.map((q) => q[0]), ...all.map((q) => q[1])) + 0.3;
@@ -1561,13 +1751,20 @@ export const neuronScene: SceneInit = ({ group, camera, params }) => {
   const nMyelin = clampInt(num(params, "myelin", 5), 3, 8);
   const up = new THREE.Vector3(0, 1, 0);
 
-  const somaMat = new THREE.MeshStandardMaterial({ color: 0xe2a43b, metalness: 0.1, roughness: 0.5 });
+  const somaMat = new THREE.MeshStandardMaterial({
+    color: 0xe2a43b,
+    metalness: 0.1,
+    roughness: 0.5,
+  });
   const dendMat = new THREE.MeshStandardMaterial({ color: 0xc98f3a, roughness: 0.6 });
 
   const soma = new THREE.Mesh(new THREE.SphereGeometry(1.0, 36, 28), somaMat);
   soma.position.set(-4.5, 0, 0);
   group.add(soma);
-  const nucleus = new THREE.Mesh(new THREE.SphereGeometry(0.45, 24, 20), new THREE.MeshStandardMaterial({ color: 0x7a4e18, roughness: 0.6 }));
+  const nucleus = new THREE.Mesh(
+    new THREE.SphereGeometry(0.45, 24, 20),
+    new THREE.MeshStandardMaterial({ color: 0x7a4e18, roughness: 0.6 }),
+  );
   nucleus.position.copy(soma.position);
   group.add(nucleus);
 
@@ -1585,13 +1782,20 @@ export const neuronScene: SceneInit = ({ group, camera, params }) => {
     const dir = new THREE.Vector3(-1.3, Math.cos(theta) * 0.95, Math.sin(theta) * 0.95);
     const base = soma.position.clone().add(dir.clone().normalize().multiplyScalar(0.85));
     const tip = addBranch(base, dir, 1.7, 0.12);
-    const jitter = new THREE.Vector3(-0.4, Math.cos(theta * 1.7) * 0.7, Math.sin(theta * 1.3) * 0.7);
+    const jitter = new THREE.Vector3(
+      -0.4,
+      Math.cos(theta * 1.7) * 0.7,
+      Math.sin(theta * 1.3) * 0.7,
+    );
     addBranch(tip, dir.clone().add(jitter), 0.95, 0.07);
   }
 
   const axonStartX = -3.5;
   const axonLen = 7;
-  const axon = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, axonLen, 16), new THREE.MeshStandardMaterial({ color: 0xb98a4a, roughness: 0.55 }));
+  const axon = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.16, 0.16, axonLen, 16),
+    new THREE.MeshStandardMaterial({ color: 0xb98a4a, roughness: 0.55 }),
+  );
   axon.rotation.z = Math.PI / 2;
   axon.position.set(axonStartX + axonLen / 2, 0, 0);
   group.add(axon);
@@ -1616,7 +1820,10 @@ export const neuronScene: SceneInit = ({ group, camera, params }) => {
     group.add(bouton);
   }
 
-  const pulse = new THREE.Mesh(new THREE.SphereGeometry(0.3, 20, 16), new THREE.MeshBasicMaterial({ color: 0x6ec1ff }));
+  const pulse = new THREE.Mesh(
+    new THREE.SphereGeometry(0.3, 20, 16),
+    new THREE.MeshBasicMaterial({ color: 0x6ec1ff }),
+  );
   group.add(pulse);
 
   return (elapsed) => {
@@ -1642,7 +1849,17 @@ export function neuronReadouts(p: ParamValues) {
 
 export function neuronChart(_p: ParamValues): LabChartData {
   const keys: [number, number][] = [
-    [0, -70], [1, -68], [1.3, -55], [1.7, 0], [2.0, 40], [2.4, 10], [2.9, -55], [3.4, -80], [4.2, -78], [5.2, -71], [6, -70],
+    [0, -70],
+    [1, -68],
+    [1.3, -55],
+    [1.7, 0],
+    [2.0, 40],
+    [2.4, 10],
+    [2.9, -55],
+    [3.4, -80],
+    [4.2, -78],
+    [5.2, -71],
+    [6, -70],
   ];
   const pts: [number, number][] = [];
   for (let i = 0; i < keys.length - 1; i++) {
@@ -1672,11 +1889,26 @@ export function neuronChart(_p: ParamValues): LabChartData {
    (the derivative) and the shaded area under it (the integral). The
    3D stage and the chart read the same x₀, so they stay in lock-step.
    ════════════════════════════════════════════════════════════════ */
-const CALC_FNS: Record<string, { f: (x: number) => number; df: (x: number) => number; label: string }> = {
+const CALC_FNS: Record<
+  string,
+  { f: (x: number) => number; df: (x: number) => number; label: string }
+> = {
   parabola: { f: (x) => 0.4 * x * x - 1, df: (x) => 0.8 * x, label: "0.4x² − 1" },
-  sine: { f: (x) => 1.6 * Math.sin(1.2 * x), df: (x) => 1.92 * Math.cos(1.2 * x), label: "1.6·sin(1.2x)" },
-  cubic: { f: (x) => 0.18 * x * x * x - 0.6 * x, df: (x) => 0.54 * x * x - 0.6, label: "0.18x³ − 0.6x" },
-  gaussian: { f: (x) => 2.2 * Math.exp((-x * x) / 1.5) - 1, df: (x) => (2.2 * (-2 * x)) / 1.5 * Math.exp((-x * x) / 1.5), label: "2.2·e^(−x²/1.5) − 1" },
+  sine: {
+    f: (x) => 1.6 * Math.sin(1.2 * x),
+    df: (x) => 1.92 * Math.cos(1.2 * x),
+    label: "1.6·sin(1.2x)",
+  },
+  cubic: {
+    f: (x) => 0.18 * x * x * x - 0.6 * x,
+    df: (x) => 0.54 * x * x - 0.6,
+    label: "0.18x³ − 0.6x",
+  },
+  gaussian: {
+    f: (x) => 2.2 * Math.exp((-x * x) / 1.5) - 1,
+    df: (x) => ((2.2 * (-2 * x)) / 1.5) * Math.exp((-x * x) / 1.5),
+    label: "2.2·e^(−x²/1.5) − 1",
+  },
 };
 
 function calcIntegral(fnKey: string, x0: number) {
@@ -1697,8 +1929,10 @@ export const calculusScene: SceneInit = ({ group, camera, params }) => {
 
   const axes = new THREE.LineSegments(
     new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(-3.4, 0, 0), new THREE.Vector3(3.4, 0, 0),
-      new THREE.Vector3(0, -3, 0), new THREE.Vector3(0, 3, 0),
+      new THREE.Vector3(-3.4, 0, 0),
+      new THREE.Vector3(3.4, 0, 0),
+      new THREE.Vector3(0, -3, 0),
+      new THREE.Vector3(0, 3, 0),
     ]),
     new THREE.LineBasicMaterial({ color: 0x46506c }),
   );
@@ -1706,13 +1940,21 @@ export const calculusScene: SceneInit = ({ group, camera, params }) => {
 
   const curvePts: THREE.Vector3[] = [];
   for (let x = -3; x <= 3.001; x += 0.06) curvePts.push(new THREE.Vector3(x, fn.f(x), 0));
-  const curve = new THREE.Line(new THREE.BufferGeometry().setFromPoints(curvePts), new THREE.LineBasicMaterial({ color: AMBER }));
+  const curve = new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints(curvePts),
+    new THREE.LineBasicMaterial({ color: AMBER }),
+  );
   group.add(curve);
 
   const NB = 48;
   const barW = 6 / NB;
   const bars: THREE.Mesh[] = [];
-  const barMat = new THREE.MeshBasicMaterial({ color: 0xe2a43b, transparent: true, opacity: 0.22, side: THREE.DoubleSide });
+  const barMat = new THREE.MeshBasicMaterial({
+    color: 0xe2a43b,
+    transparent: true,
+    opacity: 0.22,
+    side: THREE.DoubleSide,
+  });
   for (let i = 0; i < NB; i++) {
     const cx = -3 + (i + 0.5) * barW;
     const h = fn.f(cx);
@@ -1723,11 +1965,17 @@ export const calculusScene: SceneInit = ({ group, camera, params }) => {
     group.add(m);
   }
 
-  const point = new THREE.Mesh(new THREE.SphereGeometry(0.13, 20, 16), new THREE.MeshBasicMaterial({ color: 0x6ec1ff }));
+  const point = new THREE.Mesh(
+    new THREE.SphereGeometry(0.13, 20, 16),
+    new THREE.MeshBasicMaterial({ color: 0x6ec1ff }),
+  );
   group.add(point);
 
   const tangent = new THREE.Line(
-    new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-1, 0, 0), new THREE.Vector3(1, 0, 0)]),
+    new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(-1, 0, 0),
+      new THREE.Vector3(1, 0, 0),
+    ]),
     new THREE.LineBasicMaterial({ color: INDIGO }),
   );
   group.add(tangent);
@@ -1775,12 +2023,21 @@ export function calculusChart(p: ParamValues): LabChartData {
   if (mode === "integral") {
     const area: [number, number][] = [];
     for (let x = -3; x <= x0 + 0.0001; x += 0.06) area.push([x, fn.f(x)]);
-    if (area.length > 1) series.push({ points: area, color: "accent", area: true, noLine: true, label: "∫ area" });
+    if (area.length > 1)
+      series.push({ points: area, color: "accent", area: true, noLine: true, label: "∫ area" });
   } else {
     const y0 = fn.f(x0);
     const s = fn.df(x0);
     const dx = 1.4;
-    series.push({ points: [[x0 - dx, y0 - s * dx], [x0 + dx, y0 + s * dx]], color: "violet", dashed: true, label: "tangent" });
+    series.push({
+      points: [
+        [x0 - dx, y0 - s * dx],
+        [x0 + dx, y0 + s * dx],
+      ],
+      color: "violet",
+      dashed: true,
+      label: "tangent",
+    });
   }
 
   return {

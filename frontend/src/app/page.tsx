@@ -7,17 +7,61 @@ import { api } from "@/services/api-client";
 import HeroDemo from "@/features/landing/hero-demo";
 import { Confetti } from "@/components/ui/confetti";
 import {
-  Code2, Sparkles, Network, Swords, Medal, ShoppingBag, Flame, ChevronRight, Menu, X,
-  Boxes, BookOpen, Library, Sigma, Orbit, FlaskConical,
+  Code2,
+  Sparkles,
+  Network,
+  Swords,
+  Medal,
+  ShoppingBag,
+  Flame,
+  ChevronRight,
+  Menu,
+  X,
+  Boxes,
+  BookOpen,
+  Library,
+  Sigma,
+  Orbit,
+  FlaskConical,
 } from "lucide-react";
 
 const features = [
-  { icon: BookOpen, title: "Every Subject", desc: "Programming, math, physics, and science — one catalog, one progress system.", href: "/courses" },
-  { icon: Sparkles, title: "Your AI Tutor", desc: "A coach that adapts to you: explains, hints, quizzes, and plans your week.", href: "/mentor" },
-  { icon: Boxes, title: "Interactive 3D Labs", desc: "Explore math surfaces, orbital physics, and molecular science you can rotate.", href: "/lab" },
-  { icon: Code2, title: "Step-through Visualizer", desc: "Watch code and concepts unfold line by line, with live state.", href: "/codelab" },
-  { icon: Library, title: "Resources & Library", desc: "Keep notes, study guides, and materials for every class in one place.", href: "/resources" },
-  { icon: Network, title: "Skill Tree & Progress", desc: "Turn studying into momentum — unlock skills, climb ranks, earn rewards.", href: "/skill-tree" },
+  {
+    icon: BookOpen,
+    title: "Every Subject",
+    desc: "Programming, math, physics, and science — one catalog, one progress system.",
+    href: "/courses",
+  },
+  {
+    icon: Sparkles,
+    title: "Your AI Tutor",
+    desc: "A coach that adapts to you: explains, hints, quizzes, and plans your week.",
+    href: "/mentor",
+  },
+  {
+    icon: Boxes,
+    title: "Interactive 3D Labs",
+    desc: "Explore math surfaces, orbital physics, and molecular science you can rotate.",
+    href: "/lab",
+  },
+  {
+    icon: Code2,
+    title: "Step-through Visualizer",
+    desc: "Watch code and concepts unfold line by line, with live state.",
+    href: "/codelab",
+  },
+  {
+    icon: Library,
+    title: "Resources & Library",
+    desc: "Keep notes, study guides, and materials for every class in one place.",
+    href: "/resources",
+  },
+  {
+    icon: Network,
+    title: "Skill Tree & Progress",
+    desc: "Turn studying into momentum — unlock skills, climb ranks, earn rewards.",
+    href: "/skill-tree",
+  },
 ];
 
 const subjects = [
@@ -31,12 +75,42 @@ const subjects = [
 ];
 
 const challengeData = [
-  { title: "Find the Missing Number", lang: "Python", diff: "easy", desc: "Given an array of n-1 integers from 1 to n, find the missing number." },
-  { title: "Reverse a String Without Built-ins", lang: "Python", diff: "easy", desc: "Reverse a string using only loops and character access." },
-  { title: "Debounce From Scratch", lang: "JavaScript", diff: "medium", desc: "Implement a debounce function that limits how often a function can fire." },
-  { title: "Flatten a Nested Array", lang: "JavaScript", diff: "medium", desc: "Write a function that flattens a deeply nested array into one level." },
-  { title: "Binary Search, No Library", lang: "Algorithms", diff: "medium", desc: "Implement binary search without using any built-in methods." },
-  { title: "Count Islands in a Grid", lang: "Algorithms", diff: "hard", desc: "Given a 2D grid of '1's and '0's, count the number of islands." },
+  {
+    title: "Find the Missing Number",
+    lang: "Python",
+    diff: "easy",
+    desc: "Given an array of n-1 integers from 1 to n, find the missing number.",
+  },
+  {
+    title: "Reverse a String Without Built-ins",
+    lang: "Python",
+    diff: "easy",
+    desc: "Reverse a string using only loops and character access.",
+  },
+  {
+    title: "Debounce From Scratch",
+    lang: "JavaScript",
+    diff: "medium",
+    desc: "Implement a debounce function that limits how often a function can fire.",
+  },
+  {
+    title: "Flatten a Nested Array",
+    lang: "JavaScript",
+    diff: "medium",
+    desc: "Write a function that flattens a deeply nested array into one level.",
+  },
+  {
+    title: "Binary Search, No Library",
+    lang: "Algorithms",
+    diff: "medium",
+    desc: "Implement binary search without using any built-in methods.",
+  },
+  {
+    title: "Count Islands in a Grid",
+    lang: "Algorithms",
+    diff: "hard",
+    desc: "Given a 2D grid of '1's and '0's, count the number of islands.",
+  },
 ];
 
 const diffLabel: Record<string, string> = {
@@ -46,9 +120,21 @@ const diffLabel: Record<string, string> = {
 };
 
 const steps = [
-  { n: "01", title: "Pick a challenge", desc: "Choose from challenges across Python, JavaScript, and Algorithms, each designed to push you a little further." },
-  { n: "02", title: "Write real code", desc: "Open the built-in editor, write your solution, and submit. Instant AI feedback on your approach, not just pass or fail." },
-  { n: "03", title: "Watch it run", desc: "Step through your solution in the visualizer, see every variable change, and earn XP for every challenge solved." },
+  {
+    n: "01",
+    title: "Pick a challenge",
+    desc: "Choose from challenges across Python, JavaScript, and Algorithms, each designed to push you a little further.",
+  },
+  {
+    n: "02",
+    title: "Write real code",
+    desc: "Open the built-in editor, write your solution, and submit. Instant AI feedback on your approach, not just pass or fail.",
+  },
+  {
+    n: "03",
+    title: "Watch it run",
+    desc: "Step through your solution in the visualizer, see every variable change, and earn XP for every challenge solved.",
+  },
 ];
 
 function getDailyChallenge() {
@@ -131,7 +217,9 @@ export default function LandingPage() {
         const started = Date.now();
         const res = await api.aiReview(challengeCode, "python");
         setCodeResult(res.data.text);
-        setCodeResultTag(`${res.data.model || "Gemini"} · ${((Date.now() - started) / 1000).toFixed(1)}s`);
+        setCodeResultTag(
+          `${res.data.model || "Gemini"} · ${((Date.now() - started) / 1000).toFixed(1)}s`,
+        );
         setConfetti(true);
         setTimeout(() => setConfetti(false), 1500);
       } catch (err: unknown) {
@@ -144,7 +232,9 @@ export default function LandingPage() {
     }
     // Logged-out visitors see an honestly-labeled sample of what AI review looks like.
     setTimeout(() => {
-      setCodeResult("Score: 7/10. Logic is correct but O(n²) complexity detected. Use a hash map for an O(n) single pass.");
+      setCodeResult(
+        "Score: 7/10. Logic is correct but O(n²) complexity detected. Use a hash map for an O(n) single pass.",
+      );
       setCodeResultTag("Sample review — log in for live AI feedback");
       setCodeLoading(false);
       setConfetti(true);
@@ -152,14 +242,15 @@ export default function LandingPage() {
     }, 1200);
   }, [challengeCode, codeLoading]);
 
-  const filteredChallenges = filter === "All"
-    ? challengeData
-    : challengeData.filter((c) => c.lang === filter || c.diff === filter.toLowerCase());
+  const filteredChallenges =
+    filter === "All"
+      ? challengeData
+      : challengeData.filter((c) => c.lang === filter || c.diff === filter.toLowerCase());
 
   const filters = ["All", "Python", "JavaScript", "Algorithms", "Easy", "Hard"];
 
   const toggleChallenge = (title: string) => {
-    setExpandedChallenge((prev) => prev === title ? null : title);
+    setExpandedChallenge((prev) => (prev === title ? null : title));
     setChallengeCode("");
     setCodeResult("");
     setCodeResultTag("");
@@ -177,10 +268,26 @@ export default function LandingPage() {
           EduVerse
         </Link>
         <ul className="landing-nav-links">
-          <li><a href="#subjects" className="nav-link">Subjects</a></li>
-          <li><a href="#features" className="nav-link">Features</a></li>
-          <li><Link href="/courses" className="nav-link">Courses</Link></li>
-          <li><Link href="/lab" className="nav-link">3D Labs</Link></li>
+          <li>
+            <a href="#subjects" className="nav-link">
+              Subjects
+            </a>
+          </li>
+          <li>
+            <a href="#features" className="nav-link">
+              Features
+            </a>
+          </li>
+          <li>
+            <Link href="/courses" className="nav-link">
+              Courses
+            </Link>
+          </li>
+          <li>
+            <Link href="/lab" className="nav-link">
+              3D Labs
+            </Link>
+          </li>
         </ul>
         <div className="flex items-center gap-2">
           <Link href="/auth/login" className="nav-link hidden sm:inline-flex">
@@ -204,11 +311,39 @@ export default function LandingPage() {
       {mobileOpen && (
         <div className="mobile-nav lg:hidden">
           <ul>
-            <li><a href="#subjects" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Subjects</a></li>
-            <li><a href="#features" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Features</a></li>
-            <li><Link href="/courses" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Courses</Link></li>
-            <li><Link href="/lab" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>3D Labs</Link></li>
-            <li><Link href="/auth/login" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>Log in</Link></li>
+            <li>
+              <a href="#subjects" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>
+                Subjects
+              </a>
+            </li>
+            <li>
+              <a href="#features" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>
+                Features
+              </a>
+            </li>
+            <li>
+              <Link
+                href="/courses"
+                className="mobile-nav-link"
+                onClick={() => setMobileOpen(false)}
+              >
+                Courses
+              </Link>
+            </li>
+            <li>
+              <Link href="/lab" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>
+                3D Labs
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/auth/login"
+                className="mobile-nav-link"
+                onClick={() => setMobileOpen(false)}
+              >
+                Log in
+              </Link>
+            </li>
           </ul>
         </div>
       )}
@@ -223,7 +358,9 @@ export default function LandingPage() {
             <span aria-hidden="true">{"//"}</span> a student-built academic companion
           </p>
           <h1 className="hero-title reveal-rise" style={{ "--d": "0.13s" } as React.CSSProperties}>
-            Every subject you study,<br /><span className="hero-highlight">finally in one place.</span>
+            Every subject you study,
+            <br />
+            <span className="hero-highlight">finally in one place.</span>
           </h1>
           <p className="hero-desc intro" style={{ "--d": "0.21s" } as React.CSSProperties}>
             Programming, math, physics, and science — with an AI tutor that adapts to you,
@@ -253,7 +390,10 @@ export default function LandingPage() {
         <div className="sec-header rv">
           <p className="sec-kicker">Subjects</p>
           <h2 className="sec-title">One platform, every subject</h2>
-          <p className="sec-sub">From your first line of Python to orbital mechanics and the double helix — programming and the sciences, under one roof.</p>
+          <p className="sec-sub">
+            From your first line of Python to orbital mechanics and the double helix — programming
+            and the sciences, under one roof.
+          </p>
         </div>
         <div className="subjects-grid">
           {subjects.map((s, i) => (
@@ -263,7 +403,9 @@ export default function LandingPage() {
               className="subject-chip rv"
               style={{ "--reveal-delay": `${(i % 4) * 0.06}s` } as React.CSSProperties}
             >
-              <span className="subject-chip-icon"><s.icon size={18} aria-hidden="true" /></span>
+              <span className="subject-chip-icon">
+                <s.icon size={18} aria-hidden="true" />
+              </span>
               <span className="subject-chip-name">{s.name}</span>
               <span className="subject-chip-group">{s.group}</span>
             </Link>
@@ -276,7 +418,10 @@ export default function LandingPage() {
         <div className="sec-header rv">
           <p className="sec-kicker">Everything you need</p>
           <h2 className="sec-title">A complete academic companion</h2>
-          <p className="sec-sub">Every subject, an AI tutor, interactive labs, and a progress system that turns studying into momentum — one unified experience.</p>
+          <p className="sec-sub">
+            Every subject, an AI tutor, interactive labs, and a progress system that turns studying
+            into momentum — one unified experience.
+          </p>
         </div>
 
         <div className="feature-bento">
@@ -287,7 +432,9 @@ export default function LandingPage() {
               className="feature-card glass-panel glass-panel-link rv"
               style={{ "--reveal-delay": `${(i % 3) * 0.08}s` } as React.CSSProperties}
             >
-              <span className="feature-icon"><f.icon size={20} aria-hidden="true" /></span>
+              <span className="feature-icon">
+                <f.icon size={20} aria-hidden="true" />
+              </span>
               <h3>{f.title}</h3>
               <p>{f.desc}</p>
               <span className="feature-go">
@@ -303,7 +450,10 @@ export default function LandingPage() {
         <div className="sec-header rv">
           <p className="sec-kicker">Challenges</p>
           <h2 className="sec-title">A new one every day</h2>
-          <p className="sec-sub">Solve it right here on the page. <span className="countdown">Today&apos;s resets in {countdown}.</span></p>
+          <p className="sec-sub">
+            Solve it right here on the page.{" "}
+            <span className="countdown">Today&apos;s resets in {countdown}.</span>
+          </p>
         </div>
 
         <div className="challenge-daily rv">
@@ -312,7 +462,9 @@ export default function LandingPage() {
             <h3 className="challenge-title">{dailyChallenge.title}</h3>
             <p className="challenge-desc">{dailyChallenge.desc}</p>
             <div className="challenge-meta">
-              <span className={`diff-badge diff-${dailyChallenge.diff}`}>{diffLabel[dailyChallenge.diff]}</span>
+              <span className={`diff-badge diff-${dailyChallenge.diff}`}>
+                {diffLabel[dailyChallenge.diff]}
+              </span>
               <span className="challenge-lang">{dailyChallenge.lang}</span>
             </div>
           </div>
@@ -363,13 +515,19 @@ export default function LandingPage() {
                     onChange={(e) => setChallengeCode(e.target.value)}
                     rows={6}
                   />
-                  <button className="challenge-submit" onClick={submitChallengeCode} disabled={!challengeCode.trim() || codeLoading}>
+                  <button
+                    className="challenge-submit"
+                    onClick={submitChallengeCode}
+                    disabled={!challengeCode.trim() || codeLoading}
+                  >
                     {codeLoading ? "Running..." : "Submit code"}
                   </button>
                   {codeResult && (
                     <div className="challenge-result">
                       <p>{codeResult}</p>
-                      {codeResultTag && <span className="challenge-result-tag">{codeResultTag}</span>}
+                      {codeResultTag && (
+                        <span className="challenge-result-tag">{codeResultTag}</span>
+                      )}
                     </div>
                   )}
                 </div>
@@ -387,7 +545,11 @@ export default function LandingPage() {
         </div>
         <div className="steps-row">
           {steps.map((step, i) => (
-            <div key={step.n} className="step-col rv" style={{ "--reveal-delay": `${i * 0.1}s` } as React.CSSProperties}>
+            <div
+              key={step.n}
+              className="step-col rv"
+              style={{ "--reveal-delay": `${i * 0.1}s` } as React.CSSProperties}
+            >
               <span className="step-num">{step.n}</span>
               <h3>{step.title}</h3>
               <p>{step.desc}</p>
@@ -400,11 +562,17 @@ export default function LandingPage() {
       <section className="landing-band">
         <div className="beam-up" aria-hidden="true" />
         <div className="rv" style={{ position: "relative" }}>
-          <h2 className="band-title">Built by students,<br /><span className="band-hl">for students.</span></h2>
+          <h2 className="band-title">
+            Built by students,
+            <br />
+            <span className="band-hl">for students.</span>
+          </h2>
           <p className="band-sub">
             No paywalls, no fake numbers. Real challenges that prepare you for real interviews.
           </p>
-          <Link href="/auth/register" className="glow-pill">Create a free account</Link>
+          <Link href="/auth/register" className="glow-pill">
+            Create a free account
+          </Link>
         </div>
       </section>
 

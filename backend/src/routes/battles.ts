@@ -32,7 +32,13 @@ router.post("/join/:id", requireAuth, async (req: Request, res: Response) => {
 router.post("/submit", requireAuth, async (req: Request, res: Response) => {
   try {
     const { battleId, code, timeTakenMs, timeLimitMs } = req.body;
-    const result = await submitBattleSolution(battleId, req.userId!, code, timeTakenMs, timeLimitMs);
+    const result = await submitBattleSolution(
+      battleId,
+      req.userId!,
+      code,
+      timeTakenMs,
+      timeLimitMs,
+    );
     res.json({ success: true, data: result });
   } catch (err) {
     res.status(500).json({ success: false, error: "Failed to submit" });

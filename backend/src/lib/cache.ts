@@ -13,7 +13,10 @@ export function setCache(key: string, data: unknown, ttl = TTL) {
 }
 
 export function clearCache(pattern?: string) {
-  if (!pattern) { cache.clear(); return; }
+  if (!pattern) {
+    cache.clear();
+    return;
+  }
   for (const key of cache.keys()) {
     if (key.includes(pattern)) cache.delete(key);
   }

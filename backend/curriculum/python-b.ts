@@ -11,8 +11,16 @@ export const pythonB: LessonDef[] = [
       `<strong>None</strong> — what a function returns if you don't return anything`,
     ],
     examples: [
-      ex("Define, then call", `def greet(name):\n    return "Hello, " + name + "!"\n\nprint(greet("Ada"))\nprint(greet("Linus"))`, `Hello, Ada!\nHello, Linus!`),
-      ex("Compute and reuse", `def area(width, height):\n    return width * height\n\nrooms = [(3, 4), (5, 2), (4, 4)]\ntotal = 0\nfor w, h in rooms:\n    total += area(w, h)\nprint("Total area:", total)`, `Total area: 38`),
+      ex(
+        "Define, then call",
+        `def greet(name):\n    return "Hello, " + name + "!"\n\nprint(greet("Ada"))\nprint(greet("Linus"))`,
+        `Hello, Ada!\nHello, Linus!`,
+      ),
+      ex(
+        "Compute and reuse",
+        `def area(width, height):\n    return width * height\n\nrooms = [(3, 4), (5, 2), (4, 4)]\ntotal = 0\nfor w, h in rooms:\n    total += area(w, h)\nprint("Total area:", total)`,
+        `Total area: 38`,
+      ),
     ],
     realWorld: `Every API endpoint, every button handler, every test case is a function. Splitting a program into small, named, single-purpose functions is the single most important structuring habit in software.`,
     practice: `Write <code>def celsius_to_fahrenheit(c):</code> returning <code>c * 9/5 + 32</code>, and a second function <code>describe(c)</code> that uses it to return strings like <code>"25°C is 77.0°F"</code>. Test both.`,
@@ -26,9 +34,29 @@ export const pythonB: LessonDef[] = [
     ],
     template: `def celsius_to_fahrenheit(c):\n    return c * 9 / 5 + 32\n\ndef describe(c):\n    return str(c) + "C is " + str(celsius_to_fahrenheit(c)) + "F"\n\nprint(describe(25))\nprint(describe(0))`,
     quiz: [
-      q("What does a function without a return statement return?", ["0", "\"\"", "None", "Error"], 2, `Functions implicitly return None when no return executes.`),
-      q("What happens to code after a return statement in the same block?", ["It runs next call", "It never runs", "It runs once", "Syntax error"], 1, `return exits immediately; following lines in that path are unreachable.`),
-      q("Why prefer return over print inside functions?", ["print is slower", "Returned values can be reused, composed, and tested", "print is deprecated", "No difference"], 1, `Returning separates computation from display — the foundation of testable code.`),
+      q(
+        "What does a function without a return statement return?",
+        ["0", '""', "None", "Error"],
+        2,
+        `Functions implicitly return None when no return executes.`,
+      ),
+      q(
+        "What happens to code after a return statement in the same block?",
+        ["It runs next call", "It never runs", "It runs once", "Syntax error"],
+        1,
+        `return exits immediately; following lines in that path are unreachable.`,
+      ),
+      q(
+        "Why prefer return over print inside functions?",
+        [
+          "print is slower",
+          "Returned values can be reused, composed, and tested",
+          "print is deprecated",
+          "No difference",
+        ],
+        1,
+        `Returning separates computation from display — the foundation of testable code.`,
+      ),
     ],
   }),
 
@@ -41,8 +69,17 @@ export const pythonB: LessonDef[] = [
       `<strong>*args / **kwargs</strong> — accept any number of positional / keyword arguments`,
     ],
     examples: [
-      ex("Defaults and keywords", `def brew(drink, size="medium", sugar=0):\n    return size + " " + drink + " (" + str(sugar) + " sugar)"\n\nprint(brew("coffee"))\nprint(brew("tea", sugar=2))\nprint(brew("latte", "large"))`, `medium coffee (0 sugar)\nmedium tea (2 sugar)\nlarge latte (0 sugar)`),
-      ex("*args gathers extras", `def total(*prices):\n    return sum(prices)\n\nprint(total(5))\nprint(total(5, 10, 25))`, `5\n40`, `Inside the function, prices is a tuple of everything passed.`),
+      ex(
+        "Defaults and keywords",
+        `def brew(drink, size="medium", sugar=0):\n    return size + " " + drink + " (" + str(sugar) + " sugar)"\n\nprint(brew("coffee"))\nprint(brew("tea", sugar=2))\nprint(brew("latte", "large"))`,
+        `medium coffee (0 sugar)\nmedium tea (2 sugar)\nlarge latte (0 sugar)`,
+      ),
+      ex(
+        "*args gathers extras",
+        `def total(*prices):\n    return sum(prices)\n\nprint(total(5))\nprint(total(5, 10, 25))`,
+        `5\n40`,
+        `Inside the function, prices is a tuple of everything passed.`,
+      ),
     ],
     realWorld: `Library APIs you already use are built this way — <code>print(*values, sep=" ", end="\\n")</code> combines *args with keyword defaults. Designing good signatures is designing a good developer experience.`,
     practice: `Write <code>def order(item, qty=1, *extras, express=False):</code> that prints a summary line. Call it three different ways: minimal, with extras, and with express=True.`,
@@ -56,9 +93,29 @@ export const pythonB: LessonDef[] = [
     ],
     template: `def order(item, qty=1, express=False):\n    line = str(qty) + " x " + item\n    if express:\n        line += " (EXPRESS)"\n    print(line)\n\norder("laptop")\norder("mouse", 3)\norder("ssd", 2, express=True)`,
     quiz: [
-      q("Why is def f(x, items=[]) dangerous?", ["Syntax error", "The default list is created once and shared between calls", "Lists can't be defaults", "It's fine"], 1, `Defaults are evaluated once at definition time — mutations persist across calls. Use None and create inside.`),
-      q("What is args inside def f(*args)?", ["A list", "A tuple", "A dict", "A set"], 1, `*args collects extra positional arguments into a tuple.`),
-      q("Which call is INVALID for def f(a, b=2)?", ["f(1)", "f(1, 3)", "f(b=4, a=1)", "f(a=1, 5)"], 3, `Positional arguments can't follow keyword arguments.`),
+      q(
+        "Why is def f(x, items=[]) dangerous?",
+        [
+          "Syntax error",
+          "The default list is created once and shared between calls",
+          "Lists can't be defaults",
+          "It's fine",
+        ],
+        1,
+        `Defaults are evaluated once at definition time — mutations persist across calls. Use None and create inside.`,
+      ),
+      q(
+        "What is args inside def f(*args)?",
+        ["A list", "A tuple", "A dict", "A set"],
+        1,
+        `*args collects extra positional arguments into a tuple.`,
+      ),
+      q(
+        "Which call is INVALID for def f(a, b=2)?",
+        ["f(1)", "f(1, 3)", "f(b=4, a=1)", "f(a=1, 5)"],
+        3,
+        `Positional arguments can't follow keyword arguments.`,
+      ),
     ],
   }),
 
@@ -71,8 +128,17 @@ export const pythonB: LessonDef[] = [
       `<strong>Returning multiple values</strong> — <code>return a, b</code> returns a tuple`,
     ],
     examples: [
-      ex("Locals don't leak", `def double(n):\n    result = n * 2\n    return result\n\nprint(double(5))\n# print(result)  # NameError: result only exists inside`, `10`),
-      ex("Multiple returns", `def min_max(nums):\n    return min(nums), max(nums)\n\nlow, high = min_max([4, 9, 1, 7])\nprint("low:", low, "high:", high)`, `low: 1 high: 7`, `Returning a tuple and unpacking it is the Python way to give back several results.`),
+      ex(
+        "Locals don't leak",
+        `def double(n):\n    result = n * 2\n    return result\n\nprint(double(5))\n# print(result)  # NameError: result only exists inside`,
+        `10`,
+      ),
+      ex(
+        "Multiple returns",
+        `def min_max(nums):\n    return min(nums), max(nums)\n\nlow, high = min_max([4, 9, 1, 7])\nprint("low:", low, "high:", high)`,
+        `low: 1 high: 7`,
+        `Returning a tuple and unpacking it is the Python way to give back several results.`,
+      ),
     ],
     realWorld: `Scope discipline is why big programs don't collapse: a thousand functions can each use a variable named <code>result</code> without colliding. Code that leans on global mutable state is the code teams dread maintaining.`,
     practice: `Write <code>def stats(numbers):</code> that returns the count, total, and average as three values. Unpack and print them for <code>[12, 8, 20, 4]</code>.`,
@@ -86,9 +152,24 @@ export const pythonB: LessonDef[] = [
     ],
     template: `def stats(numbers):\n    count = len(numbers)\n    total = sum(numbers)\n    return count, total, total / count\n\nn, t, avg = stats([12, 8, 20, 4])\nprint("count:", n, "total:", t, "avg:", avg)`,
     quiz: [
-      q("x = 1; def f(): x = 2 — after f(), what is global x?", ["2", "1", "None", "Error"], 1, `Assignment inside the function creates a LOCAL x; the global is untouched.`),
-      q("What does return a, b actually return?", ["Two separate values", "A tuple (a, b)", "A list [a, b]", "Only b"], 1, `Python packs them into a tuple, which callers usually unpack.`),
-      q("In what order does Python resolve names?", ["Global, Local", "Local, Enclosing, Global, Built-in", "Built-in first", "Random"], 1, `The LEGB rule — innermost scope wins.`),
+      q(
+        "x = 1; def f(): x = 2 — after f(), what is global x?",
+        ["2", "1", "None", "Error"],
+        1,
+        `Assignment inside the function creates a LOCAL x; the global is untouched.`,
+      ),
+      q(
+        "What does return a, b actually return?",
+        ["Two separate values", "A tuple (a, b)", "A list [a, b]", "Only b"],
+        1,
+        `Python packs them into a tuple, which callers usually unpack.`,
+      ),
+      q(
+        "In what order does Python resolve names?",
+        ["Global, Local", "Local, Enclosing, Global, Built-in", "Built-in first", "Random"],
+        1,
+        `The LEGB rule — innermost scope wins.`,
+      ),
     ],
   }),
 
@@ -101,8 +182,17 @@ export const pythonB: LessonDef[] = [
       `<strong>Limits</strong> — one expression only; anything bigger deserves def`,
     ],
     examples: [
-      ex("Sorting with a key", `users = [("Ada", 36), ("Bo", 25), ("Cy", 31)]\nby_age = sorted(users, key=lambda u: u[1])\nprint(by_age)`, `[('Bo', 25), ('Cy', 31), ('Ada', 36)]`),
-      ex("filter and map", `nums = [1, 2, 3, 4, 5, 6]\nevens = list(filter(lambda n: n % 2 == 0, nums))\ndoubled = list(map(lambda n: n * 2, evens))\nprint(evens, doubled)`, `[2, 4, 6] [4, 8, 12]`, `filter keeps items where the lambda is true; map transforms each item.`),
+      ex(
+        "Sorting with a key",
+        `users = [("Ada", 36), ("Bo", 25), ("Cy", 31)]\nby_age = sorted(users, key=lambda u: u[1])\nprint(by_age)`,
+        `[('Bo', 25), ('Cy', 31), ('Ada', 36)]`,
+      ),
+      ex(
+        "filter and map",
+        `nums = [1, 2, 3, 4, 5, 6]\nevens = list(filter(lambda n: n % 2 == 0, nums))\ndoubled = list(map(lambda n: n * 2, evens))\nprint(evens, doubled)`,
+        `[2, 4, 6] [4, 8, 12]`,
+        `filter keeps items where the lambda is true; map transforms each item.`,
+      ),
     ],
     realWorld: `"Sort products by price", "find the newest message", "keep only active users" — real codebases are full of one-line key and predicate lambdas passed into sorting and filtering utilities.`,
     practice: `Given <code>words = ["banana", "Fig", "cherry", "date"]</code>, sort them case-insensitively (key with <code>.lower()</code>), and find the longest word with <code>max()</code> and a lambda.`,
@@ -116,9 +206,24 @@ export const pythonB: LessonDef[] = [
     ],
     template: `words = ["banana", "Fig", "cherry", "date"]\nprint(sorted(words, key=lambda w: w.lower()))\nprint(max(words, key=lambda w: len(w)))`,
     quiz: [
-      q("Which is equivalent to lambda x: x + 1?", ["def f(x): x + 1", "def f(x): return x + 1", "def f(): return x + 1", "x => x + 1"], 1, `A lambda implicitly returns its expression — the def needs an explicit return.`),
-      q("What does sorted(words, key=len) do?", ["Sorts alphabetically", "Sorts by word length", "Errors", "Removes duplicates"], 1, `key extracts the comparison value for each item — here their lengths.`),
-      q("What CAN'T a lambda contain?", ["A condition", "Arithmetic", "Statements like loops and assignments", "Function calls"], 2, `Lambdas are single expressions — no statements allowed.`),
+      q(
+        "Which is equivalent to lambda x: x + 1?",
+        ["def f(x): x + 1", "def f(x): return x + 1", "def f(): return x + 1", "x => x + 1"],
+        1,
+        `A lambda implicitly returns its expression — the def needs an explicit return.`,
+      ),
+      q(
+        "What does sorted(words, key=len) do?",
+        ["Sorts alphabetically", "Sorts by word length", "Errors", "Removes duplicates"],
+        1,
+        `key extracts the comparison value for each item — here their lengths.`,
+      ),
+      q(
+        "What CAN'T a lambda contain?",
+        ["A condition", "Arithmetic", "Statements like loops and assignments", "Function calls"],
+        2,
+        `Lambdas are single expressions — no statements allowed.`,
+      ),
     ],
   }),
 
@@ -131,8 +236,16 @@ export const pythonB: LessonDef[] = [
       `<strong>Dict/set comprehensions</strong> — same idea with <code>{}</code>`,
     ],
     examples: [
-      ex("Loop vs comprehension", `nums = [1, 2, 3, 4, 5]\n\nsquares = []\nfor n in nums:\n    squares.append(n ** 2)\n\nsquares2 = [n ** 2 for n in nums]\nprint(squares == squares2, squares2)`, `True [1, 4, 9, 16, 25]`),
-      ex("Filter + transform", `words = ["hi", "hello", "hey", "howdy"]\nlong_caps = [w.upper() for w in words if len(w) > 3]\nprint(long_caps)\nlengths = {w: len(w) for w in words}\nprint(lengths)`, `['HELLO', 'HOWDY']\n{'hi': 2, 'hello': 5, 'hey': 3, 'howdy': 5}`),
+      ex(
+        "Loop vs comprehension",
+        `nums = [1, 2, 3, 4, 5]\n\nsquares = []\nfor n in nums:\n    squares.append(n ** 2)\n\nsquares2 = [n ** 2 for n in nums]\nprint(squares == squares2, squares2)`,
+        `True [1, 4, 9, 16, 25]`,
+      ),
+      ex(
+        "Filter + transform",
+        `words = ["hi", "hello", "hey", "howdy"]\nlong_caps = [w.upper() for w in words if len(w) > 3]\nprint(long_caps)\nlengths = {w: len(w) for w in words}\nprint(lengths)`,
+        `['HELLO', 'HOWDY']\n{'hi': 2, 'hello': 5, 'hey': 3, 'howdy': 5}`,
+      ),
     ],
     realWorld: `Extracting one field from a list of records (<code>[u["email"] for u in users]</code>), cleaning datasets, and building lookup tables are everyday comprehension territory in data work and web backends alike.`,
     practice: `From <code>range(1, 21)</code>, build: a list of multiples of 3, a list of squares of even numbers, and a dict mapping each number 1–5 to its cube — all with comprehensions.`,
@@ -146,9 +259,29 @@ export const pythonB: LessonDef[] = [
     ],
     template: `mult3 = [n for n in range(1, 21) if n % 3 == 0]\nsq_even = [n ** 2 for n in range(1, 21) if n % 2 == 0]\ncubes = {n: n ** 3 for n in range(1, 6)}\nprint(mult3)\nprint(sq_even)\nprint(cubes)`,
     quiz: [
-      q("What does [c.upper() for c in \"abc\"] produce?", ["\"ABC\"", "['A','B','C']", "['abc']", "Error"], 1, `It maps over the string's characters and collects results into a list.`),
-      q("Which comprehension keeps only positive numbers?", ["[n if n > 0 for n in nums]", "[n for n in nums if n > 0]", "[for n in nums if n > 0]", "[n > 0 for n in nums]"], 1, `The filter clause goes at the end: expression, for, if.`),
-      q("What does [n > 0 for n in [1, -2]] give?", ["[1]", "[True, False]", "[1, -2]", "Error"], 1, `The expression n > 0 is a boolean — the list collects True/False values.`),
+      q(
+        'What does [c.upper() for c in "abc"] produce?',
+        ['"ABC"', "['A','B','C']", "['abc']", "Error"],
+        1,
+        `It maps over the string's characters and collects results into a list.`,
+      ),
+      q(
+        "Which comprehension keeps only positive numbers?",
+        [
+          "[n if n > 0 for n in nums]",
+          "[n for n in nums if n > 0]",
+          "[for n in nums if n > 0]",
+          "[n > 0 for n in nums]",
+        ],
+        1,
+        `The filter clause goes at the end: expression, for, if.`,
+      ),
+      q(
+        "What does [n > 0 for n in [1, -2]] give?",
+        ["[1]", "[True, False]", "[1, -2]", "Error"],
+        1,
+        `The expression n > 0 is a boolean — the list collects True/False values.`,
+      ),
     ],
   }),
 
@@ -161,8 +294,17 @@ export const pythonB: LessonDef[] = [
       `<strong>Your own modules</strong> — any .py file is importable from siblings`,
     ],
     examples: [
-      ex("Importing from the standard library", `import math\nfrom random import randint\n\nprint(math.sqrt(144))\nprint(math.pi)\nprint(randint(1, 6))  # a dice roll`, `12.0\n3.141592653589793\n4`),
-      ex("Module as namespace", `import math\n\nradius = 5\narea = math.pi * radius ** 2\nprint(round(area, 2))`, `78.54`, `The math. prefix tells readers exactly where pi came from.`),
+      ex(
+        "Importing from the standard library",
+        `import math\nfrom random import randint\n\nprint(math.sqrt(144))\nprint(math.pi)\nprint(randint(1, 6))  # a dice roll`,
+        `12.0\n3.141592653589793\n4`,
+      ),
+      ex(
+        "Module as namespace",
+        `import math\n\nradius = 5\narea = math.pi * radius ** 2\nprint(round(area, 2))`,
+        `78.54`,
+        `The math. prefix tells readers exactly where pi came from.`,
+      ),
     ],
     realWorld: `Real projects are dozens of modules: <code>models.py</code>, <code>views.py</code>, <code>utils.py</code>. The import system is also the gateway to third-party power — web frameworks, data science stacks, game engines — all one import away.`,
     practice: `Import <code>math</code> and compute the hypotenuse of a 3-4 right triangle with <code>math.sqrt()</code>, then with <code>math.hypot()</code>. Confirm both give 5.0.`,
@@ -176,9 +318,34 @@ export const pythonB: LessonDef[] = [
     ],
     template: `import math\n\na, b = 3, 4\nprint(math.sqrt(a ** 2 + b ** 2))\nprint(math.hypot(a, b))`,
     quiz: [
-      q("After 'import math', how do you use sqrt?", ["sqrt(9)", "math.sqrt(9)", "math->sqrt(9)", "import sqrt first"], 1, `Plain import keeps names inside the module namespace.`),
-      q("Why avoid 'from x import *'?", ["It's slower", "It imports nothing", "It dumps unknown names into your namespace and invites collisions", "It's a syntax error"], 2, `Wildcard imports make code harder to read and can silently shadow names.`),
-      q("What does 'import numpy as np' do?", ["Renames the library on disk", "Imports it under the shorter alias np", "Imports only part of it", "Nothing"], 1, `Aliasing is convention for frequently used libraries.`),
+      q(
+        "After 'import math', how do you use sqrt?",
+        ["sqrt(9)", "math.sqrt(9)", "math->sqrt(9)", "import sqrt first"],
+        1,
+        `Plain import keeps names inside the module namespace.`,
+      ),
+      q(
+        "Why avoid 'from x import *'?",
+        [
+          "It's slower",
+          "It imports nothing",
+          "It dumps unknown names into your namespace and invites collisions",
+          "It's a syntax error",
+        ],
+        2,
+        `Wildcard imports make code harder to read and can silently shadow names.`,
+      ),
+      q(
+        "What does 'import numpy as np' do?",
+        [
+          "Renames the library on disk",
+          "Imports it under the shorter alias np",
+          "Imports only part of it",
+          "Nothing",
+        ],
+        1,
+        `Aliasing is convention for frequently used libraries.`,
+      ),
     ],
   }),
 
@@ -191,8 +358,17 @@ export const pythonB: LessonDef[] = [
       `<strong>json</strong> — convert between Python objects and JSON text`,
     ],
     examples: [
-      ex("random and Counter", `import random\nfrom collections import Counter\n\nrolls = [random.randint(1, 6) for _ in range(10)]\nprint(rolls)\nprint(Counter(rolls).most_common(1))`, `[3, 1, 6, 3, 2, 3, 5, 1, 4, 6]\n[(3, 3)]`, `Counter turns "tally these up" from a loop into a single call.`),
-      ex("json round-trip", `import json\n\nuser = {"name": "Ada", "skills": ["math", "code"]}\ntext = json.dumps(user)\nprint(text)\nback = json.loads(text)\nprint(back["skills"][0])`, `{"name": "Ada", "skills": ["math", "code"]}\nmath`),
+      ex(
+        "random and Counter",
+        `import random\nfrom collections import Counter\n\nrolls = [random.randint(1, 6) for _ in range(10)]\nprint(rolls)\nprint(Counter(rolls).most_common(1))`,
+        `[3, 1, 6, 3, 2, 3, 5, 1, 4, 6]\n[(3, 3)]`,
+        `Counter turns "tally these up" from a loop into a single call.`,
+      ),
+      ex(
+        "json round-trip",
+        `import json\n\nuser = {"name": "Ada", "skills": ["math", "code"]}\ntext = json.dumps(user)\nprint(text)\nback = json.loads(text)\nprint(back["skills"][0])`,
+        `{"name": "Ada", "skills": ["math", "code"]}\nmath`,
+      ),
     ],
     realWorld: `json.dumps/loads is the bridge between Python and every web API. Counter powers quick analytics. datetime handles "posted 3 days ago". A developer who knows the standard library writes half the code of one who doesn't.`,
     practice: `Use <code>random.choice()</code> to pick a winner from a list of five names, run it in a loop 100 times, and use <code>Counter</code> to show how many times each name won.`,
@@ -206,9 +382,24 @@ export const pythonB: LessonDef[] = [
     ],
     template: `import random\nfrom collections import Counter\n\nnames = ["Ada", "Bo", "Cy", "Dee", "Eli"]\nwins = [random.choice(names) for _ in range(100)]\nfor name, count in Counter(wins).most_common():\n    print(name, count)`,
     quiz: [
-      q("Which converts a Python dict to a JSON string?", ["json.loads", "json.dumps", "json.parse", "str()"], 1, `dumps = dump-to-string. loads parses the other way.`),
-      q("What does Counter(\"aabbbc\") report for 'b'?", ["1", "2", "3", "Error"], 2, `Counter tallies every element — three b's.`),
-      q("Which picks a random item from a list?", ["random.randint(list)", "random.choice(list)", "random.pick(list)", "list.random()"], 1, `choice selects one element uniformly at random.`),
+      q(
+        "Which converts a Python dict to a JSON string?",
+        ["json.loads", "json.dumps", "json.parse", "str()"],
+        1,
+        `dumps = dump-to-string. loads parses the other way.`,
+      ),
+      q(
+        "What does Counter(\"aabbbc\") report for 'b'?",
+        ["1", "2", "3", "Error"],
+        2,
+        `Counter tallies every element — three b's.`,
+      ),
+      q(
+        "Which picks a random item from a list?",
+        ["random.randint(list)", "random.choice(list)", "random.pick(list)", "list.random()"],
+        1,
+        `choice selects one element uniformly at random.`,
+      ),
     ],
   }),
 
@@ -221,8 +412,17 @@ export const pythonB: LessonDef[] = [
       `<strong>Writing</strong> — <code>.write()</code> doesn't add newlines for you`,
     ],
     examples: [
-      ex("Write, then read back", `with open("notes.txt", "w") as f:\n    f.write("line one\\n")\n    f.write("line two\\n")\n\nwith open("notes.txt", "r") as f:\n    content = f.read()\nprint(content)`, `line one\nline two`),
-      ex("Processing line by line", `with open("notes.txt") as f:\n    for i, line in enumerate(f, 1):\n        print(i, line.strip())`, `1 line one\n2 line two`, `Looping over the file object reads one line at a time — memory-friendly for huge files.`),
+      ex(
+        "Write, then read back",
+        `with open("notes.txt", "w") as f:\n    f.write("line one\\n")\n    f.write("line two\\n")\n\nwith open("notes.txt", "r") as f:\n    content = f.read()\nprint(content)`,
+        `line one\nline two`,
+      ),
+      ex(
+        "Processing line by line",
+        `with open("notes.txt") as f:\n    for i, line in enumerate(f, 1):\n        print(i, line.strip())`,
+        `1 line one\n2 line two`,
+        `Looping over the file object reads one line at a time — memory-friendly for huge files.`,
+      ),
     ],
     realWorld: `Log files, configuration files, exports, report generation — server software reads and writes files constantly. The same open/process/close discipline extends to databases and network connections.`,
     practice: `Write a list of three favorite quotes to <code>quotes.txt</code> (one per line), then read the file back and print each line numbered. (Run this in real Python on your machine — the in-browser runner has no file system.)`,
@@ -236,9 +436,29 @@ export const pythonB: LessonDef[] = [
     ],
     template: `# File I/O needs a real file system - run locally.\n# In-browser, we simulate the logic:\nlines = ["line one", "line two"]\nfor i, line in enumerate(lines, 1):\n    print(i, line)`,
     quiz: [
-      q("What does opening a file in \"w\" mode do if it already exists?", ["Appends to it", "Raises an error", "Erases its contents", "Opens read-only"], 2, `Write mode truncates the file to empty — use \"a\" to append.`),
-      q("Why prefer 'with open(...) as f:'?", ["It's faster", "The file closes automatically, even on errors", "It reads the whole file", "It's required syntax"], 1, `The context manager guarantees cleanup — no leaked handles.`),
-      q("How do you read a file line by line memory-efficiently?", ["f.read().split()", "for line in f:", "f.readlines()[:]", "while f.next():"], 1, `Iterating the file object streams lines without loading the whole file.`),
+      q(
+        'What does opening a file in "w" mode do if it already exists?',
+        ["Appends to it", "Raises an error", "Erases its contents", "Opens read-only"],
+        2,
+        `Write mode truncates the file to empty — use \"a\" to append.`,
+      ),
+      q(
+        "Why prefer 'with open(...) as f:'?",
+        [
+          "It's faster",
+          "The file closes automatically, even on errors",
+          "It reads the whole file",
+          "It's required syntax",
+        ],
+        1,
+        `The context manager guarantees cleanup — no leaked handles.`,
+      ),
+      q(
+        "How do you read a file line by line memory-efficiently?",
+        ["f.read().split()", "for line in f:", "f.readlines()[:]", "while f.next():"],
+        1,
+        `Iterating the file object streams lines without loading the whole file.`,
+      ),
     ],
   }),
 
@@ -251,8 +471,17 @@ export const pythonB: LessonDef[] = [
       `<strong>Choosing</strong> — CSV for flat tables, JSON for nested data`,
     ],
     examples: [
-      ex("CSV with DictReader (concept)", `import csv\n\n# students.csv:  name,grade\n#                Ada,95\n#                Bo,88\nwith open("students.csv") as f:\n    for row in csv.DictReader(f):\n        print(row["name"], "got", row["grade"])`, `Ada got 95\nBo got 88`),
-      ex("JSON for nested data", `import json\n\nconfig = {"app": "EduVerse", "features": {"ai": True, "battles": True}}\ntext = json.dumps(config, indent=2)\nprint(text)`, `{\n  "app": "EduVerse",\n  "features": {\n    "ai": true,\n    "battles": true\n  }\n}`, `indent=2 produces human-readable output — handy for config files.`),
+      ex(
+        "CSV with DictReader (concept)",
+        `import csv\n\n# students.csv:  name,grade\n#                Ada,95\n#                Bo,88\nwith open("students.csv") as f:\n    for row in csv.DictReader(f):\n        print(row["name"], "got", row["grade"])`,
+        `Ada got 95\nBo got 88`,
+      ),
+      ex(
+        "JSON for nested data",
+        `import json\n\nconfig = {"app": "EduVerse", "features": {"ai": True, "battles": True}}\ntext = json.dumps(config, indent=2)\nprint(text)`,
+        `{\n  "app": "EduVerse",\n  "features": {\n    "ai": true,\n    "battles": true\n  }\n}`,
+        `indent=2 produces human-readable output — handy for config files.`,
+      ),
     ],
     realWorld: `Exporting analytics to Excel? CSV. Calling a weather API? JSON in, JSON out. Every data pipeline starts and ends in one of these formats, and bad hand-rolled parsers are a notorious bug source.`,
     practice: `Build a list of dicts for three products (name, price). Convert it to a JSON string with indent=2 and print it. Then parse it back with json.loads and print the second product's price.`,
@@ -266,9 +495,34 @@ export const pythonB: LessonDef[] = [
     ],
     template: `import json\n\nproducts = [\n    {"name": "Keyboard", "price": 49},\n    {"name": "Mouse", "price": 25},\n    {"name": "Monitor", "price": 199},\n]\ntext = json.dumps(products, indent=2)\nprint(text)\nback = json.loads(text)\nprint("Second price:", back[1]["price"])`,
     quiz: [
-      q("Why not parse CSV with str.split(\",\")?", ["Too slow", "Quoted fields containing commas break it", "split can't take a comma", "It works fine"], 1, `\"Smith, John\" is one field — naive splitting cuts it in two. The csv module handles quoting.`),
-      q("json.load vs json.loads — the difference?", ["No difference", "load reads from a file object, loads from a string", "loads is plural", "load is deprecated"], 1, `The trailing s means string.`),
-      q("Which Python value becomes null in JSON?", ["0", "\"\"", "None", "False"], 2, `Python None maps to JSON null.`),
+      q(
+        'Why not parse CSV with str.split(",")?',
+        [
+          "Too slow",
+          "Quoted fields containing commas break it",
+          "split can't take a comma",
+          "It works fine",
+        ],
+        1,
+        `\"Smith, John\" is one field — naive splitting cuts it in two. The csv module handles quoting.`,
+      ),
+      q(
+        "json.load vs json.loads — the difference?",
+        [
+          "No difference",
+          "load reads from a file object, loads from a string",
+          "loads is plural",
+          "load is deprecated",
+        ],
+        1,
+        `The trailing s means string.`,
+      ),
+      q(
+        "Which Python value becomes null in JSON?",
+        ["0", '""', "None", "False"],
+        2,
+        `Python None maps to JSON null.`,
+      ),
     ],
   }),
 
@@ -281,8 +535,16 @@ export const pythonB: LessonDef[] = [
       `<strong>Exception objects</strong> — <code>except ValueError as e:</code> captures the message`,
     ],
     examples: [
-      ex("Catching bad input", `def safe_int(text):\n    try:\n        return int(text)\n    except ValueError:\n        return None\n\nprint(safe_int("42"))\nprint(safe_int("forty-two"))`, `42\nNone`),
-      ex("Multiple handlers + finally", `data = {"a": 1}\ntry:\n    value = data["b"]\n    result = 10 / value\nexcept KeyError:\n    print("missing key")\nexcept ZeroDivisionError:\n    print("divided by zero")\nfinally:\n    print("cleanup runs always")`, `missing key\ncleanup runs always`),
+      ex(
+        "Catching bad input",
+        `def safe_int(text):\n    try:\n        return int(text)\n    except ValueError:\n        return None\n\nprint(safe_int("42"))\nprint(safe_int("forty-two"))`,
+        `42\nNone`,
+      ),
+      ex(
+        "Multiple handlers + finally",
+        `data = {"a": 1}\ntry:\n    value = data["b"]\n    result = 10 / value\nexcept KeyError:\n    print("missing key")\nexcept ZeroDivisionError:\n    print("divided by zero")\nfinally:\n    print("cleanup runs always")`,
+        `missing key\ncleanup runs always`,
+      ),
     ],
     realWorld: `Production services wrap I/O — network calls, database queries, file reads — in exception handlers with logging and retries. Yesterday's AI service in this very project retries on rate-limit exceptions; that pattern is exactly this lesson.`,
     practice: `Write a loop that asks for a number until <code>int(input())</code> succeeds (catch ValueError), then prints 100 divided by it — also handling the zero case with a friendly message.`,
@@ -296,9 +558,29 @@ export const pythonB: LessonDef[] = [
     ],
     template: `def divide_100_by(text):\n    try:\n        n = int(text)\n        return 100 / n\n    except ValueError:\n        return "not a number"\n    except ZeroDivisionError:\n        return "cannot divide by zero"\n\nprint(divide_100_by("4"))\nprint(divide_100_by("abc"))\nprint(divide_100_by("0"))`,
     quiz: [
-      q("Which exception does int(\"hello\") raise?", ["TypeError", "ValueError", "KeyError", "NameError"], 1, `The type (str) is acceptable; the VALUE can't be parsed — ValueError.`),
-      q("When does finally run?", ["Only on success", "Only on failure", "Always", "Never with return"], 2, `finally executes on success, on exception, even past return statements.`),
-      q("Why is bare 'except:' discouraged?", ["Syntax error", "It catches everything, hiding real bugs", "It's slow", "It only catches ValueError"], 1, `Catching all exceptions indiscriminately buries typos and system errors alike.`),
+      q(
+        'Which exception does int("hello") raise?',
+        ["TypeError", "ValueError", "KeyError", "NameError"],
+        1,
+        `The type (str) is acceptable; the VALUE can't be parsed — ValueError.`,
+      ),
+      q(
+        "When does finally run?",
+        ["Only on success", "Only on failure", "Always", "Never with return"],
+        2,
+        `finally executes on success, on exception, even past return statements.`,
+      ),
+      q(
+        "Why is bare 'except:' discouraged?",
+        [
+          "Syntax error",
+          "It catches everything, hiding real bugs",
+          "It's slow",
+          "It only catches ValueError",
+        ],
+        1,
+        `Catching all exceptions indiscriminately buries typos and system errors alike.`,
+      ),
     ],
   }),
 
@@ -311,8 +593,16 @@ export const pythonB: LessonDef[] = [
       `<strong>re-raising</strong> — catch, act (log), then <code>raise</code> again to propagate`,
     ],
     examples: [
-      ex("Validating with raise", `def set_age(age):\n    if age < 0:\n        raise ValueError("age cannot be negative: " + str(age))\n    return age\n\ntry:\n    set_age(-5)\nexcept ValueError as e:\n    print("Rejected:", e)`, `Rejected: age cannot be negative: -5`),
-      ex("A custom exception", `class InsufficientFunds(Exception):\n    pass\n\ndef withdraw(balance, amount):\n    if amount > balance:\n        raise InsufficientFunds("need " + str(amount - balance) + " more")\n    return balance - amount\n\ntry:\n    withdraw(50, 80)\nexcept InsufficientFunds as e:\n    print("Bank says:", e)`, `Bank says: need 30 more`),
+      ex(
+        "Validating with raise",
+        `def set_age(age):\n    if age < 0:\n        raise ValueError("age cannot be negative: " + str(age))\n    return age\n\ntry:\n    set_age(-5)\nexcept ValueError as e:\n    print("Rejected:", e)`,
+        `Rejected: age cannot be negative: -5`,
+      ),
+      ex(
+        "A custom exception",
+        `class InsufficientFunds(Exception):\n    pass\n\ndef withdraw(balance, amount):\n    if amount > balance:\n        raise InsufficientFunds("need " + str(amount - balance) + " more")\n    return balance - amount\n\ntry:\n    withdraw(50, 80)\nexcept InsufficientFunds as e:\n    print("Bank says:", e)`,
+        `Bank says: need 30 more`,
+      ),
     ],
     realWorld: `Frameworks define rich exception families — Django's ValidationError, requests' Timeout — so callers can react differently to different failures. Your EduVerse backend defines AIError for exactly this reason.`,
     practice: `Create <code>class EmptyCartError(Exception)</code>. Write <code>checkout(items)</code> that raises it for an empty list, otherwise returns the total. Call it both ways with try/except.`,
@@ -326,9 +616,29 @@ export const pythonB: LessonDef[] = [
     ],
     template: `class EmptyCartError(Exception):\n    pass\n\ndef checkout(items):\n    if len(items) == 0:\n        raise EmptyCartError("cart is empty")\n    return sum(items)\n\ntry:\n    print(checkout([19, 5]))\n    print(checkout([]))\nexcept EmptyCartError as e:\n    print("Error:", e)`,
     quiz: [
-      q("What does raise do?", ["Logs a warning", "Throws an exception up the call stack", "Exits Python", "Returns None"], 1, `raise interrupts normal flow and propagates until something catches it.`),
-      q("A custom exception should inherit from…", ["BaseException", "Exception", "Error", "object"], 1, `Exception is the conventional base; BaseException is reserved for system-level signals.`),
-      q("Why raise instead of returning an error code?", ["It's faster", "Errors can't be ignored accidentally and carry rich context", "Return codes are deprecated", "No reason"], 1, `Unhandled exceptions are loud; ignored return codes are silent corruption.`),
+      q(
+        "What does raise do?",
+        ["Logs a warning", "Throws an exception up the call stack", "Exits Python", "Returns None"],
+        1,
+        `raise interrupts normal flow and propagates until something catches it.`,
+      ),
+      q(
+        "A custom exception should inherit from…",
+        ["BaseException", "Exception", "Error", "object"],
+        1,
+        `Exception is the conventional base; BaseException is reserved for system-level signals.`,
+      ),
+      q(
+        "Why raise instead of returning an error code?",
+        [
+          "It's faster",
+          "Errors can't be ignored accidentally and carry rich context",
+          "Return codes are deprecated",
+          "No reason",
+        ],
+        1,
+        `Unhandled exceptions are loud; ignored return codes are silent corruption.`,
+      ),
     ],
   }),
 
@@ -341,8 +651,17 @@ export const pythonB: LessonDef[] = [
       `<strong>Attributes vs methods</strong> — data on the object vs functions on the object`,
     ],
     examples: [
-      ex("A class with state and behavior", `class BankAccount:\n    def __init__(self, owner, balance=0):\n        self.owner = owner\n        self.balance = balance\n\n    def deposit(self, amount):\n        self.balance += amount\n\n    def summary(self):\n        return self.owner + ": $" + str(self.balance)\n\nacct = BankAccount("Ada", 100)\nacct.deposit(50)\nprint(acct.summary())`, `Ada: $150`),
-      ex("Each instance is independent", `a = BankAccount("Ada", 100)\nb = BankAccount("Bo")\na.deposit(25)\nprint(a.balance, b.balance)`, `125 0`, `Two objects from one class — separate state, shared behavior.`),
+      ex(
+        "A class with state and behavior",
+        `class BankAccount:\n    def __init__(self, owner, balance=0):\n        self.owner = owner\n        self.balance = balance\n\n    def deposit(self, amount):\n        self.balance += amount\n\n    def summary(self):\n        return self.owner + ": $" + str(self.balance)\n\nacct = BankAccount("Ada", 100)\nacct.deposit(50)\nprint(acct.summary())`,
+        `Ada: $150`,
+      ),
+      ex(
+        "Each instance is independent",
+        `a = BankAccount("Ada", 100)\nb = BankAccount("Bo")\na.deposit(25)\nprint(a.balance, b.balance)`,
+        `125 0`,
+        `Two objects from one class — separate state, shared behavior.`,
+      ),
     ],
     realWorld: `Django models, game entities, GUI widgets, the Prisma client in this project's backend — all classes. When data and the operations on it always travel together, a class is the natural container.`,
     practice: `Write a <code>Playlist</code> class with a name and a song list. Add methods <code>add(song)</code>, <code>total()</code> returning the count, and <code>show()</code> printing each song numbered. Create one and exercise all three.`,
@@ -356,9 +675,34 @@ export const pythonB: LessonDef[] = [
     ],
     template: `class Playlist:\n    def __init__(self, name):\n        self.name = name\n        self.songs = []\n\n    def add(self, song):\n        self.songs.append(song)\n\n    def show(self):\n        for i, s in enumerate(self.songs, 1):\n            print(i, s)\n\np = Playlist("Focus")\np.add("Lo-fi beats")\np.add("Rainy mood")\np.show()`,
     quiz: [
-      q("What is self?", ["A keyword for private data", "The instance the method is called on", "The class itself", "A global object"], 1, `self is just the conventional name for the first parameter — the instance.`),
-      q("When does __init__ run?", ["When the class is defined", "Every time an instance is created", "Only the first time", "When you call init()"], 1, `Calling the class — BankAccount(...) — constructs an instance and runs __init__ on it.`),
-      q("a = Dog(); b = Dog(); a.name = \"Rex\". What about b.name?", ["Also \"Rex\"", "Unset — instances have independent attributes", "Error always", "\"\""], 1, `Setting an attribute on one instance doesn't touch others.`),
+      q(
+        "What is self?",
+        [
+          "A keyword for private data",
+          "The instance the method is called on",
+          "The class itself",
+          "A global object",
+        ],
+        1,
+        `self is just the conventional name for the first parameter — the instance.`,
+      ),
+      q(
+        "When does __init__ run?",
+        [
+          "When the class is defined",
+          "Every time an instance is created",
+          "Only the first time",
+          "When you call init()",
+        ],
+        1,
+        `Calling the class — BankAccount(...) — constructs an instance and runs __init__ on it.`,
+      ),
+      q(
+        'a = Dog(); b = Dog(); a.name = "Rex". What about b.name?',
+        ['Also "Rex"', "Unset — instances have independent attributes", "Error always", '""'],
+        1,
+        `Setting an attribute on one instance doesn't touch others.`,
+      ),
     ],
   }),
 
@@ -371,8 +715,17 @@ export const pythonB: LessonDef[] = [
       `<strong>Polymorphism</strong> — one interface, many implementations`,
     ],
     examples: [
-      ex("Inherit and override", `class Animal:\n    def __init__(self, name):\n        self.name = name\n    def speak(self):\n        return "..."\n\nclass Dog(Animal):\n    def speak(self):\n        return "Woof!"\n\nclass Cat(Animal):\n    def speak(self):\n        return "Meow"\n\nfor pet in [Dog("Rex"), Cat("Mia"), Animal("Blob")]:\n    print(pet.name, "says", pet.speak())`, `Rex says Woof!\nMia says Meow\nBlob says ...`),
-      ex("Extending with super()", `class Employee:\n    def __init__(self, name):\n        self.name = name\n\nclass Manager(Employee):\n    def __init__(self, name, team_size):\n        super().__init__(name)\n        self.team_size = team_size\n\nm = Manager("Ada", 5)\nprint(m.name, "manages", m.team_size)`, `Ada manages 5`, `super() runs the parent's __init__ so you don't repeat its setup.`),
+      ex(
+        "Inherit and override",
+        `class Animal:\n    def __init__(self, name):\n        self.name = name\n    def speak(self):\n        return "..."\n\nclass Dog(Animal):\n    def speak(self):\n        return "Woof!"\n\nclass Cat(Animal):\n    def speak(self):\n        return "Meow"\n\nfor pet in [Dog("Rex"), Cat("Mia"), Animal("Blob")]:\n    print(pet.name, "says", pet.speak())`,
+        `Rex says Woof!\nMia says Meow\nBlob says ...`,
+      ),
+      ex(
+        "Extending with super()",
+        `class Employee:\n    def __init__(self, name):\n        self.name = name\n\nclass Manager(Employee):\n    def __init__(self, name, team_size):\n        super().__init__(name)\n        self.team_size = team_size\n\nm = Manager("Ada", 5)\nprint(m.name, "manages", m.team_size)`,
+        `Ada manages 5`,
+        `super() runs the parent's __init__ so you don't repeat its setup.`,
+      ),
     ],
     realWorld: `GUI frameworks (every widget extends Widget), game engines (every entity extends GameObject), and web frameworks (your view extends the base View) all hand you a parent class to inherit. Polymorphism is why the framework can call YOUR code without knowing it exists.`,
     practice: `Create <code>Shape</code> with method <code>area()</code> returning 0. Make <code>Rectangle(w, h)</code> and <code>Circle(r)</code> override it. Loop over a list of mixed shapes printing each area — that loop is polymorphism.`,
@@ -386,9 +739,39 @@ export const pythonB: LessonDef[] = [
     ],
     template: `class Shape:\n    def area(self):\n        return 0\n\nclass Rectangle(Shape):\n    def __init__(self, w, h):\n        self.w = w\n        self.h = h\n    def area(self):\n        return self.w * self.h\n\nclass Circle(Shape):\n    def __init__(self, r):\n        self.r = r\n    def area(self):\n        return 3.14159 * self.r ** 2\n\nfor s in [Rectangle(3, 4), Circle(5)]:\n    print(round(s.area(), 2))`,
     quiz: [
-      q("What does class Dog(Animal) mean?", ["Dog contains an Animal", "Dog inherits from Animal", "Dog and Animal are equal", "Animal inherits from Dog"], 1, `The parenthesized class is the parent; Dog receives its members.`),
-      q("What does super().__init__(name) do?", ["Creates a second object", "Calls the parent class's initializer", "Resets the object", "Imports the parent"], 1, `It reuses the parent's setup logic on the current instance.`),
-      q("Polymorphism means…", ["Many classes in one file", "Calling the same method on different types, each behaving its own way", "Multiple inheritance", "Renaming methods"], 1, `One interface (speak), many forms (Woof/Meow) — that's the definition.`),
+      q(
+        "What does class Dog(Animal) mean?",
+        [
+          "Dog contains an Animal",
+          "Dog inherits from Animal",
+          "Dog and Animal are equal",
+          "Animal inherits from Dog",
+        ],
+        1,
+        `The parenthesized class is the parent; Dog receives its members.`,
+      ),
+      q(
+        "What does super().__init__(name) do?",
+        [
+          "Creates a second object",
+          "Calls the parent class's initializer",
+          "Resets the object",
+          "Imports the parent",
+        ],
+        1,
+        `It reuses the parent's setup logic on the current instance.`,
+      ),
+      q(
+        "Polymorphism means…",
+        [
+          "Many classes in one file",
+          "Calling the same method on different types, each behaving its own way",
+          "Multiple inheritance",
+          "Renaming methods",
+        ],
+        1,
+        `One interface (speak), many forms (Woof/Meow) — that's the definition.`,
+      ),
     ],
   }),
 
@@ -401,8 +784,17 @@ export const pythonB: LessonDef[] = [
       `<strong>@dataclass</strong> — auto-generates __init__, __repr__, __eq__ from field declarations`,
     ],
     examples: [
-      ex("Making print() friendly", `class Point:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n    def __str__(self):\n        return "(" + str(self.x) + ", " + str(self.y) + ")"\n    def __add__(self, other):\n        return Point(self.x + other.x, self.y + other.y)\n\np = Point(1, 2) + Point(3, 4)\nprint(p)`, `(4, 6)`),
-      ex("Dataclasses remove boilerplate", `from dataclasses import dataclass\n\n@dataclass\nclass Song:\n    title: str\n    seconds: int\n\na = Song("Lo-fi", 180)\nb = Song("Lo-fi", 180)\nprint(a)\nprint(a == b)`, `Song(title='Lo-fi', seconds=180)\nTrue`, `Without @dataclass, that == would be False (identity comparison) and printing would show a memory address.`),
+      ex(
+        "Making print() friendly",
+        `class Point:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n    def __str__(self):\n        return "(" + str(self.x) + ", " + str(self.y) + ")"\n    def __add__(self, other):\n        return Point(self.x + other.x, self.y + other.y)\n\np = Point(1, 2) + Point(3, 4)\nprint(p)`,
+        `(4, 6)`,
+      ),
+      ex(
+        "Dataclasses remove boilerplate",
+        `from dataclasses import dataclass\n\n@dataclass\nclass Song:\n    title: str\n    seconds: int\n\na = Song("Lo-fi", 180)\nb = Song("Lo-fi", 180)\nprint(a)\nprint(a == b)`,
+        `Song(title='Lo-fi', seconds=180)\nTrue`,
+        `Without @dataclass, that == would be False (identity comparison) and printing would show a memory address.`,
+      ),
     ],
     realWorld: `ORMs print readable records, vector math libraries overload +, money types compare safely — all magic methods. Dataclasses are the modern standard for config objects and API payloads in production Python.`,
     practice: `Build a <code>Duration</code> class storing seconds, with <code>__str__</code> showing "MM:SS" and <code>__add__</code> combining two durations. Add two song lengths and print the total.`,
@@ -416,9 +808,29 @@ export const pythonB: LessonDef[] = [
     ],
     template: `class Duration:\n    def __init__(self, seconds):\n        self.seconds = seconds\n    def __str__(self):\n        m = self.seconds // 60\n        s = self.seconds % 60\n        return str(m) + ":" + str(s).zfill(2)\n    def __add__(self, other):\n        return Duration(self.seconds + other.seconds)\n\ntotal = Duration(215) + Duration(187)\nprint(total)`,
     quiz: [
-      q("Which method controls what print(obj) displays?", ["__print__", "__str__", "__show__", "__text__"], 1, `print calls str(obj), which calls __str__.`),
-      q("What does @dataclass generate for you?", ["Database tables", "__init__, __repr__, __eq__ from the declared fields", "Getters and setters", "Nothing"], 1, `It writes the standard boilerplate from the field declarations.`),
-      q("a + b on your objects calls…", ["a.__plus__(b)", "a.__add__(b)", "add(a, b)", "It can't work on custom classes"], 1, `Operator syntax maps to magic methods — + is __add__.`),
+      q(
+        "Which method controls what print(obj) displays?",
+        ["__print__", "__str__", "__show__", "__text__"],
+        1,
+        `print calls str(obj), which calls __str__.`,
+      ),
+      q(
+        "What does @dataclass generate for you?",
+        [
+          "Database tables",
+          "__init__, __repr__, __eq__ from the declared fields",
+          "Getters and setters",
+          "Nothing",
+        ],
+        1,
+        `It writes the standard boilerplate from the field declarations.`,
+      ),
+      q(
+        "a + b on your objects calls…",
+        ["a.__plus__(b)", "a.__add__(b)", "add(a, b)", "It can't work on custom classes"],
+        1,
+        `Operator syntax maps to magic methods — + is __add__.`,
+      ),
     ],
   }),
 
@@ -431,8 +843,17 @@ export const pythonB: LessonDef[] = [
       `<strong>Generator expressions</strong> — <code>(n*n for n in nums)</code>, like comprehensions but lazy`,
     ],
     examples: [
-      ex("A simple generator", `def countdown(n):\n    while n > 0:\n        yield n\n        n -= 1\n    yield "liftoff!"\n\nfor x in countdown(3):\n    print(x)`, `3\n2\n1\nliftoff!`),
-      ex("Lazy means cheap", `def evens():\n    n = 0\n    while True:\n        yield n\n        n += 2\n\ngen = evens()  # infinite! but nothing computed yet\nprint(next(gen), next(gen), next(gen))`, `0 2 4`, `An infinite sequence is fine — values exist only when you ask.`),
+      ex(
+        "A simple generator",
+        `def countdown(n):\n    while n > 0:\n        yield n\n        n -= 1\n    yield "liftoff!"\n\nfor x in countdown(3):\n    print(x)`,
+        `3\n2\n1\nliftoff!`,
+      ),
+      ex(
+        "Lazy means cheap",
+        `def evens():\n    n = 0\n    while True:\n        yield n\n        n += 2\n\ngen = evens()  # infinite! but nothing computed yet\nprint(next(gen), next(gen), next(gen))`,
+        `0 2 4`,
+        `An infinite sequence is fine — values exist only when you ask.`,
+      ),
     ],
     realWorld: `Reading a 10 GB log file line by line, paginating through an API, streaming database rows — generators let production code process unbounded data with constant memory. Python's own range() works on this principle.`,
     practice: `Write a generator <code>squares_up_to(limit)</code> yielding square numbers below the limit. Loop over <code>squares_up_to(100)</code> and print each — then sum a generator expression of the same squares.`,
@@ -446,9 +867,34 @@ export const pythonB: LessonDef[] = [
     ],
     template: `def squares_up_to(limit):\n    n = 1\n    while n * n < limit:\n        yield n * n\n        n += 1\n\nfor sq in squares_up_to(100):\n    print(sq)\nprint("sum:", sum(squares_up_to(100)))`,
     quiz: [
-      q("What does yield do that return doesn't?", ["Exits faster", "Emits a value and pauses, resuming on the next request", "Returns multiple values at once", "Nothing different"], 1, `yield suspends the function's state; return ends it for good.`),
-      q("What happens when you loop over an already-consumed generator?", ["It restarts", "The loop body never runs", "Error on creation", "Values repeat"], 1, `Generators are exhausted after one pass — iteration simply yields nothing.`),
-      q("Why prefer sum(x*x for x in big) over sum([x*x for x in big])?", ["It's always faster", "No intermediate list is built in memory", "The list version errors", "No reason"], 1, `The generator feeds sum one value at a time — constant memory.`),
+      q(
+        "What does yield do that return doesn't?",
+        [
+          "Exits faster",
+          "Emits a value and pauses, resuming on the next request",
+          "Returns multiple values at once",
+          "Nothing different",
+        ],
+        1,
+        `yield suspends the function's state; return ends it for good.`,
+      ),
+      q(
+        "What happens when you loop over an already-consumed generator?",
+        ["It restarts", "The loop body never runs", "Error on creation", "Values repeat"],
+        1,
+        `Generators are exhausted after one pass — iteration simply yields nothing.`,
+      ),
+      q(
+        "Why prefer sum(x*x for x in big) over sum([x*x for x in big])?",
+        [
+          "It's always faster",
+          "No intermediate list is built in memory",
+          "The list version errors",
+          "No reason",
+        ],
+        1,
+        `The generator feeds sum one value at a time — constant memory.`,
+      ),
     ],
   }),
 
@@ -461,8 +907,16 @@ export const pythonB: LessonDef[] = [
       `<strong>*args, **kwargs</strong> — wrappers forward any signature`,
     ],
     examples: [
-      ex("A logging decorator", `def log_calls(func):\n    def wrapper(*args):\n        print("calling", func.__name__, "with", args)\n        result = func(*args)\n        print("->", result)\n        return result\n    return wrapper\n\n@log_calls\ndef add(a, b):\n    return a + b\n\nadd(3, 4)`, `calling add with (3, 4)\n-> 7`),
-      ex("The @ line is just sugar", `def shout(func):\n    def wrapper():\n        return func().upper() + "!"\n    return wrapper\n\ndef greet():\n    return "hello"\n\ngreet = shout(greet)  # same as @shout\nprint(greet())`, `HELLO!`),
+      ex(
+        "A logging decorator",
+        `def log_calls(func):\n    def wrapper(*args):\n        print("calling", func.__name__, "with", args)\n        result = func(*args)\n        print("->", result)\n        return result\n    return wrapper\n\n@log_calls\ndef add(a, b):\n    return a + b\n\nadd(3, 4)`,
+        `calling add with (3, 4)\n-> 7`,
+      ),
+      ex(
+        "The @ line is just sugar",
+        `def shout(func):\n    def wrapper():\n        return func().upper() + "!"\n    return wrapper\n\ndef greet():\n    return "hello"\n\ngreet = shout(greet)  # same as @shout\nprint(greet())`,
+        `HELLO!`,
+      ),
     ],
     realWorld: `You've already met decorators in the wild: Flask's <code>@app.route("/")</code>, pytest's <code>@fixture</code>, Django's <code>@login_required</code>. Authentication on this project's Express routes plays the identical role — wrap the handler, add a check.`,
     practice: `Write a <code>@twice</code> decorator that calls the wrapped function two times. Apply it to a function printing "beep" and confirm you get two beeps from one call.`,
@@ -476,9 +930,29 @@ export const pythonB: LessonDef[] = [
     ],
     template: `def twice(func):\n    def wrapper(*args):\n        func(*args)\n        func(*args)\n    return wrapper\n\n@twice\ndef beep(name):\n    print("beep", name)\n\nbeep("A")`,
     quiz: [
-      q("@deco above def f() is equivalent to…", ["deco = f(deco)", "f = deco(f)", "f.deco()", "deco(f) discarded"], 1, `The decorator receives the function and its return value replaces it.`),
-      q("Why do wrappers use *args, **kwargs?", ["Style", "So they can forward any argument signature to the wrapped function", "Required by Python", "Performance"], 1, `The wrapper doesn't know the target's parameters — splat operators forward everything.`),
-      q("A decorator must return…", ["None", "A string", "A callable (usually the wrapper function)", "The original arguments"], 2, `Whatever it returns REPLACES the decorated function — so it must be callable.`),
+      q(
+        "@deco above def f() is equivalent to…",
+        ["deco = f(deco)", "f = deco(f)", "f.deco()", "deco(f) discarded"],
+        1,
+        `The decorator receives the function and its return value replaces it.`,
+      ),
+      q(
+        "Why do wrappers use *args, **kwargs?",
+        [
+          "Style",
+          "So they can forward any argument signature to the wrapped function",
+          "Required by Python",
+          "Performance",
+        ],
+        1,
+        `The wrapper doesn't know the target's parameters — splat operators forward everything.`,
+      ),
+      q(
+        "A decorator must return…",
+        ["None", "A string", "A callable (usually the wrapper function)", "The original arguments"],
+        2,
+        `Whatever it returns REPLACES the decorated function — so it must be callable.`,
+      ),
     ],
   }),
 
@@ -491,8 +965,17 @@ export const pythonB: LessonDef[] = [
       `<strong>Error handling</strong> — timeouts and bad statuses are normal, plan for them`,
     ],
     examples: [
-      ex("A GET request (run locally with requests installed)", `import requests\n\nresp = requests.get("https://api.github.com/users/python", timeout=10)\nprint(resp.status_code)\ndata = resp.json()\nprint(data["name"], "-", data["public_repos"], "repos")`, `200\nPython - 248 repos`),
-      ex("Defensive API code", `def fetch_user(username):\n    try:\n        r = requests.get("https://api.github.com/users/" + username, timeout=10)\n        if r.status_code == 404:\n            return None\n        r.raise_for_status()\n        return r.json()\n    except requests.Timeout:\n        return None`, ``, `Real API code always handles: not-found, server errors, and timeouts.`),
+      ex(
+        "A GET request (run locally with requests installed)",
+        `import requests\n\nresp = requests.get("https://api.github.com/users/python", timeout=10)\nprint(resp.status_code)\ndata = resp.json()\nprint(data["name"], "-", data["public_repos"], "repos")`,
+        `200\nPython - 248 repos`,
+      ),
+      ex(
+        "Defensive API code",
+        `def fetch_user(username):\n    try:\n        r = requests.get("https://api.github.com/users/" + username, timeout=10)\n        if r.status_code == 404:\n            return None\n        r.raise_for_status()\n        return r.json()\n    except requests.Timeout:\n        return None`,
+        ``,
+        `Real API code always handles: not-found, server errors, and timeouts.`,
+      ),
     ],
     realWorld: `EduVerse itself does this: the backend you're using right now calls Google's Gemini API with exactly this pattern — POST request, JSON body, status-code checks, timeout, retries. Every integration you'll ever build follows this shape.`,
     practice: `Sketch (in the editor) a function <code>get_temperature(city)</code> that would call a weather API: build the URL, check status, pull a field from the JSON, return a default on failure. Focus on the structure — run it locally with a real API later.`,
@@ -506,9 +989,34 @@ export const pythonB: LessonDef[] = [
     ],
     template: `# Structure of real API code (requests isn't available in-browser):\ndef get_temperature(city):\n    # r = requests.get(API_URL + city, timeout=10)\n    # if r.status_code != 200: return None\n    # return r.json()["main"]["temp"]\n    fake_response = {"main": {"temp": 21.5}}\n    return fake_response["main"]["temp"]\n\nprint(get_temperature("Cairo"), "C")`,
     quiz: [
-      q("Which status code means success?", ["404", "200", "500", "302"], 1, `2xx codes are success; 200 is the standard OK.`),
-      q("Why always set a timeout on requests?", ["Faster responses", "So a hung server can't freeze your program forever", "Servers require it", "It retries automatically"], 1, `Without a timeout, a dead connection blocks indefinitely.`),
-      q("Where should API keys live?", ["In the source code", "In environment variables / .env files excluded from git", "In the README", "In comments"], 1, `Secrets in code leak through version control — environment config is the standard.`),
+      q(
+        "Which status code means success?",
+        ["404", "200", "500", "302"],
+        1,
+        `2xx codes are success; 200 is the standard OK.`,
+      ),
+      q(
+        "Why always set a timeout on requests?",
+        [
+          "Faster responses",
+          "So a hung server can't freeze your program forever",
+          "Servers require it",
+          "It retries automatically",
+        ],
+        1,
+        `Without a timeout, a dead connection blocks indefinitely.`,
+      ),
+      q(
+        "Where should API keys live?",
+        [
+          "In the source code",
+          "In environment variables / .env files excluded from git",
+          "In the README",
+          "In comments",
+        ],
+        1,
+        `Secrets in code leak through version control — environment config is the standard.`,
+      ),
     ],
   }),
 
@@ -522,8 +1030,16 @@ export const pythonB: LessonDef[] = [
       `<strong>EAFP</strong> — "easier to ask forgiveness": try it, catch the exception`,
     ],
     examples: [
-      ex("enumerate and zip", `names = ["Ada", "Bo", "Cy"]\nscores = [95, 88, 91]\nfor i, (name, score) in enumerate(zip(names, scores), 1):\n    print(i, name, score)`, `1 Ada 95\n2 Bo 88\n3 Cy 91`),
-      ex("Unpacking and ternary", `first, *rest = [10, 20, 30, 40]\nprint(first, rest)\nn = 7\nparity = "even" if n % 2 == 0 else "odd"\nprint(n, "is", parity)`, `10 [20, 30, 40]\n7 is odd`),
+      ex(
+        "enumerate and zip",
+        `names = ["Ada", "Bo", "Cy"]\nscores = [95, 88, 91]\nfor i, (name, score) in enumerate(zip(names, scores), 1):\n    print(i, name, score)`,
+        `1 Ada 95\n2 Bo 88\n3 Cy 91`,
+      ),
+      ex(
+        "Unpacking and ternary",
+        `first, *rest = [10, 20, 30, 40]\nprint(first, rest)\nn = 7\nparity = "even" if n % 2 == 0 else "odd"\nprint(n, "is", parity)`,
+        `10 [20, 30, 40]\n7 is odd`,
+      ),
     ],
     realWorld: `Code review in Python shops polices exactly these idioms: a manual index counter where enumerate belongs, or index-juggling where zip fits, marks code as translated-from-another-language. Idiomatic code is easier for the team to maintain.`,
     practice: `Given parallel lists of products and prices, print a numbered receipt using enumerate + zip, compute the total with sum(), and mark each line "(deal)" with a ternary when price < 10.`,
@@ -537,9 +1053,24 @@ export const pythonB: LessonDef[] = [
     ],
     template: `products = ["pen", "notebook", "backpack"]\nprices = [3, 8, 45]\nfor i, (item, price) in enumerate(zip(products, prices), 1):\n    tag = " (deal)" if price < 10 else ""\n    print(i, item, "$" + str(price) + tag)\nprint("Total: $" + str(sum(prices)))`,
     quiz: [
-      q("What replaces 'for i in range(len(xs)): use xs[i]'?", ["map", "for i, x in enumerate(xs):", "zip(xs)", "while loops"], 1, `enumerate yields (index, item) pairs directly.`),
-      q("zip([1,2,3], [\"a\",\"b\"]) yields how many pairs?", ["3", "2", "1", "Error"], 1, `zip stops at the shortest input — two pairs.`),
-      q("What does first, *rest = [1,2,3] assign?", ["first=1, rest=[2,3]", "first=[1], rest=[2,3]", "Error", "first=1, rest=(2,3)"], 0, `Star-unpacking collects the remainder into a list.`),
+      q(
+        "What replaces 'for i in range(len(xs)): use xs[i]'?",
+        ["map", "for i, x in enumerate(xs):", "zip(xs)", "while loops"],
+        1,
+        `enumerate yields (index, item) pairs directly.`,
+      ),
+      q(
+        'zip([1,2,3], ["a","b"]) yields how many pairs?',
+        ["3", "2", "1", "Error"],
+        1,
+        `zip stops at the shortest input — two pairs.`,
+      ),
+      q(
+        "What does first, *rest = [1,2,3] assign?",
+        ["first=1, rest=[2,3]", "first=[1], rest=[2,3]", "Error", "first=1, rest=(2,3)"],
+        0,
+        `Star-unpacking collects the remainder into a list.`,
+      ),
     ],
   }),
 ];

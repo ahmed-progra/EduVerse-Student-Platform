@@ -10,11 +10,11 @@ This project adheres to a [Code of Conduct](CODE_OF_CONDUCT.md). By participatin
 
 EduVerse is an npm-workspaces monorepo:
 
-| Workspace   | Purpose                                            |
-|-------------|----------------------------------------------------|
-| `frontend/` | Next.js 16 (App Router, React 19) web app          |
-| `backend/`  | Express 5 + TypeScript API, Prisma ORM             |
-| `shared/`   | Types shared between frontend and backend          |
+| Workspace   | Purpose                                   |
+| ----------- | ----------------------------------------- |
+| `frontend/` | Next.js 16 (App Router, React 19) web app |
+| `backend/`  | Express 5 + TypeScript API, Prisma ORM    |
+| `shared/`   | Types shared between frontend and backend |
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full picture.
 
@@ -96,6 +96,7 @@ A change to an AI feature should keep its suite green. If you add new functional
 ## Reporting bugs & requesting features
 
 Use the issue templates under **New issue**:
+
 - [Bug report](.github/ISSUE_TEMPLATE/bug_report.md) — include reproduction steps and environment details.
 - [Feature request](.github/ISSUE_TEMPLATE/feature_request.md) — describe the problem and proposed solution.
 

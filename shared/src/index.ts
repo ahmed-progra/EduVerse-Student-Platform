@@ -7,8 +7,10 @@ export interface User {
   email: string;
   username: string;
   avatar: string;
+  bio?: string;
   level: number;
   xp: number;
+  coins: number;
   rank: number;
   placementLevel: PlacementLevel;
   createdAt: string;
@@ -47,7 +49,7 @@ export interface XpLog {
   id: string;
   userId: string;
   amount: number;
-  source: "lesson" | "battle" | "challenge";
+  source: "lesson" | "battle" | "challenge" | "placement" | "project" | "mission" | "teachback";
   createdAt: string;
 }
 

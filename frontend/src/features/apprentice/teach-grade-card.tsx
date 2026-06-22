@@ -1,7 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Zap, TrendingUp, CheckCircle2, AlertCircle, RotateCcw, Award, Sparkles } from "lucide-react";
+import {
+  Zap,
+  TrendingUp,
+  CheckCircle2,
+  AlertCircle,
+  RotateCcw,
+  Award,
+  Sparkles,
+} from "lucide-react";
 import type { TeachGrade } from "@/types/apprentice";
 
 interface TeachGradeCardProps {
@@ -26,14 +34,23 @@ export function TeachGradeCard({ grade, topic, onTeachAgain }: TeachGradeCardPro
   ];
 
   return (
-    <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
+    <motion.div
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+    >
       {/* Headline */}
       <div className="flex items-center gap-4 mb-5">
         <div
           className="flex flex-col items-center justify-center rounded-full w-20 h-20 shrink-0"
-          style={{ border: `2px solid ${t.color}`, background: "var(--color-eduverse-accent-soft)" }}
+          style={{
+            border: `2px solid ${t.color}`,
+            background: "var(--color-eduverse-accent-soft)",
+          }}
         >
-          <span className="text-2xl font-bold font-mono text-eduverse-text leading-none">{grade.overall}</span>
+          <span className="text-2xl font-bold font-mono text-eduverse-text leading-none">
+            {grade.overall}
+          </span>
           <span className="text-[9px] text-eduverse-text-muted mt-0.5">/ 100</span>
         </div>
         <div>
@@ -85,22 +102,36 @@ export function TeachGradeCard({ grade, topic, onTeachAgain }: TeachGradeCardPro
       <div className="grid sm:grid-cols-2 gap-3 mb-5">
         <div className="app-card p-3">
           <div className="flex items-center gap-1.5 text-xs font-semibold text-eduverse-text mb-2">
-            <CheckCircle2 size={13} className="text-eduverse-success" aria-hidden="true" /> What you nailed
+            <CheckCircle2 size={13} className="text-eduverse-success" aria-hidden="true" /> What you
+            nailed
           </div>
           <ul className="space-y-1">
-            {grade.strengths.length ? grade.strengths.map((s, i) => (
-              <li key={i} className="text-xs text-eduverse-text-body leading-snug">• {s}</li>
-            )) : <li className="text-xs text-eduverse-text-muted">—</li>}
+            {grade.strengths.length ? (
+              grade.strengths.map((s, i) => (
+                <li key={i} className="text-xs text-eduverse-text-body leading-snug">
+                  • {s}
+                </li>
+              ))
+            ) : (
+              <li className="text-xs text-eduverse-text-muted">—</li>
+            )}
           </ul>
         </div>
         <div className="app-card p-3">
           <div className="flex items-center gap-1.5 text-xs font-semibold text-eduverse-text mb-2">
-            <AlertCircle size={13} className="text-eduverse-warning" aria-hidden="true" /> Sharpen next time
+            <AlertCircle size={13} className="text-eduverse-warning" aria-hidden="true" /> Sharpen
+            next time
           </div>
           <ul className="space-y-1">
-            {grade.improvements.length ? grade.improvements.map((s, i) => (
-              <li key={i} className="text-xs text-eduverse-text-body leading-snug">• {s}</li>
-            )) : <li className="text-xs text-eduverse-text-muted">—</li>}
+            {grade.improvements.length ? (
+              grade.improvements.map((s, i) => (
+                <li key={i} className="text-xs text-eduverse-text-body leading-snug">
+                  • {s}
+                </li>
+              ))
+            ) : (
+              <li className="text-xs text-eduverse-text-muted">—</li>
+            )}
           </ul>
         </div>
       </div>

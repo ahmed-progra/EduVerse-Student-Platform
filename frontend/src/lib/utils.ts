@@ -11,7 +11,12 @@ export function xpForCurrentLevel(level: number): number {
   return (level - 1) * (level - 1) * 100;
 }
 
-export function xpProgress(currentXp: number): { level: number; current: number; next: number; progress: number } {
+export function xpProgress(currentXp: number): {
+  level: number;
+  current: number;
+  next: number;
+  progress: number;
+} {
   const level = calculateLevel(currentXp);
   const current = currentXp - xpForCurrentLevel(level);
   const next = xpForNextLevel(level) - xpForCurrentLevel(level);

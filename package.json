@@ -20,7 +20,7 @@
     "build": "npm run build -w shared && npm run build -w backend && npm run build -w frontend",
     "start": "npm run start -w backend",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "lint": "npm run typecheck",
+    "lint": "npm run typecheck && npm run format:check",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "node -e \"try { require('husky').install() } catch {}\"",

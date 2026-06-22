@@ -26,14 +26,20 @@ export function InsightsList({
           <Lightbulb size={15} className="text-eduverse-accent" aria-hidden="true" /> AI Insights
         </h3>
         {insights.length === 0 ? (
-          <p className="text-xs text-eduverse-text-muted">No insights yet — sync your mentor to generate them.</p>
+          <p className="text-xs text-eduverse-text-muted">
+            No insights yet — sync your mentor to generate them.
+          </p>
         ) : (
           <ul className="space-y-3">
             {insights.map((ins, i) => {
               const Icon = kindIcon[ins.kind] || Lightbulb;
               return (
                 <li key={i} className="flex items-start gap-2.5">
-                  <Icon size={15} className="text-eduverse-accent mt-0.5 shrink-0" aria-hidden="true" />
+                  <Icon
+                    size={15}
+                    className="text-eduverse-accent mt-0.5 shrink-0"
+                    aria-hidden="true"
+                  />
                   <div>
                     <div className="text-sm font-semibold text-eduverse-text">{ins.title}</div>
                     <p className="text-xs text-eduverse-text-muted mt-0.5">{ins.body}</p>
@@ -47,7 +53,8 @@ export function InsightsList({
 
       <div className="app-card p-5">
         <h3 className="flex items-center gap-2 text-sm font-semibold text-eduverse-text mb-3">
-          <ArrowRight size={15} className="text-eduverse-accent" aria-hidden="true" /> Recommended Actions
+          <ArrowRight size={15} className="text-eduverse-accent" aria-hidden="true" /> Recommended
+          Actions
         </h3>
         {recommendations.length === 0 ? (
           <p className="text-xs text-eduverse-text-muted">No recommendations yet.</p>
@@ -63,7 +70,11 @@ export function InsightsList({
                   <div className="text-sm font-semibold text-eduverse-text">{r.title}</div>
                   <div className="text-xs text-eduverse-text-muted mt-0.5">{r.reason}</div>
                 </div>
-                <ArrowRight size={15} className="text-eduverse-text-muted group-hover:text-eduverse-accent shrink-0 transition-colors" aria-hidden="true" />
+                <ArrowRight
+                  size={15}
+                  className="text-eduverse-text-muted group-hover:text-eduverse-accent shrink-0 transition-colors"
+                  aria-hidden="true"
+                />
               </Link>
             ))}
           </div>

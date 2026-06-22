@@ -16,7 +16,7 @@ function getWeekStart(): string {
 export async function addXp(
   userId: string,
   amount: number,
-  source: "lesson" | "battle" | "challenge" | "placement"
+  source: "lesson" | "battle" | "challenge" | "placement",
 ) {
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) throw new Error("User not found");

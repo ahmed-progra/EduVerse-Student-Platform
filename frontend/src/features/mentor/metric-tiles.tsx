@@ -12,10 +12,21 @@ interface MetricTilesProps {
   lessonsCompleted: number;
 }
 
-const speedLabel: Record<string, string> = { slow: "Steady climb", steady: "On pace", fast: "Fast learner" };
+const speedLabel: Record<string, string> = {
+  slow: "Steady climb",
+  steady: "On pace",
+  fast: "Fast learner",
+};
 
 /** The "current skill assessment" strip on the coach dashboard. */
-export function MetricTiles({ level, xp, learningSpeed, retention, momentum, lessonsCompleted }: MetricTilesProps) {
+export function MetricTiles({
+  level,
+  xp,
+  learningSpeed,
+  retention,
+  momentum,
+  lessonsCompleted,
+}: MetricTilesProps) {
   const tiles: { label: string; value: string; sub?: string; icon: LucideIcon }[] = [
     { label: "Level", value: String(level), sub: `${xp.toLocaleString()} XP`, icon: Zap },
     { label: "Learning Speed", value: speedLabel[learningSpeed] || "On pace", icon: Brain },
@@ -29,9 +40,13 @@ export function MetricTiles({ level, xp, learningSpeed, retention, momentum, les
       {tiles.map((t) => (
         <div key={t.label} className="app-card p-4">
           <t.icon className="w-4 h-4 text-eduverse-text-muted mb-2" aria-hidden="true" />
-          <div className="text-lg font-bold text-eduverse-text font-mono leading-tight">{t.value}</div>
+          <div className="text-lg font-bold text-eduverse-text font-mono leading-tight">
+            {t.value}
+          </div>
           <div className="text-[11px] text-eduverse-text-muted mt-0.5">{t.label}</div>
-          {t.sub && <div className="text-[10px] text-eduverse-text-muted/70 font-mono mt-0.5">{t.sub}</div>}
+          {t.sub && (
+            <div className="text-[10px] text-eduverse-text-muted/70 font-mono mt-0.5">{t.sub}</div>
+          )}
         </div>
       ))}
     </div>

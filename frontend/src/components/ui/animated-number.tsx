@@ -4,7 +4,15 @@ import { useEffect, useRef, useState } from "react";
 
 /* Counts from 0 to value when scrolled into view. Renders the final
    value immediately under prefers-reduced-motion. */
-export function AnimatedNumber({ value, delay = 0, suffix = "" }: { value: number; delay?: number; suffix?: string }) {
+export function AnimatedNumber({
+  value,
+  delay = 0,
+  suffix = "",
+}: {
+  value: number;
+  delay?: number;
+  suffix?: string;
+}) {
   const [displayed, setDisplayed] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
   const started = useRef(false);
@@ -38,7 +46,7 @@ export function AnimatedNumber({ value, delay = 0, suffix = "" }: { value: numbe
           raf = requestAnimationFrame(tick);
         }, delay);
       },
-      { threshold: 0.3 }
+      { threshold: 0.3 },
     );
     obs.observe(el);
     return () => {
@@ -48,5 +56,10 @@ export function AnimatedNumber({ value, delay = 0, suffix = "" }: { value: numbe
     };
   }, [value, delay]);
 
-  return <span ref={ref} style={{ fontVariantNumeric: "tabular-nums" }}>{displayed.toLocaleString()}{suffix}</span>;
+  return (
+    <span ref={ref} style={{ fontVariantNumeric: "tabular-nums" }}>
+      {displayed.toLocaleString()}
+      {suffix}
+    </span>
+  );
 }

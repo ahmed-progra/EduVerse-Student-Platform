@@ -41,7 +41,15 @@ function extractProps(obj: any): Record<string, any> {
         continue;
       }
       props[key] = formatValue(val);
-    } else if (!(typeof val === "object" && Array.isArray(val) && val.length > 0 && typeof val[0] === "object" && val[0]?.constructor?.$dct)) {
+    } else if (
+      !(
+        typeof val === "object" &&
+        Array.isArray(val) &&
+        val.length > 0 &&
+        typeof val[0] === "object" &&
+        val[0]?.constructor?.$dct
+      )
+    ) {
       props[key] = formatValue(val);
     }
   }
@@ -70,8 +78,18 @@ function isASTNode(val: any): boolean {
 
 function buildASTTree(ast: any): ASTNodeData {
   const type = getNodeType(ast);
-  const line = ast.lineno !== undefined ? (typeof ast.lineno === "object" ? ast.lineno.v : ast.lineno) : undefined;
-  const col = ast.col_offset !== undefined ? (typeof ast.col_offset === "object" ? ast.col_offset.v : ast.col_offset) : undefined;
+  const line =
+    ast.lineno !== undefined
+      ? typeof ast.lineno === "object"
+        ? ast.lineno.v
+        : ast.lineno
+      : undefined;
+  const col =
+    ast.col_offset !== undefined
+      ? typeof ast.col_offset === "object"
+        ? ast.col_offset.v
+        : ast.col_offset
+      : undefined;
 
   const props: Record<string, any> = { ...extractProps(ast) };
   if (line !== undefined) props["lineno"] = line;
@@ -105,7 +123,12 @@ interface ASTViewerProps {
   onToggle: () => void;
 }
 
-export const ASTViewer = memo(function ASTViewer({ code, onLineClick, visible, onToggle }: ASTViewerProps) {
+export const ASTViewer = memo(function ASTViewer({
+  code,
+  onLineClick,
+  visible,
+  onToggle,
+}: ASTViewerProps) {
   const [tree, setTree] = useState<ASTNodeData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -146,48 +169,58 @@ export const ASTViewer = memo(function ASTViewer({ code, onLineClick, visible, o
     });
   }, []);
 
-  const renderNode = useCallback((node: ASTNodeData, depth: number, path: string): ReactNode => {
-    const isCollapsed = collapsed.has(path);
-    const hasChildren = node.children.length > 0;
-    const nodeKey = `${node.type}:${node.line || "?"}:${path}`;
+  const renderNode = useCallback(
+    (node: ASTNodeData, depth: number, path: string): ReactNode => {
+      const isCollapsed = collapsed.has(path);
+      const hasChildren = node.children.length > 0;
+      const nodeKey = `${node.type}:${node.line || "?"}:${path}`;
 
-    return (
-      <div key={nodeKey} className="ast-node">
-        <div
-          className="ast-node-row"
-          style={{ paddingLeft: `${depth * 14}px` }}
-          onClick={() => {
-            toggleCollapse(path);
-            if (node.line && onLineClick) onLineClick(node.line);
-          }}
-        >
-          <span className="ast-toggle">
-            {hasChildren ? (
-              isCollapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />
-            ) : (
-              <span className="w-3 inline-block" />
-            )}
-          </span>
-          <span className="ast-type">{node.type}</span>
-          {node.line && <span className="ast-line">:{node.line}</span>}
-          {Object.entries(node.props).filter(([k]) => k !== "lineno").slice(0, 3).map(([k, v]) => (
-            <span key={k} className="ast-prop">
-              <span className="ast-prop-key">{k}=</span>
-              <span className="ast-prop-val">{String(v).substring(0, 40)}</span>
+      return (
+        <div key={nodeKey} className="ast-node">
+          <div
+            className="ast-node-row"
+            style={{ paddingLeft: `${depth * 14}px` }}
+            onClick={() => {
+              toggleCollapse(path);
+              if (node.line && onLineClick) onLineClick(node.line);
+            }}
+          >
+            <span className="ast-toggle">
+              {hasChildren ? (
+                isCollapsed ? (
+                  <ChevronRight className="w-3 h-3" />
+                ) : (
+                  <ChevronDown className="w-3 h-3" />
+                )
+              ) : (
+                <span className="w-3 inline-block" />
+              )}
             </span>
-          ))}
-          {Object.keys(node.props).filter((k) => k !== "lineno").length > 3 && (
-            <span className="ast-more">+{Object.keys(node.props).length - 3} more</span>
+            <span className="ast-type">{node.type}</span>
+            {node.line && <span className="ast-line">:{node.line}</span>}
+            {Object.entries(node.props)
+              .filter(([k]) => k !== "lineno")
+              .slice(0, 3)
+              .map(([k, v]) => (
+                <span key={k} className="ast-prop">
+                  <span className="ast-prop-key">{k}=</span>
+                  <span className="ast-prop-val">{String(v).substring(0, 40)}</span>
+                </span>
+              ))}
+            {Object.keys(node.props).filter((k) => k !== "lineno").length > 3 && (
+              <span className="ast-more">+{Object.keys(node.props).length - 3} more</span>
+            )}
+          </div>
+          {hasChildren && !isCollapsed && (
+            <div className="ast-children">
+              {node.children.map((child, i) => renderNode(child, depth + 1, `${path}.${i}`))}
+            </div>
           )}
         </div>
-        {hasChildren && !isCollapsed && (
-          <div className="ast-children">
-            {node.children.map((child, i) => renderNode(child, depth + 1, `${path}.${i}`))}
-          </div>
-        )}
-      </div>
-    );
-  }, [collapsed, toggleCollapse, onLineClick]);
+      );
+    },
+    [collapsed, toggleCollapse, onLineClick],
+  );
 
   return (
     <div className="visualizer-panel ast-panel">
@@ -208,11 +241,7 @@ export const ASTViewer = memo(function ASTViewer({ code, onLineClick, visible, o
             </div>
           )}
           {!loading && !error && !tree && <div className="panel-empty">Enter code to see AST</div>}
-          {!loading && !error && tree && (
-            <div className="ast-tree">
-              {renderNode(tree, 0, "0")}
-            </div>
-          )}
+          {!loading && !error && tree && <div className="ast-tree">{renderNode(tree, 0, "0")}</div>}
         </div>
       )}
       {visible && tree && (

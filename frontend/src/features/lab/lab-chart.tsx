@@ -106,7 +106,9 @@ export function LabChart({ data }: { data: LabChartData }) {
   const baseY = mapY(Math.max(y0, Math.min(y1, 0)));
 
   const linePath = (pts: [number, number][]) =>
-    pts.map((p, i) => `${i === 0 ? "M" : "L"}${mapX(p[0]).toFixed(1)},${mapY(p[1]).toFixed(1)}`).join(" ");
+    pts
+      .map((p, i) => `${i === 0 ? "M" : "L"}${mapX(p[0]).toFixed(1)},${mapY(p[1]).toFixed(1)}`)
+      .join(" ");
   const areaPath = (pts: [number, number][]) =>
     `${linePath(pts)} L${mapX(pts[pts.length - 1][0]).toFixed(1)},${baseY.toFixed(1)} L${mapX(pts[0][0]).toFixed(1)},${baseY.toFixed(1)} Z`;
 
@@ -143,7 +145,13 @@ export function LabChart({ data }: { data: LabChartData }) {
         </g>
 
         {data.zeroLine && y0 < 0 && y1 > 0 && (
-          <line className="wb-graph-zero" x1={PAD.l} y1={baseY.toFixed(1)} x2={W - PAD.r} y2={baseY.toFixed(1)} />
+          <line
+            className="wb-graph-zero"
+            x1={PAD.l}
+            y1={baseY.toFixed(1)}
+            x2={W - PAD.r}
+            y2={baseY.toFixed(1)}
+          />
         )}
 
         <line className="wb-graph-axis" x1={PAD.l} y1={PAD.t} x2={PAD.l} y2={H - PAD.b} />
@@ -178,7 +186,13 @@ export function LabChart({ data }: { data: LabChartData }) {
                 )}
                 {s.dots &&
                   s.points.map((p, pi) => (
-                    <circle key={pi} cx={mapX(p[0]).toFixed(1)} cy={mapY(p[1]).toFixed(1)} r={3} fill={col.stroke} />
+                    <circle
+                      key={pi}
+                      cx={mapX(p[0]).toFixed(1)}
+                      cy={mapY(p[1]).toFixed(1)}
+                      r={3}
+                      fill={col.stroke}
+                    />
                   ))}
               </g>
             );
@@ -191,8 +205,22 @@ export function LabChart({ data }: { data: LabChartData }) {
           const cy = mapY(m.y).toFixed(1);
           return (
             <g key={i}>
-              <circle className="wb-graph-marker-ring" cx={cx} cy={cy} r={5} fill="none" stroke={col.stroke} />
-              <circle cx={cx} cy={cy} r={4.5} fill={col.stroke} stroke="var(--color-eduverse-bg)" strokeWidth={1.5} />
+              <circle
+                className="wb-graph-marker-ring"
+                cx={cx}
+                cy={cy}
+                r={5}
+                fill="none"
+                stroke={col.stroke}
+              />
+              <circle
+                cx={cx}
+                cy={cy}
+                r={4.5}
+                fill={col.stroke}
+                stroke="var(--color-eduverse-bg)"
+                strokeWidth={1.5}
+              />
             </g>
           );
         })}
@@ -209,7 +237,12 @@ export function LabChart({ data }: { data: LabChartData }) {
           </text>
         )}
         {data.xLabel && (
-          <text className="wb-graph-axis-label" x={PAD.l + innerW / 2} y={H - 7} textAnchor="middle">
+          <text
+            className="wb-graph-axis-label"
+            x={PAD.l + innerW / 2}
+            y={H - 7}
+            textAnchor="middle"
+          >
             {data.xLabel}
           </text>
         )}

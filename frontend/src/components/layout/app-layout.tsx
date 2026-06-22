@@ -9,19 +9,49 @@ import { XpBar } from "@/components/ui/xp-bar";
 import dynamic from "next/dynamic";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import {
-  LayoutDashboard, BookOpen, Swords, Medal, ShoppingBag,
-  User, LogOut, Menu, X, GitBranch, ChevronLeft, ChevronDown,
-  Brain, Code2, Lightbulb, GraduationCap, FlaskConical, Sparkles, Sprout, Rocket,
-  Boxes, Search, ChevronsUpDown, Settings, Library, Megaphone,
+  LayoutDashboard,
+  BookOpen,
+  Swords,
+  Medal,
+  ShoppingBag,
+  User,
+  LogOut,
+  Menu,
+  X,
+  GitBranch,
+  ChevronLeft,
+  ChevronDown,
+  Brain,
+  Code2,
+  Lightbulb,
+  GraduationCap,
+  FlaskConical,
+  Sparkles,
+  Sprout,
+  Rocket,
+  Boxes,
+  Search,
+  ChevronsUpDown,
+  Settings,
+  Library,
+  Megaphone,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { CommandPalette, type CommandItem } from "./command-palette";
 
-const AIMentorPanel = dynamic(() => import("./ai-mentor-panel").then(m => m.AIMentorPanel), { ssr: false });
-const CodeReviewPanel = dynamic(() => import("./ai-review-panel").then(m => m.CodeReviewPanel), { ssr: false });
-const HintsPanel = dynamic(() => import("./ai-hints-panel").then(m => m.HintsPanel), { ssr: false });
-const ExamPanel = dynamic(() => import("./ai-exam-panel").then(m => m.ExamPanel), { ssr: false });
-const ChallengePanel = dynamic(() => import("./ai-challenge-panel").then(m => m.ChallengePanel), { ssr: false });
+const AIMentorPanel = dynamic(() => import("./ai-mentor-panel").then((m) => m.AIMentorPanel), {
+  ssr: false,
+});
+const CodeReviewPanel = dynamic(() => import("./ai-review-panel").then((m) => m.CodeReviewPanel), {
+  ssr: false,
+});
+const HintsPanel = dynamic(() => import("./ai-hints-panel").then((m) => m.HintsPanel), {
+  ssr: false,
+});
+const ExamPanel = dynamic(() => import("./ai-exam-panel").then((m) => m.ExamPanel), { ssr: false });
+const ChallengePanel = dynamic(() => import("./ai-challenge-panel").then((m) => m.ChallengePanel), {
+  ssr: false,
+});
 
 type NavItem = {
   label: string;
@@ -82,11 +112,18 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const [cmdOpen, setCmdOpen] = useState(false);
 
   // Public pages render without the app shell or auth gate (shareable portfolio included).
-  const isPublicPage = pathname.startsWith("/auth") || pathname === "/" || pathname.startsWith("/u/");
+  const isPublicPage =
+    pathname.startsWith("/auth") || pathname === "/" || pathname.startsWith("/u/");
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { loadUser(); setMounted(true); }, []);
-  useEffect(() => { setActivePanel(null); setMobileOpen(false); }, [pathname]);
+  useEffect(() => {
+    loadUser();
+    setMounted(true);
+  }, []);
+  useEffect(() => {
+    setActivePanel(null);
+    setMobileOpen(false);
+  }, [pathname]);
 
   // Gate app pages: unauthenticated visitors get sent to login instead of a broken shell
   useEffect(() => {
@@ -135,16 +172,50 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       for (const item of section.items) {
         if (item.href) {
           const href = item.href;
-          items.push({ id: `nav:${href}`, label: item.label, group: "Navigate", icon: item.icon, run: () => router.push(href) });
+          items.push({
+            id: `nav:${href}`,
+            label: item.label,
+            group: "Navigate",
+            icon: item.icon,
+            run: () => router.push(href),
+          });
         } else if (item.panel) {
           const panel = item.panel;
-          items.push({ id: `panel:${panel}`, label: item.label, group: "AI Tools", icon: item.icon, hint: "panel", run: () => { setActivePanel(panel); setMobileOpen(false); } });
+          items.push({
+            id: `panel:${panel}`,
+            label: item.label,
+            group: "AI Tools",
+            icon: item.icon,
+            hint: "panel",
+            run: () => {
+              setActivePanel(panel);
+              setMobileOpen(false);
+            },
+          });
         }
       }
     }
-    items.push({ id: "acct:profile", label: "View profile", group: "Account", icon: User, run: () => router.push("/profile") });
-    items.push({ id: "acct:settings", label: "Account settings", group: "Account", icon: Settings, run: () => router.push("/profile") });
-    items.push({ id: "acct:logout", label: "Log out", group: "Account", icon: LogOut, run: () => logout() });
+    items.push({
+      id: "acct:profile",
+      label: "View profile",
+      group: "Account",
+      icon: User,
+      run: () => router.push("/profile"),
+    });
+    items.push({
+      id: "acct:settings",
+      label: "Account settings",
+      group: "Account",
+      icon: Settings,
+      run: () => router.push("/profile"),
+    });
+    items.push({
+      id: "acct:logout",
+      label: "Log out",
+      group: "Account",
+      icon: LogOut,
+      run: () => logout(),
+    });
     return items;
   }, [router, logout]);
 
@@ -167,7 +238,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   }
 
   const handleNavClick = (item: NavItem) => {
-    if (item.panel) { setActivePanel(item.panel); setMobileOpen(false); }
+    if (item.panel) {
+      setActivePanel(item.panel);
+      setMobileOpen(false);
+    }
   };
 
   return (
@@ -175,9 +249,24 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       {/* Ambient background lives in root layout.tsx */}
 
       {/* Mobile top bar */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 px-4 py-3 flex items-center justify-between"
-        style={{ background: "oklch(13% 0.028 262 / 0.92)", backdropFilter: "blur(20px) saturate(160%)", borderBottom: "1px solid var(--color-eduverse-border)" }}>
-        <Link href="/dashboard" prefetch={true} className="text-xl font-bold flex items-center gap-2" style={{ fontFamily: "var(--font-display)", color: "var(--color-eduverse-text)", letterSpacing: "-0.02em" }}>
+      <div
+        className="lg:hidden fixed top-0 left-0 right-0 z-50 px-4 py-3 flex items-center justify-between"
+        style={{
+          background: "oklch(13% 0.028 262 / 0.92)",
+          backdropFilter: "blur(20px) saturate(160%)",
+          borderBottom: "1px solid var(--color-eduverse-border)",
+        }}
+      >
+        <Link
+          href="/dashboard"
+          prefetch={true}
+          className="text-xl font-bold flex items-center gap-2"
+          style={{
+            fontFamily: "var(--font-display)",
+            color: "var(--color-eduverse-text)",
+            letterSpacing: "-0.02em",
+          }}
+        >
           <Code2 size={20} style={{ color: "var(--color-eduverse-accent)" }} aria-hidden="true" />
           EduVerse
         </Link>
@@ -208,21 +297,51 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             className="fixed inset-0 z-40 lg:hidden outline-none"
           >
             <div className="absolute inset-0 bg-black/60" onClick={() => setMobileOpen(false)} />
-            <SidebarContent user={user} pathname={pathname} logout={logout} activePanel={activePanel} onNavClick={handleNavClick} onOpenCmd={() => setCmdOpen(true)} mobile />
+            <SidebarContent
+              user={user}
+              pathname={pathname}
+              logout={logout}
+              activePanel={activePanel}
+              onNavClick={handleNavClick}
+              onOpenCmd={() => setCmdOpen(true)}
+              mobile
+            />
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Desktop sidebar */}
-      <div className={`hidden lg:fixed lg:inset-y-0 lg:flex lg:flex-col transition-[width] duration-300 z-30 ${collapsed ? "lg:w-20" : "lg:w-64"}`}>
-        <SidebarContent user={user} pathname={pathname} logout={logout} activePanel={activePanel} onNavClick={handleNavClick} onOpenCmd={() => setCmdOpen(true)} collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} />
+      <div
+        className={`hidden lg:fixed lg:inset-y-0 lg:flex lg:flex-col transition-[width] duration-300 z-30 ${collapsed ? "lg:w-20" : "lg:w-64"}`}
+      >
+        <SidebarContent
+          user={user}
+          pathname={pathname}
+          logout={logout}
+          activePanel={activePanel}
+          onNavClick={handleNavClick}
+          onOpenCmd={() => setCmdOpen(true)}
+          collapsed={collapsed}
+          onToggle={() => setCollapsed(!collapsed)}
+        />
       </div>
 
-      <main inert={mobileOpen} className={`transition-[padding] duration-300 pt-16 lg:pt-0 min-h-screen ${collapsed ? "lg:pl-20" : "lg:pl-64"}`}>
+      <main
+        inert={mobileOpen}
+        className={`transition-[padding] duration-300 pt-16 lg:pt-0 min-h-screen ${collapsed ? "lg:pl-20" : "lg:pl-64"}`}
+      >
         <div className="p-4 md:p-8 max-w-7xl mx-auto page-enter">
           {activePanel ? (
-            <ErrorBoundary><AIPanel panel={activePanel} onClose={() => setActivePanel(null)} context={`The user is level ${user?.level ?? 1} on EduVerse and is currently viewing the route "${pathname}". Tailor your guidance to what they are likely doing there (a lesson, course, 3D lab, code lab, skill tree, battle, project, or the dashboard).`} /></ErrorBoundary>
-          ) : children}
+            <ErrorBoundary>
+              <AIPanel
+                panel={activePanel}
+                onClose={() => setActivePanel(null)}
+                context={`The user is level ${user?.level ?? 1} on EduVerse and is currently viewing the route "${pathname}". Tailor your guidance to what they are likely doing there (a lesson, course, 3D lab, code lab, skill tree, battle, project, or the dashboard).`}
+              />
+            </ErrorBoundary>
+          ) : (
+            children
+          )}
         </div>
       </main>
 
@@ -231,19 +350,41 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
-function AIPanel({ panel, onClose, context }: { panel: string; onClose: () => void; context?: string }) {
+function AIPanel({
+  panel,
+  onClose,
+  context,
+}: {
+  panel: string;
+  onClose: () => void;
+  context?: string;
+}) {
   switch (panel) {
-    case "mentor": return <AIMentorPanel onClose={onClose} context={context} />;
-    case "exam": return <ExamPanel onClose={onClose} />;
-    case "review": return <CodeReviewPanel onClose={onClose} />;
-    case "hints": return <HintsPanel onClose={onClose} />;
-    case "challenges": return <ChallengePanel onClose={onClose} />;
-    default: return null;
+    case "mentor":
+      return <AIMentorPanel onClose={onClose} context={context} />;
+    case "exam":
+      return <ExamPanel onClose={onClose} />;
+    case "review":
+      return <CodeReviewPanel onClose={onClose} />;
+    case "hints":
+      return <HintsPanel onClose={onClose} />;
+    case "challenges":
+      return <ChallengePanel onClose={onClose} />;
+    default:
+      return null;
   }
 }
 
 function SidebarContent({
-  user, pathname, logout, activePanel, onNavClick, onOpenCmd, mobile, collapsed, onToggle,
+  user,
+  pathname,
+  logout,
+  activePanel,
+  onNavClick,
+  onOpenCmd,
+  mobile,
+  collapsed,
+  onToggle,
 }: {
   user: { username: string; level: number; xp: number; email?: string } | null;
   pathname: string;
@@ -268,7 +409,10 @@ function SidebarContent({
 
   const q = query.trim().toLowerCase();
   const sections = navSections
-    .map((s) => ({ ...s, items: q ? s.items.filter((i) => i.label.toLowerCase().includes(q)) : s.items }))
+    .map((s) => ({
+      ...s,
+      items: q ? s.items.filter((i) => i.label.toLowerCase().includes(q)) : s.items,
+    }))
     .filter((s) => s.items.length > 0);
 
   const renderItem = (item: NavItem) => {
@@ -282,13 +426,29 @@ function SidebarContent({
     );
     if (item.href) {
       return (
-        <Link key={item.label} href={item.href} prefetch className={cls} onClick={() => onNavClick(item)} data-label={item.label} aria-label={!showFull ? item.label : undefined} aria-current={active ? "page" : undefined}>
+        <Link
+          key={item.label}
+          href={item.href}
+          prefetch
+          className={cls}
+          onClick={() => onNavClick(item)}
+          data-label={item.label}
+          aria-label={!showFull ? item.label : undefined}
+          aria-current={active ? "page" : undefined}
+        >
           {inner}
         </Link>
       );
     }
     return (
-      <button key={item.label} className={cls} onClick={() => onNavClick(item)} data-label={item.label} aria-label={!showFull ? item.label : undefined} aria-pressed={active}>
+      <button
+        key={item.label}
+        className={cls}
+        onClick={() => onNavClick(item)}
+        data-label={item.label}
+        aria-label={!showFull ? item.label : undefined}
+        aria-pressed={active}
+      >
         {inner}
       </button>
     );
@@ -298,8 +458,14 @@ function SidebarContent({
     <div className={`sb ${mobile ? "sb-mobile" : "sb-full"} ${!showFull ? "sb-collapsed" : ""}`}>
       {/* Brand header */}
       <div className="sb-head">
-        <Link href="/dashboard" prefetch className={`sb-brand ${!showFull ? "sb-brand-collapsed" : ""}`}>
-          <span className="sb-brand-mark"><Code2 size={20} aria-hidden="true" /></span>
+        <Link
+          href="/dashboard"
+          prefetch
+          className={`sb-brand ${!showFull ? "sb-brand-collapsed" : ""}`}
+        >
+          <span className="sb-brand-mark">
+            <Code2 size={20} aria-hidden="true" />
+          </span>
           {showFull && (
             <span className="sb-brand-text">
               <span className="sb-brand-name">EduVerse</span>
@@ -308,7 +474,11 @@ function SidebarContent({
           )}
         </Link>
         {!mobile && onToggle && (
-          <button onClick={onToggle} className="sb-collapse" aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}>
+          <button
+            onClick={onToggle}
+            className="sb-collapse"
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
             {showFull ? <ChevronLeft size={16} /> : <ChevronsUpDown size={15} />}
           </button>
         )}
@@ -326,7 +496,13 @@ function SidebarContent({
             aria-label="Filter navigation"
           />
           {onOpenCmd && (
-            <button type="button" className="sb-cmdk" onClick={onOpenCmd} aria-label="Open command menu" title="Command menu (Ctrl K)">
+            <button
+              type="button"
+              className="sb-cmdk"
+              onClick={onOpenCmd}
+              aria-label="Open command menu"
+              title="Command menu (Ctrl K)"
+            >
               <kbd>⌘K</kbd>
             </button>
           )}
@@ -342,11 +518,19 @@ function SidebarContent({
               {showFull ? (
                 <button
                   className="sb-section-head"
-                  onClick={() => setClosedSections((c) => ({ ...c, [section.title]: !c[section.title] }))}
+                  onClick={() =>
+                    setClosedSections((c) => ({ ...c, [section.title]: !c[section.title] }))
+                  }
                   aria-expanded={!isClosed}
                 >
-                  <span className="sb-section-label"><span className="sb-section-slash">//</span> {section.title}</span>
-                  <ChevronDown size={13} className={`sb-section-chevron ${isClosed ? "closed" : ""}`} aria-hidden="true" />
+                  <span className="sb-section-label">
+                    <span className="sb-section-slash">//</span> {section.title}
+                  </span>
+                  <ChevronDown
+                    size={13}
+                    className={`sb-section-chevron ${isClosed ? "closed" : ""}`}
+                    aria-hidden="true"
+                  />
                 </button>
               ) : (
                 <div className="sb-section-rule" aria-hidden="true" />
@@ -361,7 +545,9 @@ function SidebarContent({
       </nav>
 
       {showFull && (
-        <div className="sb-hint">Press <kbd>/</kbd> for AI · <kbd>⌘K</kbd> to search</div>
+        <div className="sb-hint">
+          Press <kbd>/</kbd> for AI · <kbd>⌘K</kbd> to search
+        </div>
       )}
 
       {showFull && user && (
@@ -376,16 +562,37 @@ function SidebarContent({
 
       {/* User card + menu */}
       <div className="sb-user-wrap">
-        {menuOpen && <div className="sb-menu-backdrop" onClick={() => setMenuOpen(false)} aria-hidden="true" />}
+        {menuOpen && (
+          <div className="sb-menu-backdrop" onClick={() => setMenuOpen(false)} aria-hidden="true" />
+        )}
         {menuOpen && (
           <div className="sb-user-menu" role="menu">
-            <Link href="/profile" prefetch className="sb-menu-item" role="menuitem" onClick={() => setMenuOpen(false)}>
+            <Link
+              href="/profile"
+              prefetch
+              className="sb-menu-item"
+              role="menuitem"
+              onClick={() => setMenuOpen(false)}
+            >
               <User size={15} aria-hidden="true" /> View profile
             </Link>
-            <Link href="/profile" prefetch className="sb-menu-item" role="menuitem" onClick={() => setMenuOpen(false)}>
+            <Link
+              href="/profile"
+              prefetch
+              className="sb-menu-item"
+              role="menuitem"
+              onClick={() => setMenuOpen(false)}
+            >
               <Settings size={15} aria-hidden="true" /> Account settings
             </Link>
-            <button className="sb-menu-item danger" role="menuitem" onClick={() => { setMenuOpen(false); logout(); }}>
+            <button
+              className="sb-menu-item danger"
+              role="menuitem"
+              onClick={() => {
+                setMenuOpen(false);
+                logout();
+              }}
+            >
               <LogOut size={15} aria-hidden="true" /> Log out
             </button>
           </div>

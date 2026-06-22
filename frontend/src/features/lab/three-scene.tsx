@@ -49,7 +49,14 @@ interface ThreeSceneProps {
  * ambient shows through), gentle auto-rotation governed by the live `autoRotate`
  * param, and pointer drag-orbit. Cleans up fully on unmount.
  */
-export function ThreeScene({ init, params, rebuildKey, className, onReady, environment }: ThreeSceneProps) {
+export function ThreeScene({
+  init,
+  params,
+  rebuildKey,
+  className,
+  onReady,
+  environment,
+}: ThreeSceneProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
   const envRef = useRef(environment);
@@ -216,16 +223,23 @@ export function ThreeScene({ init, params, rebuildKey, className, onReady, envir
   }, [rebuildKey]);
 
   return (
-    <div ref={mountRef} className={className} style={{ width: "100%", height: "100%", position: "relative" }}>
+    <div
+      ref={mountRef}
+      className={className}
+      style={{ width: "100%", height: "100%", position: "relative" }}
+    >
       {failed && (
         <div
           className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-center p-6"
           role="status"
           style={{ color: "var(--color-eduverse-text-muted)" }}
         >
-          <span className="text-sm font-semibold" style={{ color: "var(--color-eduverse-text)" }}>3D unavailable</span>
+          <span className="text-sm font-semibold" style={{ color: "var(--color-eduverse-text)" }}>
+            3D unavailable
+          </span>
           <span className="text-xs" style={{ maxWidth: "20rem" }}>
-            Your browser or device couldn&apos;t start WebGL. Try another browser or enable hardware acceleration.
+            Your browser or device couldn&apos;t start WebGL. Try another browser or enable hardware
+            acceleration.
           </span>
         </div>
       )}

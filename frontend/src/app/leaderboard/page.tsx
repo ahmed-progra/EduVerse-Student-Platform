@@ -49,7 +49,9 @@ export default function LeaderboardPage() {
     setLoading(false);
   };
 
-  useEffect(() => { loadLeaderboard(); }, [period]);
+  useEffect(() => {
+    loadLeaderboard();
+  }, [period]);
 
   const filtered = search
     ? entries.filter((e) => e.username.toLowerCase().includes(search.toLowerCase()))
@@ -70,7 +72,12 @@ export default function LeaderboardPage() {
   };
 
   return (
-    <motion.div className="space-y-8 max-w-4xl mx-auto" initial="hidden" animate="visible" variants={staggerContainer}>
+    <motion.div
+      className="space-y-8 max-w-4xl mx-auto"
+      initial="hidden"
+      animate="visible"
+      variants={staggerContainer}
+    >
       <motion.div variants={fadeUp} transition={fastEaseTransition}>
         <h1 className="text-3xl font-bold mb-2 font-display tracking-tight">Leaderboard</h1>
         <p className="text-eduverse-text-muted">Top programmers ranked by XP earned.</p>
@@ -92,7 +99,10 @@ export default function LeaderboardPage() {
             ))}
           </div>
           <div className="relative flex-1 max-w-xs">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-eduverse-text-muted" aria-hidden="true" />
+            <Search
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-eduverse-text-muted"
+              aria-hidden="true"
+            />
             <input
               type="text"
               placeholder="Search by username..."
@@ -110,19 +120,29 @@ export default function LeaderboardPage() {
           <div className="section-label">
             <span className="section-label-prefix">//</span> My Rank
           </div>
-          <GlassCard className="flex items-center justify-between border-eduverse-accent/30" style={{ borderColor: "oklch(78% 0.14 85 / 0.3)" }}>
+          <GlassCard
+            className="flex items-center justify-between border-eduverse-accent/30"
+            style={{ borderColor: "oklch(78% 0.14 85 / 0.3)" }}
+          >
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: "var(--color-eduverse-accent-soft)" }}>
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center"
+                style={{ background: "var(--color-eduverse-accent-soft)" }}
+              >
                 <Medal className="w-5 h-5 text-eduverse-accent" aria-hidden="true" />
               </div>
               <div>
                 <div className="text-xs text-eduverse-text-muted font-mono mb-0.5">Your Rank</div>
-                <div className="text-2xl font-bold text-eduverse-accent-light font-mono tracking-tight">#{myRank.rank}</div>
+                <div className="text-2xl font-bold text-eduverse-accent-light font-mono tracking-tight">
+                  #{myRank.rank}
+                </div>
               </div>
             </div>
             <div className="text-right">
               <div className="text-xs text-eduverse-text-muted font-mono mb-0.5">Total XP</div>
-              <div className="font-bold font-mono text-lg text-eduverse-text">{myRank.score.toLocaleString()}</div>
+              <div className="font-bold font-mono text-lg text-eduverse-text">
+                {myRank.score.toLocaleString()}
+              </div>
             </div>
           </GlassCard>
         </motion.div>
@@ -155,7 +175,11 @@ export default function LeaderboardPage() {
                     <div className="podium-name">{e.username}</div>
                     <div className="podium-xp">{e.xp.toLocaleString()} XP</div>
                     <div className={`podium-pedestal ${rankClass}`}>
-                      {e.rank === 1 ? <Crown className="w-5 h-5" aria-hidden="true" /> : <Medal className="w-5 h-5" aria-hidden="true" />}
+                      {e.rank === 1 ? (
+                        <Crown className="w-5 h-5" aria-hidden="true" />
+                      ) : (
+                        <Medal className="w-5 h-5" aria-hidden="true" />
+                      )}
                     </div>
                   </motion.div>
                 );
@@ -183,14 +207,22 @@ export default function LeaderboardPage() {
             </div>
           ) : offline ? (
             <div className="p-8">
-              <EmptyState icon={WifiOff} title="Can't reach the server" message="The EduVerse API isn't responding, so rankings can't be loaded." />
+              <EmptyState
+                icon={WifiOff}
+                title="Can't reach the server"
+                message="The EduVerse API isn't responding, so rankings can't be loaded."
+              />
             </div>
           ) : filtered.length === 0 ? (
             <div className="p-8">
               <EmptyState
                 icon={Trophy}
                 title={search ? "No matching players" : "No rankings yet"}
-                message={search ? "Nobody on the board matches that name." : "Be the first on the board: complete a lesson or win a battle to earn XP."}
+                message={
+                  search
+                    ? "Nobody on the board matches that name."
+                    : "Be the first on the board: complete a lesson or win a battle to earn XP."
+                }
               />
             </div>
           ) : (
@@ -223,19 +255,29 @@ export default function LeaderboardPage() {
                       <div
                         className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-xs font-bold font-mono"
                         style={{
-                          background: isMe ? "var(--color-eduverse-accent-strong)" : "var(--color-eduverse-raised)",
-                          color: isMe ? "var(--color-eduverse-bg)" : "var(--color-eduverse-text-muted)",
+                          background: isMe
+                            ? "var(--color-eduverse-accent-strong)"
+                            : "var(--color-eduverse-raised)",
+                          color: isMe
+                            ? "var(--color-eduverse-bg)"
+                            : "var(--color-eduverse-text-muted)",
                         }}
                       >
                         {entry.username[0].toUpperCase()}
                       </div>
-                      <span className={`font-medium text-sm truncate ${isMe ? "text-eduverse-accent" : "text-eduverse-text"}`}>
+                      <span
+                        className={`font-medium text-sm truncate ${isMe ? "text-eduverse-accent" : "text-eduverse-text"}`}
+                      >
                         {entry.username}
-                        {isMe && <span className="ml-2 text-[10px] opacity-70 font-mono">(you)</span>}
+                        {isMe && (
+                          <span className="ml-2 text-[10px] opacity-70 font-mono">(you)</span>
+                        )}
                       </span>
                     </div>
                     <div className="text-sm font-mono text-eduverse-accent">{entry.level}</div>
-                    <div className="text-right font-mono text-sm text-eduverse-text">{entry.xp.toLocaleString()}</div>
+                    <div className="text-right font-mono text-sm text-eduverse-text">
+                      {entry.xp.toLocaleString()}
+                    </div>
                   </motion.div>
                 );
               })}
