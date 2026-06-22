@@ -1,259 +1,425 @@
-# EduVerse — Learn Programming Through RPG Adventure
-
 <div align="center">
-
-[![CI](https://img.shields.io/github/actions/workflow/status/ahmed-progra/EduVerse-Student-Platform/ci.yml?branch=main&label=CI&logo=github)](https://github.com/ahmed-progra/EduVerse-Student-Platform/actions)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue?logo=typescript)](https://www.typescriptlang.org/)
-[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev/)
-[![Express](https://img.shields.io/badge/Express-5-000?logo=express)](https://expressjs.com/)
-[![Prisma](https://img.shields.io/badge/Prisma-6-2D3748?logo=prisma)](https://www.prisma.io/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss)](https://tailwindcss.com/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-
-**See your code run, line by line.** EduVerse is an AI‑powered, gamified learning platform that transforms programming education into an RPG adventure. Every learner gets a personal AI mentor, a skill tree to conquer, coding battles to fight, and an AI apprentice to teach — turning mastery into an actual, shareable portfolio.
-
-**7 courses · 172 lessons · Python · HTML · CSS · C++ · Mathematics · Physics · Science**
-
+  <img src="assets/logo.svg" alt="EduVerse" width="120" height="120" />
+  <h1 align="center">EduVerse</h1>
+  <p align="center">
+    <strong>AI-powered, gamified learning platform — see your code run, line by line.</strong>
+  </p>
+  <p align="center">
+    An open-source RPG adventure that transforms programming and academic education into
+    an interactive journey. Personal AI mentor, skill tree, coding battles, 3D lab, and more.
+  </p>
+  <p align="center">
+    <a href="#features">Features</a> ·
+    <a href="#quick-start">Quick Start</a> ·
+    <a href="#architecture">Architecture</a> ·
+    <a href="#documentation">Documentation</a> ·
+    <a href="#contributing">Contributing</a>
+  </p>
 </div>
+
+<br />
+
+<p align="center">
+  <a href="https://github.com/ahmed-progra/EduVerse-Student-Platform/actions">
+    <img src="https://img.shields.io/github/actions/workflow/status/ahmed-progra/EduVerse-Student-Platform/ci.yml?branch=main&label=CI&logo=github" alt="CI" />
+  </a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/github/license/ahmed-progra/EduVerse-Student-Platform?color=blue" alt="License" />
+  </a>
+  <a href="https://github.com/ahmed-progra/EduVerse-Student-Platform/issues">
+    <img src="https://img.shields.io/github/issues/ahmed-progra/EduVerse-Student-Platform" alt="Issues" />
+  </a>
+  <a href="https://github.com/ahmed-progra/EduVerse-Student-Platform/pulls">
+    <img src="https://img.shields.io/github/issues-pr/ahmed-progra/EduVerse-Student-Platform" alt="Pull Requests" />
+  </a>
+  <img src="https://img.shields.io/github/repo-size/ahmed-progra/EduVerse-Student-Platform" alt="Repo Size" />
+  <img src="https://img.shields.io/github/last-commit/ahmed-progra/EduVerse-Student-Platform/main" alt="Last Commit" />
+  <img src="https://img.shields.io/github/contributors/ahmed-progra/EduVerse-Student-Platform" alt="Contributors" />
+  <br />
+  <img src="https://img.shields.io/badge/TypeScript-5.8-blue?logo=typescript" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Next.js-16-black?logo=next.js" alt="Next.js" />
+  <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react" alt="React" />
+  <img src="https://img.shields.io/badge/Express-5-000?logo=express" alt="Express" />
+  <img src="https://img.shields.io/badge/Prisma-6-2D3748?logo=prisma" alt="Prisma" />
+  <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/Three.js-000?logo=three.js" alt="Three.js" />
+  <br />
+  <strong>7 courses · 172 lessons · Python · HTML · CSS · C++ · Mathematics · Physics · Science</strong>
+</p>
 
 ---
 
 ## Overview
 
-EduVerse reimagines how programming (and academic subjects) are learned. Instead of static tutorials and disconnected exercises, it wraps a full curriculum inside a role‑playing game. You earn XP by completing lessons, unlock abilities on a branching skill tree, duel other players in coding battles, and collect cosmetics from the shop. Every feature is tied to real learning progress.
+EduVerse reimagines how programming and academic subjects are learned. Instead of static tutorials and disconnected exercises, it wraps a full curriculum inside a role‑playing game. You earn XP by completing lessons, unlock abilities on a branching skill tree, duel other players in coding battles, and collect cosmetics from the shop. Every feature is tied to real learning progress.
 
 The platform's signature feature is a **step‑through code visualizer**: it executes code line by line and shows variables, loops, and the call stack changing in real time. Around it, an **AI mentor** adapts to your strengths and weaknesses, assigns smart daily missions, and generates weekly learning reports. An **apprentice mode** lets you teach a novice AI called **Pip** — the protégé effect in action, where teaching solidifies your own understanding.
 
-Built by students, for students. The UI is a warm, dark "Code Sorcery" theme with purposeful motion and zero fluff — no gradient text, no glassmorphism, no fake numbers.
+Built by students, for students. The UI is a warm, dark "Code Sorcery" theme with purposeful motion and zero fluff.
+
+---
 
 ## Features
 
-- **Step‑through Code Visualizer** — Watch Python execute line by line with live variable state; HTML/CSS render in a live preview; C++ runs via an external judge.
-- **AI Mentor** (`/mentor`) — Persistent, cross‑course coach that tracks your mastery profile, identifies weak topics, assigns smart daily/weekly missions, and produces weekly learning reports. Profile‑aware chat grounded in your real activity.
-- **Skill Tree** — Branching ability map across Python mastery, frontend mastery, algorithms, and debugging. Unlock nodes with XP and level requirements.
-- **Battle Arena** (`/battle`) — Timed coding duels against other players. Multiple difficulty levels and challenge types (debug, write function, predict output).
-- **3D Interactive Lab** (`/lab`) — Explore Mathematics, Physics, and Science concepts through interactive 3D scenes with real‑time parameter manipulation (Three.js + React Three Fiber).
-- **Code Lab** (`/codelab`) — In‑browser code editor with Monaco, live preview, and the step visualizer.
-- **Project Studio + Portfolio** (`/projects`, `/u/:username`) — AI suggests projects appropriate to your level. Build them in‑app, get them AI‑graded against a rubric. Publish to a shareable public portfolio.
-- **Placement Test** — Adaptive assessment that builds a per‑topic mastery profile and generates a personalized roadmap, skipping content you already know.
-- **Apprentice Teaching** (`/apprentice`) — Teach a novice AI (**Pip**) a topic. Pip asks beginner questions, its understanding meter climbs, then it grades how well you taught. The AI Mentor can assign "teach this weak topic" missions.
-- **Shop** — Cosmetics (avatars, frames, animations, titles, themes) bought with **Coins** — a separate currency so shopping never costs you progression XP.
-- **Leaderboard** — Weekly and all‑time rankings with gold / silver / bronze tiers.
-- **Adaptive Daily Challenges** — Personalized coding exercises generated based on your current mastery profile.
+| Feature                                 | Description                                                                                                       |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| **Step‑through Code Visualizer**        | Watch Python execute line by line with live variable state; HTML/CSS render in live preview; C++ runs via Judge0  |
+| **AI Mentor** (`/mentor`)               | Cross‑course coach that tracks mastery, identifies weak topics, assigns missions, produces weekly reports         |
+| **Skill Tree**                          | Branching ability map across Python, frontend, algorithms, debugging. Unlock nodes with XP and level requirements |
+| **Battle Arena** (`/battle`)            | Timed coding duels with multiple difficulty levels and challenge types                                            |
+| **3D Interactive Lab** (`/lab`)         | Explore math, physics, and science through Three.js interactive 3D scenes                                         |
+| **Apprentice Teaching** (`/apprentice`) | Teach a novice AI (**Pip**) — the protégé effect solidifies your own understanding                                |
+| **AI Project Studio** (`/projects`)     | AI-suggested projects, in-app builder, AI grading against rubric, public portfolio                                |
+| **Code Lab** (`/codelab`)               | Monaco editor, live preview, step visualizer for Python, HTML, CSS                                                |
+| **Placement Test**                      | Adaptive assessment that builds per‑topic mastery and generates personalized roadmaps                             |
+| **Shop** & **Leaderboard**              | Cosmetics bought with **Coins** (separate from XP) + weekly/all‑time rankings                                     |
+| **Announcements & Resources**           | Built-in bulletin board and resource library (localStorage-backed)                                                |
+| **Adaptive Daily Challenges**           | Personalized exercises generated from your current mastery profile                                                |
 
-## Tech Stack
+---
 
-| Category    | Technology                                                                  |
-| ----------- | --------------------------------------------------------------------------- |
-| Frontend    | Next.js 16 (App Router), React 19, Framer Motion, Tailwind CSS v4, Zustand  |
-| Backend     | Express 5, Prisma ORM, PostgreSQL (Supabase), SQLite (local mirror)         |
-| AI          | Google AI Studio — Gemini (powering mentor, apprentice, projects, missions) |
-| Code Editor | Monaco Editor (via `@monaco-editor/react`)                                  |
-| Code Exec.  | Skulpt (Python, in‑browser) · Judge0 (C++) · sandboxed iframe (HTML/CSS)    |
-| 3D          | Three.js + React Three Fiber                                                |
-| Tooling     | TypeScript 5, Prettier, tsx                                                 |
-| Monorepo    | npm workspaces (`frontend`, `backend`, `shared`)                            |
+## Quick Start
 
-## Architecture
-
-EduVerse is an **npm workspaces monorepo** with three packages:
-
-| Package     | Purpose                                                                                                            |
-| ----------- | ------------------------------------------------------------------------------------------------------------------ |
-| `frontend/` | Next.js 16 App Router — dashboard, courses, code lab, mentor, apprentice, battle, shop, leaderboard, user profiles |
-| `backend/`  | Express 5 REST API — auth, courses, lessons, AI services, battles, leaderboard, shop, project grading, skill tree  |
-| `shared/`   | TypeScript types and interfaces shared between frontend and backend                                                |
-
-The frontend communicates with the backend via RESTful JSON endpoints. AI features (mentor, apprentice, project grading, mission generation) flow through a centralized AI service in the backend that interfaces with **Google AI Studio (Gemini)** with retry, model fallback, and graceful deterministic fallback logic. The Skill Tree and XP system drive gamification across all surfaces.
-
-📚 **Deeper docs:** [Architecture](docs/ARCHITECTURE.md) · [API reference](docs/API.md) · [Database](docs/DATABASE.md) · [Development guide](docs/DEVELOPMENT.md) · [Deployment](docs/DEPLOYMENT.md) · [FAQ](docs/FAQ.md)
-
-## Screenshots
-
-<!--
-  Add screenshots here as the project matures:
-  ![Dashboard](docs/screenshots/dashboard.png)
-  ![Course View](docs/screenshots/courses.png)
-  ![Code Lab](docs/screenshots/codelab.png)
-  ![3D Lab](docs/screenshots/lab.png)
-  ![AI Mentor](docs/screenshots/mentor.png)
--->
-
-## Prerequisites
+### Prerequisites
 
 - **Node.js** 20+ (see `.nvmrc`)
 - **npm** 10+
 - **PostgreSQL** 16+ (or Docker — see below)
 
-## Installation
+### One-minute setup
 
 ```bash
-# 1. Clone the repository
 git clone https://github.com/ahmed-progra/EduVerse-Student-Platform.git
 cd EduVerse-Student-Platform
-
-# 2. Install all dependencies (all workspaces)
 npm install
-
-# 3. Set up environment variables
 cp .env.example .env
-# Edit .env with your keys (see Environment Variables below)
-
-# 4. Initialize the database and seed data
 npm run db:setup
-
-# 5. Start development (backend + frontend concurrently)
 npm run dev
 ```
 
 The backend starts on **http://localhost:4000** and the frontend on **http://localhost:3000**.
 
-### Quick Start with Docker
+### Docker path
 
 ```bash
-docker compose up -d        # Start PostgreSQL + Judge0
-npm install                 # Install dependencies
-cp .env.example .env        # Configure environment
-npm run db:setup            # Migrate + seed database
-npm run dev                 # Start both servers
+docker compose up -d          # PostgreSQL + Judge0
+npm install
+cp .env.example .env
+npm run db:setup
+npm run dev
 ```
 
-### Demo Accounts
+### Demo accounts
 
-After seeding, log in with:
+| Account | Email               | Password      | Description                                               |
+| ------- | ------------------- | ------------- | --------------------------------------------------------- |
+| Demo    | `demo@eduverse.dev` | `demo1234`    | Intermediate Python learner, 500+ XP, placement test done |
+| Alice   | `alice@example.com` | `password123` | Fresh account, 0 XP, beginner                             |
 
-| Account | Email               | Password      | Description                                                    |
-| ------- | ------------------- | ------------- | -------------------------------------------------------------- |
-| Demo    | `demo@eduverse.dev` | `demo1234`    | Intermediate Python learner, 500+ XP, placement test completed |
-| Alice   | `alice@example.com` | `password123` | Fresh account, 0 XP, beginner                                  |
+---
 
-## Environment Variables
+## Architecture
 
-Copy `.env.example` to `.env` and fill in the values.
+```mermaid
+graph TB
+    subgraph Browser["Browser"]
+        NEXT["Next.js 16 App Router<br/>React 19 · Tailwind CSS v4"]
+        SKULPT["Skulpt (Python)<br/>iframe (HTML/CSS)"]
+        THREE["Three.js 3D Lab"]
+    end
 
-| Variable                                    | Description                                                      | Required |
-| ------------------------------------------- | ---------------------------------------------------------------- | -------- |
-| `DATABASE_URL`                              | PostgreSQL app connection (Supabase transaction pooler, `:6543`) | Yes      |
-| `DIRECT_URL`                                | PostgreSQL migration connection (session pooler, `:5432`)        | Yes      |
-| `GOOGLE_AI_API_KEY`                         | Google AI Studio (Gemini) API key                                | Yes      |
-| `GOOGLE_AI_MODEL`                           | Override the default model (`gemini-2.5-flash`)                  | No       |
-| `JWT_SECRET`                                | Secret key for signing JWT tokens                                | Yes      |
-| `JWT_EXPIRES_IN`                            | Token expiration duration (default `7d`)                         | No       |
-| `PORT`                                      | Backend server port (default `4000`)                             | No       |
-| `FRONTEND_URL`                              | Frontend origin for CORS (default `http://localhost:3000`)       | No       |
-| `NEXT_PUBLIC_API_URL`                       | Frontend API URL (default `http://localhost:4000/api`)           | No       |
-| `JUDGE0_URL`                                | Judge0 CE endpoint for C++ execution                             | No       |
-| `JUDGE0_API_KEY`                            | Judge0 API key (optional, public endpoint works without one)     | No       |
-| `JUDGE0_HOST`                               | Judge0 custom host header (for RapidAPI setups)                  | No       |
-| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Google OAuth sign-in (optional)                                  | No       |
+    subgraph Backend["Backend — Express 5"]
+        API["REST API · /api/*<br/>14 route groups"]
+        MIDDLEWARE["Middleware<br/>JWT Auth · Rate Limit"]
+        SERVICES["Services<br/>AI · Learning · Mentor · Apprentice<br/>Project · Battle · XP"]
+        PRISMA["Prisma ORM"]
+    end
 
-## Development
+    subgraph External["External Services"]
+        AI["Google AI Studio<br/>Gemini API"]
+        JUDGE0["Judge0<br/>C++ Execution"]
+        PG[("PostgreSQL<br/>Supabase")]
+    end
 
-### Running individual workspaces
+    NEXT -->|JWT Bearer| API
+    API --> MIDDLEWARE
+    MIDDLEWARE --> SERVICES
+    SERVICES --> PRISMA
+    PRISMA --> PG
+    SERVICES --> AI
+    SERVICES --> JUDGE0
+    THREE --> API
 
-```bash
-npm run dev:frontend   # Next.js dev server on :3000
-npm run dev:backend    # Express API with tsx watch on :4000
-npm run dev            # Both concurrently
+    style Browser fill:#1a1a2e,color:#e0e0e0
+    style Backend fill:#16213e,color:#e0e0e0
+    style External fill:#0f3460,color:#e0e0e0
+    style PG fill:#0a1628,color:#e0e0e0
 ```
 
-### Common commands
+### Workspaces
 
-| Command                | Description                                           |
-| ---------------------- | ----------------------------------------------------- |
-| `npm run build`        | Build all workspaces                                  |
-| `npm run typecheck`    | TypeScript check across all workspaces                |
-| `npm run format`       | Format code with Prettier                             |
-| `npm run format:check` | Check formatting without writing                      |
-| `npm run db:generate`  | Regenerate Prisma client                              |
-| `npm run db:migrate`   | Run Prisma migrations                                 |
-| `npm run db:seed`      | Seed the database with courses, lessons, demo account |
-| `npm run db:setup`     | Migrate + seed (one step)                             |
-| `npm run test:e2e`     | Run all E2E test suites                               |
+| Package     | Responsibility                                                                                                                    |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `frontend/` | Next.js 16 App Router — dashboard, courses, code lab, mentor, apprentice, battle, shop, leaderboard, 3D lab, user profiles        |
+| `backend/`  | Express 5 REST API — auth, courses, lessons, AI services, battles, leaderboard, shop, project grading, skill tree, code execution |
+| `shared/`   | TypeScript types and interfaces shared between frontend and backend (`User`, `Course`, `Lesson`, `Battle`, etc.)                  |
 
-### E2E tests
+### AI Layer
 
-End‑to‑end test suites run against a live backend and the real Google Gemini API:
+```mermaid
+graph LR
+    subgraph Frontend
+        MENTOR_UI["/mentor<br/>Apprentice<br/>Projects"]
+        LESSON_UI["/lessons<br/>/codelab<br/>/battle"]
+    end
 
-```bash
-cd backend
-node scripts/learning-e2e.mjs       # adaptive learning placement
-node scripts/mentor-e2e.mjs         # AI mentor + missions
-node scripts/apprentice-e2e.mjs     # apprentice teaching
-node scripts/projects-e2e.mjs       # project studio + portfolio
-node scripts/teachback-e2e.mjs      # teach-back grading
-node scripts/ai-e2e.mjs             # AI endpoint integration
+    subgraph Backend
+        AI_SERVICE[("ai-service.ts<br/>Gemini Gateway")]
+        MENTOR_SVC["mentor-service<br/>Apprentice-service<br/>Project-service"]
+        MISC_SVC["Routes /api/ai/*<br/>review · hints · quiz<br/>summary · explain"]
+    end
+
+    subgraph Gemini["Google AI Studio"]
+        MODEL["gemini-2.5-flash<br/>+ fallback models"]
+    end
+
+    MENTOR_UI --> MENTOR_SVC
+    LESSON_UI --> MISC_SVC
+    MENTOR_SVC --> AI_SERVICE
+    MISC_SVC --> AI_SERVICE
+    AI_SERVICE -->|retry + fallback| MODEL
 ```
+
+### Code Execution
+
+| Language   | Where            | How                                                 |
+| ---------- | ---------------- | --------------------------------------------------- |
+| Python     | Browser          | Skulpt — stepped execution with live variable state |
+| HTML / CSS | Browser          | Sandboxed `<iframe>` live preview                   |
+| C++        | Backend → Judge0 | Submitted via `services/judge0.ts`                  |
+
+### Authentication
+
+```
+Registration/Login → bcrypt password hash / Google OAuth
+                   → Signed JWT (7 day expiry)
+                   → Stored in localStorage
+                   → Sent as Bearer token on every request
+                   → Verified by auth middleware
+```
+
+---
+
+## Tech Stack
+
+| Category           | Technology                                                                           |
+| ------------------ | ------------------------------------------------------------------------------------ |
+| **Frontend**       | Next.js 16 (App Router), React 19, Framer Motion, Tailwind CSS v4, Zustand, Three.js |
+| **Backend**        | Express 5, Prisma ORM, TypeScript, Zod validation                                    |
+| **Database**       | PostgreSQL (Supabase), SQLite (local dev mirror)                                     |
+| **AI**             | Google AI Studio — Gemini 2.5 Flash                                                  |
+| **Code Editor**    | Monaco Editor (`@monaco-editor/react`)                                               |
+| **Code Execution** | Skulpt (Python) · Judge0 (C++) · sandboxed iframe (HTML/CSS)                         |
+| **Tooling**        | TypeScript 5.8, Prettier, ESLint, tsx watch                                          |
+| **Monorepo**       | npm workspaces (`frontend`, `backend`, `shared`)                                     |
+
+---
 
 ## Project Structure
 
 ```
 eduverse/
-├── frontend/                  # Next.js 16 web application
-│   ├── src/
-│   │   ├── app/               # App Router pages (23 routes)
-│   │   │   ├── dashboard/     # Learner dashboard
-│   │   │   ├── courses/       # Course catalog + detail
-│   │   │   ├── lessons/       # Lesson viewer + code visualizer
-│   │   │   ├── lab/           # Interactive 3D lab
-│   │   │   ├── codelab/       # Code playground
-│   │   │   ├── mentor/        # AI Mentor dashboard
-│   │   │   ├── apprentice/    # Teach the AI
-│   │   │   ├── projects/      # Project studio
-│   │   │   ├── battle/        # Coding battles
-│   │   │   ├── leaderboard/   # Rankings
-│   │   │   ├── shop/          # Cosmetics shop
-│   │   │   ├── skill-tree/    # Ability tree
-│   │   │   ├── placement-test/# Adaptive assessment
-│   │   │   ├── resources/     # Learning resources
-│   │   │   ├── announcements/ # Bulletin board
-│   │   │   └── u/[username]/  # Public portfolio
-│   │   ├── components/        # Shared UI components
-│   │   ├── features/          # Feature modules (12)
-│   │   ├── hooks/             # Custom React hooks
-│   │   ├── lib/               # Utilities
-│   │   ├── services/          # API client (cached, deduped)
-│   │   └── stores/            # Zustand state (auth)
-│   └── public/
-├── backend/                   # Express 5 API
-│   ├── src/
-│   │   ├── routes/            # 14 route groups
-│   │   ├── services/          # AI, learning, XP, battle, etc.
-│   │   ├── middleware/        # Auth, rate limiting
-│   │   ├── lib/               # Prisma, JWT, validation, cache
-│   │   └── index.ts           # Entry point
-│   ├── prisma/                # Prisma schema + migrations
-│   ├── curriculum/            # Authored lesson content (172 lessons, 7 courses)
-│   └── scripts/               # E2E test suites
-├── shared/                    # Shared TypeScript types
-│   └── src/index.ts           # 20+ type definitions
-├── docs/                      # Documentation (10+ documents)
-├── .github/                   # CI, issue templates, PR template
-├── .env.example               # Environment template
-├── package.json               # Root workspace config
-└── tsconfig.base.json         # Shared TypeScript config
+├── frontend/                          # Next.js 16 web application
+│   ├── src/app/                       # App Router — 23 route segments
+│   │   ├── dashboard/                 # Learner dashboard
+│   │   ├── courses/                   # Course catalog + detail
+│   │   ├── lessons/                   # Lesson viewer + code visualizer
+│   │   ├── lab/                       # Interactive 3D lab
+│   │   ├── codelab/                   # Code playground
+│   │   ├── mentor/                    # AI Mentor dashboard
+│   │   ├── apprentice/                # Teach the AI (Pip)
+│   │   ├── projects/                  # Project studio + portfolio
+│   │   ├── battle/                    # Coding battles
+│   │   ├── leaderboard/               # Rankings
+│   │   ├── shop/                      # Cosmetics shop
+│   │   ├── skill-tree/                # Ability tree
+│   │   ├── placement-test/            # Adaptive assessment
+│   │   ├── resources/                 # Learning resources
+│   │   ├── announcements/             # Bulletin board
+│   │   └── u/[username]/              # Public portfolio
+│   ├── src/components/                # Shared UI + layout components
+│   ├── src/features/                  # Feature modules (12 domains)
+│   ├── src/hooks/                     # Custom React hooks
+│   ├── src/lib/                       # Utilities + motion helpers
+│   ├── src/services/                  # API client (cached, deduplicated)
+│   ├── src/stores/                    # Zustand auth store
+│   └── src/types/                     # TypeScript declarations
+├── backend/                           # Express 5 REST API
+│   ├── src/routes/                    # 14 route groups
+│   ├── src/services/                  # AI, learning, mentor, apprentice, XP, battle, project
+│   ├── src/middleware/                # JWT auth, rate limiting
+│   ├── src/learning/                  # Topic catalogs, assessment banks
+│   ├── src/lib/                       # Prisma client, JWT, validation, cache
+│   ├── prisma/                        # Schema + migrations (7 migration sets)
+│   ├── curriculum/                    # 172 authored lessons across 7 courses
+│   └── scripts/                       # 6 E2E test suites
+├── shared/src/                        # 20+ shared TypeScript types
+├── docs/                              # Documentation (14 documents)
+├── assets/                            # Logos, diagrams, social preview
+├── .github/                           # CI, issue/PR templates, Dependabot
+├── package.json                       # Root workspace orchestrator
+└── tsconfig.base.json                 # Shared TypeScript config
 ```
 
-## Project Documentation
+---
 
-| Document                                   | Description                                   |
-| ------------------------------------------ | --------------------------------------------- |
-| [Architecture](docs/ARCHITECTURE.md)       | System design, monorepo layout, request flow  |
-| [API Reference](docs/API.md)               | Complete REST API endpoint documentation      |
-| [Database](docs/DATABASE.md)               | Prisma data model, relationships, conventions |
-| [Design System](docs/design-system.md)     | Visual system — colors, typography, motion    |
-| [Development Guide](docs/DEVELOPMENT.md)   | Local setup, commands, workflows              |
-| [Deployment Guide](docs/DEPLOYMENT.md)     | Production deployment instructions            |
-| [FAQ](docs/FAQ.md)                         | Frequently asked questions                    |
-| [Troubleshooting](docs/TROUBLESHOOTING.md) | Common issues and solutions                   |
-| [Product Context](docs/product.md)         | Brand voice, design direction, audience       |
-| [Roadmap](docs/ROADMAP.md)                 | Future plans and priorities                   |
+## API Overview
+
+The backend exposes **50+ REST endpoints** under `/api/*`. Key groups:
+
+| Group       | Base Path                 | Endpoints                                                                                 |
+| ----------- | ------------------------- | ----------------------------------------------------------------------------------------- |
+| Auth        | `/api/auth`               | Register, login, Google OAuth, me                                                         |
+| Courses     | `/api/courses`            | List courses, get course with progress                                                    |
+| Lessons     | `/api/lessons`            | Get lesson, complete, submit quiz                                                         |
+| AI          | `/api/ai`                 | Mentor chat, code review, hints, challenge, quiz, summary, recommendations, error explain |
+| Learning    | `/api/learning/:courseId` | State, assessment start/submit, roadmap refresh                                           |
+| Mentor      | `/api/mentor`             | Profile, sync, missions, reports, chat                                                    |
+| Apprentice  | `/api/apprentice`         | Topics, start, reply, grade                                                               |
+| Projects    | `/api/projects`           | CRUD, suggest, submit, portfolio                                                          |
+| Battles     | `/api/battles`            | Create, join, submit, active, history                                                     |
+| Skill Tree  | `/api/skilltree`          | Tree, unlock                                                                              |
+| Leaderboard | `/api/leaderboard`        | Rankings, rank                                                                            |
+| Shop        | `/api/shop`               | Items, buy, equip, inventory                                                              |
+| User        | `/api/user`               | Profile, update, XP logs                                                                  |
+| Submissions | `/api/submissions`        | Code execute                                                                              |
+
+Full reference: [docs/API.md](docs/API.md)
+
+---
+
+## Database Overview
+
+**21 models** across Identity, Content, Adaptive Learning, AI Mentor, and Gamification domains.
+
+| Model                                      | Purpose                                    |
+| ------------------------------------------ | ------------------------------------------ |
+| `User`                                     | Core user — XP, coins, level, rank, avatar |
+| `Course`                                   | Course catalog (7 courses)                 |
+| `Lesson`                                   | Lesson content, quiz, difficulty, topics   |
+| `UserProgress`                             | Lesson completion tracking                 |
+| `Assessment`, `SkillProfile`, `Roadmap`    | Adaptive learning system                   |
+| `MentorProfile`, `Mission`, `MentorReport` | AI Mentor system                           |
+| `Project`                                  | Project studio + portfolio                 |
+| `Battle`, `BattleSubmission`               | Battle arena                               |
+| `SkillTreeNode`, `UserSkill`               | Skill tree                                 |
+| `LeaderboardEntry`                         | Rankings                                   |
+| `ShopItem`, `UserInventory`                | Shop + cosmetics                           |
+| `XpLog`                                    | XP audit trail                             |
+| `LearningEvent`                            | Analytics trail                            |
+
+Full details: [docs/DATABASE.md](docs/DATABASE.md)
+
+---
+
+## Environment Variables
+
+Copy `.env.example` to `.env` and fill in:
+
+| Variable                                    | Required | Default                     | Description                                   |
+| ------------------------------------------- | -------- | --------------------------- | --------------------------------------------- |
+| `DATABASE_URL`                              | ✅       | —                           | PostgreSQL app connection (Supabase, `:6543`) |
+| `DIRECT_URL`                                | ✅       | —                           | PostgreSQL migration connection (`:5432`)     |
+| `GOOGLE_AI_API_KEY`                         | ✅       | —                           | Google AI Studio (Gemini) API key             |
+| `JWT_SECRET`                                | ✅       | —                           | JWT signing secret                            |
+| `PORT`                                      | —        | `4000`                      | Backend server port                           |
+| `FRONTEND_URL`                              | —        | `http://localhost:3000`     | CORS origin                                   |
+| `NEXT_PUBLIC_API_URL`                       | —        | `http://localhost:4000/api` | Frontend API URL                              |
+| `JUDGE0_URL`                                | —        | —                           | Judge0 endpoint (C++)                         |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | —        | —                           | Google OAuth                                  |
+
+---
+
+## Documentation
+
+| Document                                   | Description                                     |
+| ------------------------------------------ | ----------------------------------------------- |
+| [Getting Started](docs/getting-started.md) | 5-minute setup guide                            |
+| [Architecture](docs/ARCHITECTURE.md)       | System design, monorepo, request flow           |
+| [Frontend](docs/frontend.md)               | Next.js, routes, components, state, 3D lab      |
+| [Backend](docs/backend.md)                 | Express, services, middleware, auth             |
+| [API Reference](docs/API.md)               | Complete REST API endpoint catalog              |
+| [Database](docs/DATABASE.md)               | Prisma models, relationships, conventions       |
+| [Authentication](docs/authentication.md)   | Login, JWT, OAuth, security model               |
+| [AI Features](docs/ai-features.md)         | Gemini integration, mentor, apprentice, grading |
+| [Design System](docs/design-system.md)     | Colors, typography, motion theme                |
+| [Deployment](docs/DEPLOYMENT.md)           | Production deployment guide                     |
+| [FAQ](docs/FAQ.md)                         | Frequently asked questions                      |
+| [Troubleshooting](docs/TROUBLESHOOTING.md) | Common issues and solutions                     |
+| [Contributing](docs/contributing.md)       | Contributing guide                              |
+| [Roadmap](docs/ROADMAP.md)                 | Future plans and priorities                     |
+
+---
+
+## Development
+
+```bash
+npm run dev:frontend      # Next.js dev server on :3000
+npm run dev:backend       # Express API with tsx watch on :4000
+npm run dev               # Both concurrently
+```
+
+| Command               | Description                            |
+| --------------------- | -------------------------------------- |
+| `npm run build`       | Build all workspaces                   |
+| `npm run typecheck`   | TypeScript check across all workspaces |
+| `npm run format`      | Format with Prettier                   |
+| `npm run lint`        | Typecheck + format check               |
+| `npm run db:generate` | Regenerate Prisma client               |
+| `npm run db:migrate`  | Run Prisma migrations                  |
+| `npm run db:seed`     | Seed courses, lessons, demo account    |
+| `npm run db:setup`    | Migrate + seed                         |
+| `npm run test:e2e`    | Run all 6 E2E suites                   |
+
+### E2E tests
+
+```bash
+cd backend
+node scripts/learning-e2e.mjs      # adaptive learning placement
+node scripts/mentor-e2e.mjs        # AI mentor + missions
+node scripts/apprentice-e2e.mjs    # apprentice teaching
+node scripts/projects-e2e.mjs      # project studio + portfolio
+node scripts/teachback-e2e.mjs     # teach-back grading
+node scripts/ai-e2e.mjs            # AI endpoint integration
+```
+
+---
+
+## Roadmap
+
+| Status | Initiative                                                   |
+| ------ | ------------------------------------------------------------ |
+| ✅     | Landing page "calm premium" rebuild                          |
+| ✅     | Interactive 3D Lab (math, physics, science)                  |
+| ✅     | Academic courses: Mathematics, Physics, Science (48 lessons) |
+| ✅     | UI design system overhaul, command palette                   |
+| ✅     | AI panel accessibility (aria-live, keyboard nav)             |
+| 🔄     | Propagate calm-premium system to all app pages               |
+| 🔄     | Designed empty state for backend-offline                     |
+| 📅     | Mobile-responsive layout improvements                        |
+| 📅     | Multi-language support                                       |
+| 📅     | Teacher/instructor dashboard                                 |
+| 📅     | Course authoring UI                                          |
+| 📅     | Performance monitoring and analytics                         |
+
+Full roadmap: [docs/ROADMAP.md](docs/ROADMAP.md)
+
+---
 
 ## Contributing
 
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for the full contribution workflow — including branch naming, commit conventions (Conventional Commits), code style, and how to run tests before opening a PR.
+We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow — branch naming, Conventional Commits, code style, and testing before PRs.
 
 Please review our [Code of Conduct](CODE_OF_CONDUCT.md) and [Security Policy](SECURITY.md) before contributing.
 
@@ -262,6 +428,19 @@ Please review our [Code of Conduct](CODE_OF_CONDUCT.md) and [Security Policy](SE
 - [Bug reports](.github/ISSUE_TEMPLATE/bug_report.md)
 - [Feature requests](.github/ISSUE_TEMPLATE/feature_request.md)
 - [Pull request template](.github/PULL_REQUEST_TEMPLATE.md)
+
+## Contributors
+
+<a href="https://github.com/ahmed-progra/EduVerse-Student-Platform/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=ahmed-progra/EduVerse-Student-Platform" />
+</a>
+
+## Support
+
+- **Issues**: [GitHub Issues](https://github.com/ahmed-progra/EduVerse-Student-Platform/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/ahmed-progra/EduVerse-Student-Platform/discussions)
+- **Email**: eduverse@googlegroups.com
+- **Security**: [SECURITY.md](SECURITY.md) for vulnerability reporting
 
 ## License
 

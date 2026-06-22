@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a1a2e"/>
+      <stop offset="100%" stop-color="#0f3460"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+  </defs>
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="248" fill="url(#bg)" stroke="#f59e0b" stroke-width="3"/>
+  <!-- Open book shape -->
+  <path d="M128 160 L256 130 L384 160 L384 340 L256 370 L128 340 L128 160Z"
+        fill="none" stroke="#f59e0b" stroke-width="4" stroke-linejoin="round"/>
+  <!-- Book spine -->
+  <line x1="256" y1="130" x2="256" y2="370" stroke="#f59e0b" stroke-width="4"/>
+  <!-- Code bracket left -->
+  <path d="M175 220 L155 250 L175 280" fill="none" stroke="#e0e0e0" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Code bracket right -->
+  <path d="M337 220 L357 250 L337 280" fill="none" stroke="#e0e0e0" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Slash -->
+  <line x1="245" y1="290" x2="267" y2="210" stroke="#f59e0b" stroke-width="3.5" stroke-linecap="round"/>
+  <!-- Small star/circle accents -->
+  <circle cx="210" cy="235" r="3" fill="#f59e0b"/>
+  <circle cx="302" cy="235" r="3" fill="#f59e0b"/>
+  <circle cx="256" cy="330" r="4" fill="#f59e0b"/>
+  <!-- Text -->
+  <text x="256" y="440" text-anchor="middle" fill="#f59e0b" font-family="system-ui, sans-serif" font-size="36" font-weight="700" letter-spacing="1">EDUVERSE</text>
+</svg>

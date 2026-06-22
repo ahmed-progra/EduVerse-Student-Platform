@@ -3,6 +3,22 @@
   "version": "1.0.0",
   "private": true,
   "description": "AI-powered, gamified platform for learning to program — see your code run, line by line.",
+  "keywords": [
+    "education",
+    "ai-education",
+    "learning-management-system",
+    "student-platform",
+    "university-students",
+    "nextjs",
+    "express",
+    "prisma",
+    "postgresql",
+    "gemini-ai",
+    "coding-platform",
+    "interactive-learning",
+    "gamification",
+    "open-source"
+  ],
   "repository": "https://github.com/ahmed-progra/EduVerse-Student-Platform.git",
   "license": "MIT",
   "engines": {

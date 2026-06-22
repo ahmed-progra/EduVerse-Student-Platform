@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="50%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Decorative grid -->
+  <g stroke="#1e293b" stroke-width="0.5" opacity="0.5">
+    <line x1="0" y1="150" x2="1200" y2="150"/>
+    <line x1="0" y1="300" x2="1200" y2="300"/>
+    <line x1="0" y1="450" x2="1200" y2="450"/>
+    <line x1="300" y1="0" x2="300" y2="630"/>
+    <line x1="600" y1="0" x2="600" y2="630"/>
+    <line x1="900" y1="0" x2="900" y2="630"/>
+  </g>
+
+  <!-- Logo placeholder -->
+  <circle cx="200" cy="280" r="80" stroke="#f59e0b" stroke-width="4" fill="none"/>
+  <path d="M150 260 L200 245 L250 260 L250 360 L200 375 L150 360 L150 260Z" fill="none" stroke="#f59e0b" stroke-width="3" stroke-linejoin="round"/>
+  <line x1="200" y1="245" x2="200" y2="375" stroke="#f59e0b" stroke-width="3"/>
+  <path d="M175 295 L162 310 L175 325" fill="none" stroke="#e0e0e0" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M225 295 L238 310 L225 325" fill="none" stroke="#e0e0e0" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="195" y1="340" x2="205" y2="280" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Title -->
+  <text x="320" y="270" fill="#f59e0b" font-family="system-ui, sans-serif" font-size="64" font-weight="800" letter-spacing="2">EduVerse</text>
+  <text x="320" y="310" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="22" font-weight="400">AI-Powered Gamified Learning Platform</text>
+
+  <!-- Feature tags -->
+  <rect x="320" y="340" width="130" height="28" rx="14" fill="#334155" stroke="#475569" stroke-width="1"/>
+  <text x="385" y="359" text-anchor="middle" fill="#f59e0b" font-family="system-ui, sans-serif" font-size="12" font-weight="600">7 Courses</text>
+
+  <rect x="465" y="340" width="130" height="28" rx="14" fill="#334155" stroke="#475569" stroke-width="1"/>
+  <text x="530" y="359" text-anchor="middle" fill="#f59e0b" font-family="system-ui, sans-serif" font-size="12" font-weight="600">172 Lessons</text>
+
+  <rect x="610" y="340" width="130" height="28" rx="14" fill="#334155" stroke="#475569" stroke-width="1"/>
+  <text x="675" y="359" text-anchor="middle" fill="#f59e0b" font-family="system-ui, sans-serif" font-size="12" font-weight="600">AI Mentor</text>
+
+  <rect x="755" y="340" width="130" height="28" rx="14" fill="#334155" stroke="#475569" stroke-width="1"/>
+  <text x="820" y="359" text-anchor="middle" fill="#f59e0b" font-family="system-ui, sans-serif" font-size="12" font-weight="600">3D Lab</text>
+
+  <!-- Bottom bar -->
+  <rect x="60" y="440" width="1080" height="1" fill="#334155"/>
+  <text x="200" y="485" text-anchor="middle" fill="#64748b" font-family="system-ui, sans-serif" font-size="14">Next.js 16 · React 19 · Express 5 · PostgreSQL · Gemini AI</text>
+  <text x="200" y="510" text-anchor="middle" fill="#475569" font-family="system-ui, sans-serif" font-size="12">TypeScript · Tailwind CSS · Three.js · Prisma · Docker</text>
+
+  <!-- Open source badge -->
+  <rect x="880" y="455" width="200" height="36" rx="18" fill="none" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="980" y="478" text-anchor="middle" fill="#f59e0b" font-family="system-ui, sans-serif" font-size="13" font-weight="600">⭐ Open Source · MIT</text>
+</svg>
