@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 import { validUsername, validBio, validAvatar } from "../lib/validate";
 import { requireAuth } from "../middleware/auth";
+import { clearCache } from "../lib/cache";
 
 const router = Router();
 
@@ -57,6 +58,7 @@ router.put("/profile", requireAuth, async (req: Request, res: Response) => {
       where: { id: req.userId },
       data,
     });
+    clearCache(`user:${req.userId}`); // profile changed — invalidate cached /auth/me
     const { passwordHash, ...safe } = user;
     res.json({ success: true, data: safe });
   } catch (err: unknown) {

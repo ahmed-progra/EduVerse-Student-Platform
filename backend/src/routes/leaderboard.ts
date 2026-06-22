@@ -8,15 +8,17 @@ const router = Router();
 router.get("/", async (req: Request, res: Response) => {
   try {
     const period = (req.query.period as string) || "all";
-    const cacheKey = `leaderboard:${period}`;
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 50;
+    const skip = (page - 1) * limit;
+    // Key must include page + limit — the cached payload is page-specific, so a
+    // period-only key made every page return page 1's rows until the TTL lapsed.
+    const cacheKey = `leaderboard:${period}:${page}:${limit}`;
     const cached = getCached<any>(cacheKey);
     if (cached) {
       res.json({ success: true, data: cached });
       return;
     }
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 50;
-    const skip = (page - 1) * limit;
 
     const where: Record<string, unknown> = {};
     if (period === "weekly") {

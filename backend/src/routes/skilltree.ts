@@ -98,6 +98,7 @@ router.post("/unlock/:nodeId", requireAuth, async (req: Request, res: Response) 
       where: { id: user.id },
       data: { xp: user.xp - node.xpCost },
     });
+    clearCache(`user:${user.id}`); // XP spent — invalidate cached /auth/me
 
     await prisma.userSkill.upsert({
       where: { userId_skillId: { userId: user.id, skillId: node.id } },

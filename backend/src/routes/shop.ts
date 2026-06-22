@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 import { requireAuth } from "../middleware/auth";
-import { getCached, setCache } from "../lib/cache";
+import { getCached, setCache, clearCache } from "../lib/cache";
 
 const router = Router();
 
@@ -68,6 +68,7 @@ router.post("/buy/:itemId", requireAuth, async (req: Request, res: Response) => 
         data: { userId: user.id, itemId: item.id, equipped: false },
       });
     });
+    clearCache(`user:${user.id}`); // coins changed — invalidate cached /auth/me
 
     res.json({ success: true, data: { message: "Purchased successfully", item, coins: user.coins - item.price } });
   } catch (err) {

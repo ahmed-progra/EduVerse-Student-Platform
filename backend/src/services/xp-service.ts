@@ -1,4 +1,5 @@
 import { prisma } from "../lib/prisma";
+import { clearCache } from "../lib/cache";
 
 export function calculateLevel(xp: number): number {
   return Math.floor(Math.sqrt(xp / 100)) + 1;
@@ -28,6 +29,8 @@ export async function addXp(
     where: { id: userId },
     data: { xp: newXp, level: newLevel, coins: newCoins },
   });
+  // Bust the cached /auth/me snapshot so freshly-earned XP/coins show immediately.
+  clearCache(`user:${userId}`);
 
   await prisma.xpLog.create({
     data: { userId, amount, source },
