@@ -15,6 +15,8 @@ services:
       timeout: 5s
       retries: 5
     restart: unless-stopped
+    networks:
+      - eduverse
 
   judge0:
     image: judge0/judge0:1.13.1
@@ -29,6 +31,46 @@ services:
       timeout: 10s
       retries: 5
     restart: unless-stopped
+    networks:
+      - eduverse
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "4000:4000"
+    environment:
+      PORT: "4000"
+      DATABASE_URL: "postgresql://eduverse:eduverse_pass@postgres:5432/eduverse"
+      DIRECT_URL: "postgresql://eduverse:eduverse_pass@postgres:5432/eduverse"
+      JWT_SECRET: "dev-secret-change-in-production"
+      FRONTEND_URL: "http://localhost:3000"
+      JUDGE0_URL: "http://judge0:2358"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - eduverse
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: "http://localhost:4000/api"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - eduverse
 
 volumes:
   pgdata:
+
+networks:
+  eduverse:
+    driver: bridge

@@ -48,6 +48,21 @@
   <strong>7 courses · 172 lessons · Python · HTML · CSS · C++ · Mathematics · Physics · Science</strong>
 </p>
 
+<br />
+
+<div align="center">
+  <a href="#screenshots">
+    <img src="assets/home-page.png" alt="EduVerse Home" width="45%" />
+  </a>
+  <a href="#screenshots">
+    <img src="assets/dashboard.png" alt="EduVerse Dashboard" width="45%" />
+  </a>
+</div>
+
+<p align="center">
+  <a href="#screenshots">View all screenshots ↓</a>
+</p>
+
 ---
 
 ## Overview
@@ -79,31 +94,71 @@ Built by students, for students. The UI is a warm, dark "Code Sorcery" theme wit
 
 ---
 
+## Screenshots & Demo
+
+<div align="center">
+  <table>
+    <tr>
+      <td><img src="assets/home-page.png" alt="Landing Page" width="200" /></td>
+      <td><img src="assets/dashboard.png" alt="Dashboard" width="200" /></td>
+      <td><img src="assets/course-page.png" alt="Course Page" width="200" /></td>
+    </tr>
+    <tr>
+      <td align="center"><strong>Landing Page</strong></td>
+      <td align="center"><strong>Dashboard</strong></td>
+      <td align="center"><strong>Course Catalog</strong></td>
+    </tr>
+    <tr>
+      <td><img src="assets/ai-summary.png" alt="AI Summary" width="200" /></td>
+      <td><img src="assets/ai-quiz.png" alt="AI Quiz" width="200" /></td>
+      <td><img src="assets/profile-page.png" alt="Profile" width="200" /></td>
+    </tr>
+    <tr>
+      <td align="center"><strong>AI Mentor</strong></td>
+      <td align="center"><strong>AI Quiz</strong></td>
+      <td align="center"><strong>Profile</strong></td>
+    </tr>
+  </table>
+
+  <img src="assets/demo.gif" alt="EduVerse Demo" width="600" />
+  <p><em>Student workflow — landing page to AI-powered learning</em></p>
+</div>
+
+---
+
 ## Quick Start
 
-### Prerequisites
+### One-command startup (Docker)
 
-- **Node.js** 20+ (see `.nvmrc`)
-- **npm** 10+
-- **PostgreSQL** 16+ (or Docker — see below)
+```bash
+docker compose up -d
+```
 
-### One-minute setup
+Starts PostgreSQL, Judge0 (C++ runner), the Express backend, and the Next.js frontend.
+Frontend at **http://localhost:3000**, backend at **http://localhost:4000**.
+
+> **Note:** Some AI features require a `GOOGLE_AI_API_KEY`. Set it in your `.env` or in the `backend` service environment in `docker-compose.yml` before starting.
+
+### Manual setup
+
+Requires **Node.js 20+** and **PostgreSQL 16+**.
 
 ```bash
 git clone https://github.com/ahmed-progra/EduVerse-Student-Platform.git
 cd EduVerse-Student-Platform
 npm install
 cp .env.example .env
+# Edit .env with your database credentials and API keys
 npm run db:setup
 npm run dev
 ```
 
 The backend starts on **http://localhost:4000** and the frontend on **http://localhost:3000**.
 
-### Docker path
+### One-minute (infra-only Docker)
 
 ```bash
-docker compose up -d          # PostgreSQL + Judge0
+docker compose up -d postgres judge0
 npm install
 cp .env.example .env
 npm run db:setup
@@ -327,17 +382,24 @@ Full details: [docs/DATABASE.md](docs/DATABASE.md)
 
 Copy `.env.example` to `.env` and fill in:
 
-| Variable                                    | Required | Default                     | Description                                   |
-| ------------------------------------------- | -------- | --------------------------- | --------------------------------------------- |
-| `DATABASE_URL`                              | ✅       | —                           | PostgreSQL app connection (Supabase, `:6543`) |
-| `DIRECT_URL`                                | ✅       | —                           | PostgreSQL migration connection (`:5432`)     |
-| `GOOGLE_AI_API_KEY`                         | ✅       | —                           | Google AI Studio (Gemini) API key             |
-| `JWT_SECRET`                                | ✅       | —                           | JWT signing secret                            |
-| `PORT`                                      | —        | `4000`                      | Backend server port                           |
-| `FRONTEND_URL`                              | —        | `http://localhost:3000`     | CORS origin                                   |
-| `NEXT_PUBLIC_API_URL`                       | —        | `http://localhost:4000/api` | Frontend API URL                              |
-| `JUDGE0_URL`                                | —        | —                           | Judge0 endpoint (C++)                         |
-| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | —        | —                           | Google OAuth                                  |
+| Variable               | Required | Default                     | Used In                               | Description                                                                                                |
+| ---------------------- | -------- | --------------------------- | ------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `DATABASE_URL`         | ✅       | —                           | `backend/prisma/schema.prisma`        | PostgreSQL connection (Supabase pooler `:6543` with `pgbouncer=true`) for the running app                  |
+| `DIRECT_URL`           | ✅       | —                           | `backend/prisma/schema.prisma`        | PostgreSQL direct connection (`:5432`) for Prisma migrations                                               |
+| `JWT_SECRET`           | ✅       | —                           | `backend/src/lib/jwt.ts`              | HMAC secret for signing JSON Web Tokens — generate with `openssl rand -hex 32`                             |
+| `GOOGLE_AI_API_KEY`    | ✅       | —                           | `backend/src/services/ai-service.ts`  | API key for Google AI Studio ([get one free](https://aistudio.google.com/apikey)) to power all AI features |
+| `NEXT_PUBLIC_API_URL`  | —        | `http://localhost:4000/api` | `frontend/src/services/api-client.ts` | Base URL the frontend uses to call the backend REST API                                                    |
+| `PORT`                 | —        | `4000`                      | `backend/src/index.ts`                | Backend Express server port                                                                                |
+| `FRONTEND_URL`         | —        | `http://localhost:3000`     | `backend/src/index.ts`                | Comma-separated list of allowed CORS origins                                                               |
+| `JUDGE0_URL`           | —        | `https://ce.judge0.com`     | `backend/src/services/judge0.ts`      | Judge0 CE endpoint for C++ code execution                                                                  |
+| `JUDGE0_API_KEY`       | —        | —                           | `backend/src/services/judge0.ts`      | Judge0 API key (required for authenticated instances)                                                      |
+| `JUDGE0_HOST`          | —        | —                           | `backend/src/services/judge0.ts`      | Judge0 host header for RapidAPI (e.g. `judge0-ce.p.rapidapi.com`)                                          |
+| `GOOGLE_AI_MODEL`      | —        | `gemini-2.5-flash`          | `backend/src/services/ai-service.ts`  | Override the default Gemini model                                                                          |
+| `GOOGLE_CLIENT_ID`     | —        | —                           | `backend/src/routes/auth.ts`          | Google OAuth 2.0 client ID for social login                                                                |
+| `GOOGLE_CLIENT_SECRET` | —        | —                           | `.env.example` (documented)           | Google OAuth client secret (referenced in `.env.example`, not directly imported in source)                 |
+| `JWT_EXPIRES_IN`       | —        | `7d`                        | `.env.example` (documented)           | JWT token expiry duration (e.g. `7d`, `24h`) — defaults to 7 days in library                               |
+| `API_BASE`             | —        | `http://localhost:4000/api` | `backend/scripts/*-e2e.mjs`           | API base URL used by E2E test scripts                                                                      |
+| `NODE_ENV`             | —        | —                           | `backend/src/lib/jwt.ts`              | Set to `production` to enable production-only behaviour (stricter JWT, prisma logging)                     |
 
 ---
 
