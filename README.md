@@ -55,7 +55,7 @@
     <img src="assets/home-page.png" alt="EduVerse Home" width="45%" />
   </a>
   <a href="#screenshots">
-    <img src="assets/dashboard.png" alt="EduVerse Dashboard" width="45%" />
+    <img src="assets/dashboard.jpg" alt="EduVerse Dashboard" width="45%" />
   </a>
 </div>
 
@@ -100,8 +100,8 @@ Built by students, for students. The UI is a warm, dark "Code Sorcery" theme wit
   <table>
     <tr>
       <td><img src="assets/home-page.png" alt="Landing Page" width="200" /></td>
-      <td><img src="assets/dashboard.png" alt="Dashboard" width="200" /></td>
-      <td><img src="assets/course-page.png" alt="Course Page" width="200" /></td>
+      <td><img src="assets/dashboard.jpg" alt="Dashboard" width="200" /></td>
+      <td><img src="assets/course-page.jpg" alt="Course Page" width="200" /></td>
     </tr>
     <tr>
       <td align="center"><strong>Landing Page</strong></td>
@@ -111,7 +111,7 @@ Built by students, for students. The UI is a warm, dark "Code Sorcery" theme wit
     <tr>
       <td><img src="assets/ai-summary.png" alt="AI Summary" width="200" /></td>
       <td><img src="assets/ai-quiz.png" alt="AI Quiz" width="200" /></td>
-      <td><img src="assets/profile-page.png" alt="Profile" width="200" /></td>
+      <td><img src="assets/profile-page.jpg" alt="Profile" width="200" /></td>
     </tr>
     <tr>
       <td align="center"><strong>AI Mentor</strong></td>
