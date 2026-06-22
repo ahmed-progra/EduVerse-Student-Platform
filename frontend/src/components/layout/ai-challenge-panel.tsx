@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Sparkles, Copy } from "lucide-react";
 import { api } from "@/services/api-client";
 import { AIPanelShell } from "./ai-panel-shell";
+import { useTopicOptions } from "@/hooks/use-topic-options";
 
 interface GeneratedChallenge {
   title: string;
@@ -15,6 +16,12 @@ interface GeneratedChallenge {
 
 export function ChallengePanel({ onClose }: { onClose: () => void }) {
   const [topic, setTopic] = useState("python");
+  const topicOptions = useTopicOptions();
+  useEffect(() => {
+    if (topicOptions.length && !topicOptions.some((o) => o.value === topic)) {
+      setTopic(topicOptions[0].value);
+    }
+  }, [topicOptions, topic]);
   const [difficulty, setDifficulty] = useState("medium");
   const [challenge, setChallenge] = useState<GeneratedChallenge | null>(null);
   const [error, setError] = useState("");
@@ -56,10 +63,10 @@ export function ChallengePanel({ onClose }: { onClose: () => void }) {
     <AIPanelShell title="Challenge Generator" subtitle="AI generates problems for your level" onClose={onClose} icon={Sparkles}>
       <div className="ai-panel-gen">
         <div className="ai-panel-gen-row">
-          <select className="ai-panel-select" value={topic} onChange={(e) => setTopic(e.target.value)}>
-            <option value="python">Python</option>
-            <option value="javascript">JavaScript</option>
-            <option value="algorithms">Algorithms</option>
+          <select className="ai-panel-select" value={topic} onChange={(e) => setTopic(e.target.value)} aria-label="Challenge topic">
+            {topicOptions.map((o) => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
           </select>
           <select className="ai-panel-select" value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
             <option value="easy">Easy</option>

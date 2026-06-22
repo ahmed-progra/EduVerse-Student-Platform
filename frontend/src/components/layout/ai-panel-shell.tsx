@@ -19,7 +19,7 @@ export function AIPanelShell({
   return (
     <div className="ai-panel">
       <div className="ai-panel-header">
-        <button className="ai-panel-back" onClick={onClose} title="Back to page">
+        <button className="ai-panel-back" onClick={onClose} title="Back to page" aria-label="Back to page">
           <ArrowLeft size={18} />
         </button>
         <div className="ai-panel-header-info">

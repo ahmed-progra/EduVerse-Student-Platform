@@ -5,7 +5,7 @@ import { Brain, Copy } from "lucide-react";
 import { api } from "@/services/api-client";
 import { AIPanelShell } from "./ai-panel-shell";
 
-export function AIMentorPanel({ onClose }: { onClose: () => void }) {
+export function AIMentorPanel({ onClose, context }: { onClose: () => void; context?: string }) {
   const [msgs, setMsgs] = useState<{ role: string; text: string }[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -25,7 +25,7 @@ export function AIMentorPanel({ onClose }: { onClose: () => void }) {
     setInput("");
     setLoading(true);
     try {
-      const res = await api.aiMentor(msg, history);
+      const res = await api.aiMentor(msg, history, context);
       setResponseLabel(res.data.model || "Gemini");
       setMsgs((p) => [...p, { role: "assistant", text: res.data.text }]);
     } catch (err: unknown) {
@@ -34,7 +34,7 @@ export function AIMentorPanel({ onClose }: { onClose: () => void }) {
     } finally {
       setLoading(false);
     }
-  }, [input, loading, msgs]);
+  }, [input, loading, msgs, context]);
 
   const copyText = (text: string) => navigator.clipboard.writeText(text);
 

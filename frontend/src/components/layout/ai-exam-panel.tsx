@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GraduationCap, CheckCircle, XCircle } from "lucide-react";
 import { api } from "@/services/api-client";
 import { AIPanelShell } from "./ai-panel-shell";
+import { useTopicOptions } from "@/hooks/use-topic-options";
 
 interface GradeResult {
   score: number;
@@ -16,6 +17,12 @@ interface GradeResult {
 export function ExamPanel({ onClose }: { onClose: () => void }) {
   const [phase, setPhase] = useState<"start" | "question" | "result">("start");
   const [topic, setTopic] = useState("python");
+  const topicOptions = useTopicOptions();
+  useEffect(() => {
+    if (topicOptions.length && !topicOptions.some((o) => o.value === topic)) {
+      setTopic(topicOptions[0].value);
+    }
+  }, [topicOptions, topic]);
   const [difficulty, setDifficulty] = useState("medium");
   const [question, setQuestion] = useState("");
   const [userAnswer, setUserAnswer] = useState("");
@@ -82,10 +89,10 @@ export function ExamPanel({ onClose }: { onClose: () => void }) {
         {phase === "start" && (
           <>
             <div className="ai-panel-gen-row">
-              <select className="ai-panel-select" value={topic} onChange={(e) => setTopic(e.target.value)}>
-                <option value="python">Python</option>
-                <option value="javascript">JavaScript</option>
-                <option value="algorithms">Algorithms</option>
+              <select className="ai-panel-select" value={topic} onChange={(e) => setTopic(e.target.value)} aria-label="Exam topic">
+                {topicOptions.map((o) => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
               </select>
               <select className="ai-panel-select" value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
                 <option value="easy">Easy</option>

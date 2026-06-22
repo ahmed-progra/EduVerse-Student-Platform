@@ -24,7 +24,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
               {"        "}you.xp <span className="ao">+=</span> <span className="an">1</span>
             </code>
           </pre>
-          <p className="auth-facts font-mono">4 languages · 120 lessons · $0, no paywalls</p>
+          <p className="auth-facts font-mono">7 subjects · AI tutor · 3D labs · $0, no paywalls</p>
         </div>
       </aside>
 

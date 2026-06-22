@@ -53,7 +53,7 @@ export function MentorChat() {
 
   return (
     <div>
-      <div className="space-y-3 max-h-80 overflow-y-auto pr-1 mb-3">
+      <div className="space-y-3 max-h-80 overflow-y-auto pr-1 mb-3" role="log" aria-live="polite" aria-label="Mentor conversation">
         {msgs.length === 0 && !loading && (
           <div className="text-sm text-eduverse-text-muted">
             <p className="mb-3">Your mentor knows your full progress. Ask anything — it answers in context.</p>

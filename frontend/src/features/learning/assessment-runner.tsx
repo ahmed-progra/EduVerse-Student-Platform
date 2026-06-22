@@ -130,7 +130,7 @@ export function AssessmentRunner({ courseId, courseTitle, questionCount, topics,
     ? typeof answers[q.id] === "string"
     : typeof answers[q.id] === "number";
   const isLast = idx === questions.length - 1;
-  const progress = Math.round(((idx) / questions.length) * 100);
+  const progress = Math.round(((idx + 1) / questions.length) * 100);
 
   return (
     <GlassCard>
