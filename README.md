@@ -48,21 +48,6 @@
   <strong>7 courses · 172 lessons · Python · HTML · CSS · C++ · Mathematics · Physics · Science</strong>
 </p>
 
-<br />
-
-<div align="center">
-  <a href="#screenshots">
-    <img src="assets/home-page.png" alt="EduVerse Home" width="45%" />
-  </a>
-  <a href="#screenshots">
-    <img src="assets/dashboard.jpg" alt="EduVerse Dashboard" width="45%" />
-  </a>
-</div>
-
-<p align="center">
-  <a href="#screenshots">View all screenshots ↓</a>
-</p>
-
 ---
 
 ## Overview
@@ -94,37 +79,7 @@ Built by students, for students. The UI is a warm, dark "Code Sorcery" theme wit
 
 ---
 
-## Screenshots & Demo
-
-<div align="center">
-  <table>
-    <tr>
-      <td><img src="assets/home-page.png" alt="Landing Page" width="200" /></td>
-      <td><img src="assets/dashboard.jpg" alt="Dashboard" width="200" /></td>
-      <td><img src="assets/course-page.jpg" alt="Course Page" width="200" /></td>
-    </tr>
-    <tr>
-      <td align="center"><strong>Landing Page</strong></td>
-      <td align="center"><strong>Dashboard</strong></td>
-      <td align="center"><strong>Course Catalog</strong></td>
-    </tr>
-    <tr>
-      <td><img src="assets/ai-summary.png" alt="AI Summary" width="200" /></td>
-      <td><img src="assets/ai-quiz.png" alt="AI Quiz" width="200" /></td>
-      <td><img src="assets/profile-page.jpg" alt="Profile" width="200" /></td>
-    </tr>
-    <tr>
-      <td align="center"><strong>AI Mentor</strong></td>
-      <td align="center"><strong>AI Quiz</strong></td>
-      <td align="center"><strong>Profile</strong></td>
-    </tr>
-  </table>
-
-  <img src="assets/demo.gif" alt="EduVerse Demo" width="600" />
-  <p><em>Student workflow — landing page to AI-powered learning</em></p>
-</div>
-
----
+## Quick Start
 
 ## Quick Start
 
