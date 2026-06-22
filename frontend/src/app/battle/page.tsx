@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { GlassCard } from "@/components/ui/glass-card";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { AnimatedNumber } from "@/components/ui/animated-number";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Confetti } from "@/components/ui/confetti";
 import { api } from "@/services/api-client";
 import { useAuthStore } from "@/stores/auth-store";
 import { fadeUp, staggerContainer, fastEaseTransition } from "@/lib/motion";
@@ -164,6 +166,17 @@ export default function BattlePage() {
     ? result.winnerId === user?.id ? "victory" : result.winnerId ? "defeat" : "draw"
     : null;
 
+  // One-shot victory confetti — keyed on the verdict so the running arena timer
+  // (which re-renders every second) can't re-roll the burst mid-fall.
+  const [victoryBurst, setVictoryBurst] = useState(false);
+  useEffect(() => {
+    if (verdict === "victory") {
+      setVictoryBurst(true);
+      const t = setTimeout(() => setVictoryBurst(false), 2400);
+      return () => clearTimeout(t);
+    }
+  }, [verdict]);
+
   return (
     <motion.div className="space-y-6 max-w-6xl mx-auto" initial="hidden" animate="visible" variants={staggerContainer}>
       <motion.div variants={fadeUp} transition={fastEaseTransition}>
@@ -224,11 +237,17 @@ export default function BattlePage() {
             </div>
           </GlassCard>
 
-          {history.length > 0 && (
-            <GlassCard className="mt-6">
-              <h2 className="flex items-center gap-2 text-sm font-mono text-eduverse-text-muted mb-4">
-                <History className="w-4 h-4" aria-hidden="true" /> Battle History
-              </h2>
+          <GlassCard className="mt-6">
+            <h2 className="flex items-center gap-2 text-sm font-mono text-eduverse-text-muted mb-4">
+              <History className="w-4 h-4" aria-hidden="true" /> Battle History
+            </h2>
+            {history.length === 0 ? (
+              <EmptyState
+                icon={Swords}
+                title="No battles yet"
+                message="Create a battle above and race the clock — every win and loss lands here."
+              />
+            ) : (
               <div className="space-y-2">
                 {history.map((b) => (
                   <div key={b.id} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0 text-sm">
@@ -242,8 +261,8 @@ export default function BattlePage() {
                   </div>
                 ))}
               </div>
-            </GlassCard>
-          )}
+            )}
+          </GlassCard>
         </motion.div>
       )}
 
@@ -276,7 +295,7 @@ export default function BattlePage() {
           {/* Timer & status */}
           <div className="bt-timer-row">
             <div className="flex items-center gap-4 min-w-0">
-              <div className={`bt-clock font-mono ${timeLeft < 30 && !submitted ? "danger" : ""}`}>
+              <div className={`bt-clock font-mono ${timeLeft < 30 && !submitted ? "danger" : ""}`} role="timer" aria-label={`${formatTime(timeLeft)} remaining`}>
                 <Clock className="w-5 h-5 inline mr-2 -mt-1" aria-hidden="true" />
                 {formatTime(timeLeft)}
               </div>
@@ -336,6 +355,7 @@ export default function BattlePage() {
           )}
 
           {/* ── Verdict ── */}
+          <Confetti active={victoryBurst} count={72} />
           <AnimatePresence>
             {result && verdict && (
               <motion.div
