@@ -98,7 +98,7 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
   const [output, setOutput] = useState("");
   const [speed, setSpeed] = useState(800);
   const [autoPlay, setAutoPlay] = useState(false);
-  const [skLoaded, setSkLoaded] = useState(false);
+  const [skStatus, setSkStatus] = useState<"loading" | "ready" | "failed">("loading");
   const [errorInfo, setErrorInfo] = useState<{ line: number; message: string; type: string } | null>(null);
   const [showAST, setShowAST] = useState(false);
   const [runningDirect, setRunningDirect] = useState(false);
@@ -132,7 +132,7 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
   useEffect(() => { framesRef.current = frames; }, [frames]);
 
   useEffect(() => {
-    initSkulpt().then((ok) => setSkLoaded(ok));
+    initSkulpt().then((ok) => setSkStatus(ok ? "ready" : "failed"));
   }, []);
 
   const MAX_FRAMES = 50000;
@@ -432,14 +432,16 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
             onClick={handleReset}
             disabled={status === "idle"}
             className="visualizer-btn"
+            aria-label="Reset"
             title="Reset (Ctrl+Shift+R)"
           >
             <RotateCcw className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={handleNextStep}
-            disabled={status === "running" && !isPaused()}
+            disabled={(status === "running" && !isPaused()) || (!isPreviewable && skStatus !== "ready")}
             className="visualizer-btn visualizer-btn-primary"
+            aria-label="Next step"
             title="Next Step (Ctrl+Enter)"
           >
             <StepForward className="w-4 h-4" />
@@ -448,14 +450,17 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
             onClick={handleAutoPlayToggle}
             disabled={status === "error"}
             className={`visualizer-btn ${autoPlay ? "visualizer-btn-active" : ""}`}
+            aria-label={autoPlay ? "Pause auto play" : "Auto play"}
+            aria-pressed={autoPlay}
             title={autoPlay ? "Pause" : "Auto Play"}
           >
             {autoPlay ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
           </button>
           <button
             onClick={handleRunAll}
-            disabled={status === "running" || status === "paused"}
+            disabled={status === "running" || status === "paused" || (!isPreviewable && skStatus !== "ready")}
             className="visualizer-btn"
+            aria-label="Run all"
             title="Run All (Ctrl+Shift+Enter)"
           >
             <SkipForward className="w-3.5 h-3.5" />
@@ -466,6 +471,8 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
           <button
             onClick={() => setShowAST((v) => !v)}
             className={`visualizer-btn ${showAST ? "visualizer-btn-active" : ""}`}
+            aria-label="Toggle AST view"
+            aria-pressed={showAST}
             title="Toggle AST"
           >
             <Code2 className="w-3.5 h-3.5" />
@@ -473,6 +480,18 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
           <div className="text-[10px] text-eduverse-text-muted">
             Step {frames.length}
           </div>
+          {!isPreviewable && skStatus !== "ready" && (
+            <span
+              className="text-[10px] font-mono px-2 py-0.5 rounded"
+              role="status"
+              style={{
+                color: skStatus === "failed" ? "var(--color-eduverse-danger)" : "var(--color-eduverse-text-muted)",
+                background: skStatus === "failed" ? "oklch(66% 0.19 25 / 0.12)" : "var(--color-eduverse-accent-soft)",
+              }}
+            >
+              {skStatus === "failed" ? "Runtime failed — refresh" : "Initializing Python…"}
+            </span>
+          )}
         </div>
 
         <div className="flex items-center gap-2">
@@ -485,6 +504,7 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
             value={speed}
             onChange={(e) => setSpeed(Number(e.target.value))}
             className="visualizer-slider"
+            aria-label="Playback speed"
             title="Speed"
           />
           <FastForward className="w-3 h-3 text-eduverse-text-muted" />

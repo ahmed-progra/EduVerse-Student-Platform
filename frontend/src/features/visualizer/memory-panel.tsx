@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useMemo, useState } from "react";
+import { memo, useMemo, useState, Fragment } from "react";
 import type { StepFrame } from "./step-engine";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
@@ -106,9 +106,8 @@ export const MemoryPanel = memo(function MemoryPanel({ frames, currentIdx, onFra
                   const isExpanded = expandedVars.has(name);
 
                   return (
-                    <>
+                    <Fragment key={name}>
                       <tr
-                        key={name}
                         className={`memory-row ${changed ? "memory-row-changed" : ""}`}
                         onClick={() => history.length > 1 && toggleVar(name)}
                       >
@@ -124,7 +123,7 @@ export const MemoryPanel = memo(function MemoryPanel({ frames, currentIdx, onFra
                         </td>
                       </tr>
                       {isExpanded && history.length > 1 && (
-                        <tr key={`${name}-hist`} className="memory-history-row">
+                        <tr className="memory-history-row">
                           <td colSpan={3}>
                             <div className="memory-history">
                               <span className="history-label">History:</span>
@@ -138,7 +137,7 @@ export const MemoryPanel = memo(function MemoryPanel({ frames, currentIdx, onFra
                           </td>
                         </tr>
                       )}
-                    </>
+                    </Fragment>
                   );
                 })}
             </tbody>

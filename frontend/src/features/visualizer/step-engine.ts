@@ -104,7 +104,26 @@ export async function initSkulpt(): Promise<boolean> {
       Sk = skulpt.default || skulpt;
       Sk.configure({
         output: (text: string) => { capturedOutput += text; },
-        read: (x: string) => { throw new Error("input() not supported in visualizer"); },
+        // Skulpt's `read` is its module loader — serve stdlib files (sys, math,
+        // random, …) from the bundled builtinFiles so imports actually resolve.
+        // (Skulpt's own `print` pulls in `sys`, so without this every program
+        //  failed with "No module named sys".)
+        read: (filename: string) => {
+          if (Sk.builtinFiles === undefined || Sk.builtinFiles.files[filename] === undefined) {
+            throw new Error("File not found: '" + filename + "'");
+          }
+          return Sk.builtinFiles.files[filename];
+        },
+        // input() — without this Skulpt throws "prompt() is not supported".
+        // Back it with a browser prompt so lessons/presets that read input work.
+        inputfun: (promptText: string) => {
+          const v =
+            typeof window !== "undefined" && typeof window.prompt === "function"
+              ? window.prompt(promptText || "Input:")
+              : "";
+          return v === null ? "" : v;
+        },
+        inputfunTakesPrompt: true,
         python3: true,
       });
       return true;
@@ -119,13 +138,21 @@ function createSkStepFunction(onStep: (lineNo: number) => void): any {
   return new Sk.builtin.func(function (lineNo: any) {
     const n = Sk.ffi.remapToJs(lineNo);
     onStep(n);
-    return new Sk.misceval.Suspension(
-      function (resume: any) {
-        stepResolve = resume;
-      },
-      null,
-      null
-    );
+    // Pause execution until the UI calls nextStep(). Use the canonical
+    // promise-backed suspension: a bare `new Suspension()` (all args undefined)
+    // avoids Skulpt's `child.optional` crash, and asyncToPromise resumes us when
+    // the promise resolves.
+    const susp = new Sk.misceval.Suspension();
+    susp.resume = function () {
+      return Sk.builtin.none.none$;
+    };
+    susp.data = {
+      type: "Sk.promise",
+      promise: new Promise(function (resolve: (val?: unknown) => void) {
+        stepResolve = resolve;
+      }),
+    };
+    return susp;
   });
 }
 
@@ -157,33 +184,37 @@ export async function runCode(
   function captureVars(): Record<string, { type: string; value: any }> {
     try {
       const vars: Record<string, { type: string; value: any }> = {};
+      // Skulpt's `Sk.globals` is a plain JS object keyed by variable name
+      // (values are Sk builtin objects) — iterate it directly, not as a Map.
       const g = Sk.globals;
-      if (!g || !g.items) return vars;
-      const items = g.items;
-      if (items) {
-        for (const [k, v] of items) {
+      if (!g || typeof g !== "object") return vars;
+      for (const rawKey of Object.keys(g)) {
+        // Skulpt mangles identifiers that clash with JS reserved words by
+        // appending `_$rw$` (e.g. `name` → `name_$rw$`); show the clean name.
+        const key = rawKey.replace(/_\$rw\$$/, "");
+        if (key === "Sk" || key === "_sk_vars_before" || key === "_sk_keys" || key === "_sk_step" || key.startsWith("__")) continue;
+        const v = g[rawKey];
+        if (v === undefined || v === null) continue;
+        try {
+          let val: any;
+          let type: string;
           try {
-            const key = Sk.ffi.remapToJs(k);
-            if (key === "Sk" || key === "_sk_vars_before" || key === "_sk_keys" || key === "_sk_step" || key.startsWith("__")) continue;
-            let val: any;
-            let type: string;
-            try {
-              val = Sk.ffi.remapToJs(v);
-              type = typeof val;
-              if (v instanceof Sk.builtin.list) type = "list";
-              else if (v instanceof Sk.builtin.dict) type = "dict";
-              else if (v instanceof Sk.builtin.str) type = "str";
-              else if (v instanceof Sk.builtin.int_) type = "int";
-              else if (v instanceof Sk.builtin.float_) type = "float";
-              else if (v instanceof Sk.builtin.bool) type = "bool";
-              else if (v instanceof Sk.builtin.none) { type = "NoneType"; val = null; }
-            } catch {
-              val = String(v);
-              type = typeof v;
-            }
-            vars[key] = { type, value: val };
-          } catch {}
-        }
+            val = Sk.ffi.remapToJs(v);
+            type = typeof val;
+            if (v instanceof Sk.builtin.list) type = "list";
+            else if (v instanceof Sk.builtin.dict) type = "dict";
+            else if (v instanceof Sk.builtin.str) type = "str";
+            else if (v instanceof Sk.builtin.int_) type = "int";
+            else if (v instanceof Sk.builtin.float_) type = "float";
+            else if (v instanceof Sk.builtin.bool) type = "bool";
+            else if (v instanceof Sk.builtin.none) { type = "NoneType"; val = null; }
+            else if (typeof v?.tp$name === "string") type = v.tp$name;
+          } catch {
+            val = String(v);
+            type = typeof v;
+          }
+          vars[key] = { type, value: val };
+        } catch {}
       }
       return vars;
     } catch { return {}; }
@@ -233,6 +264,21 @@ export async function runCode(
     await Sk.misceval.asyncToPromise(() => {
       return Sk.importMainWithBody("user_code", false, instrumented, true);
     });
+
+    // "Run All" runs uninstrumented (no per-line frames), so surface the final
+    // program output and variable state as one closing frame.
+    if (directRun) {
+      const finalFrame: StepFrame = {
+        lineNumber: currentLine,
+        variables: captureVars(),
+        scopes: [...scopeStack],
+        callStack: [...callStack],
+        output: capturedOutput,
+        changedVars: [],
+      };
+      frames.push(finalFrame);
+      onStep(finalFrame);
+    }
 
     onDone("finished");
   } catch (err: unknown) {
