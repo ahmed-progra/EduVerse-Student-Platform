@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { GlassCard } from "@/components/ui/glass-card";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { SkillMap, type MapNode } from "@/features/skill-map/skill-map";
+import { Confetti } from "@/components/ui/confetti";
 import { api } from "@/services/api-client";
 import { useAuthStore } from "@/stores/auth-store";
 import { fadeUp, staggerContainer, fastEaseTransition } from "@/lib/motion";
@@ -79,6 +80,8 @@ export default function SkillTreePage() {
   const [selectedNode, setSelectedNode] = useState<SkillNode | null>(null);
   const [tab, setTab] = useState<"example" | "debug">("example");
   const [showHint, setShowHint] = useState(false);
+  const [celebrate, setCelebrate] = useState(false);
+  const [unlockedInfo, setUnlockedInfo] = useState<{ name: string; cost: number } | null>(null);
 
   const openInCodeLab = (code: string) => {
     try { localStorage.setItem("eduverse_codelab_code", code); } catch {}
@@ -97,13 +100,19 @@ export default function SkillTreePage() {
 
   const handleUnlock = async (nodeId: string) => {
     setUnlocking(nodeId);
+    const unlockedNode = nodes.find((n) => n.id === nodeId);
     try {
       await api.unlockSkill(nodeId);
       api.clearCache();
       await loadTree();
       setJustUnlocked(nodeId);
       setSelectedNode((prev) => prev && prev.id === nodeId ? { ...prev, unlocked: true } : prev);
-      setTimeout(() => setJustUnlocked(null), 1300);
+      if (unlockedNode) {
+        setUnlockedInfo({ name: unlockedNode.name, cost: unlockedNode.xpCost });
+        setCelebrate(true);
+        setTimeout(() => setCelebrate(false), 1800);
+      }
+      setTimeout(() => { setJustUnlocked(null); setUnlockedInfo(null); }, 2600);
       if (user) {
         const profileRes = await api.getProfile();
         updateXp(profileRes.data.xp, profileRes.data.level);
@@ -137,6 +146,25 @@ export default function SkillTreePage() {
 
   return (
     <motion.div className="flex gap-6" initial="hidden" animate="visible" variants={staggerContainer}>
+      <Confetti active={celebrate} count={48} />
+      <AnimatePresence>
+        {unlockedInfo && (
+          <motion.div
+            initial={{ opacity: 0, y: -14, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, transition: { duration: 0.18, ease: "easeOut" } }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="xp-toast"
+            role="status"
+          >
+            <Unlock className="w-6 h-6 text-eduverse-accent" aria-hidden="true" />
+            <div>
+              <div className="font-bold text-eduverse-accent">Unlocked {unlockedInfo.name}</div>
+              <div className="text-xs text-eduverse-text-muted">−{unlockedInfo.cost} XP spent</div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <div className={`flex-1 min-w-0 space-y-6 transition-[max-width] duration-300 ${selectedNode ? "lg:max-w-[calc(100%-380px)]" : ""}`}>
         <motion.div variants={fadeUp} transition={fastEaseTransition}>
           <div className="flex items-end justify-between gap-4 flex-wrap">
