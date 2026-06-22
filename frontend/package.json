@@ -1,5 +1,6 @@
 {
   "name": "@eduverse/frontend",
+  "description": "EduVerse frontend — Next.js 16, React 19, Three.js 3D Lab, Monaco code visualizer",
   "version": "1.0.0",
   "private": true,
   "scripts": {

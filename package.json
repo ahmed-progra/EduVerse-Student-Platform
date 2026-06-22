@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "description": "AI-powered, gamified platform for learning to program — see your code run, line by line.",
+  "repository": "https://github.com/ahmed-progra/EduVerse-Student-Platform.git",
   "license": "MIT",
   "engines": {
     "node": ">=20"

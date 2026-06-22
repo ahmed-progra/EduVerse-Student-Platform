@@ -1,5 +1,6 @@
 {
   "name": "@eduverse/backend",
+  "description": "EduVerse backend — Express API, Prisma ORM, Gemini AI service, Supabase PostgreSQL",
   "version": "1.0.0",
   "scripts": {
     "dev": "tsx watch src/index.ts",

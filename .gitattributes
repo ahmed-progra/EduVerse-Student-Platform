@@ -1,10 +1,8 @@
 # Normalise line endings — Git stores LF, checks out native on Windows
 * text=auto eol=lf
-
 # Windows-only scripts keep CRLF
 *.bat   text eol=crlf
 *.ps1   text eol=crlf
-
 # Language-specific diff attributes for better diffs
 *.ts       text diff=typescript
 *.tsx      text diff=typescript
@@ -23,7 +21,6 @@
 *.sql      text
 *.env      text
 *.env.example text
-
 # Binary files — no EOL conversion, no diff
 *.ttf      binary
 *.woff     binary
@@ -48,8 +45,11 @@
 *.tar      binary
 *.gz       binary
 *.lock     binary
-
 # Collapse generated / lock files from diffs and language stats
 package-lock.json  linguist-generated=true -diff
 *.tsbuildinfo      linguist-generated=true
 docs/**            linguist-documentation
+# 3D models — binary, no diff, commit directly (no LFS)
+*.glb      binary
+*.gltf     binary
+*.blend    binary
