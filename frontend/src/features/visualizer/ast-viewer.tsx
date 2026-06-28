@@ -11,6 +11,8 @@ interface ASTNodeData {
   children: ASTNodeData[];
 }
 
+// Skulpt's AST nodes are an untyped dynamic tree (no published types); `any` is the intentional
+// boundary used throughout this file's traversal helpers.
 let Sk: any = null;
 
 function getNodeType(obj: any): string {

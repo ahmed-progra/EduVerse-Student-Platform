@@ -29,6 +29,7 @@ import {
   Star,
   Layers,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 interface ProfileData {
   id: string;
@@ -50,12 +51,6 @@ interface ProfileData {
   skills: { skillId: string; unlocked: boolean; skill: { name: string } }[];
   xpLogs: { id: string; amount: number; source: string; createdAt: string }[];
 }
-
-const tierColors: Record<string, string> = {
-  beginner: "text-eduverse-accent-light",
-  intermediate: "text-eduverse-success",
-  advanced: "text-eduverse-warning",
-};
 
 const tierBadgeColors: Record<string, string> = {
   beginner: "bg-eduverse-accent/20 text-eduverse-accent-light",
@@ -176,7 +171,7 @@ function getCourseProgress(progress: { completed: boolean; lesson: { courseId: s
 }
 
 export default function ProfilePage() {
-  const { user, updateXp, setUser } = useAuthStore();
+  const { setUser } = useAuthStore();
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [battlesWon, setBattlesWon] = useState(0);
   const [battlesPlayed, setBattlesPlayed] = useState(0);
@@ -191,7 +186,7 @@ export default function ProfilePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
-  const streak = useMemo(() => getStreak(), [profile]);
+  const streak = useMemo(() => getStreak(), []);
   const activityData = useMemo(() => getActivityData(profile?.xpLogs || []), [profile]);
   const days12Weeks = useMemo(() => getLast12Weeks(), []);
   const maxActivity = Math.max(...Object.values(activityData), 1);
@@ -290,7 +285,7 @@ export default function ProfilePage() {
     return "bg-eduverse-accent/80";
   };
 
-  const sourceIcons: Record<string, any> = {
+  const sourceIcons: Record<string, LucideIcon> = {
     lesson: BookOpen,
     battle: Swords,
     challenge: Target,
@@ -341,6 +336,9 @@ export default function ProfilePage() {
             <div className="relative group cursor-pointer shrink-0" onClick={handleAvatarClick}>
               <div className="w-24 h-24 rounded-full flex items-center justify-center text-4xl font-bold overflow-hidden transition-all duration-300 bg-eduverse-accent-strong text-eduverse-text shadow-md">
                 {avatarPreview || profile.avatar?.startsWith("data:") ? (
+                  // User avatar is a base64 data: URL (or local preview) — next/image
+                  // can't optimize data URLs, so a plain <img> is correct here.
+                  // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={avatarPreview || profile.avatar}
                     alt=""
@@ -722,6 +720,9 @@ export default function ProfilePage() {
                   >
                     <div className="w-9 h-9 flex items-center justify-center shrink-0">
                       {inv.item.imageUrl ? (
+                        // Shop-item icon from an arbitrary remote host (20px); next/image
+                        // would require per-host remotePatterns config for no real benefit.
+                        // eslint-disable-next-line @next/next/no-img-element
                         <img src={inv.item.imageUrl} alt="" className="w-5 h-5" />
                       ) : (
                         <Star className="w-4 h-4 text-eduverse-accent-light" />

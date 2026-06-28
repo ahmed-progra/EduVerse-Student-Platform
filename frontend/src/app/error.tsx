@@ -16,14 +16,7 @@ export default function GlobalError({
 
   return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4 page-enter">
-      <div
-        className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5"
-        style={{
-          background: "oklch(66% 0.19 25 / 0.1)",
-          border: "1px solid oklch(66% 0.19 25 / 0.3)",
-          color: "var(--color-eduverse-danger)",
-        }}
-      >
+      <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5 bg-eduverse-danger/10 border border-eduverse-danger/30 text-eduverse-danger">
         <AlertTriangle size={28} aria-hidden="true" />
       </div>
       <h2 className="text-2xl font-bold text-eduverse-text mb-2">Something went wrong</h2>

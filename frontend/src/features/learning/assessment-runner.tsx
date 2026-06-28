@@ -102,7 +102,7 @@ export function AssessmentRunner({
             <h2 className="text-xl font-bold font-display mb-2">Find your starting point</h2>
             <p className="text-sm text-eduverse-text-body mb-3">
               Before the lessons begin, a placement assessment maps what you already know — so your{" "}
-              {courseTitle} path skips what you've mastered and focuses on your gaps. It mixes
+              {courseTitle} path skips what you&apos;ve mastered and focuses on your gaps. It mixes
               concept questions, code reading, and two short coding tasks graded by AI. Skipping a
               question is fine: it simply marks that topic as untested.
             </p>

@@ -68,7 +68,7 @@ Built by students, for students. The UI is a warm, dark "Code Sorcery" theme wit
 | **AI Mentor** (`/mentor`)               | Cross‑course coach that tracks mastery, identifies weak topics, assigns missions, produces weekly reports         |
 | **Skill Tree**                          | Branching ability map across Python, frontend, algorithms, debugging. Unlock nodes with XP and level requirements |
 | **Battle Arena** (`/battle`)            | Timed coding duels with multiple difficulty levels and challenge types                                            |
-| **3D Interactive Lab** (`/lab`)         | Explore math, physics, and science through Three.js interactive 3D scenes                                         |
+| **3D Interactive Lab** (`/lab`)         | Explore physics, math, computer science, chemistry, electronics & more through Three.js interactive 3D scenes     |
 | **Apprentice Teaching** (`/apprentice`) | Teach a novice AI (**Pip**) — the protégé effect solidifies your own understanding                                |
 | **AI Project Studio** (`/projects`)     | AI-suggested projects, in-app builder, AI grading against rubric, public portfolio                                |
 | **Code Lab** (`/codelab`)               | Monaco editor, live preview, step visualizer for Python, HTML, CSS                                                |
@@ -78,8 +78,6 @@ Built by students, for students. The UI is a warm, dark "Code Sorcery" theme wit
 | **Adaptive Daily Challenges**           | Personalized exercises generated from your current mastery profile                                                |
 
 ---
-
-## Quick Start
 
 ## Quick Start
 
@@ -241,7 +239,7 @@ Registration/Login → bcrypt password hash / Google OAuth
 ```
 eduverse/
 ├── frontend/                          # Next.js 16 web application
-│   ├── src/app/                       # App Router — 23 route segments
+│   ├── src/app/                       # App Router — 24 route segments
 │   │   ├── dashboard/                 # Learner dashboard
 │   │   ├── courses/                   # Course catalog + detail
 │   │   ├── lessons/                   # Lesson viewer + code visualizer
@@ -264,7 +262,8 @@ eduverse/
 │   ├── src/lib/                       # Utilities + motion helpers
 │   ├── src/services/                  # API client (cached, deduplicated)
 │   ├── src/stores/                    # Zustand auth store
-│   └── src/types/                     # TypeScript declarations
+│   ├── src/types/                     # TypeScript declarations + API entity types
+│   └── eslint.config.mjs              # Flat ESLint config
 ├── backend/                           # Express 5 REST API
 │   ├── src/routes/                    # 14 route groups
 │   ├── src/services/                  # AI, learning, mentor, apprentice, XP, battle, project
@@ -344,6 +343,7 @@ Copy `.env.example` to `.env` and fill in:
 | `JWT_SECRET`           | ✅       | —                           | `backend/src/lib/jwt.ts`              | HMAC secret for signing JSON Web Tokens — generate with `openssl rand -hex 32`                             |
 | `GOOGLE_AI_API_KEY`    | ✅       | —                           | `backend/src/services/ai-service.ts`  | API key for Google AI Studio ([get one free](https://aistudio.google.com/apikey)) to power all AI features |
 | `NEXT_PUBLIC_API_URL`  | —        | `http://localhost:4000/api` | `frontend/src/services/api-client.ts` | Base URL the frontend uses to call the backend REST API                                                    |
+| `NEXT_PUBLIC_SITE_URL` | —        | `http://localhost:3000`     | `frontend/src/app/robots.ts`          | Public site origin for canonical URLs, Open Graph tags, robots.txt, and sitemap.xml                        |
 | `PORT`                 | —        | `4000`                      | `backend/src/index.ts`                | Backend Express server port                                                                                |
 | `FRONTEND_URL`         | —        | `http://localhost:3000`     | `backend/src/index.ts`                | Comma-separated list of allowed CORS origins                                                               |
 | `JUDGE0_URL`           | —        | `https://ce.judge0.com`     | `backend/src/services/judge0.ts`      | Judge0 CE endpoint for C++ code execution                                                                  |
@@ -415,20 +415,20 @@ node scripts/ai-e2e.mjs            # AI endpoint integration
 
 ## Roadmap
 
-| Status | Initiative                                                   |
-| ------ | ------------------------------------------------------------ |
-| ✅     | Landing page "calm premium" rebuild                          |
-| ✅     | Interactive 3D Lab (math, physics, science)                  |
-| ✅     | Academic courses: Mathematics, Physics, Science (48 lessons) |
-| ✅     | UI design system overhaul, command palette                   |
-| ✅     | AI panel accessibility (aria-live, keyboard nav)             |
-| 🔄     | Propagate calm-premium system to all app pages               |
-| 🔄     | Designed empty state for backend-offline                     |
-| 📅     | Mobile-responsive layout improvements                        |
-| 📅     | Multi-language support                                       |
-| 📅     | Teacher/instructor dashboard                                 |
-| 📅     | Course authoring UI                                          |
-| 📅     | Performance monitoring and analytics                         |
+| Status | Initiative                                                     |
+| ------ | -------------------------------------------------------------- |
+| ✅     | Landing page "calm premium" rebuild                            |
+| ✅     | Interactive 3D Lab (physics, math, CS, chemistry, electronics) |
+| ✅     | Academic courses: Mathematics, Physics, Science (48 lessons)   |
+| ✅     | UI design system overhaul, command palette                     |
+| ✅     | AI panel accessibility (aria-live, keyboard nav)               |
+| 🔄     | Propagate calm-premium system to all app pages                 |
+| 🔄     | Designed empty state for backend-offline                       |
+| 📅     | Mobile-responsive layout improvements                          |
+| 📅     | Multi-language support                                         |
+| 📅     | Teacher/instructor dashboard                                   |
+| 📅     | Course authoring UI                                            |
+| 📅     | Performance monitoring and analytics                           |
 
 Full roadmap: [docs/ROADMAP.md](docs/ROADMAP.md)
 

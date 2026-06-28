@@ -21,6 +21,7 @@ import {
   CheckCircle2,
   Code2,
   Lightbulb,
+  AlertCircle,
 } from "lucide-react";
 
 const BRANCH_NAMES: Record<string, string> = {
@@ -101,6 +102,7 @@ export default function SkillTreePage() {
   const [showHint, setShowHint] = useState(false);
   const [celebrate, setCelebrate] = useState(false);
   const [unlockedInfo, setUnlockedInfo] = useState<{ name: string; cost: number } | null>(null);
+  const [unlockError, setUnlockError] = useState<string | null>(null);
 
   const openInCodeLab = (code: string) => {
     try {
@@ -143,7 +145,10 @@ export default function SkillTreePage() {
         const profileRes = await api.getProfile();
         updateXp(profileRes.data.xp, profileRes.data.level);
       }
-    } catch {}
+    } catch (err) {
+      setUnlockError(err instanceof Error ? err.message : "Couldn't unlock that skill.");
+      setTimeout(() => setUnlockError(null), 3500);
+    }
     setUnlocking(null);
   };
 
@@ -192,6 +197,22 @@ export default function SkillTreePage() {
             <div>
               <div className="font-bold text-eduverse-accent">Unlocked {unlockedInfo.name}</div>
               <div className="text-xs text-eduverse-text-muted">−{unlockedInfo.cost} XP spent</div>
+            </div>
+          </motion.div>
+        )}
+        {unlockError && (
+          <motion.div
+            initial={{ opacity: 0, y: -14, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, transition: { duration: 0.18, ease: "easeOut" } }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="xp-toast"
+            role="alert"
+          >
+            <AlertCircle className="w-6 h-6 text-eduverse-danger" aria-hidden="true" />
+            <div>
+              <div className="font-bold text-eduverse-text">Couldn&apos;t unlock</div>
+              <div className="text-xs text-eduverse-text-muted">{unlockError}</div>
             </div>
           </motion.div>
         )}

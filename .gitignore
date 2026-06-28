@@ -54,13 +54,21 @@ Thumbs.db
 # ───────────── AI / agent tooling scratch (local only) ──────────
 .agents/
 .superpowers/
+docs/superpowers/
 .opencode/
 .graphifyignore
 graphify-out/
 skills-lock.json
 
+# ───────────────────────── AI / agent scratch files ────────────
+AUDIT.md
+NOTES.md
+scratch*.md
+
 # ───────────────────────── Local helper scripts ────────────────
 backend_check.ps1
+_check.ps1
+check_*.ps1
 */check_server.ps1
 */server_health.ps1
 */test_pages.ps1

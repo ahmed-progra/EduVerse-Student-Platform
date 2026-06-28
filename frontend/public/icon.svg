@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="EduVerse">
+  <rect width="512" height="512" rx="112" fill="#0e111a"/>
+  <rect x="40" y="40" width="432" height="432" rx="88" fill="none" stroke="#cc8800" stroke-width="10" stroke-opacity="0.35"/>
+  <text x="256" y="356" text-anchor="middle" fill="#cc8800" font-size="320" font-weight="700" font-family="Georgia, 'Times New Roman', serif">E</text>
+</svg>

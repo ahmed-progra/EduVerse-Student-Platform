@@ -6,6 +6,7 @@ dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 import express from "express";
 import cors from "cors";
 import { apiLimiter } from "./middleware/rate-limit";
+import { prisma } from "./lib/prisma";
 
 import authRoutes from "./routes/auth";
 import courseRoutes from "./routes/courses";
@@ -63,6 +64,19 @@ app.get("/api/health", (_req, res) => {
   res.json({ success: true, data: { status: "ok", timestamp: new Date().toISOString() } });
 });
 
-app.listen(PORT, () => {
-  console.log(`EduVerse API running on http://localhost:${PORT}`);
+const server = app.listen(PORT, () => {
+  console.info(`EduVerse API running on http://localhost:${PORT}`);
 });
+
+// Graceful shutdown: let in-flight requests finish, then close the DB pool.
+// Container orchestrators (Docker / Railway / Render) send SIGTERM on stop.
+const shutdown = (signal: string) => {
+  console.info(`${signal} received — shutting down gracefully`);
+  server.close(() => {
+    prisma.$disconnect().finally(() => process.exit(0));
+  });
+  // Force-exit if connections don't drain within the grace window.
+  setTimeout(() => process.exit(1), 10_000).unref();
+};
+process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("SIGINT", () => shutdown("SIGINT"));

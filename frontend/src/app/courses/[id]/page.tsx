@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { GlassCard } from "@/components/ui/glass-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { api } from "@/services/api-client";
 import { useEffect, useState, useCallback } from "react";
@@ -143,12 +142,8 @@ export default function CourseDetailPage() {
           transition={{ duration: 0.4 }}
         >
           <div
-            className="px-4 py-3 text-sm flex items-center gap-2.5 flex-wrap rounded-[var(--radius-card)]"
+            className="px-4 py-3 text-sm flex items-center gap-2.5 flex-wrap rounded-[var(--radius-card)] bg-eduverse-success/8 border border-eduverse-success/22"
             role="status"
-            style={{
-              background: "oklch(76% 0.14 165 / 0.08)",
-              border: "1px solid oklch(76% 0.14 165 / 0.22)",
-            }}
           >
             <Zap size={15} style={{ color: "var(--color-eduverse-success)" }} aria-hidden="true" />
             <span className="text-eduverse-text">

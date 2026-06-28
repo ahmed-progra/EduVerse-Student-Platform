@@ -73,7 +73,8 @@ export default function MentorPage() {
   const [reportError, setReportError] = useState("");
 
   const loadProfile = useCallback(async (refresh = false) => {
-    refresh ? setSyncing(true) : setProfileLoading(true);
+    if (refresh) setSyncing(true);
+    else setProfileLoading(true);
     setProfileError("");
     try {
       const res = refresh ? await api.mentorSync() : await api.mentorProfile();

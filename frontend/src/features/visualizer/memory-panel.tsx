@@ -21,18 +21,21 @@ export const MemoryPanel = memo(function MemoryPanel({
   const prevFrame = currentIdx > 0 ? frames[currentIdx - 1] : null;
 
   const currentVars = currentFrame?.variables || {};
-  const prevVars = prevFrame?.variables || {};
 
   const changedVars = useMemo(() => {
+    // Derive from the frame objects directly (stable per step) so the memo
+    // doesn't depend on the `|| {}` fallbacks, which are new each render.
+    const cur = currentFrame?.variables || {};
+    const prev = prevFrame?.variables || {};
     const changed = new Set<string>();
-    for (const [k, v] of Object.entries(currentVars)) {
-      const prev = prevVars[k];
-      if (!prev || JSON.stringify(prev.value) !== JSON.stringify(v.value)) {
+    for (const [k, v] of Object.entries(cur)) {
+      const p = prev[k];
+      if (!p || JSON.stringify(p.value) !== JSON.stringify(v.value)) {
         changed.add(k);
       }
     }
     return changed;
-  }, [currentVars, prevVars]);
+  }, [currentFrame, prevFrame]);
 
   const changeLog = useMemo(() => {
     const log: { step: number; varName: string; from: unknown; to: unknown }[] = [];

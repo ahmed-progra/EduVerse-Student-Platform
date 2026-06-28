@@ -2054,3 +2054,1235 @@ export function calculusChart(p: ParamValues): LabChartData {
         : `Slope at x = ${x0.toFixed(1)} is f′ = ${fn.df(x0).toFixed(2)}.`,
   };
 }
+
+/* ════════════════════════════════════════════════════════════════
+   SHARED HELPERS for the expansion scenes below. Geometry + colour
+   only (no text textures) so the engine's traverse-and-dispose
+   teardown reclaims everything, exactly like the existing scenes.
+   ════════════════════════════════════════════════════════════════ */
+const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
+
+/** A static line through the given points. */
+function line2(pts: THREE.Vector3[], color: number) {
+  return new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints(pts),
+    new THREE.LineBasicMaterial({ color }),
+  );
+}
+
+/** A reusable polyline with `n` updatable vertices (no per-frame allocation). */
+function polyLine(n: number, color: number) {
+  const pts = Array.from({ length: n }, () => new THREE.Vector3());
+  return new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints(pts),
+    new THREE.LineBasicMaterial({ color }),
+  );
+}
+
+/** Update a polyline's vertices in place. */
+function setPts(line: THREE.Line, ...pts: THREE.Vector3[]) {
+  const a = line.geometry.attributes.position as THREE.BufferAttribute;
+  for (let i = 0; i < pts.length; i++) a.setXYZ(i, pts[i].x, pts[i].y, pts[i].z);
+  a.needsUpdate = true;
+}
+
+/** A small unlit marker sphere. */
+function dotMesh(color: number, r = 0.1) {
+  return new THREE.Mesh(
+    new THREE.SphereGeometry(r, 14, 10),
+    new THREE.MeshBasicMaterial({ color }),
+  );
+}
+
+/** A simple flat box used by the data-structure scenes. */
+function cellBox(w: number, h: number, color: number, opacity = 1) {
+  return new THREE.Mesh(
+    new THREE.BoxGeometry(w, h, 0.3),
+    new THREE.MeshStandardMaterial({
+      color,
+      roughness: 0.5,
+      metalness: 0.1,
+      transparent: opacity < 1,
+      opacity,
+    }),
+  );
+}
+
+/** An arrow (shaft line + cone head) that can be repositioned each frame. */
+function makeArrow(color: number) {
+  const group = new THREE.Group();
+  const shaft = polyLine(2, color);
+  const head = new THREE.Mesh(
+    new THREE.ConeGeometry(0.12, 0.32, 14),
+    new THREE.MeshBasicMaterial({ color }),
+  );
+  group.add(shaft);
+  group.add(head);
+  return {
+    group,
+    /** Draw a vertical arrow from (x, 0) to (x, y). */
+    set(x: number, y: number) {
+      setPts(
+        shaft,
+        new THREE.Vector3(x, 0, 0.01),
+        new THREE.Vector3(x, y - Math.sign(y) * 0.16, 0.01),
+      );
+      head.position.set(x, y, 0.01);
+      head.rotation.z = y >= 0 ? 0 : Math.PI;
+    },
+  };
+}
+
+/* ════════════════════════════════════════════════════════════════
+   PHYSICS — Projectile motion (parabolic trajectory)
+   ════════════════════════════════════════════════════════════════ */
+const PROJ_ORIGIN_X = -4.2;
+const PROJ_GROUND_Y = -2.6;
+
+function projectileFit(v: number, angle: number, g: number) {
+  const T = (2 * v * Math.sin(angle)) / g || 0.001;
+  const R = (v * v * Math.sin(2 * angle)) / g;
+  const H = (v * v * Math.sin(angle) ** 2) / (2 * g);
+  const scale = 7.6 / Math.max(R, 2 * H, 5);
+  return { T, R, H, scale };
+}
+
+export const projectileScene: SceneInit = ({ group, camera, params }) => {
+  camera.position.set(0, 0, 9);
+  group.add(new THREE.AmbientLight(0xffffff, 0.95));
+
+  // ground line + vertical axis
+  group.add(
+    line2(
+      [
+        new THREE.Vector3(PROJ_ORIGIN_X, PROJ_GROUND_Y, 0),
+        new THREE.Vector3(4.4, PROJ_GROUND_Y, 0),
+      ],
+      0x46506c,
+    ),
+  );
+  group.add(
+    line2(
+      [new THREE.Vector3(PROJ_ORIGIN_X, PROJ_GROUND_Y, 0), new THREE.Vector3(PROJ_ORIGIN_X, 3, 0)],
+      0x46506c,
+    ),
+  );
+
+  const N = 80;
+  const traj = polyLine(N, 0xe2a43b);
+  group.add(traj);
+
+  const ball = new THREE.Mesh(
+    new THREE.SphereGeometry(0.17, 22, 16),
+    new THREE.MeshStandardMaterial({ color: AMBER_LIGHT, emissive: 0x5a3d12, roughness: 0.4 }),
+  );
+  group.add(ball);
+  addStudioLights(group);
+
+  const apexMark = dotMesh(INDIGO, 0.1);
+  group.add(apexMark);
+
+  return (elapsed) => {
+    const v = num(params, "speed", 20);
+    const angle = (num(params, "angle", 45) * Math.PI) / 180;
+    const g = Math.max(1, num(params, "gravity", 9.8));
+    const animate = bool(params, "animate", true);
+    const { T, R, H, scale } = projectileFit(v, angle, g);
+
+    const a = traj.geometry.attributes.position as THREE.BufferAttribute;
+    for (let i = 0; i < N; i++) {
+      const t = (i / (N - 1)) * T;
+      const x = v * Math.cos(angle) * t;
+      const y = v * Math.sin(angle) * t - 0.5 * g * t * t;
+      a.setXYZ(i, PROJ_ORIGIN_X + x * scale, PROJ_GROUND_Y + Math.max(0, y) * scale, 0);
+    }
+    a.needsUpdate = true;
+
+    const phase = animate ? (elapsed % (T + 0.4)) / T : 0.9999;
+    const tb = Math.min(phase, 1) * T;
+    const bx = v * Math.cos(angle) * tb;
+    const by = Math.max(0, v * Math.sin(angle) * tb - 0.5 * g * tb * tb);
+    ball.position.set(PROJ_ORIGIN_X + bx * scale, PROJ_GROUND_Y + by * scale, 0.05);
+    apexMark.position.set(PROJ_ORIGIN_X + (R / 2) * scale, PROJ_GROUND_Y + H * scale, 0.05);
+  };
+};
+
+export function projectileReadouts(p: ParamValues) {
+  const v = num(p, "speed", 20);
+  const angle = (num(p, "angle", 45) * Math.PI) / 180;
+  const g = Math.max(1, num(p, "gravity", 9.8));
+  const { T, R, H } = projectileFit(v, angle, g);
+  return [
+    { label: "Range", value: `${R.toFixed(1)} m` },
+    { label: "Max height", value: `${H.toFixed(1)} m` },
+    { label: "Flight time", value: `${T.toFixed(2)} s` },
+    { label: "Launch angle", value: `${num(p, "angle", 45).toFixed(0)}°` },
+  ];
+}
+
+export function projectileChart(p: ParamValues): LabChartData {
+  const v = num(p, "speed", 20);
+  const angle = (num(p, "angle", 45) * Math.PI) / 180;
+  const g = Math.max(1, num(p, "gravity", 9.8));
+  const { T, R, H } = projectileFit(v, angle, g);
+  const pts: [number, number][] = [];
+  for (let i = 0; i <= 60; i++) {
+    const t = (i / 60) * T;
+    const x = v * Math.cos(angle) * t;
+    const y = v * Math.sin(angle) * t - 0.5 * g * t * t;
+    pts.push([x, Math.max(0, y)]);
+  }
+  return {
+    title: "Trajectory — height vs distance",
+    xLabel: "distance (m)",
+    yLabel: "height (m)",
+    series: [{ points: pts, color: "accent", area: true }],
+    markers: [{ x: R / 2, y: H, color: "violet", label: "apex" }],
+    note: `Peak ${H.toFixed(1)} m at ${(R / 2).toFixed(1)} m; lands at ${R.toFixed(1)} m. Max range is at 45°.`,
+  };
+}
+
+/* ════════════════════════════════════════════════════════════════
+   PHYSICS — Bohr atom model (nucleus + electron shells)
+   ════════════════════════════════════════════════════════════════ */
+const ATOM_ELEMENTS: Record<
+  string,
+  { name: string; symbol: string; z: number; n: number; shells: number[] }
+> = {
+  H: { name: "Hydrogen", symbol: "H", z: 1, n: 0, shells: [1] },
+  He: { name: "Helium", symbol: "He", z: 2, n: 2, shells: [2] },
+  Li: { name: "Lithium", symbol: "Li", z: 3, n: 4, shells: [2, 1] },
+  C: { name: "Carbon", symbol: "C", z: 6, n: 6, shells: [2, 4] },
+  O: { name: "Oxygen", symbol: "O", z: 8, n: 8, shells: [2, 6] },
+  Ne: { name: "Neon", symbol: "Ne", z: 10, n: 10, shells: [2, 8] },
+  Na: { name: "Sodium", symbol: "Na", z: 11, n: 12, shells: [2, 8, 1] },
+  Si: { name: "Silicon", symbol: "Si", z: 14, n: 14, shells: [2, 8, 4] },
+  Ar: { name: "Argon", symbol: "Ar", z: 18, n: 22, shells: [2, 8, 8] },
+};
+
+export const atomScene: SceneInit = ({ group, camera, params }) => {
+  camera.position.set(0, 0, 10);
+  addStudioLights(group);
+  const el = ATOM_ELEMENTS[str(params, "element", "C")] ?? ATOM_ELEMENTS.C;
+
+  // nucleus: protons (red) + neutrons (grey) packed on a golden spiral
+  const nucleus = new THREE.Group();
+  const total = el.z + el.n;
+  const protonMat = new THREE.MeshStandardMaterial({ color: 0xff5a5a, roughness: 0.45 });
+  const neutronMat = new THREE.MeshStandardMaterial({ color: 0x9aa3b4, roughness: 0.55 });
+  const packR = 0.22 + 0.18 * Math.cbrt(Math.max(1, total));
+  for (let i = 0; i < total; i++) {
+    const m = new THREE.Mesh(
+      new THREE.SphereGeometry(0.17, 16, 12),
+      i < el.z ? protonMat : neutronMat,
+    );
+    const phi = Math.acos(1 - (2 * (i + 0.5)) / Math.max(total, 1));
+    const theta = Math.PI * (1 + Math.sqrt(5)) * i;
+    const rr = total === 1 ? 0 : packR;
+    m.position.set(
+      rr * Math.sin(phi) * Math.cos(theta),
+      rr * Math.sin(phi) * Math.sin(theta),
+      rr * Math.cos(phi),
+    );
+    nucleus.add(m);
+  }
+  group.add(nucleus);
+
+  const pivots: { pivot: THREE.Group; speed: number }[] = [];
+  el.shells.forEach((count, si) => {
+    const radius = 1.35 + si * 0.95;
+    const ringPts: THREE.Vector3[] = [];
+    for (let aa = 0; aa <= 72; aa++) {
+      const t = (aa / 72) * Math.PI * 2;
+      ringPts.push(new THREE.Vector3(Math.cos(t) * radius, Math.sin(t) * radius, 0));
+    }
+    const ring = line2(ringPts, 0x46506c);
+    ring.rotation.x = 1.05;
+    group.add(ring);
+
+    const pivot = new THREE.Group();
+    pivot.rotation.x = 1.05;
+    for (let e = 0; e < count; e++) {
+      const t = (e / count) * Math.PI * 2;
+      const elec = dotMesh(0x6ec1ff, 0.13);
+      elec.position.set(Math.cos(t) * radius, Math.sin(t) * radius, 0);
+      pivot.add(elec);
+    }
+    group.add(pivot);
+    pivots.push({ pivot, speed: 0.95 - si * 0.2 });
+  });
+
+  return (_elapsed, delta) => {
+    const animate = bool(params, "animate", true);
+    if (animate) for (const p of pivots) p.pivot.rotation.z += delta * p.speed;
+    nucleus.rotation.y += delta * 0.3;
+  };
+};
+
+export function atomReadouts(p: ParamValues) {
+  const el = ATOM_ELEMENTS[str(p, "element", "C")] ?? ATOM_ELEMENTS.C;
+  const electrons = el.shells.reduce((s, n) => s + n, 0);
+  return [
+    { label: "Element", value: `${el.name} (${el.symbol})` },
+    { label: "Protons (Z)", value: `${el.z}` },
+    { label: "Neutrons", value: `${el.n}` },
+    { label: "Electrons", value: `${electrons}` },
+    { label: "Shells", value: el.shells.join(", ") },
+    { label: "Mass number", value: `${el.z + el.n}` },
+  ];
+}
+
+export function atomChart(p: ParamValues): LabChartData {
+  const el = ATOM_ELEMENTS[str(p, "element", "C")] ?? ATOM_ELEMENTS.C;
+  return {
+    title: "Electrons per shell",
+    kind: "bars",
+    yLabel: "electrons",
+    categories: el.shells.map((_, i) => `n=${i + 1}`),
+    series: [{ points: el.shells.map((c, i) => [i, c] as [number, number]), color: "accent" }],
+    note: `${el.name}: capacity rule 2n² → shells fill 2, 8, 18… Valence shell holds ${el.shells[el.shells.length - 1]}.`,
+  };
+}
+
+/* ════════════════════════════════════════════════════════════════
+   PHYSICS — Thin lens (ray diagram, converging & diverging)
+   1/f = 1/v + 1/u  (real-positive convention)
+   ════════════════════════════════════════════════════════════════ */
+const OPTICS_SC = 0.7; // world units per "metre"
+const OPTICS_HOBJ = 1.6;
+
+function lensSolve(p: ParamValues) {
+  const convex = str(p, "lens", "convex") === "convex";
+  const f = (convex ? 1 : -1) * Math.max(0.3, num(p, "focal", 2));
+  const u = Math.max(0.4, num(p, "objDist", 4));
+  const di = 1 / (1 / f - 1 / u); // >0 real (right) · <0 virtual (left)
+  const m = -di / u;
+  return { convex, f, u, di, m };
+}
+
+export const opticsScene: SceneInit = ({ group, camera, params }) => {
+  camera.position.set(0, 0, 11);
+  group.add(new THREE.AmbientLight(0xffffff, 0.95));
+
+  group.add(line2([new THREE.Vector3(-6.5, 0, 0), new THREE.Vector3(6.5, 0, 0)], 0x46506c));
+
+  // lens silhouette (rebuilds on lens type)
+  const convex = str(params, "lens", "convex") === "convex";
+  const lh = 2.4;
+  const bulge = convex ? 0.55 : -0.55;
+  const lensPts: THREE.Vector3[] = [];
+  for (let i = 0; i <= 26; i++) {
+    const y = ((i / 26) * 2 - 1) * lh;
+    lensPts.push(new THREE.Vector3(bulge * (1 - (y / lh) ** 2), y, 0));
+  }
+  for (let i = 0; i <= 26; i++) {
+    const y = (1 - (i / 26) * 2) * lh;
+    lensPts.push(new THREE.Vector3(-bulge * (1 - (y / lh) ** 2), y, 0));
+  }
+  group.add(line2(lensPts, 0x6ec1ff));
+
+  const fNear = dotMesh(INDIGO, 0.09);
+  const fFar = dotMesh(INDIGO, 0.09);
+  group.add(fNear);
+  group.add(fFar);
+
+  const obj = makeArrow(AMBER);
+  const img = makeArrow(0x6ec1ff);
+  group.add(obj.group);
+  group.add(img.group);
+
+  const rayA = polyLine(3, 0xe2a43b); // parallel → focus
+  const rayB = polyLine(3, 0xefc97e); // through centre
+  const extA = polyLine(2, 0x4a5573); // virtual construction
+  const extB = polyLine(2, 0x4a5573);
+  group.add(rayA, rayB, extA, extB);
+
+  return () => {
+    const { f, u, di, m } = lensSolve(params);
+    const hi = m * OPTICS_HOBJ;
+    const tipX = -u * OPTICS_SC;
+    const tipY = OPTICS_HOBJ * OPTICS_SC;
+    const tip = new THREE.Vector3(tipX, tipY, 0.02);
+    const aLens = new THREE.Vector3(0, tipY, 0.02);
+    const centre = new THREE.Vector3(0, 0, 0.02);
+
+    obj.set(tipX, tipY);
+    img.set(di * OPTICS_SC, hi * OPTICS_SC);
+    fNear.position.set(-Math.abs(f) * OPTICS_SC, 0, 0);
+    fFar.position.set(Math.abs(f) * OPTICS_SC, 0, 0);
+
+    // parallel ray: through (0, h), along the line through the focal point (+f, 0), travelling +x
+    const dirA = new THREE.Vector3(0 - f * OPTICS_SC, tipY - 0, 0);
+    if (dirA.x < 0) dirA.negate();
+    dirA.normalize();
+    setPts(rayA, tip, aLens, aLens.clone().add(dirA.multiplyScalar(13)));
+
+    // central ray: straight through the optical centre
+    const dirB = centre.clone().sub(tip).normalize();
+    setPts(rayB, tip, centre, centre.clone().add(dirB.multiplyScalar(13)));
+
+    const virtual = di < 0;
+    extA.visible = virtual;
+    extB.visible = virtual;
+    if (virtual) {
+      const vt = new THREE.Vector3(di * OPTICS_SC, hi * OPTICS_SC, 0.02);
+      setPts(extA, aLens, vt);
+      setPts(extB, centre, vt);
+    }
+  };
+};
+
+export function opticsReadouts(p: ParamValues) {
+  const { convex, f, u, di, m } = lensSolve(p);
+  const real = di > 0;
+  return [
+    { label: "Lens", value: `${convex ? "Converging" : "Diverging"} (f = ${f.toFixed(1)})` },
+    { label: "Object distance", value: `${u.toFixed(1)}` },
+    { label: "Image distance", value: `${di.toFixed(2)}` },
+    { label: "Magnification", value: `${m.toFixed(2)}×` },
+    { label: "Image", value: `${real ? "real" : "virtual"}, ${m < 0 ? "inverted" : "upright"}` },
+  ];
+}
+
+export function opticsChart(p: ParamValues): LabChartData {
+  const { f, u } = lensSolve(p);
+  const di = 1 / (1 / f - 1 / u);
+  const pts: [number, number][] = [];
+  for (let uu = 0.4; uu <= 8.0001; uu += 0.1) {
+    const v = 1 / (1 / f - 1 / uu);
+    if (Math.abs(v) <= 12) pts.push([uu, v]);
+  }
+  return {
+    title: "Lens equation — image vs object distance",
+    xLabel: "object distance u",
+    yLabel: "image distance v",
+    series: [{ points: pts, color: "accent" }],
+    markers: [{ x: u, y: clamp(di, -12, 12), color: "violet" }],
+    zeroLine: true,
+    note: `1/f = 1/v + 1/u. At u = f the image flies to infinity; inside f it turns virtual.`,
+  };
+}
+
+/* ════════════════════════════════════════════════════════════════
+   MATH — Unit circle & trigonometry (sin/cos/tan projections)
+   ════════════════════════════════════════════════════════════════ */
+const TRIG_R = 2.2;
+
+export const trigScene: SceneInit = ({ group, camera, params }) => {
+  camera.position.set(0, 0, 8);
+  group.add(new THREE.AmbientLight(0xffffff, 0.95));
+
+  group.add(line2([new THREE.Vector3(-3.3, 0, 0), new THREE.Vector3(3.3, 0, 0)], 0x46506c));
+  group.add(line2([new THREE.Vector3(0, -3, 0), new THREE.Vector3(0, 3, 0)], 0x46506c));
+
+  const circlePts: THREE.Vector3[] = [];
+  for (let i = 0; i <= 80; i++) {
+    const t = (i / 80) * Math.PI * 2;
+    circlePts.push(new THREE.Vector3(Math.cos(t) * TRIG_R, Math.sin(t) * TRIG_R, 0));
+  }
+  group.add(line2(circlePts, 0x6ec1ff));
+
+  const radius = polyLine(2, 0xefc97e);
+  const sinSeg = polyLine(2, 0xe2a43b); // vertical leg = sin
+  const cosSeg = polyLine(2, 0x7a6bff); // horizontal leg = cos
+  group.add(radius, sinSeg, cosSeg);
+  const point = dotMesh(0xefc97e, 0.13);
+  group.add(point);
+
+  // The angle slider drives the scene directly, so readouts/chart stay in sync.
+  return () => {
+    const t = (num(params, "angle", 45) * Math.PI) / 180;
+    const x = Math.cos(t) * TRIG_R;
+    const y = Math.sin(t) * TRIG_R;
+    setPts(radius, new THREE.Vector3(0, 0, 0.01), new THREE.Vector3(x, y, 0.01));
+    setPts(sinSeg, new THREE.Vector3(x, 0, 0.02), new THREE.Vector3(x, y, 0.02));
+    setPts(cosSeg, new THREE.Vector3(0, 0, 0.03), new THREE.Vector3(x, 0, 0.03));
+    point.position.set(x, y, 0.04);
+  };
+};
+
+export function trigReadouts(p: ParamValues) {
+  const deg = num(p, "angle", 45);
+  const t = (deg * Math.PI) / 180;
+  const tan = Math.abs(Math.cos(t)) < 1e-6 ? "∞" : Math.tan(t).toFixed(3);
+  return [
+    { label: "Angle", value: `${deg.toFixed(0)}°  (${t.toFixed(3)} rad)` },
+    { label: "sin θ", value: Math.sin(t).toFixed(3) },
+    { label: "cos θ", value: Math.cos(t).toFixed(3) },
+    { label: "tan θ", value: tan },
+  ];
+}
+
+export function trigChart(p: ParamValues): LabChartData {
+  const deg = num(p, "angle", 45);
+  const sinPts: [number, number][] = [];
+  const cosPts: [number, number][] = [];
+  for (let d = 0; d <= 360; d += 4) {
+    const t = (d * Math.PI) / 180;
+    sinPts.push([d, Math.sin(t)]);
+    cosPts.push([d, Math.cos(t)]);
+  }
+  const t = (deg * Math.PI) / 180;
+  return {
+    title: "Sine & cosine vs angle",
+    xLabel: "angle (°)",
+    yLabel: "value",
+    series: [
+      { points: sinPts, color: "accent", label: "sin" },
+      { points: cosPts, color: "violet", label: "cos" },
+    ],
+    xDomain: [0, 360],
+    yDomain: [-1.1, 1.1],
+    zeroLine: true,
+    markers: [
+      { x: deg, y: Math.sin(t), color: "accent" },
+      { x: deg, y: Math.cos(t), color: "violet" },
+    ],
+    note: `At ${deg.toFixed(0)}°: sin = ${Math.sin(t).toFixed(2)}, cos = ${Math.cos(t).toFixed(2)}. sin²+cos² = 1 always.`,
+  };
+}
+
+/* ════════════════════════════════════════════════════════════════
+   MATH — Platonic solids (Euler's formula V − E + F = 2)
+   ════════════════════════════════════════════════════════════════ */
+const SOLIDS: Record<
+  string,
+  { name: string; v: number; e: number; f: number; geo: () => THREE.BufferGeometry }
+> = {
+  tetra: { name: "Tetrahedron", v: 4, e: 6, f: 4, geo: () => new THREE.TetrahedronGeometry(1.8) },
+  cube: { name: "Cube", v: 8, e: 12, f: 6, geo: () => new THREE.BoxGeometry(2.5, 2.5, 2.5) },
+  octa: { name: "Octahedron", v: 6, e: 12, f: 8, geo: () => new THREE.OctahedronGeometry(1.95) },
+  dodeca: {
+    name: "Dodecahedron",
+    v: 20,
+    e: 30,
+    f: 12,
+    geo: () => new THREE.DodecahedronGeometry(1.75),
+  },
+  icosa: {
+    name: "Icosahedron",
+    v: 12,
+    e: 30,
+    f: 20,
+    geo: () => new THREE.IcosahedronGeometry(1.85),
+  },
+};
+
+export const solidsScene: SceneInit = ({ group, camera, params }) => {
+  camera.position.set(0, 0, 7.5);
+  addStudioLights(group);
+  const s = SOLIDS[str(params, "solid", "cube")] ?? SOLIDS.cube;
+  const geo = s.geo();
+  const mesh = new THREE.Mesh(
+    geo,
+    new THREE.MeshStandardMaterial({
+      color: 0x2a3550,
+      metalness: 0.2,
+      roughness: 0.35,
+      transparent: true,
+      opacity: 0.5,
+      flatShading: true,
+    }),
+  );
+  group.add(mesh);
+  const edges = new THREE.LineSegments(
+    new THREE.EdgesGeometry(geo),
+    new THREE.LineBasicMaterial({ color: 0xefc97e }),
+  );
+  group.add(edges);
+
+  return (_elapsed, delta) => {
+    if (bool(params, "animate", true)) {
+      mesh.rotation.y += delta * 0.5;
+      mesh.rotation.x += delta * 0.18;
+      edges.rotation.copy(mesh.rotation);
+    }
+  };
+};
+
+export function solidsReadouts(p: ParamValues) {
+  const s = SOLIDS[str(p, "solid", "cube")] ?? SOLIDS.cube;
+  return [
+    { label: "Solid", value: s.name },
+    { label: "Vertices (V)", value: `${s.v}` },
+    { label: "Edges (E)", value: `${s.e}` },
+    { label: "Faces (F)", value: `${s.f}` },
+    { label: "V − E + F", value: `${s.v - s.e + s.f}` },
+  ];
+}
+
+export function solidsChart(p: ParamValues): LabChartData {
+  const s = SOLIDS[str(p, "solid", "cube")] ?? SOLIDS.cube;
+  return {
+    title: "Vertices · Edges · Faces",
+    kind: "bars",
+    yLabel: "count",
+    categories: ["V", "E", "F"],
+    series: [
+      {
+        points: [
+          [0, s.v],
+          [1, s.e],
+          [2, s.f],
+        ],
+        color: "accent",
+      },
+    ],
+    note: `Euler's formula: V − E + F = ${s.v} − ${s.e} + ${s.f} = 2 for every convex polyhedron.`,
+  };
+}
+
+/* ════════════════════════════════════════════════════════════════
+   CS — Stack & Queue (LIFO vs FIFO), animated push/pop demo
+   ════════════════════════════════════════════════════════════════ */
+const SQ_OPS: { push: boolean; val: number }[] = [
+  { push: true, val: 3 },
+  { push: true, val: 7 },
+  { push: true, val: 1 },
+  { push: true, val: 9 },
+  { push: false, val: 0 },
+  { push: true, val: 5 },
+  { push: false, val: 0 },
+  { push: false, val: 0 },
+  { push: false, val: 0 },
+  { push: false, val: 0 },
+];
+
+function sqState(isQueue: boolean, kRaw: number) {
+  const kc = ((kRaw % SQ_OPS.length) + SQ_OPS.length) % SQ_OPS.length;
+  const arr: number[] = [];
+  for (let i = 0; i <= kc; i++) {
+    const op = SQ_OPS[i];
+    if (op.push) arr.push(op.val);
+    else if (arr.length) {
+      if (isQueue) arr.shift();
+      else arr.pop();
+    }
+  }
+  return arr;
+}
+
+export const stackQueueScene: SceneInit = ({ group, camera, params }) => {
+  camera.position.set(0, 0, 9);
+  addStudioLights(group);
+  const MAX = 6;
+  const boxes = Array.from({ length: MAX }, () => {
+    const b = cellBox(1.3, 0.72, 0x2a3550);
+    group.add(b);
+    return b;
+  });
+
+  let lastK = 0;
+  return (elapsed) => {
+    const isQueue = str(params, "mode", "stack") === "queue";
+    const animate = bool(params, "animate", true);
+    if (animate) lastK = Math.floor(elapsed / 0.9);
+    const arr = sqState(isQueue, lastK);
+
+    for (let i = 0; i < MAX; i++) {
+      const b = boxes[i];
+      const mat = b.material as THREE.MeshStandardMaterial;
+      if (i >= arr.length) {
+        b.visible = false;
+        continue;
+      }
+      b.visible = true;
+      if (isQueue) {
+        const gap = 1.45;
+        b.position.set(-((arr.length - 1) / 2) * gap + i * gap, 0, 0);
+      } else {
+        const gap = 0.82;
+        b.position.set(0, -((arr.length - 1) / 2) * gap + i * gap, 0);
+      }
+      const active = isQueue ? i === 0 : i === arr.length - 1;
+      mat.color.setHex(active ? 0x3fbf7f : 0x2a3550);
+      mat.emissive.setHex(active ? 0x123524 : 0x000000);
+    }
+  };
+};
+
+export function stackQueueReadouts(p: ParamValues) {
+  const isQueue = str(p, "mode", "stack") === "queue";
+  return [
+    { label: "Structure", value: isQueue ? "Queue" : "Stack" },
+    { label: "Rule", value: isQueue ? "FIFO — first in, first out" : "LIFO — last in, first out" },
+    { label: "Add", value: isQueue ? "enqueue (back) → O(1)" : "push (top) → O(1)" },
+    { label: "Remove", value: isQueue ? "dequeue (front) → O(1)" : "pop (top) → O(1)" },
+    { label: "Active end", value: isQueue ? "front (green)" : "top (green)" },
+  ];
+}
+
+/* ════════════════════════════════════════════════════════════════
+   CS — Singly linked list (nodes + next pointers), traversal sweep
+   ════════════════════════════════════════════════════════════════ */
+export const linkedListScene: SceneInit = ({ group, camera, params }) => {
+  camera.position.set(0, 0, 9.5);
+  addStudioLights(group);
+  const n = clampInt(num(params, "length", 5), 2, 7);
+  const gap = 1.85;
+  const x0 = -((n - 1) / 2) * gap;
+
+  const nodes: THREE.Mesh[] = [];
+  for (let i = 0; i < n; i++) {
+    const b = cellBox(1.0, 0.92, 0x2a3550);
+    b.position.set(x0 + i * gap, 0, 0);
+    group.add(b);
+    nodes.push(b);
+
+    if (i < n - 1) {
+      group.add(
+        line2(
+          [
+            new THREE.Vector3(x0 + i * gap + 0.52, 0, 0),
+            new THREE.Vector3(x0 + (i + 1) * gap - 0.52, 0, 0),
+          ],
+          0x6ec1ff,
+        ),
+      );
+      const head = new THREE.Mesh(
+        new THREE.ConeGeometry(0.1, 0.28, 12),
+        new THREE.MeshBasicMaterial({ color: 0x6ec1ff }),
+      );
+      head.position.set(x0 + (i + 1) * gap - 0.56, 0, 0);
+      head.rotation.z = -Math.PI / 2;
+      group.add(head);
+    }
+  }
+  // "head" pointer above the first node
+  const headMark = new THREE.Mesh(
+    new THREE.ConeGeometry(0.13, 0.34, 12),
+    new THREE.MeshBasicMaterial({ color: 0xefc97e }),
+  );
+  headMark.position.set(x0, 0.95, 0);
+  headMark.rotation.z = Math.PI;
+  group.add(headMark);
+
+  return (elapsed) => {
+    const animate = bool(params, "animate", true);
+    const cur = animate ? Math.floor(elapsed / 0.7) % n : 0;
+    nodes.forEach((nd, i) => {
+      const mat = nd.material as THREE.MeshStandardMaterial;
+      mat.color.setHex(i === cur ? 0x3fbf7f : 0x2a3550);
+      mat.emissive.setHex(i === cur ? 0x123524 : 0x000000);
+    });
+  };
+};
+
+export function linkedListReadouts(p: ParamValues) {
+  const n = clampInt(num(p, "length", 5), 2, 7);
+  return [
+    { label: "Structure", value: "Singly linked list" },
+    { label: "Nodes", value: `${n}` },
+    { label: "Access i-th", value: "O(n) — walk from head" },
+    { label: "Insert at head", value: "O(1)" },
+    { label: "Node", value: "value + next pointer" },
+  ];
+}
+
+/* ════════════════════════════════════════════════════════════════
+   CS — Binary tree traversal (in / pre / post-order)
+   ════════════════════════════════════════════════════════════════ */
+const TREE_POS: [number, number][] = [
+  [0, 2],
+  [-2, 0.5],
+  [2, 0.5],
+  [-3, -1],
+  [-1, -1],
+  [1, -1],
+  [3, -1],
+];
+const TREE_EDGES: [number, number][] = [
+  [0, 1],
+  [0, 2],
+  [1, 3],
+  [1, 4],
+  [2, 5],
+  [2, 6],
+];
+const TREE_ORDERS: Record<string, number[]> = {
+  inorder: [3, 1, 4, 0, 5, 2, 6],
+  preorder: [0, 1, 3, 4, 2, 5, 6],
+  postorder: [3, 4, 1, 5, 6, 2, 0],
+};
+
+export const treeScene: SceneInit = ({ group, camera, params }) => {
+  camera.position.set(0, 0, 8.5);
+  addStudioLights(group);
+
+  for (const [a, b] of TREE_EDGES) {
+    group.add(
+      line2(
+        [
+          new THREE.Vector3(TREE_POS[a][0], TREE_POS[a][1], 0),
+          new THREE.Vector3(TREE_POS[b][0], TREE_POS[b][1], 0),
+        ],
+        0x46506c,
+      ),
+    );
+  }
+
+  const nodes = TREE_POS.map(([x, y]) => {
+    const m = new THREE.Mesh(
+      new THREE.SphereGeometry(0.42, 26, 20),
+      new THREE.MeshStandardMaterial({ color: 0x2a3550, roughness: 0.5, metalness: 0.1 }),
+    );
+    m.position.set(x, y, 0);
+    group.add(m);
+    return m;
+  });
+
+  return (elapsed) => {
+    const order = TREE_ORDERS[str(params, "traversal", "inorder")] ?? TREE_ORDERS.inorder;
+    const animate = bool(params, "animate", true);
+    const step = animate ? Math.floor(elapsed / 0.7) % (order.length + 2) : order.length - 1;
+    nodes.forEach((nd) => {
+      const mat = nd.material as THREE.MeshStandardMaterial;
+      mat.color.setHex(0x2a3550);
+      mat.emissive.setHex(0x000000);
+    });
+    for (let k = 0; k <= Math.min(step, order.length - 1); k++) {
+      const mat = nodes[order[k]].material as THREE.MeshStandardMaterial;
+      const isCurrent = k === Math.min(step, order.length - 1);
+      mat.color.setHex(isCurrent ? 0x3fbf7f : 0xe2a43b);
+      mat.emissive.setHex(isCurrent ? 0x123524 : 0x3a2a0c);
+    }
+  };
+};
+
+export function treeReadouts(p: ParamValues) {
+  const key = str(p, "traversal", "inorder");
+  const order = TREE_ORDERS[key] ?? TREE_ORDERS.inorder;
+  const names: Record<string, string> = {
+    inorder: "In-order (L · root · R)",
+    preorder: "Pre-order (root · L · R)",
+    postorder: "Post-order (L · R · root)",
+  };
+  return [
+    { label: "Traversal", value: names[key] ?? key },
+    { label: "Nodes", value: "7" },
+    { label: "Height", value: "3 levels" },
+    { label: "Visit order", value: order.join(" → ") },
+  ];
+}
+
+/* ════════════════════════════════════════════════════════════════
+   CS — Pathfinding on a grid (BFS · Dijkstra · A*)
+   ════════════════════════════════════════════════════════════════ */
+const PF_W = 12;
+const PF_H = 8;
+// Top row and right column are kept open, so a path always exists.
+const PF_MAP = [
+  "............",
+  ".####.####..",
+  "....#.#.....",
+  ".##.#.#.##..",
+  ".#..#.#..#..",
+  ".#.####..#..",
+  ".#......##..",
+  "............",
+];
+
+function pfWalls(): boolean[] {
+  const w: boolean[] = [];
+  for (let r = 0; r < PF_H; r++)
+    for (let c = 0; c < PF_W; c++) w[r * PF_W + c] = PF_MAP[r][c] === "#";
+  return w;
+}
+
+function pfRun(algo: string) {
+  const W = PF_W;
+  const H = PF_H;
+  const walls = pfWalls();
+  const start = 0;
+  const goal = (H - 1) * W + (W - 1);
+  const heuristic = (i: number) => {
+    const r = Math.floor(i / W);
+    const c = i % W;
+    return Math.abs(r - (H - 1)) + Math.abs(c - (W - 1));
+  };
+  const g: Record<number, number> = { [start]: 0 };
+  const came: Record<number, number> = {};
+  const visited = new Set<number>();
+  const order: number[] = [];
+  const frontier: number[] = [start];
+  const fval = (i: number) => (algo === "astar" ? g[i] + heuristic(i) : g[i]);
+
+  while (frontier.length) {
+    let bi = 0;
+    if (algo !== "bfs")
+      for (let k = 1; k < frontier.length; k++) if (fval(frontier[k]) < fval(frontier[bi])) bi = k;
+    const cur = frontier.splice(bi, 1)[0];
+    if (visited.has(cur)) continue;
+    visited.add(cur);
+    order.push(cur);
+    if (cur === goal) break;
+    const r = Math.floor(cur / W);
+    const c = cur % W;
+    const nb: [number, number][] = [
+      [r - 1, c],
+      [r + 1, c],
+      [r, c - 1],
+      [r, c + 1],
+    ];
+    for (const [nr, nc] of nb) {
+      if (nr < 0 || nr >= H || nc < 0 || nc >= W) continue;
+      const ni = nr * W + nc;
+      if (walls[ni] || visited.has(ni)) continue;
+      const ng = g[cur] + 1;
+      if (g[ni] === undefined || ng < g[ni]) {
+        g[ni] = ng;
+        came[ni] = cur;
+        frontier.push(ni);
+      }
+    }
+  }
+
+  const path: number[] = [];
+  if (visited.has(goal)) {
+    let cur: number | undefined = goal;
+    while (cur !== undefined && cur !== start) {
+      path.push(cur);
+      cur = came[cur];
+    }
+    path.push(start);
+    path.reverse();
+  }
+  return { order, path, start, goal, walls };
+}
+
+export const pathfindingScene: SceneInit = ({ group, camera, params }) => {
+  camera.position.set(0, 0, 11);
+  group.add(new THREE.AmbientLight(0xffffff, 0.95));
+  const algo = str(params, "algorithm", "astar");
+  const { order, path, start, goal, walls } = pfRun(algo);
+  const tile = 0.82;
+  const ox = (-(PF_W - 1) / 2) * tile;
+  const oy = ((PF_H - 1) / 2) * tile;
+
+  const tiles: THREE.Mesh[] = [];
+  for (let r = 0; r < PF_H; r++) {
+    for (let c = 0; c < PF_W; c++) {
+      const i = r * PF_W + c;
+      const m = new THREE.Mesh(
+        new THREE.PlaneGeometry(tile * 0.9, tile * 0.9),
+        new THREE.MeshBasicMaterial({ color: walls[i] ? 0x10151f : 0x222b40 }),
+      );
+      m.position.set(ox + c * tile, oy - r * tile, 0);
+      group.add(m);
+      tiles.push(m);
+    }
+  }
+  const pathSet = new Set(path);
+
+  return (elapsed) => {
+    const animate = bool(params, "animate", true);
+    const step = 0.05;
+    const reveal = animate
+      ? Math.floor((elapsed % (order.length * step + 2.4)) / step)
+      : order.length;
+    for (let i = 0; i < tiles.length; i++) {
+      if (!walls[i]) (tiles[i].material as THREE.MeshBasicMaterial).color.setHex(0x222b40);
+    }
+    const lim = Math.min(reveal, order.length);
+    for (let k = 0; k < lim; k++) {
+      (tiles[order[k]].material as THREE.MeshBasicMaterial).color.setHex(0x6a5a2a);
+    }
+    if (reveal >= order.length) {
+      for (const i of pathSet)
+        (tiles[i].material as THREE.MeshBasicMaterial).color.setHex(0xe2a43b);
+    }
+    (tiles[start].material as THREE.MeshBasicMaterial).color.setHex(0x3fbf7f);
+    (tiles[goal].material as THREE.MeshBasicMaterial).color.setHex(0xff5a5a);
+  };
+};
+
+export function pathfindingReadouts(p: ParamValues) {
+  const algo = str(p, "algorithm", "astar");
+  const { order, path } = pfRun(algo);
+  const names: Record<string, string> = {
+    bfs: "Breadth-first search",
+    dijkstra: "Dijkstra",
+    astar: "A* search",
+  };
+  return [
+    { label: "Algorithm", value: names[algo] ?? algo },
+    { label: "Cells explored", value: `${order.length}` },
+    { label: "Path length", value: `${path.length ? path.length - 1 : 0} steps` },
+    { label: "Grid", value: `${PF_W} × ${PF_H}` },
+    { label: "Heuristic", value: algo === "astar" ? "Manhattan distance" : "none" },
+  ];
+}
+
+export function pathfindingChart(p: ParamValues): LabChartData {
+  const algos = ["bfs", "dijkstra", "astar"];
+  const counts = algos.map((a) => pfRun(a).order.length);
+  const cur = str(p, "algorithm", "astar");
+  return {
+    title: "Cells explored by algorithm",
+    kind: "bars",
+    yLabel: "cells",
+    categories: ["BFS", "Dijkstra", "A*"],
+    series: [{ points: counts.map((c, i) => [i, c] as [number, number]), color: "accent" }],
+    note: `A* uses a goal-directed heuristic, so it usually explores the fewest cells. Now showing: ${cur.toUpperCase()}.`,
+  };
+}
+
+/* ════════════════════════════════════════════════════════════════
+   ELECTRONICS — Circuit & Ohm's law (V = IR, P = VI)
+   ════════════════════════════════════════════════════════════════ */
+function ohm(p: ParamValues) {
+  const V = num(p, "voltage", 9);
+  const r1 = Math.max(1, num(p, "r1", 6));
+  const r2 = Math.max(1, num(p, "r2", 6));
+  const series = str(p, "config", "series") === "series";
+  const R = series ? r1 + r2 : (r1 * r2) / (r1 + r2);
+  const I = V / R;
+  return { V, r1, r2, series, R, I, P: V * I };
+}
+
+function rectLoop(): THREE.Vector3[] {
+  const pts: THREE.Vector3[] = [];
+  const add = (x1: number, y1: number, x2: number, y2: number, n: number) => {
+    for (let i = 0; i < n; i++) {
+      const t = i / n;
+      pts.push(new THREE.Vector3(x1 + (x2 - x1) * t, y1 + (y2 - y1) * t, 0));
+    }
+  };
+  add(-3, 1.6, 3, 1.6, 30);
+  add(3, 1.6, 3, -1.6, 16);
+  add(3, -1.6, -3, -1.6, 30);
+  add(-3, -1.6, -3, 1.6, 16);
+  return pts;
+}
+
+export const circuitScene: SceneInit = ({ group, camera, params }) => {
+  camera.position.set(0, 0, 9.5);
+  addStudioLights(group);
+
+  const loopPts = rectLoop();
+  group.add(line2([...loopPts, loopPts[0].clone()], 0x6ec1ff));
+
+  // battery plates on the left edge
+  group.add(
+    line2([new THREE.Vector3(-3.18, 0.45, 0), new THREE.Vector3(-2.82, 0.45, 0)], 0xefc97e),
+  );
+  group.add(
+    line2([new THREE.Vector3(-3.08, -0.35, 0), new THREE.Vector3(-2.92, -0.35, 0)], 0xefc97e),
+  );
+  group.add(line2([new THREE.Vector3(-3, 0.45, 0), new THREE.Vector3(-3, -0.35, 0)], 0x6ec1ff));
+
+  // resistors — layout depends on series/parallel (rebuilds on config)
+  const series = str(params, "config", "series") === "series";
+  const resMat = () =>
+    new THREE.MeshStandardMaterial({ color: 0xb98a3a, roughness: 0.5, metalness: 0.2 });
+  if (series) {
+    const a = cellBox(0.9, 0.4, 0xb98a3a);
+    a.position.set(-0.9, 1.6, 0);
+    const b = cellBox(0.9, 0.4, 0xb98a3a);
+    b.position.set(0.9, 1.6, 0);
+    group.add(a, b);
+  } else {
+    const a = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.4, 0.3), resMat());
+    a.position.set(0, 0.7, 0);
+    const b = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.4, 0.3), resMat());
+    b.position.set(0, -0.7, 0);
+    group.add(a, b);
+    // branch connectors from the top/bottom wires into the parallel pair
+    group.add(line2([new THREE.Vector3(-1.5, 1.6, 0), new THREE.Vector3(-1.5, -1.6, 0)], 0x6ec1ff));
+    group.add(line2([new THREE.Vector3(1.5, 1.6, 0), new THREE.Vector3(1.5, -1.6, 0)], 0x6ec1ff));
+    group.add(line2([new THREE.Vector3(-1.5, 0.7, 0), new THREE.Vector3(1.5, 0.7, 0)], 0x6ec1ff));
+    group.add(line2([new THREE.Vector3(-1.5, -0.7, 0), new THREE.Vector3(1.5, -0.7, 0)], 0x6ec1ff));
+  }
+
+  // LED on the right edge — brightness tracks the current
+  const led = new THREE.Mesh(
+    new THREE.SphereGeometry(0.34, 26, 20),
+    new THREE.MeshStandardMaterial({
+      color: 0xffd36b,
+      emissive: 0xffc24d,
+      emissiveIntensity: 0.4,
+      roughness: 0.3,
+    }),
+  );
+  led.position.set(3, 0, 0);
+  group.add(led);
+
+  const dots = Array.from({ length: 12 }, () => {
+    const d = dotMesh(0xefc97e, 0.09);
+    group.add(d);
+    return d;
+  });
+
+  return (elapsed) => {
+    const { I } = ohm(params);
+    const animate = bool(params, "animate", true);
+    const speed = clamp(I * 0.04, 0.015, 0.5);
+    const base = animate ? elapsed * speed : 0;
+    dots.forEach((d, i) => {
+      const t = (base + i / dots.length) % 1;
+      d.position.copy(loopPts[Math.floor(t * loopPts.length) % loopPts.length]);
+    });
+    (led.material as THREE.MeshStandardMaterial).emissiveIntensity = clamp(I / 4, 0.05, 2.6);
+  };
+};
+
+export function circuitReadouts(p: ParamValues) {
+  const { V, R, I, P, series } = ohm(p);
+  return [
+    { label: "Configuration", value: series ? "Series" : "Parallel" },
+    { label: "Voltage", value: `${V.toFixed(1)} V` },
+    { label: "Total resistance", value: `${R.toFixed(2)} Ω` },
+    { label: "Current (I = V/R)", value: `${I.toFixed(2)} A` },
+    { label: "Power (P = VI)", value: `${P.toFixed(2)} W` },
+  ];
+}
+
+export function circuitChart(p: ParamValues): LabChartData {
+  const { V, R } = ohm(p);
+  const pts: [number, number][] = [];
+  for (let r = 1; r <= 40; r += 0.5) pts.push([r, V / r]);
+  return {
+    title: "Current vs resistance (I = V/R)",
+    xLabel: "resistance (Ω)",
+    yLabel: "current (A)",
+    series: [{ points: pts, color: "accent" }],
+    markers: [{ x: R, y: V / R, color: "violet" }],
+    note: `Ohm's law at ${V.toFixed(0)} V: doubling resistance halves the current. Series adds R; parallel lowers it.`,
+  };
+}
+
+/* ════════════════════════════════════════════════════════════════
+   CHEMISTRY — Interactive periodic table (periods 1–4, Z = 1…36)
+   ════════════════════════════════════════════════════════════════ */
+type PTElement = {
+  z: number;
+  sym: string;
+  name: string;
+  mass: number;
+  group: number;
+  period: number;
+  cat: string;
+};
+const PT_DATA: PTElement[] = (
+  [
+    [1, "H", "Hydrogen", 1.008, 1, 1, "nonmetal"],
+    [2, "He", "Helium", 4.003, 18, 1, "noble"],
+    [3, "Li", "Lithium", 6.94, 1, 2, "alkali"],
+    [4, "Be", "Beryllium", 9.012, 2, 2, "alkaline"],
+    [5, "B", "Boron", 10.81, 13, 2, "metalloid"],
+    [6, "C", "Carbon", 12.011, 14, 2, "nonmetal"],
+    [7, "N", "Nitrogen", 14.007, 15, 2, "nonmetal"],
+    [8, "O", "Oxygen", 15.999, 16, 2, "nonmetal"],
+    [9, "F", "Fluorine", 18.998, 17, 2, "halogen"],
+    [10, "Ne", "Neon", 20.18, 18, 2, "noble"],
+    [11, "Na", "Sodium", 22.99, 1, 3, "alkali"],
+    [12, "Mg", "Magnesium", 24.305, 2, 3, "alkaline"],
+    [13, "Al", "Aluminium", 26.982, 13, 3, "post"],
+    [14, "Si", "Silicon", 28.085, 14, 3, "metalloid"],
+    [15, "P", "Phosphorus", 30.974, 15, 3, "nonmetal"],
+    [16, "S", "Sulfur", 32.06, 16, 3, "nonmetal"],
+    [17, "Cl", "Chlorine", 35.45, 17, 3, "halogen"],
+    [18, "Ar", "Argon", 39.948, 18, 3, "noble"],
+    [19, "K", "Potassium", 39.098, 1, 4, "alkali"],
+    [20, "Ca", "Calcium", 40.078, 2, 4, "alkaline"],
+    [21, "Sc", "Scandium", 44.956, 3, 4, "transition"],
+    [22, "Ti", "Titanium", 47.867, 4, 4, "transition"],
+    [23, "V", "Vanadium", 50.942, 5, 4, "transition"],
+    [24, "Cr", "Chromium", 51.996, 6, 4, "transition"],
+    [25, "Mn", "Manganese", 54.938, 7, 4, "transition"],
+    [26, "Fe", "Iron", 55.845, 8, 4, "transition"],
+    [27, "Co", "Cobalt", 58.933, 9, 4, "transition"],
+    [28, "Ni", "Nickel", 58.693, 10, 4, "transition"],
+    [29, "Cu", "Copper", 63.546, 11, 4, "transition"],
+    [30, "Zn", "Zinc", 65.38, 12, 4, "transition"],
+    [31, "Ga", "Gallium", 69.723, 13, 4, "post"],
+    [32, "Ge", "Germanium", 72.63, 14, 4, "metalloid"],
+    [33, "As", "Arsenic", 74.922, 15, 4, "metalloid"],
+    [34, "Se", "Selenium", 78.971, 16, 4, "nonmetal"],
+    [35, "Br", "Bromine", 79.904, 17, 4, "halogen"],
+    [36, "Kr", "Krypton", 83.798, 18, 4, "noble"],
+  ] as const
+).map(([z, sym, name, mass, group, period, cat]) => ({ z, sym, name, mass, group, period, cat }));
+
+const PT_COLORS: Record<string, number> = {
+  alkali: 0xff7a59,
+  alkaline: 0xffb259,
+  transition: 0x6ec1ff,
+  post: 0x9aa3b4,
+  metalloid: 0x7a6bff,
+  nonmetal: 0x3fbf7f,
+  halogen: 0xefc97e,
+  noble: 0xff5a9e,
+};
+const PT_CAT_LABEL: Record<string, string> = {
+  alkali: "Alkali metal",
+  alkaline: "Alkaline earth metal",
+  transition: "Transition metal",
+  post: "Post-transition metal",
+  metalloid: "Metalloid",
+  nonmetal: "Nonmetal",
+  halogen: "Halogen",
+  noble: "Noble gas",
+};
+
+function ptSelected(p: ParamValues): PTElement {
+  const z = clampInt(num(p, "z", 6), 1, 36);
+  return PT_DATA[z - 1] ?? PT_DATA[5];
+}
+
+export const periodicTableScene: SceneInit = ({ group, camera, params }) => {
+  camera.position.set(0, 0, 13);
+  group.add(new THREE.AmbientLight(0xffffff, 0.95));
+  addStudioLights(group);
+
+  const tw = 0.62;
+  const th = 0.66;
+  const tiles: { mesh: THREE.Mesh; base: number }[] = [];
+  for (const el of PT_DATA) {
+    const base = PT_COLORS[el.cat] ?? 0x6ec1ff;
+    const m = new THREE.Mesh(
+      new THREE.BoxGeometry(tw * 0.9, th * 0.9, 0.22),
+      new THREE.MeshStandardMaterial({ color: base, roughness: 0.55, metalness: 0.1 }),
+    );
+    m.position.set((el.group - 9.5) * tw, (2.5 - el.period) * th, 0);
+    group.add(m);
+    tiles.push({ mesh: m, base });
+  }
+
+  return () => {
+    const z = clampInt(num(params, "z", 6), 1, 36);
+    tiles.forEach((t, i) => {
+      const sel = i === z - 1;
+      const mat = t.mesh.material as THREE.MeshStandardMaterial;
+      mat.color.setHex(t.base);
+      mat.emissive.setHex(sel ? t.base : 0x000000);
+      mat.emissiveIntensity = sel ? 0.6 : 0;
+      const s = sel ? 1.7 : 1;
+      t.mesh.scale.set(s, s, sel ? 4 : 1);
+    });
+  };
+};
+
+export function periodicTableReadouts(p: ParamValues) {
+  const el = ptSelected(p);
+  return [
+    { label: "Selected", value: `${el.name} (${el.sym})` },
+    { label: "Atomic number", value: `${el.z}` },
+    { label: "Atomic mass", value: `${el.mass.toFixed(3)} u` },
+    { label: "Group · Period", value: `${el.group} · ${el.period}` },
+    { label: "Category", value: PT_CAT_LABEL[el.cat] ?? el.cat },
+  ];
+}
+
+export function periodicTableChart(p: ParamValues): LabChartData {
+  const el = ptSelected(p);
+  const pts: [number, number][] = PT_DATA.map((e) => [e.z, e.mass]);
+  return {
+    title: "Atomic mass climbs with atomic number",
+    xLabel: "atomic number Z",
+    yLabel: "mass (u)",
+    series: [{ points: pts, color: "accent" }],
+    markers: [{ x: el.z, y: el.mass, color: "violet", label: el.sym }],
+    note: `${el.name}: Z = ${el.z}, mass ≈ ${el.mass.toFixed(1)} u. Mass rises with Z (with a few inversions, e.g. Ar/K).`,
+  };
+}

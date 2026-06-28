@@ -21,7 +21,7 @@ If you use the hosted version, pricing may vary — check the project's website.
 
 ### What subjects are available?
 
-- **Programming**: Python, HTML, CSS, C++ (124 lessons)
+- **Programming**: Python, HTML, CSS, C++ (124+ lessons)
 - **Academic**: Mathematics, Physics, Science (48 lessons)
 - **Total**: 7 courses, 172 lessons
 

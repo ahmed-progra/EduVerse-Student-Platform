@@ -303,10 +303,7 @@ export default function DashboardPage() {
                         </div>
                       </div>
                     </div>
-                    <span
-                      className="text-sm font-bold font-mono text-eduverse-success px-2 py-0.5 rounded"
-                      style={{ background: "oklch(76% 0.14 165 / 0.1)" }}
-                    >
+                    <span className="text-sm font-bold font-mono text-eduverse-success px-2 py-0.5 rounded bg-eduverse-success/10">
                       +{log.amount} XP
                     </span>
                   </motion.div>

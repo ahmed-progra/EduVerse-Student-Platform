@@ -142,6 +142,18 @@ For production, we recommend using managed services:
 - Backend health: `GET /api/health` returns `{ status: "ok" }`
 - Frontend health: any successful page load
 
+## Security headers
+
+- **Backend** (`backend/src/index.ts`) sets `X-Content-Type-Options`, `X-Frame-Options`,
+  and `Referrer-Policy` on every API response, plus CORS locked to `FRONTEND_URL`.
+- **Frontend** (`frontend/next.config.js`) sets `X-Content-Type-Options`, `X-Frame-Options`,
+  `Referrer-Policy`, `Strict-Transport-Security` (HTTPS only), `X-DNS-Prefetch-Control`, and a
+  restrictive `Permissions-Policy` on every route.
+- **Content-Security-Policy is intentionally not enabled by default.** A strict CSP must account
+  for Monaco's `blob:` web workers, Three.js, and Next's inline runtime. Add it via the `headers()`
+  hook in `next.config.js` and validate every page on a staging deploy (editor, 3D Lab, AI panels)
+  before enabling it in production.
+
 ## Monitoring
 
 - Use the backend's built-in rate limiting (configured in `src/middleware/rate-limit.ts`)

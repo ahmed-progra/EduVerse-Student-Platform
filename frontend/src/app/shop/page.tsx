@@ -8,7 +8,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { SkeletonCardGrid } from "@/components/ui/skeleton";
 import { api } from "@/services/api-client";
 import { useAuthStore } from "@/stores/auth-store";
-import { fadeUp, staggerContainer, fastEaseTransition, cardHover } from "@/lib/motion";
+import { fadeUp, staggerContainer, fastEaseTransition } from "@/lib/motion";
 import { useEffect, useState } from "react";
 import {
   ShoppingBag,
@@ -22,6 +22,7 @@ import {
   Wand2,
   WifiOff,
   Gift,
+  AlertCircle,
 } from "lucide-react";
 
 interface ShopItem {
@@ -56,6 +57,12 @@ export default function ShopPage() {
   const [buyingId, setBuyingId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>("all");
   const [purchased, setPurchased] = useState<{ name: string; price: number } | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+
+  const showActionError = (err: unknown, fallback: string) => {
+    setActionError(err instanceof Error ? err.message : fallback);
+    setTimeout(() => setActionError(null), 3500);
+  };
 
   const loadData = async () => {
     try {
@@ -92,7 +99,9 @@ export default function ShopPage() {
         setPurchased({ name: item.name, price: item.price });
         setTimeout(() => setPurchased(null), 2600);
       }
-    } catch {}
+    } catch (err) {
+      showActionError(err, "Purchase failed. Please try again.");
+    }
     setBuyingId(null);
   };
 
@@ -101,7 +110,9 @@ export default function ShopPage() {
       await api.equipItem(itemId);
       api.clearCache();
       await loadData();
-    } catch {}
+    } catch (err) {
+      showActionError(err, "Couldn't equip that item. Please try again.");
+    }
   };
 
   if (loading) {
@@ -142,6 +153,22 @@ export default function ShopPage() {
               <div className="text-xs text-eduverse-text-muted">
                 −{purchased.price.toLocaleString()} coins
               </div>
+            </div>
+          </motion.div>
+        )}
+        {actionError && (
+          <motion.div
+            initial={{ opacity: 0, y: -14, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, transition: { duration: 0.18, ease: "easeOut" } }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="xp-toast"
+            role="alert"
+          >
+            <AlertCircle className="w-6 h-6 text-eduverse-danger" aria-hidden="true" />
+            <div>
+              <div className="font-bold text-eduverse-text">Action failed</div>
+              <div className="text-xs text-eduverse-text-muted">{actionError}</div>
             </div>
           </motion.div>
         )}

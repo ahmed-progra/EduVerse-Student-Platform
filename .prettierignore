@@ -8,3 +8,7 @@ coverage/
 package-lock.json
 backend/prisma/migrations/
 docs/superpowers/
+AUDIT.md
+NOTES.md
+scratch*.md
+*.log

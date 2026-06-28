@@ -1,6 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
 
+/**
+ * State synced to `localStorage`. Hydrates from the stored value after mount (SSR-safe — starts at
+ * `defaultValue` on the server) and persists on every set. Read/write failures are ignored so a
+ * blocked or full storage never crashes the component.
+ */
 export function useLocalStorage<T>(key: string, defaultValue: T): [T, (v: T) => void] {
   const [value, setValue] = useState<T>(defaultValue);
 

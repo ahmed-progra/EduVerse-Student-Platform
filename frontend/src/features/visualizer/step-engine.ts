@@ -4,6 +4,8 @@
  * and uses Suspension to pause between each statement.
  */
 
+// `Sk` is the untyped Skulpt runtime (no published types — see types/skulpt.d.ts); `any` is the
+// intentional boundary for its dynamic API.
 let Sk: any = null;
 let skLoadPromise: Promise<boolean> | null = null;
 let stepResolve: ((val?: unknown) => void) | null = null;
@@ -192,7 +194,7 @@ export async function runCode(
   const callStack: { name: string; line: number }[] = [{ name: "<module>", line: 0 }];
   const scopeStack: string[] = ["<module>"];
 
-  let lastVars: Record<string, any> = {};
+  const lastVars: Record<string, any> = {};
 
   function captureVars(): Record<string, { type: string; value: any }> {
     try {
@@ -246,7 +248,7 @@ export async function runCode(
 
   function detectChanges(
     currentVars: Record<string, { type: string; value: any }>,
-    step: StepFrame,
+    _step: StepFrame,
   ) {
     const changed: string[] = [];
     for (const [k, v] of Object.entries(currentVars)) {

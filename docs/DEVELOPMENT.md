@@ -134,7 +134,7 @@ eduverse/
 │   │   ├── middleware/     auth (JWT), rate-limit
 │   │   ├── learning/       topic catalogs + assessment banks
 │   │   └── lib/            prisma client, jwt, zod validate
-│   ├── curriculum/         124+ authored lessons (seed source)
+│   ├── curriculum/         172 authored lessons across 7 courses (seed source)
 │   ├── prisma/             schema + migrations
 │   ├── scripts/            *-e2e.mjs end-to-end suites
 │   └── seed.ts             database seeder

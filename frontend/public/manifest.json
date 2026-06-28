@@ -1,9 +1,18 @@
 {
-  "name": "EduVerse",
+  "name": "EduVerse — See Your Code Run, Line by Line",
   "short_name": "EduVerse",
-  "description": "Learn Programming Through RPG Adventure",
+  "description": "A student-built learning platform with a step-by-step code visualizer, daily challenges, and AI hints for Python, HTML, CSS, and C++.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#faf9ff",
-  "theme_color": "#7c3aed"
+  "background_color": "#0e111a",
+  "theme_color": "#0e111a",
+  "categories": ["education", "productivity"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    }
+  ]
 }

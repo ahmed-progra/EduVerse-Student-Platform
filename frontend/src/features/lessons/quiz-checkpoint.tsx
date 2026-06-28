@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ListChecks, CheckCircle, XCircle, RefreshCw, Zap } from "lucide-react";
+import { CheckCircle, XCircle, RefreshCw, Zap } from "lucide-react";
 import { api } from "@/services/api-client";
 import { GlassCard } from "@/components/ui/glass-card";
 

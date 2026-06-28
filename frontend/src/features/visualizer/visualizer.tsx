@@ -6,6 +6,7 @@ import { MemoryPanel } from "./memory-panel";
 import { DebuggerPanel } from "./debugger-panel";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { api } from "@/services/api-client";
+import { downloadTextFile, fileExtForLanguage } from "@/lib/utils";
 import {
   Play,
   StepForward,
@@ -16,6 +17,7 @@ import {
   Code2,
   SkipForward,
   Copy,
+  Download,
   Terminal,
   Eye,
 } from "lucide-react";
@@ -265,6 +267,14 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
     }
   }, []);
 
+  const handleCopy = useCallback(() => {
+    navigator.clipboard?.writeText(codeRef.current);
+  }, []);
+
+  const handleDownload = useCallback(() => {
+    downloadTextFile(`eduverse-code.${fileExtForLanguage(language)}`, codeRef.current);
+  }, [language]);
+
   const handleAutoPlayToggle = useCallback(() => {
     if (autoPlay) {
       setAutoPlay(false);
@@ -387,10 +397,16 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
         </div>
         <div className="flex gap-2 mt-3">
           <button
-            onClick={() => navigator.clipboard.writeText(code)}
+            onClick={handleCopy}
             className="px-3 py-2 rounded-xl border border-white/10 text-eduverse-text-muted hover:text-white hover:bg-white/5 transition-colors text-xs flex items-center gap-1.5"
           >
             <Copy className="w-3.5 h-3.5" /> Copy
+          </button>
+          <button
+            onClick={handleDownload}
+            className="px-3 py-2 rounded-xl border border-white/10 text-eduverse-text-muted hover:text-white hover:bg-white/5 transition-colors text-xs flex items-center gap-1.5"
+          >
+            <Download className="w-3.5 h-3.5" /> Download
           </button>
           <button
             onClick={() => {
@@ -451,10 +467,16 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
             <Play className="w-4 h-4" /> Run
           </GradientButton>
           <button
-            onClick={() => navigator.clipboard.writeText(code)}
+            onClick={handleCopy}
             className="px-3 py-2 rounded-xl border border-white/10 text-eduverse-text-muted hover:text-white hover:bg-white/5 transition-colors text-xs flex items-center gap-1.5"
           >
             <Copy className="w-3.5 h-3.5" /> Copy
+          </button>
+          <button
+            onClick={handleDownload}
+            className="px-3 py-2 rounded-xl border border-white/10 text-eduverse-text-muted hover:text-white hover:bg-white/5 transition-colors text-xs flex items-center gap-1.5"
+          >
+            <Download className="w-3.5 h-3.5" /> Download
           </button>
         </div>
         {output && (
@@ -581,9 +603,27 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
               {langLabel}
             </span>
           </div>
-          <span className="text-[10px] text-eduverse-text-muted">
-            {code.split("\n").length} lines
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] text-eduverse-text-muted">
+              {code.split("\n").length} lines
+            </span>
+            <button
+              onClick={handleCopy}
+              className="visualizer-btn"
+              aria-label="Copy code"
+              title="Copy code"
+            >
+              <Copy className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={handleDownload}
+              className="visualizer-btn"
+              aria-label="Download code"
+              title="Download code"
+            >
+              <Download className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
         <div className="code-editor-wrap" style={{ position: "relative" }}>
           <div className="code-editor-gutter">

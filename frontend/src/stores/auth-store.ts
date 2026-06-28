@@ -1,18 +1,6 @@
 import { create } from "zustand";
 import { api } from "@/services/api-client";
-
-interface User {
-  id: string;
-  email: string;
-  username: string;
-  avatar: string;
-  level: number;
-  xp: number;
-  coins: number;
-  rank: number;
-  placementLevel: string;
-  createdAt: string;
-}
+import type { User } from "@/types/api";
 
 interface AuthState {
   user: User | null;

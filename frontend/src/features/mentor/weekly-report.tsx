@@ -50,20 +50,17 @@ export function WeeklyReport({ report, loading, error, onRefresh }: WeeklyReport
           title="Improved"
           icon={<ArrowUpRight size={13} className="text-eduverse-success" />}
           items={report.improved}
-          tone="success"
         />
         <ReportList
           title="Regressed"
           icon={<ArrowDownRight size={13} className="text-eduverse-danger" />}
           items={report.regressed}
-          tone="danger"
           emptyText="Nothing slipped — nice."
         />
         <ReportList
           title="Needs work"
           icon={<AlertCircle size={13} className="text-eduverse-warning" />}
           items={report.needsWork}
-          tone="warning"
           emptyText="No gaps flagged."
         />
       </div>
@@ -121,13 +118,11 @@ function ReportList({
   title,
   icon,
   items,
-  tone,
   emptyText = "—",
 }: {
   title: string;
   icon: React.ReactNode;
   items: string[];
-  tone: "success" | "danger" | "warning";
   emptyText?: string;
 }) {
   return (

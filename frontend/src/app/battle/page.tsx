@@ -11,7 +11,16 @@ import { useAuthStore } from "@/stores/auth-store";
 import { fadeUp, staggerContainer, fastEaseTransition } from "@/lib/motion";
 import { useEffect, useState, useRef } from "react";
 import dynamic from "next/dynamic";
-import { Swords, Clock, Play, Trophy, History, ShieldAlert, Scale } from "lucide-react";
+import {
+  Swords,
+  Clock,
+  Play,
+  Trophy,
+  History,
+  ShieldAlert,
+  Scale,
+  AlertCircle,
+} from "lucide-react";
 
 const Editor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
@@ -55,6 +64,7 @@ export default function BattlePage() {
   const [result, setResult] = useState<BattleResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState<BattleEntry[]>([]);
+  const [battleError, setBattleError] = useState<string | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const countdownRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef(0);
@@ -76,6 +86,7 @@ export default function BattlePage() {
 
   const handleCreateBattle = async () => {
     setLoading(true);
+    setBattleError(null);
     try {
       const res = await api.createBattle({ difficulty, timeLimit });
       const b = res.data;
@@ -101,7 +112,9 @@ export default function BattlePage() {
           return prev - 1;
         });
       }, 900);
-    } catch {}
+    } catch (err) {
+      setBattleError(err instanceof Error ? err.message : "Couldn't start the battle. Try again.");
+    }
     setLoading(false);
   };
 
@@ -160,7 +173,13 @@ export default function BattlePage() {
         .getBattleHistory()
         .then((r) => setHistory(r.data))
         .catch(() => {});
-    } catch {}
+    } catch (err) {
+      // Let the learner retry: re-open the editor and surface what went wrong.
+      setSubmitted(false);
+      setBattleError(
+        err instanceof Error ? err.message : "Couldn't submit your solution. Try again.",
+      );
+    }
   };
 
   const formatTime = (s: number) => {
@@ -196,6 +215,30 @@ export default function BattlePage() {
       animate="visible"
       variants={staggerContainer}
     >
+      <AnimatePresence>
+        {battleError && (
+          <motion.div
+            initial={{ opacity: 0, y: -14, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, transition: { duration: 0.18, ease: "easeOut" } }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="xp-toast"
+            role="alert"
+          >
+            <AlertCircle className="w-6 h-6 text-eduverse-danger" aria-hidden="true" />
+            <div className="flex-1">
+              <div className="font-bold text-eduverse-text">Something went wrong</div>
+              <div className="text-xs text-eduverse-text-muted">{battleError}</div>
+            </div>
+            <button
+              onClick={() => setBattleError(null)}
+              className="text-xs underline opacity-70 hover:opacity-100 transition-opacity"
+            >
+              dismiss
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <motion.div variants={fadeUp} transition={fastEaseTransition}>
         <div className="section-label">
           <span className="section-label-prefix">//</span> Arena

@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import { GlassCard } from "@/components/ui/glass-card";
-import { SkeletonCard } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { api } from "@/services/api-client";
 import { fadeUp, staggerContainer, fastEaseTransition, cardHover } from "@/lib/motion";
@@ -47,10 +46,20 @@ export default function CoursesPage() {
         <div className="section-label">
           <span className="section-label-prefix">//</span> Courses
         </div>
-        <h1 className="text-3xl font-bold mb-2 font-display tracking-tight">Available Paths</h1>
-        <p className="text-eduverse-text-muted">
-          Choose your path and master programming languages.
-        </p>
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <h1 className="text-3xl font-bold mb-2 font-display tracking-tight">Available Paths</h1>
+            <p className="text-eduverse-text-muted">
+              Choose your path and master programming languages.
+            </p>
+          </div>
+          <Link
+            href="/placement-test"
+            className="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[var(--radius-button)] border border-eduverse-border text-sm text-eduverse-text-muted hover:text-eduverse-accent hover:border-eduverse-accent/30 hover:bg-eduverse-accent/5 transition-colors"
+          >
+            <GraduationCap className="w-4 h-4" aria-hidden="true" /> Placement Test
+          </Link>
+        </div>
       </motion.div>
 
       {loading ? (

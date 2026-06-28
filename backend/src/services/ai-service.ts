@@ -74,7 +74,7 @@ export function clampText(text: string, maxChars: number): string {
 }
 
 function log(op: string, msg: string) {
-  console.log(`[ai] ${new Date().toISOString()} op=${op} ${msg}`);
+  console.info(`[ai] ${new Date().toISOString()} op=${op} ${msg}`);
 }
 
 function logError(op: string, msg: string) {

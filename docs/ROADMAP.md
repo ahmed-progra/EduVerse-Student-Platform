@@ -1,4 +1,4 @@
-# TODO — EduVerse Frontend
+# Roadmap
 
 ## Done: landing page "calm premium" rebuild (2026-06-10)
 

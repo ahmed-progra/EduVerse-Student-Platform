@@ -115,11 +115,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const isPublicPage =
     pathname.startsWith("/auth") || pathname === "/" || pathname.startsWith("/u/");
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // `loadUser` is a stable Zustand action, so this runs once on mount.
   useEffect(() => {
     loadUser();
     setMounted(true);
-  }, []);
+  }, [loadUser]);
   useEffect(() => {
     setActivePanel(null);
     setMobileOpen(false);

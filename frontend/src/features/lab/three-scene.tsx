@@ -219,7 +219,6 @@ export function ThreeScene({
       }
     };
     // Rebuild only when the structural key changes; continuous params are live.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rebuildKey]);
 
   return (

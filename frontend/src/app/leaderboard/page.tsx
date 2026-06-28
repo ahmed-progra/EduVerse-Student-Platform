@@ -7,7 +7,7 @@ import { SkeletonRow, SkeletonPodium } from "@/components/ui/skeleton";
 import { api } from "@/services/api-client";
 import { useAuthStore } from "@/stores/auth-store";
 import { fadeUp, staggerContainer, fastEaseTransition } from "@/lib/motion";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Search, Crown, WifiOff, Trophy, Medal } from "lucide-react";
 
 interface LeaderboardEntry {
@@ -33,7 +33,7 @@ export default function LeaderboardPage() {
   const [myRank, setMyRank] = useState<RankInfo | null>(null);
   const [search, setSearch] = useState("");
 
-  const loadLeaderboard = async () => {
+  const loadLeaderboard = useCallback(async () => {
     setLoading(true);
     try {
       const [lbRes, rankRes] = await Promise.all([
@@ -47,11 +47,11 @@ export default function LeaderboardPage() {
       setOffline(true);
     }
     setLoading(false);
-  };
+  }, [period]);
 
   useEffect(() => {
     loadLeaderboard();
-  }, [period]);
+  }, [loadLeaderboard]);
 
   const filtered = search
     ? entries.filter((e) => e.username.toLowerCase().includes(search.toLowerCase()))
@@ -120,10 +120,7 @@ export default function LeaderboardPage() {
           <div className="section-label">
             <span className="section-label-prefix">//</span> My Rank
           </div>
-          <GlassCard
-            className="flex items-center justify-between border-eduverse-accent/30"
-            style={{ borderColor: "oklch(78% 0.14 85 / 0.3)" }}
-          >
+          <GlassCard className="flex items-center justify-between border-eduverse-accent/30">
             <div className="flex items-center gap-4">
               <div
                 className="w-12 h-12 rounded-xl flex items-center justify-center"

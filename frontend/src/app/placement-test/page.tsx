@@ -1,115 +1,193 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { GlassCard } from "@/components/ui/glass-card";
 import { GradientButton } from "@/components/ui/gradient-button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { AssessmentRunner } from "@/features/learning/assessment-runner";
 import { api } from "@/services/api-client";
 import { fadeUp, fastEaseTransition } from "@/lib/motion";
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { ChevronLeft, ChevronRight, Zap, Trophy, Star, Sprout } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Zap,
+  Trophy,
+  Star,
+  Sprout,
+  BookOpen,
+  WifiOff,
+  GraduationCap,
+} from "lucide-react";
 
-interface QuestionData {
+interface CourseLite {
   id: string;
-  question: string;
-  options: string[];
-  correctIndex?: number;
+  title: string;
+  description: string;
+  icon: string;
 }
 
 interface AssessmentResult {
   score: number;
   total: number;
   level: string;
-  xp?: { xp: number; level: number; coins: number; leveledUp: boolean; xpGained: number };
+  xp?: { xpGained?: number };
 }
 
+/**
+ * Standalone placement-test entry point. Picks up `?courseId=` and runs the
+ * canonical {@link AssessmentRunner} (the same flow embedded in the course page),
+ * so question handling, answer normalization, and submission errors all behave
+ * identically. Without a course id it shows a picker rather than dead-ending.
+ */
 function PlacementTestContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const courseId = searchParams.get("courseId");
-  const [questions, setQuestions] = useState<QuestionData[]>([]);
-  const [answers, setAnswers] = useState<Record<string, number>>({});
-  const [assessmentId, setAssessmentId] = useState<string | null>(null);
-  const [currentQ, setCurrentQ] = useState(0);
-  const [submitting, setSubmitting] = useState(false);
+
+  const [courses, setCourses] = useState<CourseLite[]>([]);
+  const [course, setCourse] = useState<CourseLite | null>(null);
+  const [questionCount, setQuestionCount] = useState(0);
+  const [topics, setTopics] = useState<string[]>([]);
   const [result, setResult] = useState<AssessmentResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!courseId) {
-      setLoading(false);
-      setError("No course selected. Please choose a course from the courses page.");
-      return;
-    }
-    api
-      .assessmentStart(courseId)
-      .then((res) => {
-        setAssessmentId(res.data.assessmentId);
-        setQuestions(res.data.questions);
-        setAnswers({});
+    let cancelled = false;
+    setLoading(true);
+    setError("");
+    setResult(null);
+    (async () => {
+      try {
+        // No course chosen yet — load the catalog so the learner can pick one.
+        if (!courseId) {
+          const res = await api.getCourses();
+          if (cancelled) return;
+          setCourses(res.data as CourseLite[]);
+          setLoading(false);
+          return;
+        }
+        // A course is selected — gather the title + the runner's inputs.
+        const [coursesRes, stateRes] = await Promise.all([
+          api.getCourses(),
+          api.learningState(courseId),
+        ]);
+        if (cancelled) return;
+        const found = (coursesRes.data as CourseLite[]).find((c) => c.id === courseId) || null;
+        setCourse(found);
+        setQuestionCount(stateRes.data.questionCount || 0);
+        setTopics(Array.isArray(stateRes.data.topics) ? stateRes.data.topics : []);
         setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
-        setError("Failed to load questions for this course.");
-      });
+      } catch {
+        if (!cancelled) {
+          setError("We couldn't load the placement test. Check your connection and try again.");
+          setLoading(false);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [courseId]);
-
-  const handleAnswer = (index: number) => {
-    setAnswers((prev) => ({ ...prev, [questions[currentQ].id]: index }));
-  };
-
-  const handleSubmit = async () => {
-    setSubmitting(true);
-    try {
-      const res = await api.assessmentSubmit(courseId!, { assessmentId: assessmentId!, answers });
-      setResult(res.data);
-    } catch {}
-    setSubmitting(false);
-  };
-
-  if (!courseId) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <GlassCard className="p-8 text-center max-w-md">
-          <h2 className="text-2xl font-bold mb-4 font-display">No Course Selected</h2>
-          <p className="text-eduverse-text-muted mb-6">{error}</p>
-          <GradientButton onClick={() => router.push("/courses")} className="w-full">
-            Browse Courses
-          </GradientButton>
-        </GlassCard>
-      </div>
-    );
-  }
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="sk-card" style={{ width: "400px", height: "300px" }} />
+      <div className="min-h-[60vh] flex items-center justify-center p-4">
+        <div className="sk-card" style={{ width: "400px", height: "260px" }} aria-hidden="true" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <GlassCard className="p-8 text-center max-w-md">
-          <h2 className="text-2xl font-bold mb-4 font-display">Something went wrong</h2>
-          <p className="text-eduverse-text-muted mb-6">{error}</p>
-          <GradientButton onClick={() => router.push("/courses")} className="w-full">
+      <div className="min-h-[60vh] flex items-center justify-center p-4">
+        <EmptyState icon={WifiOff} title="Something went wrong" message={error}>
+          <Link
+            href="/courses"
+            className="px-4 py-2 rounded-lg text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]"
+          >
             Back to Courses
-          </GradientButton>
-        </GlassCard>
+          </Link>
+        </EmptyState>
       </div>
     );
   }
 
+  // Course picker — no course selected.
+  if (!courseId) {
+    return (
+      <motion.div
+        className="max-w-3xl mx-auto py-8"
+        initial="hidden"
+        animate="visible"
+        variants={fadeUp}
+        transition={fastEaseTransition}
+      >
+        <div className="section-label">
+          <span className="section-label-prefix">//</span> Placement Test
+        </div>
+        <h1 className="text-3xl font-bold mb-2 font-display tracking-tight">
+          Find your starting point
+        </h1>
+        <p className="text-eduverse-text-muted mb-6">
+          Pick a course and take a short placement test — we&apos;ll map what you already know and
+          tailor your path.
+        </p>
+        {courses.length === 0 ? (
+          <EmptyState
+            icon={BookOpen}
+            title="No courses yet"
+            message="The course catalog is empty. Seed the database to add courses."
+          />
+        ) : (
+          <div className="grid sm:grid-cols-2 gap-4">
+            {courses.map((c) => (
+              <Link
+                key={c.id}
+                href={`/placement-test?courseId=${c.id}`}
+                className="block h-full group app-card-link"
+              >
+                <GlassCard className="h-full">
+                  <div className="flex items-start gap-4">
+                    <div
+                      className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 text-xl"
+                      style={{ background: "var(--color-eduverse-accent-soft)" }}
+                      aria-hidden="true"
+                    >
+                      {c.icon || <GraduationCap className="w-5 h-5 text-eduverse-accent" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h2 className="text-lg font-bold mb-1 tracking-tight">{c.title}</h2>
+                      <p className="text-sm text-eduverse-text-muted line-clamp-2">
+                        {c.description}
+                      </p>
+                    </div>
+                    <ChevronRight
+                      className="w-4 h-4 text-eduverse-accent transition-transform duration-200 group-hover:translate-x-1"
+                      aria-hidden="true"
+                    />
+                  </div>
+                </GlassCard>
+              </Link>
+            ))}
+          </div>
+        )}
+      </motion.div>
+    );
+  }
+
+  // Result screen — shown after the assessment is submitted.
   if (result) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <motion.div variants={fadeUp} transition={fastEaseTransition}>
+      <div className="min-h-[60vh] flex items-center justify-center p-4">
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
+          transition={fastEaseTransition}
+        >
           <GlassCard className="text-center p-12 max-w-md">
             <div
               className="w-20 h-20 rounded mx-auto mb-6 flex items-center justify-center"
@@ -139,13 +217,18 @@ function PlacementTestContent() {
               {result.score}/{result.total}
             </div>
             <p className="text-eduverse-text-muted mb-2">questions correct</p>
-            {result.xp?.xpGained && result.xp.xpGained > 0 && (
+            {result.xp?.xpGained && result.xp.xpGained > 0 ? (
               <div className="flex items-center justify-center gap-2 text-eduverse-warning font-bold mb-6">
-                <Zap className="w-5 h-5" /> XP Bonus: {result.xp.xpGained}
+                <Zap className="w-5 h-5" aria-hidden="true" /> XP Bonus: {result.xp.xpGained}
               </div>
+            ) : (
+              <div className="mb-6" />
             )}
-            <GradientButton onClick={() => router.push(`/courses/${courseId}`)} className="w-full">
-              Back to Course
+            <GradientButton
+              onClick={() => window.location.assign(`/courses/${courseId}`)}
+              className="w-full"
+            >
+              Go to your path
             </GradientButton>
           </GlassCard>
         </motion.div>
@@ -153,85 +236,25 @@ function PlacementTestContent() {
     );
   }
 
-  const q = questions[currentQ];
-  const allAnswered = questions.every((q) => answers[q.id] !== undefined);
-  const progress = ((currentQ + 1) / questions.length) * 100;
-
-  if (!q) return null;
-
+  // Running the assessment via the canonical runner.
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <motion.div
-        key={currentQ}
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -20 }}
-        className="w-full max-w-2xl"
+    <div className="max-w-3xl mx-auto py-8">
+      <Link
+        href="/placement-test"
+        className="text-sm text-eduverse-text-muted hover:text-eduverse-accent mb-4 inline-flex items-center gap-1 transition-colors"
       >
-        <GlassCard className="p-8">
-          <div className="mb-6">
-            <div className="flex justify-between text-sm text-eduverse-text-muted mb-2">
-              <span>
-                Question {currentQ + 1} of {questions.length}
-              </span>
-              <span>{Math.round(progress)}%</span>
-            </div>
-            <div className="h-2 rounded bg-white/10 overflow-hidden">
-              <motion.div
-                className="h-full rounded bg-eduverse-accent-strong"
-                initial={{ width: 0 }}
-                animate={{ width: `${progress}%` }}
-                transition={{ duration: 0.3 }}
-              />
-            </div>
-          </div>
-
-          <h2 className="text-xl font-bold mb-6 font-display">{q.question}</h2>
-
-          <div className="space-y-3 mb-8">
-            {q.options.map((option, i) => (
-              <motion.button
-                key={i}
-                whileHover={{ x: 4 }}
-                onClick={() => handleAnswer(i)}
-                aria-pressed={answers[q.id] === i}
-                className={`w-full text-left p-4 rounded border transition-all ${
-                  answers[q.id] === i
-                    ? "border-eduverse-accent bg-eduverse-accent/20"
-                    : "border-white/10 bg-white/5 hover:bg-white/10"
-                }`}
-              >
-                <span className="text-sm">{option}</span>
-              </motion.button>
-            ))}
-          </div>
-
-          <div className="flex justify-between">
-            <GradientButton
-              onClick={() => setCurrentQ(Math.max(0, currentQ - 1))}
-              disabled={currentQ === 0}
-              variant="ghost"
-              className="flex items-center gap-1"
-            >
-              <ChevronLeft className="w-4 h-4" /> Previous
-            </GradientButton>
-
-            {currentQ < questions.length - 1 ? (
-              <GradientButton
-                onClick={() => setCurrentQ(currentQ + 1)}
-                disabled={answers[q.id] === undefined}
-                className="flex items-center gap-1"
-              >
-                Next <ChevronRight className="w-4 h-4" />
-              </GradientButton>
-            ) : (
-              <GradientButton onClick={handleSubmit} disabled={!allAnswered} loading={submitting}>
-                Submit Test
-              </GradientButton>
-            )}
-          </div>
-        </GlassCard>
-      </motion.div>
+        <ChevronLeft className="w-4 h-4" aria-hidden="true" /> Choose a different course
+      </Link>
+      <AssessmentRunner
+        courseId={courseId}
+        courseTitle={course?.title || "this course"}
+        questionCount={questionCount}
+        topics={topics}
+        onComplete={(r) => {
+          setResult(r as AssessmentResult);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }}
+      />
     </div>
   );
 }
@@ -240,8 +263,8 @@ export default function PlacementTestPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center p-4">
-          <div className="sk-card" style={{ width: "400px", height: "200px" }} />
+        <div className="min-h-[60vh] flex items-center justify-center p-4">
+          <div className="sk-card" style={{ width: "400px", height: "200px" }} aria-hidden="true" />
         </div>
       }
     >

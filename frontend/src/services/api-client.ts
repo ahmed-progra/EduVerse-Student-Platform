@@ -1,6 +1,15 @@
 import type { MentorProfileData, Mission, MentorReportData } from "@/types/mentor";
 import type { ApprenticeTurn, TeachGrade, TeachableCourse } from "@/types/apprentice";
 import type { Project, ProjectMilestone, ProjectRubric, PortfolioData } from "@/types/project";
+import type {
+  AuthResponse,
+  CodeExecutionResult,
+  ShopItem,
+  SkillTreeNode,
+  User,
+  UserInventory,
+  XpLog,
+} from "@/types/api";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 
@@ -104,30 +113,37 @@ async function fetchApi<T>(path: string, options: FetchOptions = {}): Promise<T>
   return promise;
 }
 
+/**
+ * The single HTTP entry point for the app — every network call goes through here (no inline
+ * `fetch` lives elsewhere). Stable single-shape entities are typed with `@/types/api`; the
+ * remaining `data` payloads are rich, page-specific aggregates that each consuming page models
+ * with its own local interface, so api-client stays a thin transport seam for those rather than
+ * duplicating those shapes here.
+ */
 export const api = {
   // Auth
   register: (body: { email: string; username: string; password: string }) =>
-    fetchApi<{ success: boolean; data: { user: any; token: string } }>("/auth/register", {
+    fetchApi<{ success: boolean; data: AuthResponse }>("/auth/register", {
       method: "POST",
       body: JSON.stringify(body),
       skipAuth: true,
     }),
 
   login: (body: { email: string; password: string }) =>
-    fetchApi<{ success: boolean; data: { user: any; token: string } }>("/auth/login", {
+    fetchApi<{ success: boolean; data: AuthResponse }>("/auth/login", {
       method: "POST",
       body: JSON.stringify(body),
       skipAuth: true,
     }),
 
   googleAuth: (body: { email: string; username: string; googleId: string }) =>
-    fetchApi<{ success: boolean; data: { user: any; token: string } }>("/auth/google", {
+    fetchApi<{ success: boolean; data: AuthResponse }>("/auth/google", {
       method: "POST",
       body: JSON.stringify(body),
       skipAuth: true,
     }),
 
-  getMe: () => fetchApi<{ success: boolean; data: any }>("/auth/me"),
+  getMe: () => fetchApi<{ success: boolean; data: User }>("/auth/me"),
 
   // Courses
   getCourses: () => fetchApi<{ success: boolean; data: any[] }>("/courses"),
@@ -140,7 +156,7 @@ export const api = {
 
   // Code Execution
   executeCode: (body: { code: string; language: string; stdin?: string }) =>
-    fetchApi<{ success: boolean; data: any }>("/submissions/execute", {
+    fetchApi<{ success: boolean; data: CodeExecutionResult }>("/submissions/execute", {
       method: "POST",
       body: JSON.stringify(body),
     }),
@@ -178,15 +194,17 @@ export const api = {
   getRank: () => fetchApi<{ success: boolean; data: any }>("/leaderboard/rank"),
 
   // Shop
-  getShopItems: () => fetchApi<{ success: boolean; data: any[] }>("/shop/items"),
+  getShopItems: () => fetchApi<{ success: boolean; data: ShopItem[] }>("/shop/items"),
   buyItem: (itemId: string) =>
-    fetchApi<{ success: boolean; data: { message: string; item: any; coins: number } }>(
+    fetchApi<{ success: boolean; data: { message: string; item: ShopItem; coins: number } }>(
       `/shop/buy/${itemId}`,
       { method: "POST" },
     ),
   equipItem: (itemId: string) =>
-    fetchApi<{ success: boolean; data: any }>(`/shop/equip/${itemId}`, { method: "POST" }),
-  getInventory: () => fetchApi<{ success: boolean; data: any[] }>("/shop/inventory"),
+    fetchApi<{ success: boolean; data: UserInventory }>(`/shop/equip/${itemId}`, {
+      method: "POST",
+    }),
+  getInventory: () => fetchApi<{ success: boolean; data: UserInventory[] }>("/shop/inventory"),
 
   // User
   getProfile: () => fetchApi<{ success: boolean; data: any }>("/user/profile"),
@@ -195,10 +213,10 @@ export const api = {
       method: "PUT",
       body: JSON.stringify(body),
     }),
-  getXpLogs: () => fetchApi<{ success: boolean; data: any[] }>("/user/xp-logs"),
+  getXpLogs: () => fetchApi<{ success: boolean; data: XpLog[] }>("/user/xp-logs"),
 
   // Skill Tree
-  getSkillTree: () => fetchApi<{ success: boolean; data: any[] }>("/skilltree"),
+  getSkillTree: () => fetchApi<{ success: boolean; data: SkillTreeNode[] }>("/skilltree"),
   unlockSkill: (nodeId: string) =>
     fetchApi<{ success: boolean; data: any }>(`/skilltree/unlock/${nodeId}`, { method: "POST" }),
 
