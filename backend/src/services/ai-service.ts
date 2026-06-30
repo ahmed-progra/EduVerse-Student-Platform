@@ -103,7 +103,7 @@ function supportsThinkingControl(model: string): boolean {
 }
 
 /** Gemini 429s include a google.rpc.RetryInfo detail like { retryDelay: "12s" }. */
-function parseRetryDelayMs(data: GeminiResponse): number | null {
+export function parseRetryDelayMs(data: GeminiResponse): number | null {
   for (const d of data.error?.details || []) {
     const delay = (d as { retryDelay?: string }).retryDelay;
     if (typeof delay === "string") {

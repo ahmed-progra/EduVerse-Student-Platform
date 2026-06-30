@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
+import DOMPurify from "dompurify";
 import { LessonAITools } from "@/features/lessons/lesson-ai-tools";
 import { LessonMentor } from "@/features/lessons/lesson-mentor";
 import { QuizCheckpoint } from "@/features/lessons/quiz-checkpoint";
@@ -64,7 +65,7 @@ export default function LessonPage() {
     api
       .getLesson(id as string)
       .then((res) => {
-        setLesson(res.data);
+        setLesson({ ...res.data, content: DOMPurify.sanitize(res.data.content) });
         setInitialCode(res.data.codeTemplate);
         setCompleted(res.data.completed);
         setLoading(false);

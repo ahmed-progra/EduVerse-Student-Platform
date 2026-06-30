@@ -1,161 +1,156 @@
 # Deployment Guide
 
-## Overview
-
-EduVerse is a monorepo with three workspaces: `shared`, `backend`, and `frontend`. The
-backend runs as an Express API, the frontend as a Next.js application. A PostgreSQL
-database powers the backend, with an optional Judge0 instance for code execution.
-
 ## Architecture (production)
 
 ```
                          ┌──────────────┐
-                         │   CDN / DNS  │
+                         │   Vercel     │
+                         │  (frontend)  │
                          └──────┬───────┘
+                                │ HTTPS / CORS
+                     ┌──────────┴──────────┐
+                     │   Railway / Render   │
+                     │  (Express backend)   │
+                     └──────────┬──────────┘
                                 │
-                    ┌───────────┴───────────┐
-                    │    Next.js (frontend)  │
-                    │   Vercel / Railway     │
-                    └───────────┬───────────┘
-                                │ (HTTP API calls)
-                    ┌───────────┴───────────┐
-                    │   Express (backend)    │
-                    │   Railway / Fly.io     │
-                    └───────────┬───────────┘
-                                │
-             ┌──────────────────┼──────────────────┐
-             ▼                  ▼                  ▼
-       ┌──────────┐     ┌──────────────┐   ┌──────────────┐
-       │PostgreSQL│     │  Google AI   │   │   Judge0     │
-       │Supabase  │     │   Studio     │   │(code exec)   │
-       └──────────┘     └──────────────┘   └──────────────┘
+              ┌─────────────────┼─────────────────┐
+              ▼                 ▼                  ▼
+        ┌──────────┐     ┌────────────┐    ┌──────────────┐
+        │ Supabase │     │ Google AI  │    │   Judge0    │
+        │PostgreSQL│     │  Studio    │    │ (code exec)  │
+        └──────────┘     └────────────┘    └──────────────┘
 ```
 
-## Deploying the backend
+**Frontend** (Vercel) and **Backend** (Railway) are different origins — cookies use
+`SameSite=None; Secure`. CORS is locked to the Vercel domain.
 
-### Prerequisites
+---
 
-- Node.js >= 20
-- A PostgreSQL database (Supabase recommended)
-- A Google AI Studio API key
-- (Optional) A Judge0 instance for code execution
+## 1. Supabase — Database
 
-### Environment variables
+1. Create a project at [supabase.com](https://supabase.com) (Free tier is fine)
+2. From **Project Settings → Database → Connection string → ORMs (Prisma)**:
+   - Copy `DATABASE_URL` (transaction pooler, port `6543`, with `?pgbouncer=true`)
+   - Copy `DIRECT_URL` (session pooler, port `5432`)
+3. Run migrations + seed against production DB:
+   ```bash
+   DATABASE_URL="<pooler-string>" DIRECT_URL="<session-string>" npm run db:migrate
+   DATABASE_URL="<pooler-string>" DIRECT_URL="<session-string>" npm run db:seed
+   ```
 
-Copy `.env.example` to `backend/.env` or the root `.env` and configure all variables:
+> **Note**: If `prisma migrate dev` fails on a remote DB, use `prisma migrate deploy` instead.
 
-```bash
-cp .env.example .env
-```
+---
 
-Required variables:
+## 2. Railway — Backend (Express API)
 
-| Variable            | Description                  |
-| ------------------- | ---------------------------- |
-| `DATABASE_URL`      | PostgreSQL connection string |
-| `JWT_SECRET`        | JWT signing secret           |
-| `GOOGLE_AI_API_KEY` | Google AI Studio API key     |
-| `FRONTEND_URL`      | Frontend URL for CORS        |
-| `PORT`              | Backend port (default 4000)  |
+1. Create an account at [railway.com](https://railway.com)
+2. **New Project → Deploy from GitHub repo** → select `ahmed-progra/EduVerse-Student-Platform`
+3. Configure the service:
 
-### Building
+| Setting          | Value                         |
+| ---------------- | ----------------------------- |
+| Root directory   | (leave blank — monorepo root) |
+| Build command    | `npm run build`               |
+| Start command    | `npm run start`               |
+| Healthcheck path | `/api/health`                 |
 
-```bash
-npm run build
-```
+4. Add all environment variables from `.env.example` — **critical ones:**
 
-### Starting
+| Variable            | Value / Where to get it                                     |
+| ------------------- | ----------------------------------------------------------- |
+| `NODE_ENV`          | `production`                                                |
+| `PORT`              | `4000` (Railway sets this too)                              |
+| `DATABASE_URL`      | From Supabase (pooler)                                      |
+| `DIRECT_URL`        | From Supabase (session)                                     |
+| `JWT_SECRET`        | Generate: `openssl rand -hex 32`                            |
+| `FRONTEND_URL`      | Your Vercel domain (e.g. `https://eduverse.vercel.app`)     |
+| `GOOGLE_AI_API_KEY` | From [Google AI Studio](https://aistudio.google.com/apikey) |
+| `GOOGLE_CLIENT_ID`  | From Google Cloud Console (optional)                        |
 
-```bash
-npm run start
-```
+5. Deploy. Verify: `https://your-railway-url.up.railway.app/api/health`
 
-The backend starts on the configured `PORT` (default 4000).
+---
 
-### Database migrations
+## 3. Vercel — Frontend (Next.js)
 
-```bash
-npm run db:migrate
-npm run db:seed
-```
+1. Go to [vercel.com](https://vercel.com) → **Add New Project**
+2. Import `ahmed-progra/EduVerse-Student-Platform`
+3. **Root Directory:** `frontend`
+4. **Framework Preset:** Next.js (auto-detected)
+5. **Environment Variables:**
 
-## Deploying the frontend
+| Variable               | Value                                         |
+| ---------------------- | --------------------------------------------- |
+| `NEXT_PUBLIC_API_URL`  | `https://your-railway-url.up.railway.app/api` |
+| `NEXT_PUBLIC_SITE_URL` | `https://eduverse.vercel.app`                 |
 
-### Prerequisites
+6. Deploy. Set the domain as **Production** in Vercel dashboard.
 
-- Node.js >= 20
-- The backend must be deployed and reachable
+---
 
-### Environment variables
+## 4. Post-deploy verification
 
-| Variable              | Description                     |
-| --------------------- | ------------------------------- |
-| `NEXT_PUBLIC_API_URL` | URL of the deployed backend API |
+| Test         | Steps                                    | Expected                                                        |
+| ------------ | ---------------------------------------- | --------------------------------------------------------------- |
+| Health       | Visit `{railway-url}/api/health`         | `{"success":true,"data":{"status":"ok","db":"healthy"}}`        |
+| Register     | Open Vercel URL → Register a new account | 201, cookie set, redirect to dashboard                          |
+| Login        | Logout → Login with same creds           | 200, cookie set, dashboard loads                                |
+| Lessons      | Navigate to a course → open a lesson     | Content renders, no console errors                              |
+| Python code  | CodeLab → write `print("hello")` → Run   | Output shows "hello"                                            |
+| Leaderboard  | Visit `/leaderboard`                     | Rows load (seeded users)                                        |
+| CORS check   | Open browser DevTools → Network tab      | No CORS errors on API calls                                     |
+| Cookie check | DevTools → Application → Cookies         | `eduverse_token` present, httpOnly ✓, Secure ✓, SameSite=None ✓ |
 
-### Building
+---
 
-```bash
-npm run build -w frontend
-```
+## Environment variable reference
 
-### Starting (standalone)
+| Variable               | Who needs it                       | Required                |
+| ---------------------- | ---------------------------------- | ----------------------- |
+| `DATABASE_URL`         | Backend (Prisma runtime)           | ✅                      |
+| `DIRECT_URL`           | Backend (Prisma migrations)        | ✅                      |
+| `JWT_SECRET`           | Backend                            | ✅                      |
+| `FRONTEND_URL`         | Backend (CORS + CSRF origin check) | ✅                      |
+| `NODE_ENV`             | Backend + Frontend                 | ✅                      |
+| `NEXT_PUBLIC_API_URL`  | Frontend                           | ✅                      |
+| `GOOGLE_AI_API_KEY`    | Backend                            | ✅ (AI features)        |
+| `JUDGE0_URL`           | Backend                            | optional                |
+| `JUDGE0_API_KEY`       | Backend                            | optional                |
+| `GOOGLE_CLIENT_ID`     | Backend                            | optional (Google OAuth) |
+| `GOOGLE_CLIENT_SECRET` | Backend                            | optional                |
+| `NEXT_PUBLIC_SITE_URL` | Frontend                           | optional (SEO)          |
 
-```bash
-npm run start -w frontend
-```
+---
 
-### Deploying to Vercel
+## Docker (local only)
 
-1. Connect the repository to Vercel
-2. Set `root directory` to `frontend`
-3. Add the environment variable `NEXT_PUBLIC_API_URL`
-4. Deploy
-
-### Deploying to Railway
-
-1. Add both `backend` and `frontend` as services
-2. Set the build command to `npm run build` for both
-3. Set the start command to `npm run start` for both
-4. Add environment variables for each service
-
-## Docker deployment
-
-### Local development
+For full local reproduction (PostgreSQL + Judge0 + backend + frontend):
 
 ```bash
 docker compose up -d
+npm run dev      # backend + frontend via concurrently
 ```
 
-This starts PostgreSQL and Judge0. Then run the backend and frontend as usual.
+For Postgres-only (faster):
 
-### Production
+```bash
+docker compose -f docker-compose.local.yml up -d
+npm run dev
+```
 
-For production, we recommend using managed services:
+---
 
-- **Database**: Supabase (PostgreSQL)
-- **Backend**: Railway, Fly.io, or Render
-- **Frontend**: Vercel or Railway
-- **Code execution**: Judge0 Cloud or self-hosted
+## Updating after deploy
 
-## Health checks
+```bash
+git push main
+# Railway auto-deploys backend (if connected)
+# Vercel auto-deploys frontend (if connected)
+```
 
-- Backend health: `GET /api/health` returns `{ status: "ok" }`
-- Frontend health: any successful page load
+To re-run migrations on production DB after schema changes:
 
-## Security headers
-
-- **Backend** (`backend/src/index.ts`) sets `X-Content-Type-Options`, `X-Frame-Options`,
-  and `Referrer-Policy` on every API response, plus CORS locked to `FRONTEND_URL`.
-- **Frontend** (`frontend/next.config.js`) sets `X-Content-Type-Options`, `X-Frame-Options`,
-  `Referrer-Policy`, `Strict-Transport-Security` (HTTPS only), `X-DNS-Prefetch-Control`, and a
-  restrictive `Permissions-Policy` on every route.
-- **Content-Security-Policy is intentionally not enabled by default.** A strict CSP must account
-  for Monaco's `blob:` web workers, Three.js, and Next's inline runtime. Add it via the `headers()`
-  hook in `next.config.js` and validate every page on a staging deploy (editor, 3D Lab, AI panels)
-  before enabling it in production.
-
-## Monitoring
-
-- Use the backend's built-in rate limiting (configured in `src/middleware/rate-limit.ts`)
-- Monitor logs via your hosting platform
-- Set up uptime monitoring (e.g., Better Stack, Pingdom)
+```bash
+DATABASE_URL="<supabase-pooler>" DIRECT_URL="<supabase-session>" npx prisma migrate deploy
+```

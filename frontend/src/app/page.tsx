@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { api } from "@/services/api-client";
+import { useAuthStore } from "@/stores/auth-store";
 import HeroDemo from "@/features/landing/hero-demo";
 import { Confetti } from "@/components/ui/confetti";
 import {
@@ -207,7 +208,7 @@ export default function LandingPage() {
     if (!challengeCode.trim() || codeLoading) return;
     setCodeLoading(true);
     setCodeResult("");
-    const loggedIn = typeof window !== "undefined" && !!localStorage.getItem("eduverse_token");
+    const loggedIn = useAuthStore.getState().isAuthenticated;
     if (loggedIn) {
       // Signed-in visitors get a real AI review of their attempt.
       try {

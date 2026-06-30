@@ -44,6 +44,7 @@
     "db:migrate": "npm run db:migrate -w backend",
     "db:seed": "npm run db:seed -w backend",
     "db:setup": "npm run db:migrate && npm run db:seed",
+    "test": "npm run test --workspaces --if-present",
     "test:e2e": "npm run test:e2e -w backend"
   },
   "devDependencies": {
@@ -71,5 +72,8 @@
   },
   "optionalDependencies": {
     "@next/swc-win32-x64-msvc": "^16.2.7"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7"
   }
 }

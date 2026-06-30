@@ -24,7 +24,7 @@ built with **React 19**, styled with **Tailwind CSS v4**, and animated with
 
 ## Routes
 
-The App Router defines **23 route segments**:
+The App Router defines **28 route segments**:
 
 | Route             | Page                            | Auth     |
 | ----------------- | ------------------------------- | -------- |

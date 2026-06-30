@@ -1,7 +1,12 @@
 import { Router, Request, Response } from "express";
-import { prisma } from "../lib/prisma";
 import { requireAuth } from "../middleware/auth";
-import { createBattle, joinBattle, submitBattleSolution } from "../services/battle-service";
+import {
+  createBattle,
+  joinBattle,
+  submitBattleSolution,
+  getActiveBattles,
+  getBattleHistory,
+} from "../services/battle-service";
 
 const router = Router();
 
@@ -12,7 +17,6 @@ router.post("/create", requireAuth, async (req: Request, res: Response) => {
       res.status(400).json({ success: false, error: "Missing difficulty or timeLimit" });
       return;
     }
-
     const battle = await createBattle(req.userId!, difficulty, timeLimit);
     res.status(201).json({ success: true, data: battle });
   } catch (_err) {
@@ -47,16 +51,7 @@ router.post("/submit", requireAuth, async (req: Request, res: Response) => {
 
 router.get("/active", requireAuth, async (req: Request, res: Response) => {
   try {
-    const battles = await prisma.battle.findMany({
-      where: {
-        OR: [{ player1Id: req.userId }, { player2Id: req.userId }],
-        status: { in: ["waiting", "active"] },
-      },
-      include: {
-        player1: { select: { id: true, username: true, avatar: true } },
-        player2: { select: { id: true, username: true, avatar: true } },
-      },
-    });
+    const battles = await getActiveBattles(req.userId!);
     res.json({ success: true, data: battles });
   } catch (_err) {
     res.status(500).json({ success: false, error: "Failed to fetch battles" });
@@ -65,19 +60,7 @@ router.get("/active", requireAuth, async (req: Request, res: Response) => {
 
 router.get("/history", requireAuth, async (req: Request, res: Response) => {
   try {
-    const battles = await prisma.battle.findMany({
-      where: {
-        OR: [{ player1Id: req.userId }, { player2Id: req.userId }],
-        status: "completed",
-      },
-      orderBy: { createdAt: "desc" },
-      take: 20,
-      include: {
-        player1: { select: { id: true, username: true, avatar: true } },
-        player2: { select: { id: true, username: true, avatar: true } },
-        winner: { select: { id: true, username: true } },
-      },
-    });
+    const battles = await getBattleHistory(req.userId!);
     res.json({ success: true, data: battles });
   } catch (_err) {
     res.status(500).json({ success: false, error: "Failed to fetch battle history" });

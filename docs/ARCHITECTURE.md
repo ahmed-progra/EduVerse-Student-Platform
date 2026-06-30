@@ -13,7 +13,7 @@ persistence and AI orchestration; the frontend is a pure client of the REST API.
 │  ├─ src/app/*          route segments (dashboard, lessons, …)     │
 │  ├─ src/components/*   UI, layout, and feature panels             │
 │  ├─ src/stores/*       Zustand (auth store)                       │
-│  ├─ src/lib/api.ts     typed fetch client → backend               │
+│  ├─ src/services/api-client.ts     typed fetch client → backend               │
 │  └─ Skulpt / iframe    in-browser code execution (Python / HTML)  │
 └──────────────────┬───────────────────────────────────────────────┘
                    │  HTTPS  (JWT in Authorization header)
@@ -22,7 +22,7 @@ persistence and AI orchestration; the frontend is a pure client of the REST API.
 │                     Backend — Express 5                           │
 │  src/index.ts          app bootstrap, CORS, rate limit            │
 │  ├─ middleware/*       auth (JWT), rate-limit                    │
-│  ├─ routes/*           14 routers under /api/*                    │
+│  ├─ routes/*           15 routers under /api/*                    │
 │  ├─ services/*         business logic + AI orchestration          │
 │  ├─ learning/*         topic catalogs, assessment banks           │
 │  ├─ curriculum/*       172 authored lessons, 7 courses (seed)     │

@@ -15,7 +15,7 @@ router.get("/", async (_req, res) => {
         api: "healthy",
       },
     });
-  } catch (error) {
+  } catch (_error) {
     res.status(503).json({
       status: "error",
       timestamp: new Date().toISOString(),
@@ -23,7 +23,7 @@ router.get("/", async (_req, res) => {
         database: "disconnected",
         api: "healthy",
       },
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: "Database connection failed",
     });
   }
 });

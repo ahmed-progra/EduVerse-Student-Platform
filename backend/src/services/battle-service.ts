@@ -299,3 +299,32 @@ export async function submitBattleSolution(
 
   return { battle, winnerId: null, xpReward: 0 };
 }
+
+export async function getActiveBattles(userId: string) {
+  return prisma.battle.findMany({
+    where: {
+      OR: [{ player1Id: userId }, { player2Id: userId }],
+      status: { in: ["waiting", "active"] },
+    },
+    include: {
+      player1: { select: { id: true, username: true, avatar: true } },
+      player2: { select: { id: true, username: true, avatar: true } },
+    },
+  });
+}
+
+export async function getBattleHistory(userId: string) {
+  return prisma.battle.findMany({
+    where: {
+      OR: [{ player1Id: userId }, { player2Id: userId }],
+      status: "completed",
+    },
+    orderBy: { createdAt: "desc" },
+    take: 20,
+    include: {
+      player1: { select: { id: true, username: true, avatar: true } },
+      player2: { select: { id: true, username: true, avatar: true } },
+      winner: { select: { id: true, username: true } },
+    },
+  });
+}

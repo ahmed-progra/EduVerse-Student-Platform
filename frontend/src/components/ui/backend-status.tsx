@@ -1,0 +1,40 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { WifiOff } from "lucide-react";
+
+const CHECK_INTERVAL = 30_000;
+
+export function BackendStatus() {
+  const [offline, setOffline] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    const check = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/health`, {
+          method: "GET",
+          signal: AbortSignal.timeout(5_000),
+        });
+        if (mounted) setOffline(!res.ok);
+      } catch {
+        if (mounted) setOffline(true);
+      }
+    };
+    check();
+    const id = setInterval(check, CHECK_INTERVAL);
+    return () => {
+      mounted = false;
+      clearInterval(id);
+    };
+  }, []);
+
+  if (!offline) return null;
+
+  return (
+    <div className="fixed top-0 inset-x-0 z-[100] flex items-center justify-center gap-2 bg-eduverse-danger/10 border-b border-eduverse-danger/30 py-2 px-4 text-sm text-eduverse-danger backdrop-blur-sm">
+      <WifiOff size={14} aria-hidden="true" />
+      <span>Backend is offline — some features may not work</span>
+    </div>
+  );
+}

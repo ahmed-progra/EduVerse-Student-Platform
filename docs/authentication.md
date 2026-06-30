@@ -1,7 +1,8 @@
 # Authentication
 
 EduVerse uses **JWT-based authentication** with bcrypt password hashing and
-optional Google OAuth.
+optional Google OAuth. The JWT is stored in an **httpOnly, Secure, SameSite**
+cookie — never in localStorage.
 
 ---
 
@@ -13,16 +14,20 @@ optional Google OAuth.
 │         │     { email, username, password } │ Express  │
 │ Browser │     ←─────────────────────────    │ Backend  │
 │         │     { user, token }               │          │
+│         │     + Set-Cookie: eduverse_token  │          │
+│         │       (httpOnly, Secure, SameSite)│          │
 │         │                                   │          │
 │         │     POST /api/auth/login          │          │
 │         │     ─────────────────────────→    │          │
 │         │     { email, password }           │          │
 │         │     ←─────────────────────────    │          │
 │         │     { user, token }               │          │
+│         │     + Set-Cookie: eduverse_token  │          │
 └─────────┘                                   └──────────┘
      │                                              │
      │  Every subsequent request:                    │
-     │  Authorization: Bearer <token>                │
+     │  Cookie: eduverse_token=<jwt>                  │
+     │  (sent automatically by browser)               │
      │─────────────────────────────────────────────→│
      │                                              │
      │                                     JWT verified
@@ -58,6 +63,10 @@ Response (201):
 }
 ```
 
+Sets cookie `eduverse_token` (httpOnly, Secure in production, SameSite=None in
+production / Lax in development). Token is also returned in body for E2E scripts
+that use `Authorization: Bearer`.
+
 Rate limited: **10 requests per minute**.
 
 ### Login
@@ -84,7 +93,15 @@ Response (200):
 }
 ```
 
-Rate limited: **10 requests per minute**.
+Sets cookie `eduverse_token`. Rate limited: **10 requests per minute**.
+
+### Logout
+
+```
+POST /api/auth/logout
+```
+
+Clears the `eduverse_token` cookie. Returns `{ "success": true, "data": { "message": "Logged out" } }`.
 
 ### Google OAuth
 
@@ -106,10 +123,10 @@ if Google OAuth is not configured.
 
 ```
 GET /api/auth/me
-Authorization: Bearer <token>
 ```
 
-Returns the authenticated user's profile. Response is cached (30s TTL).
+Cookie or `Authorization: Bearer <token>` header accepted. Returns the
+authenticated user's profile. Response is cached (30s TTL).
 
 ---
 
@@ -122,17 +139,50 @@ Returns the authenticated user's profile. Response is cached (30s TTL).
 
 ---
 
+## Cookie Options
+
+| Setting    | Development | Production |
+| ---------- | ----------- | ---------- |
+| `httpOnly` | `true`      | `true`     |
+| `secure`   | `false`     | `true`     |
+| `sameSite` | `lax`       | `none`     |
+| `maxAge`   | 7 days      | 7 days     |
+
+In production (Vercel frontend + Railway backend are different origins),
+`SameSite=None` is required for cross-domain cookies. `Secure` is mandatory
+with `None`.
+
+---
+
+## CSRF Protection
+
+Since `SameSite=None` removes the browser's CSRF protection, a lightweight
+**origin check middleware** (`backend/src/middleware/csrf.ts`) guards all
+mutating requests (POST/PUT/PATCH/DELETE) in production:
+
+- Reads the `Origin` header (or `Referer` as fallback)
+- Validates it matches the configured `FRONTEND_URL`
+- Returns 403 on mismatch
+
+No CSRF token or double-submit pattern is needed — the origin check is simpler
+and provides equivalent protection when all state-changing endpoints are
+behind it.
+
+---
+
 ## Security Design
 
-| Measure          | Implementation                             |
-| ---------------- | ------------------------------------------ |
-| Password storage | bcrypt hashing (no plaintext)              |
-| Token signing    | HMAC-SHA256 with server secret             |
-| Rate limiting    | 10 req/min on auth endpoints, 30/min on AI |
-| CORS             | Restricted to configured `FRONTEND_URL`    |
-| Security headers | `nosniff`, `DENY`, `no-referrer`           |
-| Input validation | Custom validators + Zod schemas            |
-| Google OAuth     | Gated behind `GOOGLE_CLIENT_ID` config     |
+| Measure          | Implementation                                                    |
+| ---------------- | ----------------------------------------------------------------- |
+| Password storage | bcrypt hashing (no plaintext)                                     |
+| Token signing    | HMAC-SHA256 with server secret                                    |
+| Cookie transport | httpOnly (inaccessible to JS)                                     |
+| CSRF protection  | Origin header check (production)                                  |
+| Rate limiting    | 10 req/min on auth, 30/min on AI, 100/min general                 |
+| CORS             | Restricted to configured `FRONTEND_URL`                           |
+| Security headers | `nosniff`, `DENY`, `no-referrer`, HSTS, CSP                       |
+| Input validation | Custom validators + Zod schemas                                   |
+| Google OAuth     | Gated behind `GOOGLE_CLIENT_ID`, ID token verified against Google |
 
 ### JWT secret
 
@@ -144,28 +194,30 @@ unique `JWT_SECRET`.**
 
 ## Frontend Integration
 
-The frontend stores the JWT in `localStorage` via Zustand (`auth-store.ts`):
+The frontend **never stores the JWT in localStorage**. The cookie is managed
+entirely by the browser:
 
 ```
-Login → store token → redirect to /dashboard
-Every API call → api-client reads token → adds Bearer header
-401 response → clear token → redirect to /auth/login
-Logout → clear token + user → redirect to /
+Login → server sets httpOnly cookie → redirect to /dashboard
+Every API call → browser sends Cookie header automatically
+  (credentials: 'include' on fetch)
+401 response → clear user state → redirect to /auth/login
+Logout → POST /auth/logout → server clears cookie → redirect to /
 ```
 
 The `api-client.ts` service handles:
 
-- Automatic token injection
-- 401 response interception
-- Token refresh (via re-login)
+- Automatic cookie transmission via `credentials: 'include'`
+- 401 response → error thrown, caught by `auth-store.loadUser()`
+- No token injection or localStorage reads
 
 ---
 
-## Protected Routes
+## Auth Middleware
 
 Backend routes use two middleware variants:
 
-- `requireAuth` — Returns 401 if no valid token
+- `requireAuth` — Returns 401 if no valid token (reads cookie, fallback to Bearer header)
 - `optionalAuth` — Attaches user if token present, continues if not
 
 Public routes (no auth):
@@ -174,6 +226,7 @@ Public routes (no auth):
 | --------------------------------------- | ------------------ |
 | `POST /api/auth/register`               | Registration       |
 | `POST /api/auth/login`                  | Login              |
+| `POST /api/auth/logout`                 | Logout             |
 | `POST /api/auth/google`                 | Google OAuth       |
 | `GET /api/leaderboard`                  | Public leaderboard |
 | `GET /api/shop/items`                   | Shop catalog       |

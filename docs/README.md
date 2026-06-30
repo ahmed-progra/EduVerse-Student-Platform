@@ -29,6 +29,6 @@ system, and product direction.
 
 - [Root README](../README.md) — overview, highlights, quick start
 - [CHANGELOG](../CHANGELOG.md) — release history
-- [Design Philosophy](../design-philosophy.md) — design principles and decisions
+- [Design Philosophy](design-philosophy.md) — design principles and decisions
 - [Evaluation Report](../EVALUATION_REPORT.md) — professional evaluation results
 - [Support](../SUPPORT.md) — community and support resources

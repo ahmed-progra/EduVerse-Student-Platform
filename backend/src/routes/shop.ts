@@ -96,14 +96,16 @@ router.post("/equip/:itemId", requireAuth, async (req: Request, res: Response) =
 
     const item = await prisma.shopItem.findUnique({ where: { id: itemId } });
 
-    await prisma.userInventory.updateMany({
-      where: { userId: req.userId!, item: { type: item?.type } },
-      data: { equipped: false },
-    });
+    await prisma.$transaction(async (tx) => {
+      await tx.userInventory.updateMany({
+        where: { userId: req.userId!, item: { type: item?.type } },
+        data: { equipped: false },
+      });
 
-    await prisma.userInventory.update({
-      where: { userId_itemId: { userId: req.userId!, itemId } },
-      data: { equipped: true },
+      await tx.userInventory.update({
+        where: { userId_itemId: { userId: req.userId!, itemId } },
+        data: { equipped: true },
+      });
     });
 
     res.json({ success: true, data: { message: "Equipped successfully" } });

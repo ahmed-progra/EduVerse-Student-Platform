@@ -1,7 +1,6 @@
 import { Router, Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 import { requireAuth } from "../middleware/auth";
-import { addXp as _addXp } from "../services/xp-service";
 import { getCached, setCache, clearCache } from "../lib/cache";
 
 const router = Router();

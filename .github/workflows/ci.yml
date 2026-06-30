@@ -37,6 +37,9 @@ jobs:
       - name: Type-check (all workspaces)
         run: npm run typecheck
 
+      - name: Unit tests (backend)
+        run: npm run test -w backend
+
       - name: Format check
         run: npm run format:check
 

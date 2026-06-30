@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { MentorProfileData, Mission, MentorReportData } from "@/types/mentor";
 import type { ApprenticeTurn, TeachGrade, TeachableCourse } from "@/types/apprentice";
 import type { Project, ProjectMilestone, ProjectRubric, PortfolioData } from "@/types/project";
@@ -41,7 +42,7 @@ interface FetchOptions extends RequestInit {
 }
 
 async function fetchApi<T>(path: string, options: FetchOptions = {}): Promise<T> {
-  const { skipAuth, timeoutMs, noCache, ...fetchOpts } = options;
+  const { skipAuth: _skipAuth, timeoutMs, noCache, ...fetchOpts } = options;
 
   // Check cache first for cacheable requests.
   const key = cacheKey(path, options);
@@ -60,20 +61,18 @@ async function fetchApi<T>(path: string, options: FetchOptions = {}): Promise<T>
     ...(fetchOpts.headers as Record<string, string>),
   };
 
-  if (!skipAuth && typeof window !== "undefined") {
-    const token = localStorage.getItem("eduverse_token");
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
-  }
-
   const promise = (async () => {
     let res: Response;
     try {
       res = await fetch(`${API_BASE}${path}`, {
         ...fetchOpts,
         headers,
-        signal: timeoutMs ? AbortSignal.timeout(timeoutMs) : fetchOpts.signal,
+        credentials: "include",
+        signal: timeoutMs
+          ? fetchOpts.signal
+            ? AbortSignal.any([fetchOpts.signal, AbortSignal.timeout(timeoutMs)])
+            : AbortSignal.timeout(timeoutMs)
+          : fetchOpts.signal,
       });
     } catch (err) {
       if (
@@ -143,6 +142,10 @@ export const api = {
       skipAuth: true,
     }),
 
+  logout: () =>
+    fetchApi<{ success: boolean; data: { message: string } }>("/auth/logout", {
+      method: "POST",
+    }),
   getMe: () => fetchApi<{ success: boolean; data: User }>("/auth/me"),
 
   // Courses

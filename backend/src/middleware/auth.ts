@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import { verifyToken } from "../lib/jwt";
 
 declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Request {
       userId?: string;
@@ -10,14 +9,20 @@ declare global {
   }
 }
 
-export function requireAuth(req: Request, res: Response, next: NextFunction) {
+function getToken(req: Request): string | null {
+  if (req.cookies?.eduverse_token) return req.cookies.eduverse_token;
   const header = req.headers.authorization;
-  if (!header || !header.startsWith("Bearer ")) {
+  if (header?.startsWith("Bearer ")) return header.slice(7);
+  return null;
+}
+
+export function requireAuth(req: Request, res: Response, next: NextFunction) {
+  const token = getToken(req);
+  if (!token) {
     res.status(401).json({ success: false, error: "No token provided" });
     return;
   }
   try {
-    const token = header.slice(7);
     const payload = verifyToken(token);
     req.userId = payload.userId;
     next();
@@ -27,10 +32,9 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
 }
 
 export function optionalAuth(req: Request, _res: Response, next: NextFunction) {
-  const header = req.headers.authorization;
-  if (header && header.startsWith("Bearer ")) {
+  const token = getToken(req);
+  if (token) {
     try {
-      const token = header.slice(7);
       const payload = verifyToken(token);
       req.userId = payload.userId;
     } catch {

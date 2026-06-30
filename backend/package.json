@@ -12,12 +12,14 @@
     "db:seed": "tsx scripts/seed.ts",
     "db:reset": "prisma migrate reset --force && npm run db:seed",
     "test:e2e": "node scripts/learning-e2e.mjs && node scripts/mentor-e2e.mjs && node scripts/apprentice-e2e.mjs && node scripts/projects-e2e.mjs && node scripts/teachback-e2e.mjs && node scripts/ai-e2e.mjs",
+    "test": "vitest run",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
     "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^5.2.1",
@@ -28,6 +30,7 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
     "@types/jsonwebtoken": "^9.0.9",
@@ -37,6 +40,7 @@
     "eslint": "^9.20.1",
     "prisma": "^6.19.3",
     "tsx": "^4.19.4",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.9"
   }
 }
