@@ -45,11 +45,13 @@
   --radius-xl: 20px;
   --radius-pill: 999px;
 
-  --shadow-sm: 0 1px 3px oklch(0% 0 0 / 0.25), 0 1px 2px oklch(0% 0 0 / 0.15);
-  --shadow-md: 0 4px 12px oklch(0% 0 0 / 0.3), 0 1px 4px oklch(0% 0 0 / 0.2);
-  --shadow-lg: 0 8px 30px oklch(0% 0 0 / 0.35), 0 2px 8px oklch(0% 0 0 / 0.25);
-  --shadow-xl: 0 12px 48px oklch(0% 0 0 / 0.4), 0 4px 16px oklch(0% 0 0 / 0.3);
-  --shadow-glow: 0 0 30px oklch(78% 0.14 85 / 0.12);
+  /* Shadows are tinted toward the deep-space void hue (262) instead of pure
+     black, so depth reads as cohesive with the cosmos rather than a flat grey. */
+  --shadow-sm: 0 1px 3px oklch(4% 0.03 262 / 0.3), 0 1px 2px oklch(4% 0.03 262 / 0.2);
+  --shadow-md: 0 4px 14px oklch(4% 0.03 262 / 0.36), 0 1px 4px oklch(4% 0.03 262 / 0.24);
+  --shadow-lg: 0 10px 34px oklch(3% 0.03 262 / 0.42), 0 2px 10px oklch(3% 0.03 262 / 0.3);
+  --shadow-xl: 0 16px 54px oklch(3% 0.03 262 / 0.48), 0 4px 18px oklch(3% 0.03 262 / 0.34);
+  --shadow-glow: 0 0 32px oklch(78% 0.14 85 / 0.14);
 }
 
 /* Fonts come from next/font (layout.tsx) */
@@ -239,17 +241,62 @@ body {
   min-height: 100vh;
 }
 
-/* The one ambient element: a static glow behind the hero */
+/* Living cosmic ambient behind the whole landing — a breathing amber/indigo/
+   violet aurora + drifting starfield, matching the in-app shell so the marketing
+   page feels like the same world. Fixed, GPU-only, reduced-motion aware. */
 .hero-glow {
-  position: absolute;
-  top: -320px;
-  left: 50%;
-  width: min(1100px, 120vw);
-  height: 720px;
-  transform: translateX(-50%);
-  background: radial-gradient(ellipse at center, oklch(60% 0.18 75 / 0.1) 0%, transparent 65%);
-  pointer-events: none;
+  position: fixed;
+  inset: 0;
   z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background:
+    radial-gradient(60% 50% at 50% -8%, oklch(60% 0.18 75 / 0.13) 0%, transparent 60%),
+    radial-gradient(48% 44% at 88% 6%, oklch(62% 0.16 270 / 0.11) 0%, transparent 60%),
+    radial-gradient(140% 100% at 50% 122%, var(--color-eduverse-void) 0%, transparent 55%);
+}
+
+/* Breathing aurora blobs — the "alive" colour layer. */
+.hero-glow::before {
+  content: "";
+  position: absolute;
+  inset: -30%;
+  background:
+    radial-gradient(38% 38% at 20% 18%, oklch(72% 0.17 80 / 0.2), transparent 60%),
+    radial-gradient(44% 44% at 84% 26%, oklch(62% 0.17 270 / 0.18), transparent 62%),
+    radial-gradient(50% 50% at 62% 82%, oklch(58% 0.16 305 / 0.14), transparent 66%);
+  filter: blur(64px);
+  animation: aurora-drift 26s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+/* Slow-drifting starfield over the aurora. */
+.hero-glow::after {
+  content: "";
+  position: absolute;
+  inset: -25%;
+  background-image:
+    radial-gradient(1.5px 1.5px at 14% 22%, var(--color-eduverse-star) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 68% 38%, oklch(96% 0.01 264 / 0.7) 50%, transparent 51%),
+    radial-gradient(2px 2px at 82% 72%, var(--color-eduverse-star) 50%, transparent 51%),
+    radial-gradient(1px 1px at 36% 84%, oklch(96% 0.01 264 / 0.6) 50%, transparent 51%);
+  background-size:
+    230px 230px,
+    300px 300px,
+    190px 190px,
+    260px 260px;
+  opacity: 0.5;
+  animation: star-drift 150s linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-glow::before {
+    animation: aurora-drift 64s ease-in-out infinite alternate !important;
+  }
+  .hero-glow::after {
+    animation: star-drift 300s linear infinite !important;
+  }
 }
 
 /* ── Choreography ── */
@@ -488,6 +535,14 @@ body {
 
 .hero-highlight {
   color: var(--color-eduverse-accent);
+  background: linear-gradient(
+    180deg,
+    var(--color-eduverse-accent-light),
+    var(--color-eduverse-accent)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .hero-desc {
@@ -963,6 +1018,16 @@ body {
   box-shadow:
     inset 0 1px 0 oklch(96% 0.01 264 / 0.18),
     0 6px 16px oklch(60% 0.18 75 / 0.18);
+  transition:
+    transform 0.25s var(--ease-out-expo),
+    box-shadow 0.25s var(--ease-out-expo);
+}
+
+.feature-card:hover .feature-icon {
+  transform: scale(1.05);
+  box-shadow:
+    inset 0 1px 0 oklch(96% 0.01 264 / 0.22),
+    0 8px 22px oklch(60% 0.18 75 / 0.26);
 }
 
 .feature-card h3 {
@@ -1291,6 +1356,14 @@ body {
 
 .band-hl {
   color: var(--color-eduverse-accent);
+  background: linear-gradient(
+    180deg,
+    var(--color-eduverse-accent-light),
+    var(--color-eduverse-accent)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .band-sub {
@@ -1303,6 +1376,8 @@ body {
 
 /* ── Footer ── */
 .landing-footer {
+  position: relative;
+  z-index: 1;
   border-top: 1px solid var(--color-eduverse-border);
 }
 
@@ -3194,7 +3269,10 @@ h3 {
   background: var(--color-eduverse-raised);
   border: 1px solid var(--color-eduverse-border);
   border-radius: var(--radius-card);
-  box-shadow: var(--shadow-sm);
+  /* Hairline top highlight = lit-from-above depth, matching .glass-panel. */
+  box-shadow:
+    inset 0 1px 0 oklch(96% 0.01 264 / 0.04),
+    var(--shadow-sm);
   transition:
     border-color 0.25s var(--ease-out-expo),
     box-shadow 0.25s var(--ease-out-expo),
@@ -3206,7 +3284,10 @@ h3 {
 }
 .app-card-link:hover {
   border-color: var(--color-eduverse-accent);
-  box-shadow: var(--shadow-glow), var(--shadow-md);
+  box-shadow:
+    inset 0 1px 0 oklch(96% 0.01 264 / 0.06),
+    var(--shadow-glow),
+    var(--shadow-md);
   transform: translateY(-2px);
 }
 
@@ -3242,6 +3323,10 @@ h3 {
   transform: translateX(2px);
 }
 
+.side-item:hover svg {
+  color: var(--color-eduverse-accent);
+}
+
 .side-item.active {
   color: var(--color-eduverse-accent);
   background: linear-gradient(100deg, oklch(78% 0.14 85 / 0.16), oklch(78% 0.14 85 / 0.03) 70%);
@@ -3249,6 +3334,20 @@ h3 {
   box-shadow:
     inset 0 1px 0 oklch(100% 0 0 / 0.06),
     0 0 18px oklch(78% 0.14 85 / 0.1);
+}
+
+/* Glowing left indicator bar — instantly readable "current page". */
+.side-item.active::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 18px;
+  border-radius: 0 3px 3px 0;
+  background: var(--color-eduverse-accent);
+  box-shadow: 0 0 10px oklch(78% 0.14 85 / 0.7);
 }
 
 .side-item.active:hover {
@@ -3811,14 +3910,33 @@ h3 {
 .battle-staging::before {
   content: "";
   position: absolute;
-  top: -12%;
+  top: -14%;
   left: 50%;
-  width: 64%;
-  height: 60%;
+  width: 80%;
+  height: 70%;
   transform: translateX(-50%);
-  background: radial-gradient(ellipse at center, oklch(78% 0.14 85 / 0.1), transparent 70%);
-  filter: blur(20px);
+  background: radial-gradient(ellipse at center, oklch(78% 0.14 85 / 0.16), transparent 70%);
+  filter: blur(28px);
   pointer-events: none;
+  animation: arena-pulse 6s var(--ease-sine) infinite alternate;
+}
+
+/* Arena vignette — frames the stage so the player/action reads as the focus. */
+.battle-staging::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 42%, transparent 55%, oklch(8% 0.02 260 / 0.5) 100%);
+  pointer-events: none;
+}
+
+@keyframes arena-pulse {
+  from {
+    opacity: 0.65;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .battle-staging > * {
@@ -3857,20 +3975,28 @@ h3 {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   letter-spacing: 0.08em;
   color: var(--color-eduverse-text-muted);
   animation: rise 0.5s var(--ease-out-expo) 0.26s both;
 }
 
-.bt-count {
-  font-size: clamp(4rem, 12vw, 6.5rem);
+.bt-vs span {
+  color: var(--color-eduverse-text);
   font-weight: 600;
+}
+
+.bt-count {
+  font-size: clamp(4.5rem, 14vw, 7.5rem);
+  font-weight: 700;
   line-height: 1;
   color: var(--color-eduverse-accent);
   margin-top: 18px;
   animation: bt-count-in 0.85s var(--ease-out-expo) both;
   font-variant-numeric: tabular-nums;
+  text-shadow:
+    0 0 40px oklch(78% 0.14 85 / 0.6),
+    0 0 80px oklch(60% 0.18 75 / 0.3);
 }
 
 @keyframes bt-count-in {
@@ -3917,30 +4043,72 @@ h3 {
 }
 
 .bt-clock {
-  font-size: 1.6rem;
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  font-size: 1.7rem;
+  font-weight: 700;
   color: var(--color-eduverse-accent);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+  padding: 6px 16px;
+  border-radius: var(--radius-pill);
+  background: var(--color-eduverse-accent-soft);
+  border: 1px solid oklch(78% 0.14 85 / 0.25);
+}
+
+/* Final-30s urgency — the clock turns red and pulses. */
+.bt-clock.danger {
+  color: var(--color-eduverse-danger);
+  background: oklch(66% 0.19 25 / 0.12);
+  border-color: oklch(66% 0.19 25 / 0.4);
+  animation: bt-clock-pulse 1s ease-in-out infinite;
+}
+
+@keyframes bt-clock-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 oklch(66% 0.19 25 / 0);
+  }
+  50% {
+    box-shadow: 0 0 18px 1px oklch(66% 0.19 25 / 0.45);
+  }
 }
 
 .bt-timebar {
-  height: 3px;
+  height: 4px;
   border-radius: 2px;
   background: var(--color-eduverse-raised);
   overflow: hidden;
+  box-shadow: inset 0 0 0 1px oklch(96% 0.01 264 / 0.04);
 }
 
 .bt-timebar-fill {
   height: 100%;
   width: 100%;
-  background: var(--color-eduverse-accent-strong);
+  background: linear-gradient(
+    90deg,
+    var(--color-eduverse-accent-strong),
+    var(--color-eduverse-accent)
+  );
   transform-origin: left;
   transition: transform 1s linear;
+  box-shadow: 0 0 12px oklch(78% 0.14 85 / 0.5);
 }
 
 .bt-timebar-fill.danger {
-  background: var(--color-eduverse-danger);
+  background: linear-gradient(90deg, oklch(55% 0.2 25), var(--color-eduverse-danger));
+  box-shadow: 0 0 14px oklch(66% 0.19 25 / 0.6);
+  animation: bt-bar-pulse 0.9s ease-in-out infinite;
+}
+
+@keyframes bt-bar-pulse {
+  0%,
+  100% {
+    opacity: 0.72;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 .bt-verdict-icon {
@@ -3957,11 +4125,17 @@ h3 {
 }
 
 .bt-verdict-icon[data-verdict="victory"] {
-  color: var(--color-eduverse-accent);
-  border-color: var(--color-eduverse-accent);
+  color: oklch(28% 0.06 58);
+  border-color: oklch(85% 0.1 85 / 0.6);
+  background: linear-gradient(160deg, oklch(88% 0.13 90), oklch(66% 0.15 76));
+  box-shadow:
+    inset 0 1px 0 oklch(100% 0 0 / 0.4),
+    0 0 44px oklch(82% 0.14 85 / 0.55);
 }
 .bt-verdict-icon[data-verdict="defeat"] {
   color: var(--color-eduverse-danger);
+  border-color: oklch(66% 0.19 25 / 0.5);
+  box-shadow: 0 0 30px oklch(66% 0.19 25 / 0.3);
 }
 .bt-verdict-icon[data-verdict="draw"] {
   color: var(--color-eduverse-text-muted);
@@ -4110,26 +4284,34 @@ h3 {
   font-family: var(--font-mono);
   font-size: 1.1rem;
   font-weight: 700;
-  color: var(--color-eduverse-bg);
+  color: oklch(20% 0.03 60);
   position: relative;
+  box-shadow: inset 0 1px 0 oklch(100% 0 0 / 0.3);
 }
 
 .podium-avatar.rank-1 {
-  width: 64px;
-  height: 64px;
-  font-size: 1.3rem;
-  background: oklch(78% 0.14 85);
+  width: 66px;
+  height: 66px;
+  font-size: 1.35rem;
+  background: linear-gradient(160deg, oklch(90% 0.12 92), oklch(70% 0.15 78));
   box-shadow:
-    0 0 26px oklch(82% 0.14 85 / 0.45),
-    0 0 0 1px oklch(85% 0.1 85 / 0.5);
+    inset 0 1px 0 oklch(100% 0 0 / 0.4),
+    0 0 30px oklch(82% 0.14 85 / 0.55),
+    0 0 0 1px oklch(85% 0.1 85 / 0.6);
 }
 
 .podium-avatar.rank-2 {
-  background: oklch(78% 0.02 270);
+  background: linear-gradient(160deg, oklch(92% 0.012 270), oklch(72% 0.02 270));
+  box-shadow:
+    inset 0 1px 0 oklch(100% 0 0 / 0.45),
+    0 0 0 1px oklch(82% 0.02 270 / 0.5);
 }
 
 .podium-avatar.rank-3 {
-  background: oklch(65% 0.1 55);
+  background: linear-gradient(160deg, oklch(76% 0.1 62), oklch(56% 0.11 48));
+  box-shadow:
+    inset 0 1px 0 oklch(100% 0 0 / 0.35),
+    0 0 0 1px oklch(65% 0.1 55 / 0.5);
 }
 
 .podium-name {
@@ -4151,40 +4333,59 @@ h3 {
 }
 
 .podium-pedestal {
-  border-radius: 4px 4px 0 0;
+  position: relative;
+  border-radius: 7px 7px 0 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 80px;
-  font-size: 1.5rem;
+  width: 84px;
+  font-size: 1.6rem;
   font-weight: 800;
   font-family: var(--font-display);
+  overflow: hidden;
+  box-shadow:
+    inset 0 1px 0 oklch(100% 0 0 / 0.25),
+    var(--shadow-lg);
+}
+
+/* Reflective top sheen on every pedestal. */
+.podium-pedestal::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 46%;
+  background: linear-gradient(180deg, oklch(100% 0 0 / 0.22), transparent);
+  pointer-events: none;
 }
 
 .podium-pedestal.rank-1 {
-  height: 120px;
-  background: oklch(65% 0.14 80);
-  color: oklch(15% 0.03 50);
-  box-shadow: 0 -10px 36px oklch(82% 0.14 85 / 0.25);
+  height: 128px;
+  background: linear-gradient(180deg, oklch(86% 0.13 90), oklch(60% 0.14 74));
+  color: oklch(22% 0.05 55);
+  box-shadow:
+    inset 0 1px 0 oklch(100% 0 0 / 0.35),
+    0 -14px 48px oklch(82% 0.14 85 / 0.4),
+    var(--shadow-lg);
 }
 
 .podium-pedestal.rank-2 {
-  height: 88px;
-  background: oklch(72% 0.02 270);
-  color: oklch(15% 0.03 50);
+  height: 92px;
+  background: linear-gradient(180deg, oklch(86% 0.015 270), oklch(64% 0.02 270));
+  color: oklch(22% 0.03 270);
 }
 
 .podium-pedestal.rank-3 {
-  height: 72px;
-  background: oklch(62% 0.1 55);
-  color: oklch(15% 0.03 50);
+  height: 74px;
+  background: linear-gradient(180deg, oklch(72% 0.1 60), oklch(52% 0.1 48));
+  color: oklch(20% 0.04 50);
 }
 
 .podium-crown-badge {
   position: absolute;
-  top: -10px;
+  top: -12px;
   left: 50%;
   transform: translateX(-50%);
+  filter: drop-shadow(0 2px 6px oklch(82% 0.14 85 / 0.6));
 }
 
 /* ================================================================
@@ -4196,8 +4397,30 @@ h3 {
   font-weight: 800;
   font-family: var(--font-mono);
   letter-spacing: -0.03em;
-  color: var(--color-eduverse-text);
+  /* Key metrics glow in the brand amber (gradient, with a solid fallback). */
+  color: var(--color-eduverse-accent);
+  background: linear-gradient(
+    180deg,
+    var(--color-eduverse-accent-light),
+    var(--color-eduverse-accent)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
   line-height: 1;
+}
+
+/* Primary action button — a lit amber gradient with a top highlight, matching
+   the landing CTA so every primary action feels dimensional, not flat. */
+.eb-btn-primary {
+  background: linear-gradient(
+    180deg,
+    var(--color-eduverse-accent),
+    var(--color-eduverse-accent-strong)
+  );
+  box-shadow:
+    inset 0 1px 0 oklch(100% 0 0 / 0.18),
+    0 2px 8px oklch(60% 0.18 75 / 0.25);
 }
 
 .stat-card-icon {
@@ -4535,6 +4758,7 @@ h3 {
 /* Glow pill — primary CTA with an amber halo (reference's lit button). */
 .glow-pill {
   position: relative;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -4571,6 +4795,20 @@ h3 {
 }
 .glow-pill:active {
   transform: translateY(0) scale(0.98);
+}
+
+/* Light glint that sweeps across the CTA on hover. */
+.glow-pill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 35%, oklch(100% 0 0 / 0.28) 50%, transparent 65%);
+  transform: translateX(-130%);
+  pointer-events: none;
+}
+.glow-pill:hover::after {
+  transform: translateX(130%);
+  transition: transform 0.6s var(--ease-out-expo);
 }
 
 /* Glass pill — quiet secondary CTA on the cosmic canvas. */
@@ -4852,9 +5090,15 @@ h3 {
   flex-direction: column;
   height: 100%;
   width: 100%;
-  background: var(--color-eduverse-surface);
+  background: linear-gradient(
+    180deg,
+    var(--color-eduverse-raised) 0%,
+    var(--color-eduverse-surface) 100%
+  );
   border-right: 1px solid var(--color-eduverse-border);
-  box-shadow: 2px 0 24px oklch(0% 0 0 / 0.22);
+  box-shadow:
+    inset -1px 0 0 oklch(96% 0.01 264 / 0.03),
+    2px 0 28px oklch(4% 0.03 262 / 0.32);
 }
 
 .sb-mobile {
@@ -5348,6 +5592,11 @@ h3 {
     oklch(60% 0.18 75 / 0.06)
   );
   border: 1px solid oklch(78% 0.14 85 / 0.22);
+  transition: transform 0.2s var(--ease-out-expo);
+}
+
+.subject-chip:hover .subject-chip-icon {
+  transform: scale(1.05);
 }
 
 .subject-chip-name {

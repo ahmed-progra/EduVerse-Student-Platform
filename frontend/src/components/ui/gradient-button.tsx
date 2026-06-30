@@ -24,7 +24,7 @@ export const GradientButton = memo(function GradientButton({
   type = "button",
 }: GradientButtonProps) {
   const variants = {
-    primary: "bg-eduverse-accent-strong text-white hover:brightness-110",
+    primary: "eb-btn-primary text-white hover:brightness-110",
     secondary:
       "bg-eduverse-accent-soft text-eduverse-accent border border-eduverse-border-mid hover:bg-eduverse-accent-soft/70",
     danger: "bg-eduverse-danger text-white hover:brightness-110",
