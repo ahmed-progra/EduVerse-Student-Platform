@@ -148,7 +148,7 @@ npm run build          # builds shared → backend → frontend in order
 npm run dev            # concurrently runs backend (tsx watch) + frontend (next dev)
 npm run start          # runs compiled backend (node dist/index.js)
 npm run db:migrate     # applies Prisma migrations to PostgreSQL
-npm run db:seed        # seeds courses, 124+ lessons, shop items, skill tree, demo user
+npm run db:seed        # seeds courses, 172 lessons, shop items, skill tree, demo user
 ```
 
 - The backend compiles to `backend/dist` and runs with `node dist/index.js`.

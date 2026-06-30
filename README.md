@@ -45,7 +45,7 @@
   <img src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss" alt="Tailwind CSS" />
   <img src="https://img.shields.io/badge/Three.js-000?logo=three.js" alt="Three.js" />
   <br />
-  <strong>7 courses · 172 lessons · Python · HTML · CSS · C++ · Mathematics · Physics · Science</strong>
+  <strong>7 courses · 172+ lessons · Python · HTML · CSS · C++ · Mathematics · Physics · Science</strong>
 </p>
 
 <p align="center">
@@ -232,7 +232,7 @@ Registration/Login → bcrypt password hash / Google OAuth
 ```
 eduverse/
 ├── frontend/                          # Next.js 16 web application
-│   ├── src/app/                       # App Router — 24 route segments
+│   ├── src/app/                       # App Router — 23 route segments
 │   │   ├── dashboard/                 # Learner dashboard
 │   │   ├── courses/                   # Course catalog + detail
 │   │   ├── lessons/                   # Lesson viewer + code visualizer
@@ -248,6 +248,8 @@ eduverse/
 │   │   ├── placement-test/            # Adaptive assessment
 │   │   ├── resources/                 # Learning resources
 │   │   ├── announcements/             # Bulletin board
+│   │   ├── profile/                   # User profile
+│   │   ├── auth/                      # Login + register
 │   │   └── u/[username]/              # Public portfolio
 │   ├── src/components/                # Shared UI + layout components
 │   ├── src/features/                  # Feature modules (12 domains)
@@ -258,7 +260,7 @@ eduverse/
 │   ├── src/types/                     # TypeScript declarations + API entity types
 │   └── eslint.config.mjs              # Flat ESLint config
 ├── backend/                           # Express 5 REST API
-│   ├── src/routes/                    # 14 route groups
+│   ├── src/routes/                    # 15 route groups
 │   ├── src/services/                  # AI, learning, mentor, apprentice, XP, battle, project
 │   ├── src/middleware/                # JWT auth, rate limiting
 │   ├── src/learning/                  # Topic catalogs, assessment banks
@@ -267,7 +269,7 @@ eduverse/
 │   ├── curriculum/                    # 172 authored lessons across 7 courses
 │   └── scripts/                       # 6 E2E test suites
 ├── shared/src/                        # 20+ shared TypeScript types
-├── docs/                              # Documentation (14 documents)
+├── docs/                              # Documentation (17 documents)
 ├── assets/                            # Logos, diagrams, social preview
 ├── .github/                           # CI, issue/PR templates, Dependabot
 ├── package.json                       # Root workspace orchestrator
@@ -278,7 +280,7 @@ eduverse/
 
 ## API Overview
 
-The backend exposes **50+ REST endpoints** under `/api/*`. Key groups:
+The backend exposes **60+ REST endpoints** under `/api/*`. Key groups:
 
 | Group       | Base Path                 | Endpoints                                                                                 |
 | ----------- | ------------------------- | ----------------------------------------------------------------------------------------- |
@@ -295,6 +297,7 @@ The backend exposes **50+ REST endpoints** under `/api/*`. Key groups:
 | Leaderboard | `/api/leaderboard`        | Rankings, rank                                                                            |
 | Shop        | `/api/shop`               | Items, buy, equip, inventory                                                              |
 | User        | `/api/user`               | Profile, update, XP logs                                                                  |
+| Health      | `/api/health`             | DB connection check                                                                       |
 | Submissions | `/api/submissions`        | Code execute                                                                              |
 
 Full reference: [docs/API.md](docs/API.md)
@@ -365,7 +368,9 @@ Copy `.env.example` to `.env` and fill in:
 | [AI Features](docs/ai-features.md)         | Gemini integration, mentor, apprentice, grading |
 | [Design System](docs/design-system.md)     | Colors, typography, motion theme                |
 | [Deployment](docs/DEPLOYMENT.md)           | Production deployment guide                     |
+| [Development](docs/DEVELOPMENT.md)         | Dev workflow, scripts, tests, troubleshooting   |
 | [FAQ](docs/FAQ.md)                         | Frequently asked questions                      |
+| [Product](docs/product.md)                 | Product context, audience, brand voice          |
 | [Troubleshooting](docs/TROUBLESHOOTING.md) | Common issues and solutions                     |
 | [Contributing](docs/contributing.md)       | Contributing guide                              |
 | [Roadmap](docs/ROADMAP.md)                 | Future plans and priorities                     |

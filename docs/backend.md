@@ -28,7 +28,7 @@ using **Prisma ORM** with **PostgreSQL** (Supabase) and a **SQLite** local mirro
 backend/
 ├── src/
 │   ├── index.ts                # Express app bootstrap
-│   ├── routes/                 # 14 route groups
+│   ├── routes/                 # 15 route groups
 │   │   ├── auth.ts             # Register, login, Google OAuth, me
 │   │   ├── courses.ts          # Course catalog
 │   │   ├── lessons.ts          # Lesson content, complete, quiz
@@ -42,6 +42,7 @@ backend/
 │   │   ├── learning.ts         # Adaptive learning assessment
 │   │   ├── mentor.ts           # Mentor profile, missions, reports
 │   │   ├── apprentice.ts       # Teach-the-AI
+│   │   ├── health.ts            # Liveness probe
 │   │   └── projects.ts         # Project studio + portfolio
 │   ├── services/               # Business logic
 │   │   ├── ai-service.ts       # Gemini gateway (retry, fallback, JSON mode)

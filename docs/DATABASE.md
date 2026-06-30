@@ -176,7 +176,7 @@ npm run db:reset
 npx prisma studio
 ```
 
-The seed script (`backend/seed.ts`) sources lessons from `backend/curriculum/`,
+The seed script (`backend/scripts/seed.ts`) sources lessons from `backend/curriculum/`,
 creates shop items, populates the skill tree, and creates the demo account
 `demo@eduverse.dev` / `demo1234`.
 

@@ -26,7 +26,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full picture.
 git clone <your-fork-url>
 cd eduverse
 npm install                 # installs all workspaces
-cp .env.example backend/.env  # then fill in the values
+cp .env.example .env  # then fill in the values
 npm run db:setup            # prisma migrate + seed
 npm run dev                 # backend :4000 + frontend :3000
 ```
@@ -81,6 +81,7 @@ node scripts/learning-e2e.mjs     # adaptive learning
 node scripts/mentor-e2e.mjs       # AI Coach + missions
 node scripts/apprentice-e2e.mjs   # teach-the-AI
 node scripts/projects-e2e.mjs     # Project Studio + portfolio
+node scripts/teachback-e2e.mjs    # teach-the-AI (student teaches Pip)
 node scripts/ai-e2e.mjs           # AI endpoints
 ```
 

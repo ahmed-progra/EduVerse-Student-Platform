@@ -15,6 +15,7 @@ system, and product direction.
 | [backend.md](backend.md)                 | Express API architecture, services, middleware, auth        |
 | [authentication.md](authentication.md)   | Login flow, JWT, OAuth, security model                      |
 | [ai-features.md](ai-features.md)         | Gemini integration, mentor, apprentice, project grading     |
+| [contributing.md](contributing.md)       | Contributing guide, conventional commits, standards         |
 | [design-system.md](design-system.md)     | The "Code Sorcery" visual system (colors, type, motion)     |
 | [product.md](product.md)                 | Product context, audience, brand voice, and direction       |
 | [ROADMAP.md](ROADMAP.md)                 | Feature roadmap and future plans                            |
@@ -27,3 +28,7 @@ system, and product direction.
 ## Project-level docs
 
 - [Root README](../README.md) — overview, highlights, quick start
+- [CHANGELOG](../CHANGELOG.md) — release history
+- [Design Philosophy](../design-philosophy.md) — design principles and decisions
+- [Evaluation Report](../EVALUATION_REPORT.md) — professional evaluation results
+- [Support](../SUPPORT.md) — community and support resources

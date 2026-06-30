@@ -64,7 +64,14 @@ skills-lock.json
 # ───────────────────────── AI / agent scratch files ────────────
 AUDIT.md
 NOTES.md
+EDUVERSE_COMPLETE_SUMMARY.md
 scratch*.md
+
+# ──────────────────────── Orphan large assets ────────────────────
+systemic-cartography.png
+
+# ─────────────── Legacy root config (use workspace flat configs) ──
+.eslintrc.json
 
 # ───────────────────────── Local helper scripts ────────────────
 backend_check.ps1

@@ -540,6 +540,6 @@ Errors: 400 (validation), 409 (username taken)
 
 ---
 
-> This reference is generated from the route definitions in
+> This reference is maintained alongside the route definitions in
 > `backend/src/routes/`. When you add or change a route, update this file in the
 > same PR.
