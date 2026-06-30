@@ -954,7 +954,7 @@ export const ASSESSMENT_BANKS: Record<string, BankQuestion[]> = { python, cpp, h
 /** Served (client-safe) question shape — answers stripped. */
 export function serveBank(slug: string) {
   const bank = ASSESSMENT_BANKS[slug] || [];
-  return bank.map(({ answer, ...rest }) => rest);
+  return bank.map(({ answer: _answer, ...rest }) => rest);
 }
 
 export function getBank(slug: string): BankQuestion[] {

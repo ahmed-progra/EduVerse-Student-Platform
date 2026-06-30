@@ -46,7 +46,7 @@ router.get("/:id", requireAuth, async (req: Request, res: Response) => {
         score: progress?.score || null,
       },
     });
-  } catch (err) {
+  } catch (_err) {
     res.status(500).json({ success: false, error: "Failed to fetch lesson" });
   }
 });
@@ -109,7 +109,7 @@ router.post("/:id/complete", requireAuth, async (req: Request, res: Response) =>
     });
 
     res.json({ success: true, data: xpResult });
-  } catch (err) {
+  } catch (_err) {
     res.status(500).json({ success: false, error: "Failed to complete lesson" });
   }
 });

@@ -13,7 +13,7 @@
 import { prisma } from "../lib/prisma";
 import { generateJSON, AIError, clampText } from "./ai-service";
 import { COURSE_TOPICS, topicLabel, topicTier } from "../learning/topics";
-import { getBank, BankQuestion } from "../learning/assessment-banks";
+import { getBank as _getBank, BankQuestion } from "../learning/assessment-banks";
 
 export type MasteryStatus = "mastered" | "partial" | "weak" | "missing";
 
@@ -235,7 +235,7 @@ export async function aiAnalyzeAndPlan(
   skips: Set<string>,
   recentEvents: string[],
 ): Promise<AIAnalysis> {
-  const skippedLessons = lessons.filter((l) => skips.has(l.id));
+  const _skippedLessons = lessons.filter((l) => skips.has(l.id));
   const lessonLines = lessons
     .map(
       (l) =>

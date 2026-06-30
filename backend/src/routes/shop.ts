@@ -17,7 +17,7 @@ router.get("/items", async (_req: Request, res: Response) => {
     const items = await prisma.shopItem.findMany({ orderBy: { price: "asc" } });
     setCache(SHOP_ITEMS_KEY, items);
     res.json({ success: true, data: items });
-  } catch (err) {
+  } catch (_err) {
     res.status(500).json({ success: false, error: "Failed to fetch shop items" });
   }
 });
@@ -74,8 +74,8 @@ router.post("/buy/:itemId", requireAuth, async (req: Request, res: Response) => 
       success: true,
       data: { message: "Purchased successfully", item, coins: user.coins - item.price },
     });
-  } catch (err) {
-    if (err instanceof Error && err.message === "INSUFFICIENT_COINS") {
+  } catch (_err) {
+    if (_err instanceof Error && _err.message === "INSUFFICIENT_COINS") {
       res.status(400).json({ success: false, error: "Not enough coins" });
       return;
     }
@@ -107,7 +107,7 @@ router.post("/equip/:itemId", requireAuth, async (req: Request, res: Response) =
     });
 
     res.json({ success: true, data: { message: "Equipped successfully" } });
-  } catch (err) {
+  } catch (_err) {
     res.status(500).json({ success: false, error: "Equip failed" });
   }
 });
@@ -119,7 +119,7 @@ router.get("/inventory", requireAuth, async (req: Request, res: Response) => {
       include: { item: true },
     });
     res.json({ success: true, data: inventory });
-  } catch (err) {
+  } catch (_err) {
     res.status(500).json({ success: false, error: "Failed to fetch inventory" });
   }
 });

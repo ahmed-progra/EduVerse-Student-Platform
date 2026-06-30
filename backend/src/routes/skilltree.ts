@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 import { requireAuth } from "../middleware/auth";
-import { addXp } from "../services/xp-service";
+import { addXp as _addXp } from "../services/xp-service";
 import { getCached, setCache, clearCache } from "../lib/cache";
 
 const router = Router();
@@ -40,7 +40,7 @@ router.get("/", requireAuth, async (_req: Request, res: Response) => {
 
     setCache(cacheKey, data);
     res.json({ success: true, data });
-  } catch (err) {
+  } catch (_err) {
     res.status(500).json({ success: false, error: "Failed to fetch skill tree" });
   }
 });
@@ -115,7 +115,7 @@ router.post("/unlock/:nodeId", requireAuth, async (req: Request, res: Response) 
         effect: { type: node.effectType, value: node.effectValue },
       },
     });
-  } catch (err) {
+  } catch (_err) {
     res.status(500).json({ success: false, error: "Failed to unlock skill" });
   }
 });

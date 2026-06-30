@@ -506,7 +506,7 @@ export const htmlA: LessonDef[] = [
         "A minimal working form",
         `<form action="/search" method="get">\n    <input type="text" name="q" placeholder="Search courses...">\n    <button type="submit">Search</button>\n</form>`,
         undefined,
-        `Submitting navigates to /search?q=whatever-you-typed — name=\"q\" became the parameter.`,
+        `Submitting navigates to /search?q=whatever-you-typed — name="q" became the parameter.`,
       ),
       ex(
         "Login form (POST)",

@@ -22,6 +22,7 @@ import learningRoutes from "./routes/learning";
 import mentorRoutes from "./routes/mentor";
 import apprenticeRoutes from "./routes/apprentice";
 import projectRoutes from "./routes/projects";
+import healthRoutes from "./routes/health";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -59,10 +60,7 @@ app.use("/api/learning", learningRoutes);
 app.use("/api/mentor", mentorRoutes);
 app.use("/api/apprentice", apprenticeRoutes);
 app.use("/api/projects", projectRoutes);
-
-app.get("/api/health", (_req, res) => {
-  res.json({ success: true, data: { status: "ok", timestamp: new Date().toISOString() } });
-});
+app.use("/api/health", healthRoutes);
 
 const server = app.listen(PORT, () => {
   console.info(`EduVerse API running on http://localhost:${PORT}`);

@@ -48,6 +48,10 @@
   <strong>7 courses · 172 lessons · Python · HTML · CSS · C++ · Mathematics · Physics · Science</strong>
 </p>
 
+<p align="center">
+  <img src="assets/maturity_radar.png" alt="Project Maturity Radar" width="600" />
+</p>
+
 ---
 
 ## Overview
@@ -92,9 +96,34 @@ Frontend at **http://localhost:3000**, backend at **http://localhost:4000**.
 
 > **Note:** Some AI features require a `GOOGLE_AI_API_KEY`. Set it in your `.env` or in the `backend` service environment in `docker-compose.yml` before starting.
 
-### Manual setup
+### Manual setup (local PostgreSQL via Docker)
 
-Requires **Node.js 20+** and **PostgreSQL 16+**.
+The recommended local dev workflow uses a Dockerized PostgreSQL so you don't need a remote Supabase instance:
+
+```bash
+# 1. Start a local PostgreSQL 16 instance
+docker compose -f docker-compose.local.yml up -d
+
+# 2. Install dependencies
+npm install
+
+# 3. Configure environment
+cp .env.example .env
+# Edit .env — set DATABASE_URL to: postgresql://postgres:password@localhost:5432/eduverse
+# Set DIRECT_URL to the same value
+
+# 4. Setup database (migrate + seed)
+npm run db:setup
+
+# 5. Start development servers
+npm run dev
+```
+
+The backend starts on **http://localhost:4000** and the frontend on **http://localhost:3000**.
+
+### Manual setup (external PostgreSQL)
+
+Requires **Node.js 20+** and an existing PostgreSQL 16+ instance (e.g., Supabase).
 
 ```bash
 git clone https://github.com/ahmed-progra/EduVerse-Student-Platform.git
@@ -105,8 +134,6 @@ cp .env.example .env
 npm run db:setup
 npm run dev
 ```
-
-The backend starts on **http://localhost:4000** and the frontend on **http://localhost:3000**.
 
 ### One-minute (infra-only Docker)
 
@@ -129,41 +156,7 @@ npm run dev
 
 ## Architecture
 
-```mermaid
-graph TB
-    subgraph Browser["Browser"]
-        NEXT["Next.js 16 App Router<br/>React 19 · Tailwind CSS v4"]
-        SKULPT["Skulpt (Python)<br/>iframe (HTML/CSS)"]
-        THREE["Three.js 3D Lab"]
-    end
-
-    subgraph Backend["Backend — Express 5"]
-        API["REST API · /api/*<br/>14 route groups"]
-        MIDDLEWARE["Middleware<br/>JWT Auth · Rate Limit"]
-        SERVICES["Services<br/>AI · Learning · Mentor · Apprentice<br/>Project · Battle · XP"]
-        PRISMA["Prisma ORM"]
-    end
-
-    subgraph External["External Services"]
-        AI["Google AI Studio<br/>Gemini API"]
-        JUDGE0["Judge0<br/>C++ Execution"]
-        PG[("PostgreSQL<br/>Supabase")]
-    end
-
-    NEXT -->|JWT Bearer| API
-    API --> MIDDLEWARE
-    MIDDLEWARE --> SERVICES
-    SERVICES --> PRISMA
-    PRISMA --> PG
-    SERVICES --> AI
-    SERVICES --> JUDGE0
-    THREE --> API
-
-    style Browser fill:#1a1a2e,color:#e0e0e0
-    style Backend fill:#16213e,color:#e0e0e0
-    style External fill:#0f3460,color:#e0e0e0
-    style PG fill:#0a1628,color:#e0e0e0
-```
+<img src="assets/architecture_map.png" alt="EduVerse System Architecture" width="800" />
 
 ### Workspaces
 
@@ -376,6 +369,7 @@ Copy `.env.example` to `.env` and fill in:
 | [Troubleshooting](docs/TROUBLESHOOTING.md) | Common issues and solutions                     |
 | [Contributing](docs/contributing.md)       | Contributing guide                              |
 | [Roadmap](docs/ROADMAP.md)                 | Future plans and priorities                     |
+| [Evaluation Report](EVALUATION_REPORT.md)  | Professional evaluation report                  |
 
 ---
 

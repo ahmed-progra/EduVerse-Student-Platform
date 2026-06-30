@@ -39,9 +39,20 @@ jobs:
       - name: Format check
         run: npm run format:check
 
+      - name: Lint (backend)
+        working-directory: backend
+        run: npm run lint
+
+      - name: Lint (frontend)
+        working-directory: frontend
+        run: npm run lint
+
       - name: Validate Prisma schema
         working-directory: backend
         run: npx prisma validate
 
       - name: Build (all workspaces)
         run: npm run build
+
+      - name: Run E2E Tests (Backend scripts)
+        run: npm run test:e2e -w backend

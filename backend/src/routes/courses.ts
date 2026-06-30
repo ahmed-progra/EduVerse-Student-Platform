@@ -25,7 +25,7 @@ router.get("/", requireAuth, async (_req: Request, res: Response) => {
     });
     setCache(COURSES_DATA_KEY, courses);
     res.json({ success: true, data: courses });
-  } catch (err) {
+  } catch (_err) {
     res.status(500).json({ success: false, error: "Failed to fetch courses" });
   }
 });
@@ -66,7 +66,7 @@ router.get("/:id", requireAuth, async (req: Request, res: Response) => {
       completed: done.has(l.id),
     }));
     res.json({ success: true, data: { ...course, lessons } });
-  } catch (err) {
+  } catch (_err) {
     res.status(500).json({ success: false, error: "Failed to fetch course" });
   }
 });

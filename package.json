@@ -39,7 +39,7 @@
     "lint": "npm run typecheck && npm run format:check",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "node -e \"try { require('husky').install() } catch {}\"",
+    "prepare": "husky",
     "db:generate": "npm run db:generate -w backend",
     "db:migrate": "npm run db:migrate -w backend",
     "db:seed": "npm run db:seed -w backend",
@@ -48,8 +48,26 @@
   },
   "devDependencies": {
     "concurrently": "^9.1.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3",
     "prettier": "^3.4.2",
     "typescript": "^5.8.3"
+  },
+  "lint-staged": {
+    "shared/**/*.{ts,tsx}": [
+      "prettier --write"
+    ],
+    "backend/**/*.{ts,tsx}": [
+      "prettier --write",
+      "eslint --fix --config backend/eslint.config.mjs"
+    ],
+    "frontend/**/*.{ts,tsx,js,jsx}": [
+      "prettier --write",
+      "eslint --fix --config frontend/eslint.config.mjs"
+    ],
+    "*.{json,md,css}": [
+      "prettier --write"
+    ]
   },
   "optionalDependencies": {
     "@next/swc-win32-x64-msvc": "^16.2.7"

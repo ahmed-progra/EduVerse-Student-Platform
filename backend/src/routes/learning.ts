@@ -208,7 +208,7 @@ router.post("/:courseId/assessment/submit", aiLimiter, async (req: Request, res:
 
     // If the AI adjusted the level, recompute the skips for the final level.
     const finalLevel = analysis.level;
-    const finalSkips =
+    const _finalSkips =
       finalLevel === ruleLevel ? plannedSkips : ruleSkips(finalLevel, lites, mastery);
 
     // 4) Persist: profile, assessment, roadmap, XP, event.

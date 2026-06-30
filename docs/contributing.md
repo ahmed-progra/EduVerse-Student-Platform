@@ -48,11 +48,39 @@ We follow [Conventional Commits](https://www.conventionalcommits.org/):
 
 ```
 <type>(<scope>): <description>
+```
 
+| Type       | Usage                                                   | Example                                        |
+| ---------- | ------------------------------------------------------- | ---------------------------------------------- |
+| `feat`     | A new feature                                           | `feat(mentor): add weekly report regeneration` |
+| `fix`      | A bug fix                                               | `fix(auth): reject expired Google tokens`      |
+| `docs`     | Documentation only changes                              | `docs(api): document mentor endpoints`         |
+| `refactor` | Code change that neither fixes a bug nor adds a feature | `refactor(api): extract validation middleware` |
+| `chore`    | Maintenance, deps, tooling                              | `chore(deps): bump prisma to 6.19`             |
+| `test`     | Adding or fixing tests                                  | `test(e2e): add battle arena assertions`       |
+| `style`    | Formatting, missing semicolons, etc.                    | `style: run prettier on all files`             |
+| `perf`     | Performance improvement                                 | `perf(api): cache leaderboard queries`         |
+| `polish`   | UI/UX refinement, animation tuning                      | `polish(lab): smoothen scene transitions`      |
+
+| Scope      | Affected workspace/component      |
+| ---------- | --------------------------------- |
+| `frontend` | Next.js app, components, styles   |
+| `backend`  | Express API, services, middleware |
+| `shared`   | Shared types                      |
+| `auth`     | Authentication / JWT / OAuth      |
+| `mentor`   | AI mentor system                  |
+| `lab`      | 3D lab                            |
+| `deps`     | Dependency updates                |
+| `ci`       | CI/CD workflow changes            |
+
+**Examples:**
+
+```
 feat(mentor): add weekly report regeneration
 fix(auth): validate token expiry
 docs(api): document mentor endpoints
 chore(deps): bump prisma to 6.19
+polish(lab): smoothen scene transitions
 ```
 
 ---

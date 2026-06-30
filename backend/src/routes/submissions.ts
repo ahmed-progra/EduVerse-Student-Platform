@@ -24,7 +24,7 @@ router.post("/execute", requireAuth, codeExecutionLimiter, async (req: Request, 
 
     const result = await executeCode(code, language, stdinStr);
     res.json({ success: true, data: result });
-  } catch (err) {
+  } catch (_err) {
     res.status(500).json({ success: false, error: "Code execution failed" });
   }
 });

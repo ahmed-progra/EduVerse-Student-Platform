@@ -21,9 +21,9 @@ router.get("/profile", requireAuth, async (req: Request, res: Response) => {
       res.status(404).json({ success: false, error: "User not found" });
       return;
     }
-    const { passwordHash, ...safe } = user;
+    const { passwordHash: _passwordHash, ...safe } = user;
     res.json({ success: true, data: safe });
-  } catch (err) {
+  } catch (_err) {
     res.status(500).json({ success: false, error: "Failed to fetch profile" });
   }
 });
@@ -62,7 +62,7 @@ router.put("/profile", requireAuth, async (req: Request, res: Response) => {
       data,
     });
     clearCache(`user:${req.userId}`); // profile changed — invalidate cached /auth/me
-    const { passwordHash, ...safe } = user;
+    const { passwordHash: _passwordHash2, ...safe } = user;
     res.json({ success: true, data: safe });
   } catch (err: unknown) {
     if (typeof err === "object" && err !== null && (err as { code?: string }).code === "P2002") {
@@ -81,7 +81,7 @@ router.get("/xp-logs", requireAuth, async (req: Request, res: Response) => {
       take: 50,
     });
     res.json({ success: true, data: logs });
-  } catch (err) {
+  } catch (_err) {
     res.status(500).json({ success: false, error: "Failed to fetch XP logs" });
   }
 });

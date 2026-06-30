@@ -440,7 +440,7 @@ export const pythonB: LessonDef[] = [
         'What does opening a file in "w" mode do if it already exists?',
         ["Appends to it", "Raises an error", "Erases its contents", "Opens read-only"],
         2,
-        `Write mode truncates the file to empty — use \"a\" to append.`,
+        `Write mode truncates the file to empty — use "a" to append.`,
       ),
       q(
         "Why prefer 'with open(...) as f:'?",
@@ -504,7 +504,7 @@ export const pythonB: LessonDef[] = [
           "It works fine",
         ],
         1,
-        `\"Smith, John\" is one field — naive splitting cuts it in two. The csv module handles quoting.`,
+        `"Smith, John" is one field — naive splitting cuts it in two. The csv module handles quoting.`,
       ),
       q(
         "json.load vs json.loads — the difference?",

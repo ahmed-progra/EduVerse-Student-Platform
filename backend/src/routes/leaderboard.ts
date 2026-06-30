@@ -53,7 +53,7 @@ router.get("/", async (req: Request, res: Response) => {
     const result = { entries: data, total, page, limit };
     setCache(cacheKey, result);
     res.json({ success: true, data: result });
-  } catch (err) {
+  } catch (_err) {
     res.status(500).json({ success: false, error: "Failed to fetch leaderboard" });
   }
 });
@@ -74,7 +74,7 @@ router.get("/rank", requireAuth, async (req: Request, res: Response) => {
     });
 
     res.json({ success: true, data: { rank: higherRanked + 1, score: entry.score } });
-  } catch (err) {
+  } catch (_err) {
     res.status(500).json({ success: false, error: "Failed to get rank" });
   }
 });

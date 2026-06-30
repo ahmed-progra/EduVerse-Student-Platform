@@ -5,7 +5,7 @@ import { signToken } from "../lib/jwt";
 import { validEmail, validUsername, validPassword } from "../lib/validate";
 import { authLimiter } from "../middleware/rate-limit";
 import { requireAuth } from "../middleware/auth";
-import { getCached, setCache, clearCache } from "../lib/cache";
+import { getCached, setCache, clearCache as _clearCache } from "../lib/cache";
 
 const router = Router();
 
@@ -40,9 +40,9 @@ router.post("/register", authLimiter, async (req: Request, res: Response) => {
       return;
     }
 
-    const passwordHash = await bcrypt.hash(password, 10);
+    const _passwordHash = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
-      data: { email, username, passwordHash },
+      data: { email, username, passwordHash: _passwordHash },
     });
 
     const token = signToken({ userId: user.id, email: user.email });
@@ -65,7 +65,7 @@ router.post("/register", authLimiter, async (req: Request, res: Response) => {
         token,
       },
     });
-  } catch (err) {
+  } catch (_err) {
     res.status(500).json({ success: false, error: "Registration failed" });
   }
 });
@@ -110,7 +110,7 @@ router.post("/login", authLimiter, async (req: Request, res: Response) => {
         token,
       },
     });
-  } catch (err) {
+  } catch (_err) {
     res.status(500).json({ success: false, error: "Login failed" });
   }
 });
@@ -154,7 +154,7 @@ router.post("/google", authLimiter, async (req: Request, res: Response) => {
 
     const token = signToken({ userId: user.id, email: user.email });
     res.json({ success: true, data: { user: { ...user, passwordHash: undefined }, token } });
-  } catch (err) {
+  } catch (_err) {
     res.status(500).json({ success: false, error: "Google auth failed" });
   }
 });
@@ -174,10 +174,10 @@ router.get("/me", requireAuth, async (req: Request, res: Response) => {
       res.status(404).json({ success: false, error: "User not found" });
       return;
     }
-    const { passwordHash, ...safe } = user;
+    const { passwordHash: _passwordHash2, ...safe } = user;
     setCache(cacheKey, safe);
     res.json({ success: true, data: safe });
-  } catch (err) {
+  } catch (_err) {
     res.status(500).json({ success: false, error: "Failed to get user" });
   }
 });
