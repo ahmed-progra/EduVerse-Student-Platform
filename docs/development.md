@@ -102,8 +102,15 @@ npm run dev:frontend    # next dev
 
 ## Tests
 
-End-to-end suites run against a **live backend** and the **real Gemini API**, so
-start the backend and configure `GOOGLE_AI_API_KEY` first:
+Backend **unit tests** are hermetic and run in CI:
+
+```bash
+npm run test -w backend
+```
+
+The **end-to-end suites** run against a **live backend** and the **real Gemini
+API**, so they are a local/manual verification step (not part of CI). Start the
+backend and configure `GOOGLE_AI_API_KEY` first:
 
 ```bash
 cd backend
@@ -120,8 +127,12 @@ npm run test:e2e
 ## Continuous integration
 
 [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) runs on every push/PR
-to `main`: install → generate Prisma client → type-check all workspaces →
-validate the Prisma schema. Keep `npm run typecheck` green before opening a PR.
+to `main`. It keeps only deterministic, hermetic checks: install → generate the
+Prisma client → type-check all workspaces → backend unit tests → format check →
+lint (backend + frontend) → validate the Prisma schema → build all workspaces,
+plus a dependency security-audit job. The live-infra E2E suites run locally (see
+above), not in CI. Keep `npm run typecheck` and `npm run format:check` green
+before opening a PR.
 
 ## Project structure
 

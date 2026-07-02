@@ -58,8 +58,11 @@ jobs:
       - name: Build (all workspaces)
         run: npm run build
 
-      - name: Run E2E Tests (Backend scripts)
-        run: npm run test:e2e -w backend
+  # NOTE: The backend E2E suite (`npm run test:e2e -w backend`) is intentionally
+  # NOT run here. Those scripts drive a *live* backend on :4000 backed by a seeded
+  # database and the real Google Gemini API — infrastructure that a hermetic CI
+  # runner does not have. Run them locally against a running stack (see
+  # docs/development.md). CI keeps only deterministic, hermetic checks above.
 
   security-audit:
     name: Dependency security audit
