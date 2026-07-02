@@ -617,11 +617,20 @@ body {
   border-radius: var(--radius-button);
   font-weight: 600;
   font-size: 0.95rem;
-  background: var(--color-eduverse-accent-strong);
-  color: oklch(93% 0.01 80);
+  /* Lit amber gradient with a top highlight — matches .eb-btn-primary so the
+     landing CTA and in-app primary actions read as the same, dimensional button. */
+  background: linear-gradient(
+    180deg,
+    var(--color-eduverse-accent),
+    var(--color-eduverse-accent-strong)
+  );
+  color: oklch(96% 0.01 80);
   text-decoration: none;
   border: none;
   cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 oklch(100% 0 0 / 0.18),
+    0 2px 10px oklch(60% 0.18 75 / 0.25);
   transition:
     filter 0.18s ease,
     transform 0.18s var(--ease-out-expo),
@@ -629,11 +638,11 @@ body {
 }
 
 .btn-primary:hover {
-  filter: brightness(1.12);
+  filter: brightness(1.08);
   transform: translateY(-1px);
   box-shadow:
-    0 6px 20px oklch(60% 0.18 75 / 0.35),
-    inset 0 1px 0 oklch(100% 0 0 / 0.12);
+    0 8px 24px oklch(60% 0.18 75 / 0.38),
+    inset 0 1px 0 oklch(100% 0 0 / 0.2);
 }
 
 .btn-primary:active {
@@ -3261,7 +3270,9 @@ h3 {
 }
 
 .page-enter {
-  animation: page-rise 0.2s var(--ease-out-expo) both;
+  /* A touch slower + smoother so every route change feels intentional, not abrupt
+     (still well under the ~0.4s "feels laggy" threshold). */
+  animation: page-rise 0.34s var(--ease-out-expo) both;
 }
 
 /* Card — elevated surface with subtle depth. */
@@ -3625,12 +3636,21 @@ h3 {
   font-size: 0.92rem;
   outline: none;
   transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease;
+    border-color 0.18s var(--ease-out-expo),
+    box-shadow 0.18s var(--ease-out-expo),
+    background 0.18s var(--ease-out-expo);
 }
 
+/* Responsive before focus — the field brightens on hover so it reads as interactive. */
+.app-input:hover:not(:focus) {
+  border-color: oklch(82% 0.05 264 / 0.32);
+}
+
+/* Soft amber focus ring (Linear/Stripe-style) — clearer than a bare border shift,
+   and a stronger keyboard-focus affordance. */
 .app-input:focus {
   border-color: var(--color-eduverse-accent);
+  box-shadow: 0 0 0 3px oklch(78% 0.14 85 / 0.16);
 }
 
 .app-input::placeholder {
@@ -4463,13 +4483,23 @@ h3 {
   border: 1px solid var(--color-eduverse-border-mid);
   box-shadow: inset 0 1px 0 oklch(96% 0.01 264 / 0.1);
   transition:
-    border-color 0.2s ease,
-    background 0.2s ease;
+    border-color 0.25s var(--ease-out-expo),
+    background 0.25s var(--ease-out-expo),
+    box-shadow 0.25s var(--ease-out-expo),
+    transform 0.25s var(--ease-out-expo);
 }
 
 .quick-action-card:hover .quick-action-icon {
-  border-color: oklch(78% 0.14 85 / 0.3);
-  background: oklch(78% 0.14 85 / 0.06);
+  border-color: oklch(78% 0.14 85 / 0.35);
+  background: oklch(78% 0.14 85 / 0.1);
+  box-shadow:
+    inset 0 1px 0 oklch(96% 0.01 264 / 0.14),
+    0 0 20px oklch(78% 0.14 85 / 0.22);
+  transform: translateY(-2px) scale(1.05);
+}
+
+.quick-action-card:hover .quick-action-icon svg {
+  color: var(--color-eduverse-accent);
 }
 
 .quick-action-label {
