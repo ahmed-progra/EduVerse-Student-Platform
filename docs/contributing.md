@@ -66,7 +66,6 @@ We follow [Conventional Commits](https://www.conventionalcommits.org/):
 | ---------- | --------------------------------- |
 | `frontend` | Next.js app, components, styles   |
 | `backend`  | Express API, services, middleware |
-| `shared`   | Shared types                      |
 | `auth`     | Authentication / JWT / OAuth      |
 | `mentor`   | AI mentor system                  |
 | `lab`      | 3D lab                            |

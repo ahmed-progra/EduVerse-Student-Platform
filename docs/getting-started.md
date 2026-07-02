@@ -27,7 +27,7 @@ cd EduVerse-Student-Platform
 npm install
 ```
 
-This installs all three workspaces (`frontend`, `backend`, `shared`) via npm workspaces.
+This installs both workspaces (`frontend`, `backend`) via npm workspaces.
 
 ---
 

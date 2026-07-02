@@ -25,7 +25,6 @@
     "node": ">=20"
   },
   "workspaces": [
-    "shared",
     "backend",
     "frontend"
   ],
@@ -33,7 +32,7 @@
     "dev": "concurrently -n backend,frontend -c blue,magenta \"npm run dev:backend\" \"npm run dev:frontend\"",
     "dev:frontend": "npm run dev -w frontend",
     "dev:backend": "npm run dev -w backend",
-    "build": "npm run build -w shared && npm run build -w backend && npm run build -w frontend",
+    "build": "npm run build -w backend && npm run build -w frontend",
     "start": "npm run start -w backend",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "lint": "npm run typecheck && npm run format:check",
@@ -56,9 +55,6 @@
     "typescript": "^5.8.3"
   },
   "lint-staged": {
-    "shared/**/*.{ts,tsx}": [
-      "prettier --write"
-    ],
     "backend/**/*.{ts,tsx}": [
       "prettier --write",
       "eslint --fix --config backend/eslint.config.mjs"

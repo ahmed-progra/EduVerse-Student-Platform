@@ -14,7 +14,6 @@ EduVerse is an npm-workspaces monorepo:
 | ----------- | ----------------------------------------- |
 | `frontend/` | Next.js 16 (App Router, React 19) web app |
 | `backend/`  | Express 5 + TypeScript API, Prisma ORM    |
-| `shared/`   | Types shared between frontend and backend |
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full picture.
 
@@ -69,7 +68,7 @@ chore: bump prisma to 6.19
 
 Common types: `feat`, `fix`, `docs`, `refactor`, `chore`, `test`, `perf`, `style`, `polish`.
 
-Use the scope to indicate the affected workspace or component (e.g. `frontend`, `backend`, `shared`, `auth`, `mentor`).
+Use the scope to indicate the affected workspace or component (e.g. `frontend`, `backend`, `auth`, `mentor`).
 
 ## Tests
 

@@ -142,7 +142,6 @@ npm run dev
 | ----------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | `frontend/` | Next.js 16 App Router — dashboard, courses, code lab, mentor, apprentice, battle, shop, leaderboard, 3D lab, user profiles        |
 | `backend/`  | Express 5 REST API — auth, courses, lessons, AI services, battles, leaderboard, shop, project grading, skill tree, code execution |
-| `shared/`   | TypeScript types and interfaces shared between frontend and backend (User, Course, Lesson, Battle, etc.)                          |
 
 ### AI Layer
 
@@ -213,7 +212,7 @@ graph LR
 | **Code Editor**    | Monaco Editor (`@monaco-editor/react`)                                               |
 | **Code Execution** | Skulpt (Python) · Judge0 (C++) · sandboxed iframe (HTML/CSS)                         |
 | **Tooling**        | TypeScript 5.8, Prettier, ESLint, Husky, lint-staged, tsx watch                      |
-| **Monorepo**       | npm workspaces (`frontend`, `backend`, `shared`)                                     |
+| **Monorepo**       | npm workspaces (`frontend`, `backend`)                                               |
 
 ---
 
@@ -258,7 +257,6 @@ eduverse/
 │   ├── prisma/                        # Schema + migrations (7 migration sets)
 │   ├── curriculum/                    # 172 authored lessons across 7 courses
 │   └── scripts/                       # 6 E2E test suites
-├── shared/src/                        # 20+ shared TypeScript types
 ├── docs/                              # Documentation (17 documents)
 ├── assets/                            # Logos, diagrams, social preview
 ├── .github/                           # CI, issue/PR templates, Dependabot

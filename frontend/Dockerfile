@@ -1,11 +1,9 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package.json tsconfig.base.json ./
-COPY shared/package.json shared/tsconfig.json shared/
 COPY backend/package.json backend/
 COPY frontend/package.json frontend/tsconfig.json frontend/
 RUN npm ci
-COPY shared/ shared/
 COPY frontend/ frontend/
 RUN npm run build -w @eduverse/frontend
 

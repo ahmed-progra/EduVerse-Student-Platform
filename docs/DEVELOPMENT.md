@@ -18,7 +18,7 @@ tests, and troubleshooting.
 ```bash
 git clone https://github.com/ahmed-progra/EduVerse-Student-Platform.git
 cd EduVerse-Student-Platform
-npm install        # installs all workspaces (frontend, backend, shared)
+npm install        # installs all workspaces (frontend, backend)
 ```
 
 ## 2. Configure environment
@@ -81,7 +81,7 @@ npm run dev:frontend    # next dev
 | Script                            | Description                          |
 | --------------------------------- | ------------------------------------ |
 | `npm run dev`                     | Backend + frontend together          |
-| `npm run build`                   | Build `shared → backend → frontend`  |
+| `npm run build`                   | Build `backend → frontend`           |
 | `npm run start`                   | Start the compiled backend           |
 | `npm run typecheck`               | `tsc --noEmit` across all workspaces |
 | `npm run format` / `format:check` | Prettier write / verify              |
@@ -146,7 +146,6 @@ eduverse/
 │       ├── lib/            api client, types, helpers
 │       ├── stores/         Zustand stores (auth)
 │       └── types/          ambient type declarations
-├── shared/                 types shared across the boundary
 ├── docs/                   this documentation
 └── docker-compose.yml      local Postgres + Judge0
 ```

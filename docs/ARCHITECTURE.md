@@ -1,8 +1,8 @@
 # Architecture
 
-EduVerse is a TypeScript monorepo with three npm workspaces: a Next.js frontend,
-an Express backend, and a small shared-types package. The backend owns all
-persistence and AI orchestration; the frontend is a pure client of the REST API.
+EduVerse is a TypeScript monorepo with two npm workspaces: a Next.js frontend
+and an Express backend. The backend owns all persistence and AI orchestration;
+the frontend is a pure client of the REST API.
 
 ## High-level diagram
 
@@ -39,15 +39,13 @@ persistence and AI orchestration; the frontend is a pure client of the REST API.
 
 ## Workspaces
 
-| Workspace   | Package              | Responsibility                                                                |
-| ----------- | -------------------- | ----------------------------------------------------------------------------- |
-| `frontend/` | `@eduverse/frontend` | Next.js App Router UI, client-side code execution                             |
-| `backend/`  | `@eduverse/backend`  | REST API, persistence, AI orchestration                                       |
-| `shared/`   | `@eduverse/shared`   | Types shared across the boundary (`User`, `Course`, `Lesson`, `Battle`, etc.) |
+| Workspace   | Package              | Responsibility                                    |
+| ----------- | -------------------- | ------------------------------------------------- |
+| `frontend/` | `@eduverse/frontend` | Next.js App Router UI, client-side code execution |
+| `backend/`  | `@eduverse/backend`  | REST API, persistence, AI orchestration           |
 
 The root `package.json` ties them together with npm workspaces and orchestrates
-dev/build via `concurrently`. The shared package is built first, then backend
-and frontend can compile independently.
+dev/build via `concurrently`. Each workspace compiles independently.
 
 ## Frontend
 
@@ -146,7 +144,7 @@ POST /api/lessons/:id/complete  (auth cookie)
 ## Build & deploy shape
 
 ```
-npm run build          # builds shared → backend → frontend in order
+npm run build          # builds backend → frontend in order
 npm run dev            # concurrently runs backend (tsx watch) + frontend (next dev)
 npm run start          # runs compiled backend (node dist/index.js)
 npm run db:migrate     # applies Prisma migrations to PostgreSQL
@@ -162,9 +160,9 @@ npm run db:seed        # seeds courses, 172 lessons, shop items, skill tree, dem
 
 ### Why a monorepo?
 
-Three workspaces let the shared types package be a single source of truth across
-the boundary. Shared types, not shared runtime code — each service compiles
-independently and can be deployed separately.
+One repository keeps the API and its only client in lockstep — a route change
+and the page that consumes it land in the same commit and CI run. Each
+workspace still compiles independently and can be deployed separately.
 
 ### Why PostgreSQL?
 

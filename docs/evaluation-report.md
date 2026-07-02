@@ -10,12 +10,12 @@ This report evaluates the EduVerse Student Platform repository against industry-
 
 ## 1. Project Architecture & Structure
 
-| Component            | Rating       | Observations                                                                                                                                                |
-| -------------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Monorepo Design**  | 🟢 Excellent | Uses npm workspaces effectively. Clean separation between `frontend`, `backend`, and `shared` logic.                                                        |
-| **Frontend Stack**   | 🟢 Excellent | Modern Next.js 16 App Router, TypeScript strict mode, Tailwind CSS 4, and Framer Motion.                                                                    |
-| **Backend Stack**    | 🟡 Good      | Express with TypeScript and Prisma. Solid, but lacks a structured controller/dependency injection pattern common in larger "pro" apps (e.g., NestJS style). |
-| **Shared Workspace** | 🟢 Excellent | Centralizes types and logic, preventing duplication across the stack.                                                                                       |
+| Component           | Rating       | Observations                                                                                                                                                |
+| ------------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Monorepo Design** | 🟢 Excellent | Uses npm workspaces effectively. Clean separation between the `frontend` and `backend` workspaces.                                                          |
+| **Frontend Stack**  | 🟢 Excellent | Modern Next.js 16 App Router, TypeScript strict mode, Tailwind CSS 4, and Framer Motion.                                                                    |
+| **Backend Stack**   | 🟡 Good      | Express with TypeScript and Prisma. Solid, but lacks a structured controller/dependency injection pattern common in larger "pro" apps (e.g., NestJS style). |
+| **Type Contracts**  | 🟢 Excellent | Canonical API entity types are centralized on the client (`frontend/src/types/`), mirroring the backend's Prisma models.                                    |
 
 <p align="center">
   <img src="../assets/architecture_map.png" alt="Architecture Map" width="700" />

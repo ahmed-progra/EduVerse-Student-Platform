@@ -1,8 +1,8 @@
 /**
  * Canonical API entity + envelope types shared across the frontend.
  *
- * These mirror the backend's domain models (see `shared/src/index.ts`, which the Next build does
- * not import) and are the single source of truth on the client for the entities below. Page-specific
+ * These mirror the backend's domain models (Prisma schema) and are the single source of
+ * truth on the client for the entities below. Page-specific
  * aggregate responses (rich, nested shapes returned by e.g. `/user/profile` or `/courses/:id`) are
  * intentionally typed locally by their consuming page — api-client stays a thin transport seam for
  * those. Only stable, single-shape entities are centralized here.
