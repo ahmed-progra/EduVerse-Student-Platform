@@ -15,6 +15,11 @@ jobs:
     name: Quality check
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      # Prisma `generate` and `validate` read these but never open a connection —
+      # placeholder values satisfy datasource validation on a runner with no DB.
+      DATABASE_URL: "postgresql://user:pass@localhost:5432/eduverse"
+      DIRECT_URL: "postgresql://user:pass@localhost:5432/eduverse"
     strategy:
       matrix:
         node-version: [20, 22]
