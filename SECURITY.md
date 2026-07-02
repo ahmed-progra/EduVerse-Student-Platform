@@ -56,7 +56,21 @@ We ask that reporters give us a reasonable window to address vulnerabilities bef
 ### Security-relevant design notes
 
 - Passwords are hashed with `bcryptjs`; plaintext passwords are never stored.
-- Authentication uses signed JWTs (`jsonwebtoken`); protected routes pass through the `auth` middleware.
-- API input is validated with custom validation utilities and `zod` schemas (where used).
-- Rate limiting (`express-rate-limit`) is applied globally to the API.
-- CORS is restricted to the configured `FRONTEND_URL` origin(s).
+- Authentication uses signed JWTs (`jsonwebtoken`) delivered as an **`httpOnly`, `Secure`, `SameSite` cookie**, so tokens are not readable from JavaScript. The signing algorithm is pinned to `HS256` on both sign and verify to prevent algorithm-confusion attacks.
+- State-changing requests in production must carry an `Origin`/`Referer` that **exactly** matches a configured `FRONTEND_URL` origin (`csrfGuard`). The check compares full origins, not string prefixes, so lookalike hosts (e.g. `https://app.example.com.evil.com`) are rejected.
+- API input is validated with dedicated validation utilities (`lib/validate.ts`). Avatar uploads are restricted to base64 **raster** image data URLs (PNG/JPEG/GIF/WebP); SVG is rejected to avoid script-carrying data URLs.
+- Lesson HTML is sanitized with DOMPurify before it is rendered.
+- Rate limiting (`express-rate-limit`) is applied globally, with tighter limits on auth, code-execution, and AI endpoints.
+- CORS is restricted to the configured `FRONTEND_URL` origin(s), and standard hardening headers (CSP, `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, HSTS, `Permissions-Policy`) are set on both the API and the Next.js app.
+- Data-access queries are scoped by the authenticated user's id; per-resource ownership is verified before reads/writes to prevent IDOR.
+
+### Dependency advisories
+
+`npm audit` is run in CI and fails the build on **high/critical** advisories. A small number of
+**moderate** advisories are knowingly accepted because they are transitive, build-time or
+editor-internal, and cannot be fixed without breaking-change downgrades:
+
+- **`dompurify` (via `monaco-editor`)** — the code editor bundles its own pinned copy of DOMPurify for internal rendering. The application's own DOMPurify (used to sanitize lesson HTML) is kept current. Resolved when `monaco-editor` updates its pin.
+- **`postcss` (via `next`)** — Next.js bundles its own `postcss` for its build pipeline. `npm audit fix --force` would downgrade Next.js to a years-old major version, so it is intentionally not applied. Resolved by upstream Next.js updates.
+
+These are re-evaluated on each dependency bump.

@@ -123,7 +123,7 @@ src/
 
 ## State Management
 
-- **Auth state**: Zustand store (`auth-store.ts`), persisted to localStorage
+- **Auth state**: Zustand store (`auth-store.ts`); the session lives in an httpOnly cookie, so no token is persisted client-side
 - **API cache**: In-memory TTL cache (30 seconds) in `api-client.ts`
 - **Feature state**: Local to route components via `useState` / `useEffect`
 - **Persistent data**: Announcements and Resources use localStorage

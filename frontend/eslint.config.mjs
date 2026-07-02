@@ -40,7 +40,7 @@ const eslintConfig = [
   {
     // Documented `any` boundaries: the api-client transport seam (page-aggregate
     // payloads typed locally by each page) and the untyped Skulpt runtime + its
-    // dynamic AST traversal in the visualizer. See AUDIT.md (M1, L1).
+    // dynamic AST traversal in the visualizer.
     files: ["src/services/api-client.ts", "src/types/skulpt.d.ts", "src/features/visualizer/**"],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",

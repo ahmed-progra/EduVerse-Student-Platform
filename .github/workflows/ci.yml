@@ -60,3 +60,26 @@ jobs:
 
       - name: Run E2E Tests (Backend scripts)
         run: npm run test:e2e -w backend
+
+  security-audit:
+    name: Dependency security audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Fails only on high/critical advisories. Known moderate advisories are
+      # transitive (monaco-editor's bundled dompurify, Next's bundled postcss)
+      # and cannot be resolved without breaking-change downgrades — see SECURITY.md.
+      - name: npm audit (high and above)
+        run: npm audit --audit-level=high

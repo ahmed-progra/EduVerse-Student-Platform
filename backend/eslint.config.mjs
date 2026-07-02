@@ -16,6 +16,13 @@ export default tsEslint.config(
     },
   },
   {
-    ignores: ["dist/**", "node_modules/**", "*.js", "scripts/*.mjs", "scripts/*.ts", "src/__tests__/**"],
+    ignores: [
+      "dist/**",
+      "node_modules/**",
+      "*.js",
+      "scripts/*.mjs",
+      "scripts/*.ts",
+      "src/__tests__/**",
+    ],
   },
 );

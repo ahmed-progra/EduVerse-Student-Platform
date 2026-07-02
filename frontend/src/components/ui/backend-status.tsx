@@ -4,6 +4,10 @@ import { useEffect, useState } from "react";
 import { WifiOff } from "lucide-react";
 
 const CHECK_INTERVAL = 30_000;
+// Mirror the api-client fallback so the health check still targets the real API
+// when NEXT_PUBLIC_API_URL is unset (otherwise the URL becomes "undefined/health"
+// and every visitor sees a false "Backend is offline" banner).
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 
 export function BackendStatus() {
   const [offline, setOffline] = useState(false);
@@ -12,7 +16,7 @@ export function BackendStatus() {
     let mounted = true;
     const check = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/health`, {
+        const res = await fetch(`${API_BASE}/health`, {
           method: "GET",
           signal: AbortSignal.timeout(5_000),
         });

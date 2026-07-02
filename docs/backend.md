@@ -163,8 +163,8 @@ Client → Route → Service → ai-service.ts → Gemini API
 1. User registers or logs in via `/api/auth`
 2. Backend hashes password (bcrypt) and stores user record
 3. Backend signs a JWT (7-day expiry) with user ID
-4. Frontend stores token in localStorage
-5. Every API request includes `Authorization: Bearer <token>`
+4. Backend sets the JWT as an **httpOnly, `SameSite` cookie** (not readable by JavaScript)
+5. The browser sends the cookie automatically on every request (`credentials: "include"`)
 6. `auth` middleware verifies the token and attaches `req.userId`
 7. Protected routes use `req.userId` for user-scoped queries
 

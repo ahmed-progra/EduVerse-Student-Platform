@@ -229,9 +229,16 @@ export default function ProfilePage() {
 
   const handleAvatarClick = () => fileInputRef.current?.click();
 
+  const ALLOWED_AVATAR_TYPES = ["image/png", "image/jpeg", "image/gif", "image/webp"];
+
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (!ALLOWED_AVATAR_TYPES.includes(file.type)) {
+      setAvatarError("Please pick a PNG, JPG, GIF, or WebP image.");
+      setTimeout(() => setAvatarError(""), 4000);
+      return;
+    }
     if (file.size > 1.5 * 1024 * 1024) {
       setAvatarError("Image too large — please pick one under 1.5 MB.");
       setTimeout(() => setAvatarError(""), 4000);
@@ -247,7 +254,11 @@ export default function ProfilePage() {
         api.clearCache();
         setProfile(res.data);
         setUser(res.data);
-      } catch {}
+      } catch (err) {
+        setAvatarPreview(null);
+        setAvatarError(err instanceof Error ? err.message : "Couldn't update avatar.");
+        setTimeout(() => setAvatarError(""), 4000);
+      }
     };
     reader.readAsDataURL(file);
   };
@@ -354,7 +365,7 @@ export default function ProfilePage() {
               <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/*"
+                accept="image/png,image/jpeg,image/gif,image/webp"
                 className="hidden"
                 onChange={handleAvatarChange}
               />

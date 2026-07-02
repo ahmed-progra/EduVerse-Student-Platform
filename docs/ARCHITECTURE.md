@@ -121,19 +121,21 @@ and error explanations. Each endpoint has a dedicated system prompt.
 
 ## Authentication
 
-- **Email/password** — bcrypt-hashed passwords, validated with zod-level checks.
+- **Email/password** — bcrypt-hashed passwords, validated with lightweight custom checks (`lib/validate.ts`).
 - **Google OAuth** — `POST /api/auth/google` links a Google ID to an existing
   account or creates a new one (requires `GOOGLE_CLIENT_ID` to be configured).
-- On success the backend issues a signed JWT (`JWT_SECRET`, expires in 7 days).
-- The frontend stores it (localStorage) and sends it as a Bearer token; the
-  `auth` middleware guards protected routes.
+- On success the backend issues a signed JWT (`JWT_SECRET`, HS256, expires in 7 days)
+  as an **httpOnly, `SameSite` cookie** — never exposed to JavaScript.
+- The browser sends the cookie automatically (`credentials: "include"`); the `auth`
+  middleware resolves it (falling back to an `Authorization: Bearer` header for
+  non-browser clients) and guards protected routes.
 
 ## Request lifecycle (example: completing a lesson)
 
 ```
-POST /api/lessons/:id/complete  (Bearer JWT)
+POST /api/lessons/:id/complete  (auth cookie)
   → rate-limit → auth (resolve user to req.userId)
-  → lessons route validates params (zod)
+  → lessons route loads the lesson by id
   → upsert UserProgress row (userId + lessonId)
   → xp-service awards XP/coins, logs to XpLog
   → recordEvent → learning-service adaptAfterEvent (rule-based)

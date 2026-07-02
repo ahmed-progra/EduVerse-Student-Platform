@@ -133,7 +133,7 @@ eduverse/
 │   │   ├── services/       business logic + AI orchestration
 │   │   ├── middleware/     auth (JWT), rate-limit
 │   │   ├── learning/       topic catalogs + assessment banks
-│   │   └── lib/            prisma client, jwt, zod validate
+│   │   └── lib/            prisma client, jwt, custom validate
 │   ├── curriculum/         172 authored lessons across 7 courses (seed source)
 │   ├── prisma/             schema + migrations
 │   ├── scripts/            *-e2e.mjs end-to-end suites
