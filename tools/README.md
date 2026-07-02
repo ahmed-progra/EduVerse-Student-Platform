@@ -9,12 +9,11 @@ not reference it. Scripts require Python 3 (and `Pillow` for the canvas script).
 Helpers used to generate and sanity-check the seeded curriculum in
 [`backend/curriculum/`](../backend/curriculum/):
 
-| Script             | Purpose                                                                                    |
-| ------------------ | ------------------------------------------------------------------------------------------ |
-| `gen_science3.py`  | Writes `backend/curriculum/science.ts` (final generator; avoids shell-escaping issues).    |
-| `check_quotes.py`  | Counts `'''` and `"""` occurrences in a curriculum file to catch unbalanced triple quotes. |
-| `check_triple2.py` | Narrower variant of the quote check (single style only).                                   |
-| `count_lessons.py` | Counts authored lessons per course file to verify seed totals.                             |
+| Script             | Purpose                                                                                 |
+| ------------------ | --------------------------------------------------------------------------------------- |
+| `gen_science3.py`  | Writes `backend/curriculum/science.ts` (final generator; avoids shell-escaping issues). |
+| `check_quotes.py`  | Counts `'''` and `"""` occurrences in a file to catch unbalanced triple quotes.         |
+| `count_lessons.py` | Counts authored lessons per course file to verify seed totals.                          |
 
 ## `generate-canvas.py`
 

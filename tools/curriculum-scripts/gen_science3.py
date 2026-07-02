@@ -301,7 +301,10 @@ print("The Sun is a main-sequence star converting hydrogen to helium.")`,
 ];
 '''
 
-with open(r'C:\Users\zconsumers\Desktop\EduVerse Final\backend\curriculum\science.ts', 'a', encoding='utf-8') as f:
+import os
+
+target = os.path.join(os.path.dirname(__file__), '..', '..', 'backend', 'curriculum', 'science.ts')
+with open(target, 'a', encoding='utf-8') as f:
     f.write(content)
 
 print("written part 3 — science.ts complete")
