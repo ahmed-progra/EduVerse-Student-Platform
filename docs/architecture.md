@@ -16,7 +16,7 @@ the frontend is a pure client of the REST API.
 │  ├─ src/services/api-client.ts     typed fetch client → backend               │
 │  └─ Skulpt / iframe    in-browser code execution (Python / HTML)  │
 └──────────────────┬───────────────────────────────────────────────┘
-                   │  HTTPS  (JWT in Authorization header)
+                   │  HTTPS  (httpOnly auth cookie)
                    ▼
 ┌──────────────────────────────────────────────────────────────────┐
 │                     Backend — Express 5                           │
@@ -54,8 +54,8 @@ dev/build via `concurrently`. Each workspace compiles independently.
   components that fetch from the API.
 - **State** — Zustand for auth (`src/stores/auth-store.ts`); most feature state
   is local to the route or fetched on demand.
-- **API access** — a single typed client in `src/lib/api.ts` attaches the JWT
-  and centralizes base-URL handling.
+- **API access** — a single typed client in `src/services/api-client.ts` sends
+  the auth cookie (`credentials: "include"`) and centralizes base-URL handling.
 - **Components** are grouped by domain: `ui/` (primitives), `layout/`, and
   feature folders (`mentor/`, `apprentice/`, `lessons/`, `visualizer/`, …).
 - **Code execution** happens client-side where possible: Skulpt steps through
@@ -69,7 +69,7 @@ dev/build via `concurrently`. Each workspace compiles independently.
 The backend is a thin, layered Express app:
 
 1. **`index.ts`** — configures CORS (restricted to `FRONTEND_URL`), JSON body
-   limit (4 MB), security headers, and a global rate limiter, then mounts 14
+   limit (4 MB), security headers, and a global rate limiter, then mounts 15
    routers under `/api/*`.
 2. **Middleware** — `auth` verifies the JWT and attaches the user to `req.userId`;
    `rate-limit` protects the API surface with domain-specific limiters (auth,
@@ -82,7 +82,7 @@ The backend is a thin, layered Express app:
 5. **Data** — Prisma is the only path to PostgreSQL (`lib/prisma.ts`). The
    client is a singleton to avoid connection exhaustion in development.
 
-See [API.md](API.md) for the endpoint catalog and [DATABASE.md](DATABASE.md) for
+See [api.md](api.md) for the endpoint catalog and [database.md](database.md) for
 the schema.
 
 ## The AI layer
@@ -102,7 +102,7 @@ which talks to **Google AI Studio (Gemini API)**. The service provides:
 Higher-level services (mentor, apprentice, learning, projects) compose prompts,
 ground them in the learner's real activity pulled from the database, and persist
 structured results. JSON-shaped AI output is stored in `String` columns by
-convention — see [DATABASE.md](DATABASE.md#json-columns).
+convention — see [database.md](database.md#json-columns).
 
 The AI route module (`routes/ai.ts`) exposes lower-level utilities consumed by
 lesson and codelab panels: code review, progressive hints, challenge generation,

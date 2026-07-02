@@ -20,9 +20,9 @@ or reach out directly at eduverse@googlegroups.com.
 ## Documentation
 
 - [Getting Started](docs/getting-started.md)
-- [FAQ](docs/FAQ.md)
-- [Troubleshooting](docs/TROUBLESHOOTING.md)
-- [API Reference](docs/API.md)
+- [FAQ](docs/faq.md)
+- [Troubleshooting](docs/troubleshooting.md)
+- [API Reference](docs/api.md)
 
 ## Contributing
 

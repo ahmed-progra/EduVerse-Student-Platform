@@ -120,7 +120,7 @@ npm run dev
 
 ## What's next?
 
-- Browse the [Architecture](ARCHITECTURE.md) to understand the system design
+- Browse the [Architecture](architecture.md) to understand the system design
 - Read the [Frontend](frontend.md) and [Backend](backend.md) deep-dives
-- Explore the [API Reference](API.md) to understand available endpoints
-- Check the [Development Guide](DEVELOPMENT.md) for workflows and scripts
+- Explore the [API Reference](api.md) to understand available endpoints
+- Check the [Development Guide](development.md) for workflows and scripts

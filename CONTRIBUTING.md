@@ -15,7 +15,7 @@ EduVerse is an npm-workspaces monorepo:
 | `frontend/` | Next.js 16 (App Router, React 19) web app |
 | `backend/`  | Express 5 + TypeScript API, Prisma ORM    |
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full picture.
+See [docs/architecture.md](docs/architecture.md) for the full picture.
 
 ## Getting started
 
@@ -30,7 +30,7 @@ npm run db:setup            # prisma migrate + seed
 npm run dev                 # backend :4000 + frontend :3000
 ```
 
-Full setup details: [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
+Full setup details: [docs/development.md](docs/development.md).
 
 ## Development workflow
 

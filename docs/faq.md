@@ -64,7 +64,7 @@ but most features require a network connection for the backend API and AI.
 
 ### How do I set up EduVerse locally?
 
-See the [DEVELOPMENT.md](DEVELOPMENT.md) guide for full instructions.
+See the [development.md](development.md) guide for full instructions.
 
 ### How do I add a new course?
 

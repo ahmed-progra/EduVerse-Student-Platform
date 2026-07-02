@@ -287,7 +287,7 @@ The backend exposes **60+ REST endpoints** under `/api/*`. Key groups:
 | Submissions | `/api/submissions`        | Code execute                                                                              |
 | Health      | `/api/health`             | DB connection check                                                                       |
 
-Full reference: [docs/API.md](docs/API.md)
+Full reference: [docs/api.md](docs/api.md)
 
 ---
 
@@ -311,7 +311,7 @@ Full reference: [docs/API.md](docs/API.md)
 | `XpLog`                                    | XP audit trail                             |
 | `LearningEvent`                            | Analytics trail                            |
 
-Full details: [docs/DATABASE.md](docs/DATABASE.md)
+Full details: [docs/database.md](docs/database.md)
 
 ---
 
@@ -369,21 +369,21 @@ Copy `.env.example` to `.env` and fill in:
 | Document                                       | Description                                     |
 | ---------------------------------------------- | ----------------------------------------------- |
 | [Getting Started](docs/getting-started.md)     | 5-minute setup guide                            |
-| [Architecture](docs/ARCHITECTURE.md)           | System design, monorepo, request flow           |
+| [Architecture](docs/architecture.md)           | System design, monorepo, request flow           |
 | [Frontend](docs/frontend.md)                   | Next.js, routes, components, state, 3D lab      |
 | [Backend](docs/backend.md)                     | Express, services, middleware, auth             |
-| [API Reference](docs/API.md)                   | Complete REST API endpoint catalog              |
-| [Database](docs/DATABASE.md)                   | Prisma models, relationships, conventions       |
+| [API Reference](docs/api.md)                   | Complete REST API endpoint catalog              |
+| [Database](docs/database.md)                   | Prisma models, relationships, conventions       |
 | [Authentication](docs/authentication.md)       | Login, JWT, OAuth, security model               |
 | [AI Features](docs/ai-features.md)             | Gemini integration, mentor, apprentice, grading |
 | [Design System](docs/design-system.md)         | Colors, typography, motion theme                |
-| [Deployment](docs/DEPLOYMENT.md)               | Production deployment guide                     |
-| [Development](docs/DEVELOPMENT.md)             | Dev workflow, scripts, tests, troubleshooting   |
-| [FAQ](docs/FAQ.md)                             | Frequently asked questions                      |
+| [Deployment](docs/deployment.md)               | Production deployment guide                     |
+| [Development](docs/development.md)             | Dev workflow, scripts, tests, troubleshooting   |
+| [FAQ](docs/faq.md)                             | Frequently asked questions                      |
 | [Product](docs/product.md)                     | Product context, audience, brand voice          |
-| [Troubleshooting](docs/TROUBLESHOOTING.md)     | Common issues and solutions                     |
+| [Troubleshooting](docs/troubleshooting.md)     | Common issues and solutions                     |
 | [Contributing](CONTRIBUTING.md)                | Contributing guide                              |
-| [Roadmap](docs/ROADMAP.md)                     | Future plans and priorities                     |
+| [Roadmap](docs/roadmap.md)                     | Future plans and priorities                     |
 | [Evaluation Report](docs/evaluation-report.md) | Professional evaluation report                  |
 | [Design Philosophy](docs/design-philosophy.md) | Design principles and decisions                 |
 
@@ -440,7 +440,7 @@ node scripts/ai-e2e.mjs            # AI endpoint integration
 | 📅     | Course authoring UI                                            |
 | 📅     | Performance monitoring and analytics                           |
 
-Full roadmap: [docs/ROADMAP.md](docs/ROADMAP.md)
+Full roadmap: [docs/roadmap.md](docs/roadmap.md)
 
 ---
 

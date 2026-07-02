@@ -7,18 +7,17 @@ using **Prisma ORM** with **PostgreSQL** (Supabase) and a **SQLite** local mirro
 
 ## Tech Stack
 
-| Technology            | Purpose                                 |
-| --------------------- | --------------------------------------- |
-| Express 5             | HTTP framework                          |
-| TypeScript            | Type safety                             |
-| Prisma 6              | ORM with PostgreSQL and SQLite support  |
-| PostgreSQL (Supabase) | Production database                     |
-| SQLite                | Local development mirror                |
-| Zod                   | Schema validation (declared dependency) |
-| Jsonwebtoken          | JWT authentication                      |
-| Bcryptjs              | Password hashing                        |
-| Google AI Studio SDK  | Gemini AI integration                   |
-| Express Rate Limit    | API rate limiting                       |
+| Technology            | Purpose                                |
+| --------------------- | -------------------------------------- |
+| Express 5             | HTTP framework                         |
+| TypeScript            | Type safety                            |
+| Prisma 6              | ORM with PostgreSQL and SQLite support |
+| PostgreSQL (Supabase) | Production database                    |
+| SQLite                | Local development mirror               |
+| Jsonwebtoken          | JWT authentication                     |
+| Bcryptjs              | Password hashing                       |
+| Google AI Studio SDK  | Gemini AI integration                  |
+| Express Rate Limit    | API rate limiting                      |
 
 ---
 
@@ -121,7 +120,7 @@ The Express app applies middleware in this order:
 | User        | `/api/user`        | Required | Global                   |
 | Skill Tree  | `/api/skilltree`   | Required | Global                   |
 
-Full endpoint reference: [API.md](API.md)
+Full endpoint reference: [api.md](api.md)
 
 ---
 
@@ -179,7 +178,7 @@ Full reference: [authentication.md](authentication.md)
 - 7 migration sets covering initial schema through project studio
 - JSON columns used for flexible data (topics, quizzes, mentor profiles)
 
-Full reference: [DATABASE.md](DATABASE.md)
+Full reference: [database.md](database.md)
 
 ---
 

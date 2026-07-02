@@ -8,9 +8,9 @@ system, and product direction.
 
 | Document                                 | What it covers                                              |
 | ---------------------------------------- | ----------------------------------------------------------- |
-| [ARCHITECTURE.md](ARCHITECTURE.md)       | System design, monorepo layout, request flow, AI layer      |
-| [API.md](API.md)                         | REST API reference — every endpoint, grouped by domain      |
-| [DATABASE.md](DATABASE.md)               | Prisma data model, relationships, conventions, migrations   |
+| [architecture.md](architecture.md)       | System design, monorepo layout, request flow, AI layer      |
+| [api.md](api.md)                         | REST API reference — every endpoint, grouped by domain      |
+| [database.md](database.md)               | Prisma data model, relationships, conventions, migrations   |
 | [frontend.md](frontend.md)               | Next.js app architecture, routes, components, state, 3D lab |
 | [backend.md](backend.md)                 | Express API architecture, services, middleware, auth        |
 | [authentication.md](authentication.md)   | Login flow, JWT, OAuth, security model                      |
@@ -18,12 +18,12 @@ system, and product direction.
 | [contributing.md](contributing.md)       | Contributing guide, conventional commits, standards         |
 | [design-system.md](design-system.md)     | The "Code Sorcery" visual system (colors, type, motion)     |
 | [product.md](product.md)                 | Product context, audience, brand voice, and direction       |
-| [ROADMAP.md](ROADMAP.md)                 | Feature roadmap and future plans                            |
-| [DEPLOYMENT.md](DEPLOYMENT.md)           | Deployment guide and infrastructure setup                   |
+| [roadmap.md](roadmap.md)                 | Feature roadmap and future plans                            |
+| [deployment.md](deployment.md)           | Deployment guide and infrastructure setup                   |
 | [getting-started.md](getting-started.md) | 5-minute setup guide                                        |
-| [DEVELOPMENT.md](DEVELOPMENT.md)         | Development workflow, scripts, tests, and troubleshooting   |
-| [FAQ.md](FAQ.md)                         | Frequently asked questions                                  |
-| [TROUBLESHOOTING.md](TROUBLESHOOTING.md) | Common issues and solutions                                 |
+| [development.md](development.md)         | Development workflow, scripts, tests, and troubleshooting   |
+| [faq.md](faq.md)                         | Frequently asked questions                                  |
+| [troubleshooting.md](troubleshooting.md) | Common issues and solutions                                 |
 
 ## Project-level docs
 

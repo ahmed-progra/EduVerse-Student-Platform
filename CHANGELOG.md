@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   deployment guide, FAQ, troubleshooting, and product context.
 - Root tooling: Prettier config, `.editorconfig`, `.nvmrc`, and `format`/`typecheck`
   npm scripts.
-- Additional documentation: `docs/DEPLOYMENT.md`, `docs/FAQ.md`, `docs/TROUBLESHOOTING.md`.
+- Additional documentation: `docs/deployment.md`, `docs/faq.md`, `docs/troubleshooting.md`.
 - Open Graph and Twitter social-share cards (`opengraph-image.tsx`, `twitter-image.tsx`).
 - `robots.txt` and `sitemap.xml` generation for SEO.
 - Flat ESLint config (`eslint.config.mjs`) with Next.js presets and tuned rules.
@@ -50,7 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Frontend: baseline HTTP security headers on every route (`X-Content-Type-Options`,
   `X-Frame-Options`, `Referrer-Policy`, `Strict-Transport-Security`, `X-DNS-Prefetch-Control`,
-  `Permissions-Policy`) via `next.config.js`. CSP guidance documented in `docs/DEPLOYMENT.md`.
+  `Permissions-Policy`) via `next.config.js`. CSP guidance documented in `docs/deployment.md`.
 
 ## [1.0.0]
 
