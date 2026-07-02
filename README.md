@@ -386,7 +386,7 @@ Copy `.env.example` to `.env` and fill in:
 | [Troubleshooting](docs/TROUBLESHOOTING.md)     | Common issues and solutions                     |
 | [Contributing](CONTRIBUTING.md)                | Contributing guide                              |
 | [Roadmap](docs/ROADMAP.md)                     | Future plans and priorities                     |
-| [Evaluation Report](EVALUATION_REPORT.md)      | Professional evaluation report                  |
+| [Evaluation Report](docs/evaluation-report.md) | Professional evaluation report                  |
 | [Design Philosophy](docs/design-philosophy.md) | Design principles and decisions                 |
 
 ---

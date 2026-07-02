@@ -1,7 +1,7 @@
 # EduVerse Student Platform — Professional Evaluation Report
 
 <p align="center">
-  <img src="assets/maturity_radar.png" alt="Project Maturity Radar Chart" width="600" />
+  <img src="../assets/maturity_radar.png" alt="Project Maturity Radar Chart" width="600" />
 </p>
 
 This report evaluates the EduVerse Student Platform repository against industry-standard "pro" benchmarks for open-source and enterprise-grade software.
@@ -18,7 +18,7 @@ This report evaluates the EduVerse Student Platform repository against industry-
 | **Shared Workspace** | 🟢 Excellent | Centralizes types and logic, preventing duplication across the stack.                                                                                       |
 
 <p align="center">
-  <img src="assets/architecture_map.png" alt="Architecture Map" width="700" />
+  <img src="../assets/architecture_map.png" alt="Architecture Map" width="700" />
 </p>
 
 ---
