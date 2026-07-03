@@ -64,6 +64,7 @@ export default function BattlePage() {
   const [result, setResult] = useState<BattleResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState<BattleEntry[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(true);
   const [battleError, setBattleError] = useState<string | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const countdownRef = useRef<NodeJS.Timeout | null>(null);
@@ -73,7 +74,8 @@ export default function BattlePage() {
     api
       .getBattleHistory()
       .then((res) => setHistory(res.data))
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setHistoryLoading(false));
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
       if (countdownRef.current) clearInterval(countdownRef.current);
@@ -303,7 +305,13 @@ export default function BattlePage() {
             <h2 className="flex items-center gap-2 text-sm font-mono text-eduverse-text-muted mb-4">
               <History className="w-4 h-4" aria-hidden="true" /> Battle History
             </h2>
-            {history.length === 0 ? (
+            {historyLoading ? (
+              <div className="space-y-2" aria-label="Loading battle history">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="sk-card" style={{ height: "36px" }} />
+                ))}
+              </div>
+            ) : history.length === 0 ? (
               <EmptyState
                 icon={Swords}
                 title="No battles yet"
@@ -314,7 +322,7 @@ export default function BattlePage() {
                 {history.map((b) => (
                   <div
                     key={b.id}
-                    className="flex items-center justify-between py-2 border-b border-white/5 last:border-0 text-sm"
+                    className="flex items-center justify-between py-2 border-b border-eduverse-border last:border-0 text-sm"
                   >
                     <div className="font-mono text-xs">
                       <span className="capitalize text-eduverse-text-body">{b.difficulty}</span>
@@ -408,7 +416,7 @@ export default function BattlePage() {
 
           {/* Editor */}
           <GlassCard className="!p-0 overflow-hidden">
-            <div className="px-4 py-2.5 border-b border-white/10 text-xs font-mono text-eduverse-text-muted">
+            <div className="px-4 py-2.5 border-b border-eduverse-border text-xs font-mono text-eduverse-text-muted">
               <span className="text-eduverse-accent">{"//"}</span> solution.py
             </div>
             <Editor
@@ -437,7 +445,7 @@ export default function BattlePage() {
               <h3 className="text-xs font-mono text-eduverse-text-muted mb-2">
                 <span className="text-eduverse-accent">{"//"}</span> Output
               </h3>
-              <pre className="bg-black/30 rounded p-4 text-sm font-mono overflow-auto">
+              <pre className="bg-eduverse-void/40 rounded p-4 text-sm font-mono overflow-auto">
                 {output}
               </pre>
             </GlassCard>
@@ -450,6 +458,7 @@ export default function BattlePage() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.18, ease: "easeOut" } }}
                 transition={{ type: "spring", duration: 0.55, bounce: 0.25 }}
               >
                 <GlassCard className="text-center py-10 relative overflow-hidden">

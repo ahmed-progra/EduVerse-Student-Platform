@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useEffect, useState, useCallback, memo, type ReactNode } from "react";
 import { ChevronRight, ChevronDown, Code2 } from "lucide-react";
@@ -226,7 +227,21 @@ export const ASTViewer = memo(function ASTViewer({
 
   return (
     <div className="visualizer-panel ast-panel">
-      <div className="panel-header" onClick={onToggle} style={{ cursor: "pointer" }}>
+      <div
+        className="panel-header"
+        onClick={onToggle}
+        style={{ cursor: "pointer" }}
+        role="button"
+        tabIndex={0}
+        aria-expanded={visible}
+        aria-label={visible ? "Hide AST panel" : "Show AST panel"}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onToggle();
+          }
+        }}
+      >
         <div className="flex items-center gap-2">
           <Code2 className="w-3.5 h-3.5 text-eduverse-accent-light" />
           <span className="panel-title">AST</span>

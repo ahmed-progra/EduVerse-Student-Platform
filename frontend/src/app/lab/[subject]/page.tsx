@@ -2,6 +2,8 @@
 
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import { Boxes } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
 import { getLabSubject } from "@/features/lab/lab-subjects";
 import { LabWorkbench } from "@/features/lab/lab-workbench";
 
@@ -12,12 +14,15 @@ export default function LabSubjectPage() {
 
   if (!subject) {
     return (
-      <div className="empty-state page-enter">
-        <h3>Lab not found</h3>
-        <p>That experiment doesn&apos;t exist yet.</p>
-        <Link href="/lab" className="btn-primary mt-4 inline-flex">
-          Back to 3D Lab
-        </Link>
+      <div className="page-enter">
+        <EmptyState icon={Boxes} title="Lab not found" message="That experiment doesn't exist yet.">
+          <Link
+            href="/lab"
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-[var(--radius-button)] text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-all"
+          >
+            Back to 3D Lab
+          </Link>
+        </EmptyState>
       </div>
     );
   }

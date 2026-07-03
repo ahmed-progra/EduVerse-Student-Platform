@@ -25,12 +25,17 @@
   --color-eduverse-gold: oklch(82% 0.14 85);
   --color-eduverse-silver: oklch(80% 0.01 270);
   --color-eduverse-bronze: oklch(68% 0.1 60);
+  /* Unfilled track base for sliders, switches and progress rails. */
+  --color-eduverse-track: oklch(30% 0.03 264 / 0.7);
 
   /* Cosmic ambiance — atmosphere only, never an action color. */
   --color-eduverse-void: oklch(7% 0.025 260);
   --color-eduverse-ambiance: oklch(62% 0.16 270);
   --color-eduverse-ambiance-soft: oklch(62% 0.16 270 / 0.14);
   --color-eduverse-star: oklch(96% 0.01 264);
+
+  /* One size for static code snippets app-wide (lesson blocks, skill examples). */
+  --text-code: 0.82rem;
 
   --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
@@ -88,6 +93,12 @@ body {
   color: var(--color-eduverse-text);
 }
 
+/* When the offline banner is showing (BackendStatus sets this attribute),
+   push the fixed mobile top bar below it so the two never overlap. */
+body[data-offline-banner] .mobile-topbar {
+  top: 38px;
+}
+
 :focus-visible {
   outline: 2px solid var(--color-eduverse-accent);
   outline-offset: 2px;
@@ -98,6 +109,8 @@ body {
   font-size: 0.95rem;
   line-height: 1.8;
   color: var(--color-eduverse-text-body);
+  /* Keep prose at a comfortable reading measure even inside wide cards. */
+  max-width: 68ch;
 }
 
 .lesson-content h2 {
@@ -141,21 +154,21 @@ body {
 
 .lesson-content code {
   font-family: var(--font-mono);
-  font-size: 0.82rem;
+  font-size: var(--text-code);
   background: var(--color-eduverse-accent-soft);
   padding: 0.1rem 0.35rem;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   color: var(--color-eduverse-accent);
 }
 
 .lesson-content pre.lesson-code {
   background: var(--color-eduverse-editor);
   border: 1px solid var(--color-eduverse-border);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   padding: 1rem 1.2rem;
   margin: 0.75rem 0 1rem;
   overflow-x: auto;
-  font-size: 0.82rem;
+  font-size: var(--text-code);
   line-height: 1.6;
 }
 
@@ -169,11 +182,11 @@ body {
 .lesson-content .lesson-output {
   background: oklch(76% 0.14 165 / 0.05);
   border: 1px solid oklch(76% 0.14 165 / 0.14);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   padding: 0.6rem 1rem;
   margin: 0.5rem 0 1rem;
   font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-size: var(--text-code);
   color: var(--color-eduverse-success);
   white-space: pre-wrap;
 }
@@ -204,7 +217,7 @@ body {
 }
 ::-webkit-scrollbar-thumb {
   background: oklch(78% 0.14 85 / 0.22);
-  border-radius: 7px;
+  border-radius: var(--radius-sm);
   border: 3px solid transparent;
   background-clip: padding-box;
 }
@@ -428,7 +441,7 @@ body {
   align-items: center;
   justify-content: center;
   padding: 8px;
-  border-radius: 8px;
+  border-radius: var(--radius-button);
   background: transparent;
   border: none;
   color: var(--color-eduverse-text-body);
@@ -457,7 +470,7 @@ body {
 .mobile-nav-link {
   display: block;
   padding: 12px;
-  border-radius: 10px;
+  border-radius: var(--radius-button);
   color: var(--color-eduverse-text-body);
   text-decoration: none;
   font-size: 0.95rem;
@@ -817,7 +830,7 @@ body {
   gap: 8px;
   font-size: 0.74rem;
   padding: 3px 8px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: oklch(100% 0 0 / 0.025);
 }
 
@@ -933,66 +946,6 @@ body {
   margin: 0;
 }
 
-/* ── Features: hairline rule + columns, no card boxes ── */
-.feature-rule {
-  height: 1px;
-  background: var(--color-eduverse-border);
-  margin-bottom: 44px;
-}
-
-.feature-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 44px 40px;
-}
-
-.feature-col-head {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--color-eduverse-accent);
-}
-
-.feature-col-head h3 {
-  font-family: var(--font-display);
-  font-size: 1.02rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--color-eduverse-text);
-  margin: 0;
-}
-
-.feature-col p {
-  font-size: 0.92rem;
-  line-height: 1.7;
-  color: var(--color-eduverse-text-body);
-  margin: 10px 0 0;
-}
-
-.feature-col-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  margin-top: 12px;
-  font-size: 0.84rem;
-  font-weight: 500;
-  color: var(--color-eduverse-text-muted);
-  text-decoration: none;
-  transition: color 0.18s ease;
-}
-
-.feature-col-link svg {
-  transition: transform 0.18s var(--ease-out-expo);
-}
-
-.feature-col-link:hover {
-  color: var(--color-eduverse-accent);
-}
-
-.feature-col-link:hover svg {
-  transform: translateX(3px);
-}
-
 /* ── Feature bento — glass cards with glowing amber icon chips ── */
 .feature-bento {
   display: grid;
@@ -1016,7 +969,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 13px;
+  border-radius: var(--radius-card);
   color: var(--color-eduverse-accent);
   background: radial-gradient(
     120% 120% at 30% 20%,
@@ -1112,7 +1065,7 @@ body {
   background: var(--color-eduverse-accent-soft);
   border: 1px solid var(--color-eduverse-border-mid);
   padding: 4px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   flex-shrink: 0;
   margin-top: 2px;
 }
@@ -1155,7 +1108,7 @@ body {
 
 .challenge-filter-btn {
   padding: 6px 14px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   font-size: 0.8rem;
   font-weight: 500;
   border: 1px solid var(--color-eduverse-border);
@@ -1219,7 +1172,7 @@ body {
   width: 100%;
   background: var(--color-eduverse-editor);
   border: 1px solid var(--color-eduverse-border);
-  border-radius: 10px;
+  border-radius: var(--radius-input);
   color: var(--color-eduverse-text);
   padding: 12px;
   font-family: var(--font-mono);
@@ -1240,7 +1193,7 @@ body {
   background: var(--color-eduverse-accent-strong);
   color: oklch(93% 0.01 80);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-button);
   font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
@@ -1266,7 +1219,7 @@ body {
 .challenge-result {
   margin-top: 14px;
   padding: 12px 14px;
-  border-radius: 10px;
+  border-radius: var(--radius-card);
   background: var(--color-eduverse-accent-soft);
   border: 1px solid var(--color-eduverse-border);
   animation: rise 0.35s var(--ease-out-expo) both;
@@ -1293,7 +1246,7 @@ body {
   font-size: 0.66rem;
   font-weight: 600;
   padding: 3px 9px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   letter-spacing: 0.02em;
 }
 
@@ -1445,7 +1398,7 @@ body {
   background: var(--color-eduverse-raised);
   border: 1px solid var(--color-eduverse-border-mid);
   padding: 7px 14px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   font-size: 0.8rem;
   color: var(--color-eduverse-text);
 }
@@ -1470,9 +1423,6 @@ body {
   .hero-copy {
     max-width: 36rem;
   }
-  .feature-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 @media (max-width: 768px) {
@@ -1492,10 +1442,6 @@ body {
   .landing-hero {
     padding-left: 20px;
     padding-right: 20px;
-  }
-  .feature-grid {
-    grid-template-columns: 1fr;
-    gap: 32px;
   }
   .steps-row {
     grid-template-columns: 1fr;
@@ -1553,7 +1499,7 @@ body {
 .ai-panel-back {
   width: 36px;
   height: 36px;
-  border-radius: 8px;
+  border-radius: var(--radius-button);
   background: var(--color-eduverse-surface);
   border: 1px solid var(--color-eduverse-border);
   color: var(--color-eduverse-text-muted);
@@ -1582,6 +1528,7 @@ body {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  margin: 0;
   color: var(--color-eduverse-text);
 }
 
@@ -1618,7 +1565,7 @@ body {
 
 .ai-panel-msg {
   padding: 0.7rem 1rem;
-  border-radius: 10px;
+  border-radius: var(--radius-card);
   font-size: 0.88rem;
   line-height: 1.7;
   max-width: 85%;
@@ -1653,13 +1600,13 @@ body {
   color: var(--color-eduverse-text-muted);
   background: var(--color-eduverse-surface);
   padding: 0.1rem 0.4rem;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
 }
 
 .ai-panel-copy {
   background: none;
   border: 1px solid var(--color-eduverse-border);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   padding: 0.2rem;
   color: var(--color-eduverse-text-muted);
   cursor: pointer;
@@ -1690,7 +1637,7 @@ body {
   flex: 1;
   background: var(--color-eduverse-surface);
   border: 1px solid var(--color-eduverse-border);
-  border-radius: 8px;
+  border-radius: var(--radius-button);
   padding: 0.6rem 1rem;
   color: var(--color-eduverse-text);
   font-size: 0.85rem;
@@ -1707,17 +1654,25 @@ body {
   background: var(--color-eduverse-accent);
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-button);
   font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
   font-family: var(--font-sans);
-  transition: opacity 0.2s;
+  transition:
+    opacity 0.2s,
+    filter 0.2s,
+    transform 0.2s;
 }
 
 .ai-panel-send:disabled {
   opacity: 0.4;
   cursor: not-allowed;
+}
+
+.ai-panel-send:hover:not(:disabled) {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
 }
 
 .ai-panel-typing::after {
@@ -1751,7 +1706,7 @@ body {
   align-self: flex-start;
   background: var(--color-eduverse-surface);
   border: 1px solid var(--color-eduverse-border);
-  border-radius: 8px;
+  border-radius: var(--radius-button);
   color: var(--color-eduverse-text);
   padding: 0.5rem 1rem;
   font-size: 0.82rem;
@@ -1768,7 +1723,7 @@ body {
   width: 100%;
   background: var(--color-eduverse-surface);
   border: 1px solid var(--color-eduverse-border);
-  border-radius: 10px;
+  border-radius: var(--radius-input);
   color: var(--color-eduverse-text);
   padding: 1rem;
   font-family: var(--font-mono);
@@ -1789,7 +1744,7 @@ body {
   background: var(--color-eduverse-accent);
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-button);
   font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
@@ -1825,10 +1780,27 @@ body {
   outline: none;
 }
 
+/* Unselected options react on approach, before commitment. */
+.ai-choice:hover:not(:disabled) {
+  border-color: var(--color-eduverse-border-mid);
+  background: var(--color-eduverse-surface);
+}
+
+/* Keyboard focus ring for the AI panel form controls (they suppress the
+   native outline in favour of a border swap, which is too subtle alone). */
+.ai-panel-input:focus-visible,
+.ai-panel-textarea:focus-visible,
+.ai-panel-select:focus-visible,
+.challenge-textarea:focus-visible {
+  outline: none;
+  border-color: var(--color-eduverse-accent);
+  box-shadow: 0 0 0 3px oklch(78% 0.14 85 / 0.16);
+}
+
 .ai-panel-result {
   background: var(--color-eduverse-accent-soft);
   border: 1px solid var(--color-eduverse-border);
-  border-radius: 10px;
+  border-radius: var(--radius-card);
   padding: 1.2rem;
   animation: panelIn 0.3s ease both;
 }
@@ -1863,7 +1835,7 @@ body {
 .ai-panel-hint-btn {
   flex: 1;
   padding: 0.6rem 0;
-  border-radius: 8px;
+  border-radius: var(--radius-button);
   font-size: 0.82rem;
   font-weight: 500;
   border: 1px solid var(--color-eduverse-border);
@@ -1902,7 +1874,7 @@ body {
 
 .ai-panel-hint-item {
   padding: 1rem;
-  border-radius: 8px;
+  border-radius: var(--radius-button);
   background: var(--color-eduverse-accent-soft);
   border: 1px solid var(--color-eduverse-border);
   animation: panelIn 0.3s ease both;
@@ -1942,7 +1914,7 @@ body {
 .ai-panel-challenge-card {
   background: var(--color-eduverse-accent-soft);
   border: 1px solid var(--color-eduverse-border-mid);
-  border-radius: 12px;
+  border-radius: var(--radius-card);
   padding: 1.5rem;
   animation: panelIn 0.3s ease both;
 }
@@ -1953,22 +1925,22 @@ body {
   margin-bottom: 0.75rem;
   display: inline-block;
   padding: 0.15rem 0.6rem;
-  border-radius: 100px;
+  border-radius: var(--radius-pill);
 }
 
 .ai-panel-diff-easy {
-  background: rgba(52, 211, 153, 0.12);
-  color: #34d399;
+  background: oklch(76% 0.14 165 / 0.12);
+  color: var(--color-eduverse-success);
 }
 
 .ai-panel-diff-medium {
-  background: rgba(251, 191, 36, 0.12);
-  color: #fbbf24;
+  background: oklch(80% 0.13 85 / 0.12);
+  color: var(--color-eduverse-warning);
 }
 
 .ai-panel-diff-hard {
-  background: rgba(239, 68, 68, 0.12);
-  color: #ef4444;
+  background: oklch(66% 0.19 25 / 0.12);
+  color: var(--color-eduverse-danger);
 }
 
 .ai-panel-challenge-title {
@@ -1990,7 +1962,7 @@ body {
   margin-top: 0.75rem;
   padding: 0.5rem 1.4rem;
   border: 1px solid var(--color-eduverse-accent);
-  border-radius: 8px;
+  border-radius: var(--radius-button);
   background: var(--color-eduverse-accent-soft);
   color: var(--color-eduverse-accent);
   font-size: 0.82rem;
@@ -2041,7 +2013,7 @@ body {
   z-index: 9999;
   background: var(--color-eduverse-glass);
   border: 1px solid var(--color-eduverse-border-mid);
-  border-radius: 12px;
+  border-radius: var(--radius-card);
   padding: 0.9rem 1.5rem;
   font-size: 0.88rem;
   color: var(--color-eduverse-text);
@@ -2074,26 +2046,6 @@ body {
     opacity: 0;
     transform: translateX(-50%) translateY(20px);
   }
-}
-
-/* ================================================================
-   KEYBOARD SHORTCUT HINT
-   ================================================================ */
-
-.shortcut-hint {
-  position: fixed;
-  bottom: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 40;
-  font-size: 0.65rem;
-  color: var(--color-eduverse-text-muted);
-  background: var(--color-eduverse-glass);
-  border: 1px solid var(--color-eduverse-border);
-  padding: 0.25rem 0.7rem;
-  border-radius: 100px;
-  pointer-events: none;
-  opacity: 0.6;
 }
 
 /* ================================================================
@@ -2161,7 +2113,7 @@ kbd {
   font-family: var(--font-mono);
   background: var(--color-eduverse-surface);
   border: 1px solid var(--color-eduverse-border);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   margin: 0 0.1rem;
 }
 
@@ -2171,13 +2123,20 @@ kbd {
 
 .code-editor-wrap {
   display: flex;
-  background: #0d0d1a;
+  background: var(--color-eduverse-editor);
   min-height: 360px;
   max-height: 520px;
   overflow: auto;
   font-family: var(--font-mono);
   font-size: 13px;
   line-height: 1.65;
+  transition: box-shadow 0.15s ease;
+}
+
+/* The editor suppresses the textarea's native outline — surface keyboard
+   focus on the frame instead so it's never invisible. */
+.code-editor-wrap:focus-within {
+  box-shadow: inset 0 0 0 2px oklch(78% 0.14 85 / 0.3);
 }
 
 .code-editor-gutter {
@@ -2204,11 +2163,12 @@ kbd {
   border: none;
   outline: none;
   resize: none;
-  color: #e4e4ef;
+  color: var(--color-eduverse-text);
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
   padding: 14px 16px;
+  transition: opacity 0.2s ease;
   tab-size: 2;
   white-space: pre;
   overflow: auto;
@@ -2216,11 +2176,17 @@ kbd {
 }
 
 .code-editor-textarea::placeholder {
-  color: rgba(255, 255, 255, 0.15);
+  color: oklch(96% 0.01 264 / 0.15);
 }
 
 .code-editor-textarea:focus {
   outline: none;
+}
+
+/* While execution owns the editor it can't be typed in — show it. */
+.code-editor-textarea[readonly] {
+  opacity: 0.7;
+  cursor: default;
 }
 
 /* ================================================================
@@ -2236,9 +2202,9 @@ kbd {
 .visualizer-editor-area {
   position: relative;
   border: 1px solid var(--color-eduverse-border);
-  border-radius: 12px;
+  border-radius: var(--radius-card);
   overflow: hidden;
-  background: #0d0d1a;
+  background: var(--color-eduverse-editor);
 }
 
 .visualizer-line-highlight {
@@ -2258,8 +2224,8 @@ kbd {
   left: 48px;
   right: 0;
   height: 1.65em;
-  background: rgba(239, 68, 68, 0.12);
-  border-left: 3px solid #ef4444;
+  background: oklch(66% 0.19 25 / 0.12);
+  border-left: 3px solid var(--color-eduverse-danger);
   pointer-events: none;
   z-index: 2;
 }
@@ -2272,7 +2238,7 @@ kbd {
   padding: 0.5rem 0.75rem;
   background: var(--color-eduverse-surface);
   border: 1px solid var(--color-eduverse-border);
-  border-radius: 10px;
+  border-radius: var(--radius-button);
   flex-wrap: wrap;
 }
 
@@ -2282,7 +2248,7 @@ kbd {
   justify-content: center;
   width: 32px;
   height: 32px;
-  border-radius: 8px;
+  border-radius: var(--radius-button);
   border: 1px solid var(--color-eduverse-border);
   background: var(--color-eduverse-surface);
   color: var(--color-eduverse-text-muted);
@@ -2316,9 +2282,9 @@ kbd {
 }
 
 .visualizer-btn-active {
-  background: rgba(251, 191, 36, 0.15);
-  border-color: #fbbf24;
-  color: #fbbf24;
+  background: oklch(80% 0.13 85 / 0.15);
+  border-color: var(--color-eduverse-warning);
+  color: var(--color-eduverse-warning);
 }
 
 .visualizer-slider {
@@ -2351,7 +2317,7 @@ kbd {
   align-items: center;
   gap: 0.4rem;
   padding: 0.25rem 0.65rem;
-  border-radius: 100px;
+  border-radius: var(--radius-pill);
   font-size: 0.72rem;
   font-family: var(--font-sans);
 }
@@ -2379,17 +2345,17 @@ kbd {
   font-weight: 700;
   font-size: 0.65rem;
   padding: 0.05rem 0.35rem;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
 }
 
 .badge-result.true {
-  background: rgba(52, 211, 153, 0.2);
-  color: #34d399;
+  background: oklch(76% 0.14 165 / 0.2);
+  color: var(--color-eduverse-success);
 }
 
 .badge-result.false {
-  background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
+  background: oklch(66% 0.19 25 / 0.15);
+  color: var(--color-eduverse-danger);
 }
 
 .badge-sep {
@@ -2411,7 +2377,7 @@ kbd {
 
 .visualizer-panel {
   border: 1px solid var(--color-eduverse-border);
-  border-radius: 12px;
+  border-radius: var(--radius-card);
   overflow: hidden;
   background: var(--color-eduverse-glass);
 }
@@ -2436,22 +2402,22 @@ kbd {
 .panel-badge {
   font-size: 0.62rem;
   padding: 0.1rem 0.45rem;
-  border-radius: 100px;
+  border-radius: var(--radius-pill);
   background: var(--color-eduverse-surface);
   color: var(--color-eduverse-text-muted);
 }
 
 .badge-error {
-  background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
+  background: oklch(66% 0.19 25 / 0.15);
+  color: var(--color-eduverse-danger);
 }
 .badge-done {
-  background: rgba(52, 211, 153, 0.15);
-  color: #34d399;
+  background: oklch(76% 0.14 165 / 0.15);
+  color: var(--color-eduverse-success);
 }
 .badge-paused {
-  background: rgba(251, 191, 36, 0.15);
-  color: #fbbf24;
+  background: oklch(80% 0.13 85 / 0.15);
+  color: var(--color-eduverse-warning);
 }
 
 .panel-body {
@@ -2512,16 +2478,16 @@ kbd {
 }
 
 .memory-row-changed {
-  background: rgba(52, 211, 153, 0.08);
+  background: oklch(76% 0.14 165 / 0.08);
   animation: varFlash 0.6s ease;
 }
 
 @keyframes varFlash {
   0% {
-    background: rgba(52, 211, 153, 0.25);
+    background: oklch(76% 0.14 165 / 0.25);
   }
   100% {
-    background: rgba(52, 211, 153, 0.08);
+    background: oklch(76% 0.14 165 / 0.08);
   }
 }
 
@@ -2603,7 +2569,7 @@ kbd {
   font-size: 0.7rem;
   padding: 0.15rem 0;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   transition: background 0.1s;
   align-items: baseline;
 }
@@ -2687,7 +2653,7 @@ kbd {
   font-family: var(--font-mono);
   color: var(--color-eduverse-success);
   background: rgba(16, 185, 129, 0.05);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   padding: 0.4rem 0.6rem;
   max-height: 80px;
   overflow-y: auto;
@@ -2698,9 +2664,9 @@ kbd {
 .debug-error {
   margin-top: 0.5rem;
   padding: 0.6rem;
-  border-radius: 8px;
-  background: rgba(239, 68, 68, 0.06);
-  border: 1px solid rgba(239, 68, 68, 0.15);
+  border-radius: var(--radius-button);
+  background: oklch(66% 0.19 25 / 0.06);
+  border: 1px solid oklch(66% 0.19 25 / 0.15);
 }
 
 .error-header {
@@ -2709,7 +2675,7 @@ kbd {
   gap: 0.4rem;
   font-size: 0.78rem;
   font-weight: 700;
-  color: #ef4444;
+  color: var(--color-eduverse-danger);
 }
 
 .error-line {
@@ -2733,17 +2699,7 @@ kbd {
   color: var(--color-eduverse-text-muted);
   margin-top: 0.4rem;
   padding-top: 0.4rem;
-  border-top: 1px solid rgba(239, 68, 68, 0.1);
-}
-
-/* ================================================================
-   RESPONSIVE FOR AI PANELS
-   ================================================================ */
-
-@media (max-width: 480px) {
-  .shortcut-hint {
-    display: none;
-  }
+  border-top: 1px solid oklch(66% 0.19 25 / 0.1);
 }
 
 /* ================================================================
@@ -2773,7 +2729,7 @@ kbd {
   align-items: center;
   gap: 0.3rem;
   padding: 0.15rem 0;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   white-space: nowrap;
 }
@@ -2837,7 +2793,7 @@ kbd {
 .ast-error-msg {
   font-size: 0.72rem;
   font-weight: 600;
-  color: #ef4444;
+  color: var(--color-eduverse-danger);
 }
 
 .ast-error-detail {
@@ -2866,7 +2822,7 @@ kbd {
 .shortcut-kbd {
   display: inline-block;
   padding: 0.1rem 0.4rem;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   background: var(--color-eduverse-accent-soft);
   border: 1px solid var(--color-eduverse-border-mid);
   font-family: var(--font-mono);
@@ -2882,7 +2838,7 @@ kbd {
   width: 100%;
   margin-top: 0.5rem;
   padding: 0.4rem 0.6rem;
-  border-radius: 8px;
+  border-radius: var(--radius-button);
   border: 1px solid var(--color-eduverse-border-mid);
   background: var(--color-eduverse-accent-soft);
   color: var(--color-eduverse-accent);
@@ -2910,7 +2866,7 @@ kbd {
 .error-diagnosis {
   margin-top: 0.5rem;
   padding: 0.5rem;
-  border-radius: 8px;
+  border-radius: var(--radius-button);
   background: var(--color-eduverse-surface);
   border: 1px solid var(--color-eduverse-border);
 }
@@ -2919,57 +2875,6 @@ kbd {
   font-size: 0.72rem;
   color: var(--color-eduverse-text);
   line-height: 1.5;
-}
-
-/* ================================================================
-   LIGHT THEME OVERRIDES (for hardcoded dark-theme Tailwind classes)
-   ================================================================ */
-
-/* Override invisible white borders on light bg */
-.border-white\/5,
-.border-white\/10 {
-  border-color: var(--color-eduverse-border) !important;
-}
-
-.border-white\/20 {
-  border-color: var(--color-eduverse-border-mid) !important;
-}
-
-/* Override invisible white backgrounds on light bg */
-.bg-white\/5,
-.bg-white\/10 {
-  background: var(--color-eduverse-surface) !important;
-}
-
-/* Link hover colors */
-.hover\:border-white\/20:hover {
-  border-color: var(--color-eduverse-border-mid) !important;
-}
-
-.hover\:text-white:hover {
-  color: var(--color-eduverse-accent) !important;
-}
-
-.hover\:bg-white\/5:hover,
-.hover\:bg-white\/10:hover {
-  background: var(--color-eduverse-accent-soft) !important;
-}
-
-/* Override arbitrary opacity white classes on light bg */
-.bg-white\/\[0\.03\] {
-  background: var(--color-eduverse-surface) !important;
-}
-.bg-white\/\[0\.02\] {
-  background: var(--color-eduverse-surface) !important;
-}
-.bg-white\/\[0\.05\] {
-  background: var(--color-eduverse-surface) !important;
-}
-.border-white\/\[0\.05\] {
-  border-color: var(--color-eduverse-border) !important;
-}
-.hover\:bg-white\/\[0\.02\]:hover {
-  background: var(--color-eduverse-accent-soft) !important;
 }
 
 /* Exam Panel */
@@ -3009,7 +2914,7 @@ kbd {
 .ai-panel-exam-question {
   margin-bottom: 0.75rem;
   padding: 0.6rem;
-  border-radius: 8px;
+  border-radius: var(--radius-button);
   background: var(--color-eduverse-surface);
   border: 1px solid var(--color-eduverse-border);
 }
@@ -3070,21 +2975,6 @@ kbd {
   box-shadow: var(--shadow-glow), var(--shadow-lg);
   border-color: var(--color-eduverse-border-mid);
   transform: translateY(-2px);
-}
-
-/* ── Streak badge ── */
-.streak-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 14px;
-  border-radius: var(--radius-pill);
-  background: linear-gradient(135deg, oklch(80% 0.13 85 / 0.15), oklch(80% 0.13 85 / 0.05));
-  border: 1px solid oklch(80% 0.13 85 / 0.25);
-  color: var(--color-eduverse-warning);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
 }
 
 /* ── Amber glow on active nav items ── */
@@ -3425,7 +3315,7 @@ h3 {
 
 .sk-line {
   height: 12px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: linear-gradient(
     90deg,
     var(--color-eduverse-surface) 25%,
@@ -3453,39 +3343,6 @@ h3 {
   50% {
     opacity: 0.55;
   }
-}
-
-/* Tooltip (tooltip.tsx) */
-.tp-wrap {
-  position: relative;
-  display: inline-flex;
-}
-
-.tp-text {
-  position: absolute;
-  bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%) translateY(2px);
-  background: var(--color-eduverse-raised);
-  border: 1px solid var(--color-eduverse-border-mid);
-  color: var(--color-eduverse-text);
-  font-size: 0.72rem;
-  padding: 6px 12px;
-  border-radius: var(--radius-sm);
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  box-shadow: var(--shadow-md);
-  transition:
-    opacity 0.15s ease,
-    transform 0.15s ease;
-  z-index: 60;
-}
-
-.tp-wrap:hover .tp-text,
-.tp-wrap:focus-within .tp-text {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
 }
 
 /* Empty / offline states */
@@ -3729,7 +3586,7 @@ h3 {
   background-image: radial-gradient(oklch(72% 0.03 264 / 0.05) 1px, transparent 1px);
   background-size: 26px 26px;
   border: 1px solid var(--color-eduverse-border);
-  border-radius: 4px;
+  border-radius: var(--radius-card);
   overflow: hidden;
   cursor: grab;
   touch-action: none;
@@ -3769,7 +3626,7 @@ h3 {
   background: var(--color-eduverse-surface);
   color: var(--color-eduverse-text-body);
   border: 1px solid var(--color-eduverse-border-mid);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition:
     color 0.15s ease,
@@ -3793,7 +3650,7 @@ h3 {
   z-index: 5;
   background: oklch(9% 0.02 260 / 0.85);
   border: 1px solid var(--color-eduverse-border);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   padding: 8px 12px;
   font-family: var(--font-mono);
   font-size: 10px;
@@ -3922,7 +3779,7 @@ h3 {
   background-image: radial-gradient(oklch(72% 0.03 264 / 0.05) 1px, transparent 1px);
   background-size: 26px 26px;
   border: 1px solid var(--color-eduverse-border);
-  border-radius: 4px;
+  border-radius: var(--radius-card);
   padding: 48px 24px;
   overflow: hidden;
 }
@@ -4220,7 +4077,7 @@ h3 {
   padding: 16px 18px;
   background: var(--color-eduverse-surface);
   border: 1px solid var(--color-eduverse-border);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   font-size: 0.78rem;
   line-height: 1.8;
   color: var(--color-eduverse-text-body);
@@ -4354,7 +4211,7 @@ h3 {
 
 .podium-pedestal {
   position: relative;
-  border-radius: 7px 7px 0 0;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4450,7 +4307,7 @@ h3 {
   align-items: center;
   justify-content: center;
   margin-bottom: 16px;
-  border-radius: 11px;
+  border-radius: var(--radius-card);
   background: radial-gradient(
     120% 120% at 30% 20%,
     oklch(78% 0.14 85 / 0.2),
@@ -4478,7 +4335,7 @@ h3 {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 13px;
+  border-radius: var(--radius-card);
   background: oklch(96% 0.01 264 / 0.04);
   border: 1px solid var(--color-eduverse-border-mid);
   box-shadow: inset 0 1px 0 oklch(96% 0.01 264 / 0.1);
@@ -4552,7 +4409,7 @@ h3 {
   align-items: center;
   justify-content: center;
   margin: 0 auto 16px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: oklch(96% 0.01 264 / 0.04);
   border: 1px solid var(--color-eduverse-border-mid);
   box-shadow: inset 0 1px 0 oklch(96% 0.01 264 / 0.1);
@@ -4595,7 +4452,7 @@ h3 {
   display: inline-flex;
   align-items: center;
   padding: 2px 7px;
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
   font-family: var(--font-mono);
   font-size: 0.72rem;
   background: var(--color-eduverse-raised);
@@ -4936,7 +4793,7 @@ h3 {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 14px;
+  border-radius: var(--radius-card);
   color: var(--color-eduverse-accent);
   background: radial-gradient(
     120% 120% at 30% 20%,
@@ -4952,7 +4809,7 @@ h3 {
 .lab-head-icon {
   width: 46px;
   height: 46px;
-  border-radius: 12px;
+  border-radius: var(--radius-card);
 }
 
 .lab-grid {
@@ -4982,7 +4839,7 @@ h3 {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 13px;
+  border-radius: var(--radius-card);
   color: var(--color-eduverse-accent);
   background: radial-gradient(
     120% 120% at 30% 20%,
@@ -5100,7 +4957,7 @@ h3 {
   background: oklch(9% 0.02 260 / 0.6);
   border: 1px solid var(--color-eduverse-border);
   padding: 5px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   pointer-events: none;
 }
 
@@ -5165,7 +5022,7 @@ h3 {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
+  border-radius: var(--radius-card);
   color: var(--color-eduverse-accent);
   background: radial-gradient(
     120% 120% at 30% 20%,
@@ -5205,7 +5062,7 @@ h3 {
   justify-content: center;
   width: 30px;
   height: 30px;
-  border-radius: 8px;
+  border-radius: var(--radius-button);
   background: transparent;
   border: 1px solid transparent;
   color: var(--color-eduverse-text-muted);
@@ -5360,7 +5217,7 @@ h3 {
   font-size: 0.78rem;
   font-weight: 500;
   padding: 6px 11px;
-  border-radius: 8px;
+  border-radius: var(--radius-button);
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
@@ -5614,7 +5471,7 @@ h3 {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
+  border-radius: var(--radius-card);
   color: var(--color-eduverse-accent);
   background: radial-gradient(
     120% 120% at 30% 20%,
@@ -5698,6 +5555,15 @@ h3 {
   gap: 10px;
   padding: 18px 18px 16px;
   animation: page-rise 0.4s var(--ease-out-expo) both;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* Border + shadow only — the entrance animation's fill pins `transform`. */
+.res-card:hover {
+  border-color: var(--color-eduverse-border-mid);
+  box-shadow: var(--shadow-md);
 }
 
 .res-card-head {
@@ -5713,7 +5579,7 @@ h3 {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 9px;
+  border-radius: var(--radius-button);
   color: var(--color-eduverse-accent);
   background: radial-gradient(
     120% 120% at 30% 20%,
@@ -5735,14 +5601,22 @@ h3 {
 .res-card-del {
   background: transparent;
   border: 1px solid transparent;
-  border-radius: 7px;
+  border-radius: var(--radius-button);
   padding: 5px;
   color: var(--color-eduverse-text-muted);
   cursor: pointer;
+  position: relative;
   transition:
     color 0.15s ease,
     background 0.15s ease,
     border-color 0.15s ease;
+}
+
+/* Invisible expanded hit area — 42px touch target around the small icon. */
+.res-card-del::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
 }
 
 .res-card-del:hover {
@@ -5784,7 +5658,7 @@ h3 {
   background: var(--color-eduverse-accent-soft);
   border: 1px solid var(--color-eduverse-border);
   padding: 2px 9px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 }
 
 .res-card-open {
@@ -5819,6 +5693,14 @@ h3 {
   gap: 14px;
   padding: 18px 20px;
   animation: page-rise 0.4s var(--ease-out-expo) both;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.ann-card:hover {
+  border-color: var(--color-eduverse-border-mid);
+  box-shadow: var(--shadow-md);
 }
 
 .ann-card.pinned {
@@ -5835,7 +5717,7 @@ h3 {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
+  border-radius: var(--radius-card);
   color: var(--color-eduverse-accent);
   background: radial-gradient(
     120% 120% at 30% 20%,
@@ -5875,7 +5757,7 @@ h3 {
   background: var(--color-eduverse-accent-soft);
   border: 1px solid var(--color-eduverse-border-mid);
   padding: 2px 9px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 }
 
 .ann-text {
@@ -6184,7 +6066,7 @@ h3 {
   align-items: center;
   gap: 7px;
   padding: 12px 6px;
-  border-radius: 14px;
+  border-radius: var(--radius-card);
   background: var(--color-eduverse-surface);
   border: 1px solid var(--color-eduverse-border);
   cursor: pointer;
@@ -6201,7 +6083,7 @@ h3 {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 11px;
+  border-radius: var(--radius-card);
   color: var(--color-eduverse-text-muted);
   background: oklch(20% 0.032 264 / 0.6);
   border: 1px solid var(--color-eduverse-border);
@@ -6397,8 +6279,8 @@ h3 {
   appearance: none;
   width: 100%;
   height: 5px;
-  border-radius: 999px;
-  background: oklch(30% 0.03 264 / 0.7);
+  border-radius: var(--radius-pill);
+  background: var(--color-eduverse-track);
   outline: none;
   cursor: pointer;
 }
@@ -6438,8 +6320,8 @@ h3 {
   width: 42px;
   height: 24px;
   flex-shrink: 0;
-  border-radius: 999px;
-  background: oklch(30% 0.03 264 / 0.7);
+  border-radius: var(--radius-pill);
+  background: var(--color-eduverse-track);
   border: 1px solid var(--color-eduverse-border);
   cursor: pointer;
   transition:
@@ -6565,7 +6447,7 @@ h3 {
   gap: 3px;
   width: 60px;
   padding: 9px 4px;
-  border-radius: 12px;
+  border-radius: var(--radius-card);
   font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -6938,11 +6820,19 @@ h3 {
   background: transparent;
   border: 1px solid transparent;
   cursor: pointer;
+  position: relative;
   transition:
     color 0.18s ease,
     background 0.18s ease,
     transform 0.16s var(--ease-out-expo);
 }
+/* Invisible expanded hit area — 42px touch target around the 30px circle. */
+.lab-gcard-fav::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+}
+
 .lab-gcard-fav:hover {
   color: var(--color-eduverse-gold);
   background: oklch(78% 0.14 85 / 0.1);
@@ -6960,7 +6850,7 @@ h3 {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 12px;
+  border-radius: var(--radius-card);
   color: var(--color-eduverse-accent);
   background: radial-gradient(
     120% 120% at 30% 20%,
@@ -7329,7 +7219,7 @@ h3 {
   font-size: 0.62rem;
   color: var(--color-eduverse-text-muted);
   border: 1px solid var(--color-eduverse-border-mid);
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
   padding: 2px 6px;
 }
 
@@ -7416,7 +7306,7 @@ h3 {
   align-items: center;
   background: transparent;
   border: 1px solid var(--color-eduverse-border);
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
   padding: 2px 6px;
   cursor: pointer;
   color: var(--color-eduverse-text-muted);

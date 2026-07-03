@@ -28,7 +28,9 @@ import {
   TrendingUp,
   Star,
   Layers,
+  WifiOff,
 } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
 import type { LucideIcon } from "lucide-react";
 
 interface ProfileData {
@@ -177,6 +179,7 @@ export default function ProfilePage() {
   const [battlesPlayed, setBattlesPlayed] = useState(0);
   const [avatarError, setAvatarError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [offline, setOffline] = useState(false);
 
   const [editing, setEditing] = useState(false);
   const [editUsername, setEditUsername] = useState("");
@@ -212,7 +215,10 @@ export default function ProfilePage() {
         setEditBio(res.data.bio || "");
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        setOffline(true);
+        setLoading(false);
+      });
     api
       .getBattleHistory()
       .then((res) => {
@@ -288,7 +294,7 @@ export default function ProfilePage() {
   };
 
   const activityColor = (amount: number) => {
-    if (amount === 0) return "bg-white/[0.03]";
+    if (amount === 0) return "bg-eduverse-surface";
     const intensity = Math.min(1, amount / maxActivity);
     if (intensity < 0.25) return "bg-eduverse-accent/20";
     if (intensity < 0.5) return "bg-eduverse-accent/35";
@@ -317,11 +323,30 @@ export default function ProfilePage() {
     return <Icon className="w-3.5 h-3.5" />;
   };
 
+  if (offline || (!loading && !profile)) {
+    return (
+      <div className="max-w-6xl mx-auto pb-12">
+        <EmptyState
+          icon={WifiOff}
+          title="Can't reach the server"
+          message="The EduVerse API isn't responding, so your profile can't be loaded."
+        >
+          <button
+            onClick={() => window.location.reload()}
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-[var(--radius-button)] text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-all"
+          >
+            Try again
+          </button>
+        </EmptyState>
+      </div>
+    );
+  }
+
   if (loading || !profile) {
     return (
-      <div className="space-y-6 w-full max-w-5xl mx-auto pb-12">
+      <div className="space-y-6 w-full max-w-6xl mx-auto pb-12">
         <div className="sk-card" style={{ height: "140px" }} />
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="sk-card" style={{ height: "96px" }} />
           ))}
@@ -333,7 +358,7 @@ export default function ProfilePage() {
 
   return (
     <motion.div
-      className="space-y-6 max-w-5xl mx-auto pb-12"
+      className="space-y-6 max-w-6xl mx-auto pb-12"
       initial="hidden"
       animate="visible"
       variants={staggerContainer}
@@ -344,7 +369,19 @@ export default function ProfilePage() {
         </div>
         <GlassCard>
           <div className="relative flex flex-col sm:flex-row items-start gap-6">
-            <div className="relative group cursor-pointer shrink-0" onClick={handleAvatarClick}>
+            <div
+              className="relative group cursor-pointer shrink-0"
+              onClick={handleAvatarClick}
+              role="button"
+              tabIndex={0}
+              aria-label="Change avatar"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleAvatarClick();
+                }
+              }}
+            >
               <div className="w-24 h-24 rounded-full flex items-center justify-center text-4xl font-bold overflow-hidden transition-all duration-300 bg-eduverse-accent-strong text-eduverse-text shadow-md">
                 {avatarPreview || profile.avatar?.startsWith("data:") ? (
                   // User avatar is a base64 data: URL (or local preview) — next/image
@@ -359,7 +396,7 @@ export default function ProfilePage() {
                   profile.username[0].toUpperCase()
                 )}
               </div>
-              <div className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute inset-0 rounded-full bg-eduverse-void/65 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                 <Upload className="w-5 h-5 text-white" />
               </div>
               <input
@@ -418,7 +455,7 @@ export default function ProfilePage() {
                     </h1>
                     <button
                       onClick={handleStartEdit}
-                      className="text-xs text-eduverse-text-muted hover:text-white px-2.5 py-1.5 rounded-[var(--radius-button)] bg-eduverse-surface border border-eduverse-border hover:border-eduverse-border-mid flex items-center gap-1.5 transition-all"
+                      className="text-xs text-eduverse-text-muted hover:text-eduverse-accent px-2.5 py-1.5 rounded-[var(--radius-button)] bg-eduverse-surface border border-eduverse-border hover:border-eduverse-border-mid flex items-center gap-1.5 transition-all"
                     >
                       <Edit3 className="w-3 h-3" /> Edit
                     </button>
@@ -475,7 +512,7 @@ export default function ProfilePage() {
         <div className="section-label">
           <span className="section-label-prefix">//</span> Stats
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
           {[
             {
               label: "Level",
@@ -533,7 +570,7 @@ export default function ProfilePage() {
               transition={{ delay: 0.12 + i * 0.04 }}
             >
               <GlassCard className="text-center p-5">
-                <div className="w-8 h-8 flex items-center justify-center mx-auto mb-3">
+                <div className="stat-card-icon mx-auto !mb-3">
                   <stat.icon className={`w-4 h-4 ${stat.color}`} aria-hidden="true" />
                 </div>
                 <div className="text-xl font-bold font-mono text-eduverse-text tracking-tight">
@@ -577,7 +614,7 @@ export default function ProfilePage() {
             </div>
             <div className="flex items-center gap-2 mt-4 text-[10px] text-eduverse-text-muted">
               <span>Less</span>
-              <div className="w-3 h-3 rounded-sm bg-white/[0.03]" />
+              <div className="w-3 h-3 rounded-sm bg-eduverse-surface" />
               <div className="w-3 h-3 rounded-sm bg-eduverse-accent/20" />
               <div className="w-3 h-3 rounded-sm bg-eduverse-accent/35" />
               <div className="w-3 h-3 rounded-sm bg-eduverse-accent/55" />
@@ -616,7 +653,7 @@ export default function ProfilePage() {
                             {amount.toLocaleString()} XP · {pct}%
                           </span>
                         </div>
-                        <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
+                        <div className="h-1.5 rounded-full bg-eduverse-surface overflow-hidden">
                           <motion.div
                             className={`h-full rounded-full ${sourceBarColors[source] || "bg-eduverse-accent"}`}
                             initial={{ width: 0 }}
@@ -658,7 +695,7 @@ export default function ProfilePage() {
                         {done}/{total} ({pct}%)
                       </span>
                     </div>
-                    <div className="h-2 rounded-full bg-white/5 overflow-hidden">
+                    <div className="h-2 rounded-full bg-eduverse-surface overflow-hidden">
                       <motion.div
                         className="h-full rounded-full bg-eduverse-accent-strong"
                         initial={{ width: 0 }}
@@ -771,7 +808,7 @@ export default function ProfilePage() {
                 initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.02 }}
-                className="flex items-center justify-between py-2.5 px-3 rounded-[var(--radius-button)] hover:bg-white/[0.025] transition-colors text-sm"
+                className="flex items-center justify-between py-2.5 px-3 rounded-[var(--radius-button)] hover:bg-eduverse-accent-soft transition-colors text-sm"
               >
                 <div className="flex items-center gap-2.5">
                   <span

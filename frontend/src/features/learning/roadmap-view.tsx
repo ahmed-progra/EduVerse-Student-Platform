@@ -138,7 +138,7 @@ export function RoadmapView({
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-3">
             <span
-              className="w-12 h-12 rounded flex items-center justify-center shrink-0"
+              className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
               style={{ background: "var(--color-eduverse-accent-soft)" }}
             >
               <LevelIcon className="w-6 h-6" style={{ color: level.color }} aria-hidden="true" />
@@ -211,9 +211,9 @@ export function RoadmapView({
 
         {/* progress */}
         <div className="flex items-center gap-3 mt-4">
-          <div className="h-2 rounded bg-eduverse-accent-soft overflow-hidden flex-1 max-w-sm">
+          <div className="h-2 rounded-full bg-eduverse-accent-soft overflow-hidden flex-1 max-w-sm">
             <motion.div
-              className="h-full rounded"
+              className="h-full rounded-full"
               style={{ background: "var(--color-eduverse-accent-strong)" }}
               initial={{ width: 0 }}
               animate={{ width: `${pct}%` }}
@@ -253,7 +253,7 @@ export function RoadmapView({
           {Object.entries(profile.mastery).map(([topic, m]) => (
             <span
               key={topic}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[var(--radius-sm)] text-xs"
               style={{
                 border: "1px solid var(--color-eduverse-border)",
                 color: "var(--color-eduverse-text-body)",
@@ -336,7 +336,7 @@ export function RoadmapView({
                   transition={{ delay: Math.min(i * 0.02, 0.4), duration: 0.3 }}
                 >
                   <div
-                    className="rounded border px-4 py-3"
+                    className="rounded-[var(--radius-button)] border px-4 py-3"
                     style={{ borderColor: "var(--color-eduverse-border)", opacity: 0.65 }}
                   >
                     <div className="flex items-center gap-3">
@@ -419,7 +419,7 @@ export function RoadmapView({
                         {item.title}
                         {isNext && (
                           <span
-                            className="ml-2 px-1.5 py-0.5 rounded text-[10px] font-mono align-middle"
+                            className="ml-2 px-1.5 py-0.5 rounded-[var(--radius-sm)] text-[10px] font-mono align-middle"
                             style={{
                               background: "var(--color-eduverse-accent-soft)",
                               color: "var(--color-eduverse-accent)",

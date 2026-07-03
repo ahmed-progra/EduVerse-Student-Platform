@@ -64,7 +64,7 @@ export function InsightsList({
               <Link
                 key={i}
                 href={r.href}
-                className="flex items-center justify-between gap-3 px-3 py-2.5 rounded border border-eduverse-border hover:border-eduverse-accent transition-colors group"
+                className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-[var(--radius-button)] border border-eduverse-border hover:border-eduverse-accent transition-colors group"
               >
                 <div>
                   <div className="text-sm font-semibold text-eduverse-text">{r.title}</div>

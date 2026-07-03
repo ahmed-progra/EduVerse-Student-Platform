@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { EmptyState } from "@/components/ui/empty-state";
 import { api } from "@/services/api-client";
 import { useEffect, useState, useCallback } from "react";
@@ -64,11 +64,11 @@ export default function CourseDetailPage() {
 
   if (loading) {
     return (
-      <div className="space-y-4 animate-pulse" aria-hidden="true">
-        <div className="h-8 w-64 rounded bg-eduverse-surface" />
-        <div className="h-20 rounded bg-eduverse-surface" />
+      <div className="space-y-4 max-w-6xl mx-auto" aria-hidden="true">
+        <div className="sk-card" style={{ height: "32px", width: "256px" }} />
+        <div className="sk-card" style={{ height: "80px" }} />
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="h-16 rounded bg-eduverse-surface" />
+          <div key={i} className="sk-card" style={{ height: "64px" }} />
         ))}
       </div>
     );
@@ -83,7 +83,7 @@ export default function CourseDetailPage() {
       >
         <Link
           href="/courses"
-          className="px-4 py-2 rounded-lg text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]"
+          className="px-4 py-2 rounded-[var(--radius-button)] text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]"
         >
           Back to Courses
         </Link>
@@ -100,7 +100,7 @@ export default function CourseDetailPage() {
       >
         <Link
           href="/courses"
-          className="px-4 py-2 rounded-lg text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]"
+          className="px-4 py-2 rounded-[var(--radius-button)] text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-[filter]"
         >
           Back to Courses
         </Link>
@@ -111,7 +111,7 @@ export default function CourseDetailPage() {
   const showRunner = !state.assessed || retaking;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-6xl mx-auto">
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -128,37 +128,44 @@ export default function CourseDetailPage() {
             {course.icon}
           </span>
           <div className="min-w-0">
-            <h1 className="text-3xl font-bold font-display">{course.title}</h1>
+            <h1 className="text-2xl font-bold font-display tracking-tight">{course.title}</h1>
             <p className="text-eduverse-text-muted">{course.description}</p>
           </div>
         </div>
       </motion.div>
 
       {/* One-time celebration after submitting an assessment */}
-      {justCompleted && !showRunner && (
-        <motion.div
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-        >
-          <div
-            className="px-4 py-3 text-sm flex items-center gap-2.5 flex-wrap rounded-[var(--radius-card)] bg-eduverse-success/8 border border-eduverse-success/22"
-            role="status"
+      <AnimatePresence>
+        {justCompleted && !showRunner && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8, transition: { duration: 0.18, ease: "easeOut" } }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           >
-            <Zap size={15} style={{ color: "var(--color-eduverse-success)" }} aria-hidden="true" />
-            <span className="text-eduverse-text">
-              Assessment complete — your personalized path is ready
-              {justCompleted?.xp?.xpGained ? ` (+${justCompleted.xp.xpGained} XP)` : ""}.
-            </span>
-            <button
-              className="ml-auto text-xs underline opacity-70 hover:opacity-100 transition-opacity"
-              onClick={() => setJustCompleted(null)}
+            <div
+              className="px-4 py-3 text-sm flex items-center gap-2.5 flex-wrap rounded-[var(--radius-card)] bg-eduverse-success/8 border border-eduverse-success/22"
+              role="status"
             >
-              dismiss
-            </button>
-          </div>
-        </motion.div>
-      )}
+              <Zap
+                size={15}
+                style={{ color: "var(--color-eduverse-success)" }}
+                aria-hidden="true"
+              />
+              <span className="text-eduverse-text">
+                Assessment complete — your personalized path is ready
+                {justCompleted?.xp?.xpGained ? ` (+${justCompleted.xp.xpGained} XP)` : ""}.
+              </span>
+              <button
+                className="ml-auto text-xs underline opacity-70 hover:opacity-100 transition-opacity"
+                onClick={() => setJustCompleted(null)}
+              >
+                dismiss
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <motion.div
         initial={{ opacity: 0, y: 12 }}

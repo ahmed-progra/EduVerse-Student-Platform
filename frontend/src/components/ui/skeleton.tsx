@@ -15,7 +15,7 @@ export function SkeletonText({ lines = 2 }: { lines?: number }) {
 export function SkeletonRow() {
   return (
     <div
-      className="flex items-center justify-between py-3.5 px-4 border border-white/5 bg-white/[0.01]"
+      className="flex items-center justify-between py-3.5 px-4 border border-eduverse-border bg-eduverse-surface/40"
       style={{ borderRadius: "var(--radius-card)" }}
     >
       <div className="flex items-center gap-3 w-2/3">
@@ -41,7 +41,7 @@ export function SkeletonActivity() {
     <div className="flex items-center justify-between py-3 px-3 border border-transparent">
       <div className="flex items-center gap-3 w-1/2">
         <div
-          className="w-5 h-5 rounded shrink-0"
+          className="w-5 h-5 rounded-[var(--radius-sm)] shrink-0"
           style={{
             background: "var(--color-eduverse-surface)",
             animation: "sk-shimmer 1.8s infinite linear",

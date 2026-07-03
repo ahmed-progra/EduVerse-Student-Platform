@@ -35,7 +35,12 @@ export function CodeReviewPanel({ onClose }: { onClose: () => void }) {
       icon={Code2}
     >
       <div className="ai-panel-review">
-        <select className="ai-panel-select" value={lang} onChange={(e) => setLang(e.target.value)}>
+        <select
+          className="ai-panel-select"
+          value={lang}
+          onChange={(e) => setLang(e.target.value)}
+          aria-label="Language"
+        >
           <option value="python">Python</option>
           <option value="javascript">JavaScript</option>
           <option value="other">Other</option>
@@ -46,12 +51,13 @@ export function CodeReviewPanel({ onClose }: { onClose: () => void }) {
           value={code}
           onChange={(e) => setCode(e.target.value)}
           rows={8}
+          aria-label="Code to review"
         />
         <button className="ai-panel-action-btn" onClick={review} disabled={!code.trim() || loading}>
           {loading ? "Analyzing..." : "Review Code"}
         </button>
         {result && (
-          <div className="ai-panel-result">
+          <div className="ai-panel-result" role="status" aria-live="polite">
             <div className="ai-panel-result-text">{result}</div>
             <div className="ai-panel-meta">
               <span className="ai-panel-tag">{responseLabel}</span>
@@ -59,8 +65,9 @@ export function CodeReviewPanel({ onClose }: { onClose: () => void }) {
                 className="ai-panel-copy"
                 onClick={() => navigator.clipboard.writeText(result)}
                 title="Copy review"
+                aria-label="Copy review"
               >
-                <Copy size={12} />
+                <Copy size={12} aria-hidden="true" />
               </button>
             </div>
           </div>

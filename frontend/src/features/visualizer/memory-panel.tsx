@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { memo, useMemo, useState, Fragment } from "react";
 import type { StepFrame } from "./step-engine";
@@ -170,7 +171,20 @@ export const MemoryPanel = memo(function MemoryPanel({
             <div className="log-empty">No changes yet</div>
           ) : (
             changeLog.slice(-15).map((entry, i) => (
-              <div key={i} className="log-entry" onClick={() => onFrameSeek(entry.step)}>
+              <div
+                key={i}
+                className="log-entry"
+                onClick={() => onFrameSeek(entry.step)}
+                role="button"
+                tabIndex={0}
+                aria-label={`Jump to step ${entry.step}`}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onFrameSeek(entry.step);
+                  }
+                }}
+              >
                 <span className="log-step">Step {entry.step}:</span>
                 <span className="log-var">{entry.varName}</span>
                 <span className="log-change">

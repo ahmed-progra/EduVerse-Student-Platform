@@ -7,7 +7,7 @@ import { SkillMap, type MapNode } from "@/features/skill-map/skill-map";
 import { Confetti } from "@/components/ui/confetti";
 import { api } from "@/services/api-client";
 import { useAuthStore } from "@/stores/auth-store";
-import { fadeUp, staggerContainer, fastEaseTransition } from "@/lib/motion";
+import { fadeUp, staggerContainer, fastEaseTransition, springTransition } from "@/lib/motion";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -22,7 +22,9 @@ import {
   Code2,
   Lightbulb,
   AlertCircle,
+  WifiOff,
 } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
 
 const BRANCH_NAMES: Record<string, string> = {
   python_mastery: "Python Mastery",
@@ -103,6 +105,7 @@ export default function SkillTreePage() {
   const [celebrate, setCelebrate] = useState(false);
   const [unlockedInfo, setUnlockedInfo] = useState<{ name: string; cost: number } | null>(null);
   const [unlockError, setUnlockError] = useState<string | null>(null);
+  const [offline, setOffline] = useState(false);
 
   const openInCodeLab = (code: string) => {
     try {
@@ -115,7 +118,10 @@ export default function SkillTreePage() {
     try {
       const res = await api.getSkillTree();
       setNodes(res.data);
-    } catch {}
+      setOffline(false);
+    } catch {
+      setOffline(true);
+    }
     setLoading(false);
   };
 
@@ -163,12 +169,45 @@ export default function SkillTreePage() {
     [user?.level, user?.xp],
   );
 
+  // The node detail panel becomes a full-screen overlay on mobile — let Escape
+  // dismiss it like every other overlay in the app.
+  useEffect(() => {
+    if (!selectedNode) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") handleSelect(null);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [selectedNode, handleSelect]);
+
   if (loading) {
     return (
-      <div className="space-y-6" aria-label="Loading skill tree">
+      <div className="space-y-6 max-w-6xl mx-auto" aria-label="Loading skill tree">
         <div className="sk-card" style={{ height: "40px", width: "200px" }} />
         <div className="sk-card" style={{ height: "20px", width: "350px" }} />
         <div className="sk-card" style={{ height: "60vh" }} />
+      </div>
+    );
+  }
+
+  if (offline) {
+    return (
+      <div className="max-w-6xl mx-auto">
+        <EmptyState
+          icon={WifiOff}
+          title="Can't reach the server"
+          message="The EduVerse API isn't responding, so the skill map can't be loaded."
+        >
+          <button
+            onClick={() => {
+              setLoading(true);
+              loadTree();
+            }}
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-[var(--radius-button)] text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-all"
+          >
+            Try again
+          </button>
+        </EmptyState>
       </div>
     );
   }
@@ -177,7 +216,7 @@ export default function SkillTreePage() {
 
   return (
     <motion.div
-      className="flex gap-6"
+      className="flex gap-6 max-w-6xl mx-auto"
       initial="hidden"
       animate="visible"
       variants={staggerContainer}
@@ -261,8 +300,11 @@ export default function SkillTreePage() {
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 40, transition: { duration: 0.18, ease: "easeOut" } }}
-            transition={{ type: "spring", duration: 0.45, bounce: 0.15 }}
+            transition={springTransition}
             className="fixed right-0 top-0 h-full w-[360px] max-w-[calc(100vw-2rem)] z-50 p-4 lg:static lg:h-auto lg:w-[360px] lg:max-w-none lg:z-auto lg:p-0"
+            role="dialog"
+            aria-modal="true"
+            aria-label={selectedNode.name}
           >
             <GlassCard className="h-full overflow-y-auto">
               {/* Header */}
@@ -270,7 +312,7 @@ export default function SkillTreePage() {
                 <h3 className="font-bold text-lg font-display">{selectedNode.name}</h3>
                 <button
                   onClick={() => handleSelect(null)}
-                  className="p-1 rounded hover:bg-white/10 transition-colors"
+                  className="p-1 rounded-[var(--radius-sm)] hover:bg-eduverse-accent-soft transition-colors"
                   aria-label="Close panel"
                 >
                   <X className="w-4 h-4" />
@@ -283,12 +325,12 @@ export default function SkillTreePage() {
 
               {/* Status */}
               <div
-                className={`text-xs px-2 py-1 rounded inline-flex items-center gap-1 mb-4 font-mono ${
+                className={`text-xs px-2 py-1 rounded-[var(--radius-sm)] inline-flex items-center gap-1 mb-4 font-mono ${
                   selectedStatus === "completed"
                     ? "bg-eduverse-success/15 text-eduverse-success"
                     : selectedStatus === "available"
                       ? "bg-eduverse-accent-soft text-eduverse-accent"
-                      : "bg-white/5 text-eduverse-text-muted"
+                      : "bg-eduverse-surface text-eduverse-text-muted"
                 }`}
               >
                 {selectedStatus === "completed" ? (
@@ -317,7 +359,7 @@ export default function SkillTreePage() {
                 </GradientButton>
               )}
               {selectedStatus === "locked" && (
-                <div className="mb-4 text-xs text-eduverse-text-muted p-3 rounded border border-eduverse-border bg-white/[0.02] leading-relaxed">
+                <div className="mb-4 text-xs text-eduverse-text-muted p-3 rounded-[var(--radius-button)] border border-eduverse-border bg-eduverse-surface leading-relaxed">
                   Requires level {selectedNode.levelRequired} and{" "}
                   {selectedNode.xpCost.toLocaleString()} XP
                   {(selectedNode.prerequisites?.length ?? 0) > 0 && (
@@ -336,7 +378,7 @@ export default function SkillTreePage() {
 
               {/* Effect */}
               {selectedNode.effect && (
-                <div className="mb-4 p-3 rounded bg-eduverse-accent-soft border border-eduverse-border">
+                <div className="mb-4 p-3 rounded-[var(--radius-button)] bg-eduverse-accent-soft border border-eduverse-border">
                   <div className="text-xs uppercase tracking-wider text-eduverse-text-muted mb-1 font-mono">
                     Effect
                   </div>
@@ -366,7 +408,7 @@ export default function SkillTreePage() {
 
               {/* Code Example Tabs */}
               <div className="mb-3">
-                <div className="flex border-b border-white/10">
+                <div className="flex border-b border-eduverse-border">
                   <button
                     onClick={() => setTab("example")}
                     className={`flex items-center gap-1.5 px-3 py-2 text-xs border-b-2 transition-colors ${
@@ -392,8 +434,8 @@ export default function SkillTreePage() {
 
               {/* Code Block */}
               <div className="mb-4">
-                <div className="bg-black/40 rounded overflow-hidden">
-                  <div className="flex items-center justify-between px-3 py-1.5 border-b border-white/5">
+                <div className="bg-eduverse-editor rounded-[var(--radius-sm)] overflow-hidden">
+                  <div className="flex items-center justify-between px-3 py-1.5 border-b border-eduverse-border">
                     <span className="text-[10px] text-eduverse-text-muted uppercase tracking-wider font-mono">
                       Python
                     </span>
@@ -410,7 +452,7 @@ export default function SkillTreePage() {
                       <Code2 className="w-2.5 h-2.5" aria-hidden="true" /> Copy
                     </button>
                   </div>
-                  <pre className="p-3 text-xs font-mono overflow-auto max-h-[200px] text-eduverse-text leading-relaxed">
+                  <pre className="p-3 text-code font-mono overflow-auto max-h-[200px] text-eduverse-text leading-relaxed">
                     {tab === "example"
                       ? getExample(selectedNode.id).code
                       : getExample(selectedNode.id).debug}
@@ -439,13 +481,13 @@ export default function SkillTreePage() {
                     <button
                       onClick={() => setShowHint(!showHint)}
                       aria-expanded={showHint}
-                      className="w-full text-xs py-2 rounded border border-eduverse-border-mid text-eduverse-text-muted hover:text-eduverse-text hover:bg-eduverse-accent-soft transition-colors flex items-center justify-center gap-1.5"
+                      className="w-full text-xs py-2 rounded-[var(--radius-button)] border border-eduverse-border-mid text-eduverse-text-muted hover:text-eduverse-text hover:bg-eduverse-accent-soft transition-colors flex items-center justify-center gap-1.5"
                     >
                       <Lightbulb className="w-3 h-3" aria-hidden="true" />{" "}
                       {showHint ? "Hide Hint" : "Show Hint"}
                     </button>
                     {showHint && (
-                      <div className="text-xs p-3 rounded bg-eduverse-accent-soft border border-eduverse-border text-eduverse-text-body leading-relaxed">
+                      <div className="text-xs p-3 rounded-[var(--radius-button)] bg-eduverse-accent-soft border border-eduverse-border text-eduverse-text-body leading-relaxed">
                         {getExample(selectedNode.id)
                           .debug.split("\n")
                           .filter((l) => l.trim().startsWith("#"))
@@ -468,7 +510,7 @@ export default function SkillTreePage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            className="fixed inset-0 bg-eduverse-void/65 z-40 lg:hidden"
             onClick={() => handleSelect(null)}
           />
         )}

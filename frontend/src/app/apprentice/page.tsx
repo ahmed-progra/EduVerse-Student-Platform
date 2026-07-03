@@ -21,8 +21,6 @@ import type { TeachTurn, TeachGrade, TeachableCourse } from "@/types/apprentice"
 import { PipAvatar } from "@/features/apprentice/pip-avatar";
 import { TeachGradeCard } from "@/features/apprentice/teach-grade-card";
 
-const ease = [0.22, 1, 0.36, 1] as const;
-
 interface StartTarget {
   topic: string;
   topicKey: string | null;
@@ -227,7 +225,7 @@ export default function ApprenticePage() {
         <div className="section-label">
           <span className="section-label-prefix">//</span> Teach
         </div>
-        <h1 className="text-3xl font-bold mb-1 font-display flex items-center gap-2 tracking-tight">
+        <h1 className="text-3xl font-bold mb-2 font-display flex items-center gap-2 tracking-tight">
           <Sprout className="w-7 h-7 text-eduverse-accent" aria-hidden="true" /> Apprentice
         </h1>
         <p className="text-eduverse-text-muted">
@@ -320,7 +318,7 @@ export default function ApprenticePage() {
                   setSelCourse(e.target.value);
                   setSelTopic("");
                 }}
-                className="px-3 py-2 rounded border border-eduverse-border bg-eduverse-surface text-sm text-eduverse-text focus:border-eduverse-accent outline-none"
+                className="px-3 py-2 rounded-[var(--radius-input)] border border-eduverse-border bg-eduverse-surface text-sm text-eduverse-text focus:border-eduverse-accent outline-none"
                 aria-label="Course"
               >
                 {catalog.map((c) => (
@@ -332,7 +330,7 @@ export default function ApprenticePage() {
               <select
                 value={selTopic}
                 onChange={(e) => setSelTopic(e.target.value)}
-                className="px-3 py-2 rounded border border-eduverse-border bg-eduverse-surface text-sm text-eduverse-text focus:border-eduverse-accent outline-none"
+                className="px-3 py-2 rounded-[var(--radius-input)] border border-eduverse-border bg-eduverse-surface text-sm text-eduverse-text focus:border-eduverse-accent outline-none"
                 aria-label="Topic"
               >
                 <option value="">Choose a topic…</option>
@@ -365,7 +363,7 @@ export default function ApprenticePage() {
               <p className="text-xs text-eduverse-text-muted mb-2">…or teach Pip anything else:</p>
               <div className="flex gap-2">
                 <input
-                  className="flex-1 px-3 py-2 rounded border border-eduverse-border bg-transparent text-sm text-eduverse-text focus:border-eduverse-accent outline-none transition-colors"
+                  className="flex-1 px-3 py-2 rounded-[var(--radius-input)] border border-eduverse-border bg-transparent text-sm text-eduverse-text focus:border-eduverse-accent outline-none transition-colors"
                   placeholder="e.g. Recursion, REST APIs, the box model…"
                   value={customTopic}
                   onChange={(e) => setCustomTopic(e.target.value)}
@@ -376,7 +374,7 @@ export default function ApprenticePage() {
                   }
                 />
                 <button
-                  className="px-3 py-2 rounded bg-eduverse-accent-strong text-white text-sm font-semibold hover:brightness-110 active:scale-[0.97] transition-[filter,transform] duration-150 disabled:opacity-50"
+                  className="px-3 py-2 rounded-[var(--radius-button)] bg-eduverse-accent-strong text-white text-sm font-semibold hover:brightness-110 active:scale-[0.97] transition-[filter,transform] duration-150 disabled:opacity-50"
                   disabled={!customTopic.trim()}
                   onClick={() =>
                     customTopic.trim() &&
@@ -419,7 +417,7 @@ export default function ApprenticePage() {
                     key={i}
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, ease }}
+                    transition={fastEaseTransition}
                     className="text-sm leading-relaxed rounded-lg px-3 py-2 whitespace-pre-wrap"
                     style={{
                       background:
@@ -463,7 +461,7 @@ export default function ApprenticePage() {
 
             <div className="flex gap-2 mb-3">
               <textarea
-                className="flex-1 h-20 px-3 py-2 rounded border border-eduverse-border bg-transparent text-sm text-eduverse-text focus:border-eduverse-accent outline-none transition-colors resize-y"
+                className="flex-1 h-20 px-3 py-2 rounded-[var(--radius-input)] border border-eduverse-border bg-transparent text-sm text-eduverse-text focus:border-eduverse-accent outline-none transition-colors resize-y"
                 placeholder="Explain it to Pip in your own words…"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -476,7 +474,7 @@ export default function ApprenticePage() {
             </div>
             <div className="flex items-center gap-3 flex-wrap">
               <button
-                className="px-3 py-2 rounded bg-eduverse-accent-strong text-white text-sm font-semibold hover:brightness-110 active:scale-[0.97] transition-[filter,transform] duration-150 disabled:opacity-50 flex items-center gap-1.5"
+                className="px-3 py-2 rounded-[var(--radius-button)] bg-eduverse-accent-strong text-white text-sm font-semibold hover:brightness-110 active:scale-[0.97] transition-[filter,transform] duration-150 disabled:opacity-50 flex items-center gap-1.5"
                 onClick={sendExplanation}
                 disabled={!input.trim() || thinking}
               >

@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { CheckCircle, XCircle, RefreshCw, Zap } from "lucide-react";
+import { fastEaseTransition } from "@/lib/motion";
 import { api } from "@/services/api-client";
 import { GlassCard } from "@/components/ui/glass-card";
 
@@ -100,18 +102,24 @@ export function QuizCheckpoint({ lessonId, quiz }: { lessonId: string; quiz: Qui
                 <span className="font-mono text-eduverse-accent shrink-0">{qi + 1}.</span>
                 <span>{q.q}</span>
                 {verdict?.correct && (
-                  <CheckCircle
-                    size={15}
-                    className="text-eduverse-success mt-0.5 shrink-0"
-                    aria-label="Correct"
-                  />
+                  <motion.span
+                    initial={{ opacity: 0, scale: 0.6 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={fastEaseTransition}
+                    className="mt-0.5 shrink-0"
+                  >
+                    <CheckCircle size={15} className="text-eduverse-success" aria-label="Correct" />
+                  </motion.span>
                 )}
                 {verdict && !verdict.correct && (
-                  <XCircle
-                    size={15}
-                    className="text-eduverse-danger mt-0.5 shrink-0"
-                    aria-label="Incorrect"
-                  />
+                  <motion.span
+                    initial={{ opacity: 0, scale: 0.6 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={fastEaseTransition}
+                    className="mt-0.5 shrink-0"
+                  >
+                    <XCircle size={15} className="text-eduverse-danger" aria-label="Incorrect" />
+                  </motion.span>
                 )}
               </div>
               <div className="space-y-1.5">
@@ -126,7 +134,7 @@ export function QuizCheckpoint({ lessonId, quiz }: { lessonId: string; quiz: Qui
                         if (result) return;
                         setSelected((p) => p.map((v, i) => (i === qi ? oi : v)));
                       }}
-                      className="ai-choice w-full text-left text-sm px-3 py-2 rounded border transition-colors"
+                      className="ai-choice w-full text-left text-sm px-3 py-2 rounded-[var(--radius-button)] border transition-colors"
                       style={{
                         borderColor: showCorrect
                           ? "var(--color-eduverse-success)"
@@ -152,7 +160,14 @@ export function QuizCheckpoint({ lessonId, quiz }: { lessonId: string; quiz: Qui
                 })}
               </div>
               {verdict && verdict.explain && (
-                <p className="text-xs text-eduverse-text-muted mt-2 pl-1">{verdict.explain}</p>
+                <motion.p
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={fastEaseTransition}
+                  className="text-xs text-eduverse-text-muted mt-2 pl-1"
+                >
+                  {verdict.explain}
+                </motion.p>
               )}
             </div>
           );

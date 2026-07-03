@@ -81,7 +81,7 @@ export default function LabHubPage() {
   );
 
   return (
-    <div className="space-y-10 page-enter">
+    <div className="space-y-10 max-w-6xl mx-auto page-enter">
       <div>
         <div className="section-label">
           <span className="section-label-prefix">//</span> Interactive
@@ -92,7 +92,7 @@ export default function LabHubPage() {
           </span>
           <div>
             <h1 className="text-3xl font-bold font-display tracking-tight">3D Lab</h1>
-            <p className="text-eduverse-text-muted mt-1">
+            <p className="text-eduverse-text-muted mt-2">
               {totalModels} interactive, orbitable 3D models across {LAB_SUBJECTS.length} subjects.
               Drag to explore, tune the parameters, learn by doing.
             </p>

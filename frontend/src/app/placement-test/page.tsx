@@ -190,7 +190,7 @@ function PlacementTestContent() {
         >
           <GlassCard className="text-center p-12 max-w-md">
             <div
-              className="w-20 h-20 rounded mx-auto mb-6 flex items-center justify-center"
+              className="w-20 h-20 rounded-2xl mx-auto mb-6 flex items-center justify-center"
               style={{
                 background: "var(--color-eduverse-accent-soft)",
                 border: "1px solid var(--color-eduverse-border-mid)",

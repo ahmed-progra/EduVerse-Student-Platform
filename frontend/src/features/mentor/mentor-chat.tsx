@@ -112,7 +112,7 @@ export function MentorChat() {
 
       <div className="flex gap-2">
         <input
-          className="flex-1 px-3 py-2 rounded border border-eduverse-border bg-transparent text-sm text-eduverse-text focus:border-eduverse-accent outline-none transition-colors"
+          className="flex-1 px-3 py-2 rounded-[var(--radius-input)] border border-eduverse-border bg-transparent text-sm text-eduverse-text focus:border-eduverse-accent outline-none transition-colors"
           placeholder="Ask your mentor…"
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -121,7 +121,7 @@ export function MentorChat() {
           aria-label="Message your mentor"
         />
         <button
-          className="px-3 py-2 rounded bg-eduverse-accent-strong text-white text-sm font-semibold hover:brightness-110 active:scale-[0.97] transition-[filter,transform] duration-150 disabled:opacity-50 flex items-center gap-1.5"
+          className="px-3 py-2 rounded-[var(--radius-button)] bg-eduverse-accent-strong text-white text-sm font-semibold hover:brightness-110 active:scale-[0.97] transition-[filter,transform] duration-150 disabled:opacity-50 flex items-center gap-1.5"
           onClick={() => send(input)}
           disabled={!input.trim() || loading}
         >

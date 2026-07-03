@@ -75,8 +75,8 @@ export function AICoachCard() {
             <Compass size={14} aria-hidden="true" /> Get My Plan
           </button>
           {error && (
-            <p className="mt-3" role="alert">
-              Error: {error}
+            <p className="form-error mt-3" role="alert">
+              {error}
             </p>
           )}
         </div>
@@ -84,9 +84,9 @@ export function AICoachCard() {
 
       {loading && (
         <div className="space-y-3 animate-pulse" aria-label="Loading recommendations">
-          <div className="h-3.5 w-3/4 rounded bg-eduverse-raised" />
+          <div className="h-3.5 w-3/4 rounded-[var(--radius-sm)] bg-eduverse-raised" />
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-12 rounded bg-eduverse-raised" />
+            <div key={i} className="h-12 rounded-[var(--radius-sm)] bg-eduverse-raised" />
           ))}
         </div>
       )}
@@ -99,7 +99,7 @@ export function AICoachCard() {
               <Link
                 key={i}
                 href={r.href}
-                className="flex items-center justify-between gap-3 px-3 py-3 rounded border border-eduverse-border hover:border-eduverse-accent transition-colors group"
+                className="flex items-center justify-between gap-3 px-3 py-3 rounded-[var(--radius-button)] border border-eduverse-border hover:border-eduverse-accent transition-colors group"
               >
                 <div>
                   <div className="text-sm font-semibold text-eduverse-text">{r.title}</div>
@@ -114,8 +114,8 @@ export function AICoachCard() {
             ))}
           </div>
           {error && (
-            <p className="text-sm text-eduverse-text-muted mt-3" role="alert">
-              Error: {error}
+            <p className="form-error mt-3" role="alert">
+              {error}
             </p>
           )}
         </div>

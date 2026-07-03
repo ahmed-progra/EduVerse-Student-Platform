@@ -21,9 +21,9 @@ export function WeeklyReport({ report, loading, error, onRefresh }: WeeklyReport
   if (loading) {
     return (
       <div className="space-y-2 animate-pulse" aria-label="Generating weekly report">
-        <div className="h-3.5 w-full rounded bg-eduverse-raised" />
-        <div className="h-3.5 w-5/6 rounded bg-eduverse-raised" />
-        <div className="h-20 rounded bg-eduverse-raised mt-3" />
+        <div className="h-3.5 w-full rounded-[var(--radius-sm)] bg-eduverse-raised" />
+        <div className="h-3.5 w-5/6 rounded-[var(--radius-sm)] bg-eduverse-raised" />
+        <div className="h-20 rounded-[var(--radius-sm)] bg-eduverse-raised mt-3" />
       </div>
     );
   }
@@ -83,7 +83,10 @@ export function WeeklyReport({ report, loading, error, onRefresh }: WeeklyReport
           </div>
           <div className="grid sm:grid-cols-2 gap-2">
             {report.projects.map((p, i) => (
-              <div key={i} className="rounded border border-eduverse-border p-3">
+              <div
+                key={i}
+                className="rounded-[var(--radius-button)] border border-eduverse-border p-3"
+              >
                 <div className="text-sm font-semibold text-eduverse-text">{p.title}</div>
                 <p className="text-xs text-eduverse-text-muted mt-1">{p.brief}</p>
                 {p.skills.length > 0 && (
@@ -91,7 +94,7 @@ export function WeeklyReport({ report, loading, error, onRefresh }: WeeklyReport
                     {p.skills.map((s) => (
                       <span
                         key={s}
-                        className="text-[10px] px-1.5 py-0.5 rounded bg-eduverse-raised text-eduverse-text-muted"
+                        className="text-[10px] px-1.5 py-0.5 rounded-[var(--radius-sm)] bg-eduverse-raised text-eduverse-text-muted"
                       >
                         {s}
                       </span>

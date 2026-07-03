@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { GlassCard } from "@/components/ui/glass-card";
 import { EmptyState } from "@/components/ui/empty-state";
+import { SkeletonText } from "@/components/ui/skeleton";
 import { useAuthStore } from "@/stores/auth-store";
 import { api } from "@/services/api-client";
 import type { MentorProfileData, Mission, MentorReportData } from "@/types/mentor";
@@ -140,7 +141,7 @@ export default function MentorPage() {
 
   return (
     <motion.div
-      className="space-y-8"
+      className="space-y-8 max-w-6xl mx-auto"
       initial="hidden"
       animate="visible"
       variants={staggerContainer}
@@ -152,7 +153,7 @@ export default function MentorPage() {
         </div>
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
-            <h1 className="text-3xl font-bold mb-1 font-display flex items-center gap-2 tracking-tight">
+            <h1 className="text-3xl font-bold mb-2 font-display flex items-center gap-2 tracking-tight">
               <Sparkles className="w-7 h-7 text-eduverse-accent" aria-hidden="true" /> AI Coach
             </h1>
             <p className="text-eduverse-text-muted">
@@ -174,9 +175,8 @@ export default function MentorPage() {
       <motion.div variants={fadeUp} transition={{ ...fastEaseTransition, delay: 0.05 }}>
         <GlassCard>
           {profileLoading ? (
-            <div className="space-y-2 animate-pulse" aria-label="Loading mentor profile">
-              <div className="h-4 w-3/4 rounded bg-eduverse-raised" />
-              <div className="h-4 w-2/3 rounded bg-eduverse-raised" />
+            <div aria-label="Loading mentor profile">
+              <SkeletonText lines={2} />
             </div>
           ) : profileError ? (
             <EmptyState icon={WifiOff} title="Mentor unavailable" message={profileError}>
@@ -205,48 +205,52 @@ export default function MentorPage() {
       </motion.div>
 
       {/* ── Skill assessment tiles ── */}
-      <Section title="Current Skill Assessment" icon={Target} delay={0.1}>
-        {profileLoading ? (
-          <SkeletonCard />
-        ) : profile ? (
-          <MetricTiles
-            level={user?.level ?? 1}
-            xp={user?.xp ?? 0}
-            learningSpeed={profile.learningSpeed}
-            retention={profile.retention}
-            momentum={profile.momentum}
-            lessonsCompleted={lessonsCompleted}
-          />
-        ) : null}
-      </Section>
+      {!profileError && (
+        <Section title="Current Skill Assessment" icon={Target} delay={0.1}>
+          {profileLoading ? (
+            <SkeletonCard />
+          ) : profile ? (
+            <MetricTiles
+              level={user?.level ?? 1}
+              xp={user?.xp ?? 0}
+              learningSpeed={profile.learningSpeed}
+              retention={profile.retention}
+              momentum={profile.momentum}
+              lessonsCompleted={lessonsCompleted}
+            />
+          ) : null}
+        </Section>
+      )}
 
       {/* ── Growth chart ── */}
-      <Section title="Your Growth" icon={TrendingUp} delay={0.13}>
-        <GlassCard>
-          {profileLoading ? (
-            <div className="space-y-3 animate-pulse" aria-label="Loading">
-              <div className="h-4 w-1/2 rounded bg-eduverse-raised" />
-              <div className="h-4 w-2/3 rounded bg-eduverse-raised" />
-              <div className="h-4 w-3/4 rounded bg-eduverse-raised" />
-            </div>
-          ) : profile ? (
-            <GrowthChart data={metrics?.growthSeries || []} />
-          ) : null}
-        </GlassCard>
-      </Section>
+      {!profileError && (
+        <Section title="Your Growth" icon={TrendingUp} delay={0.13}>
+          <GlassCard>
+            {profileLoading ? (
+              <div aria-label="Loading">
+                <SkeletonText lines={3} />
+              </div>
+            ) : profile ? (
+              <GrowthChart data={metrics?.growthSeries || []} />
+            ) : null}
+          </GlassCard>
+        </Section>
+      )}
 
       {/* ── Strong / weak topics ── */}
-      <Section title="Strengths & Gaps" icon={Compass} delay={0.16}>
-        {profileLoading ? (
-          <SkeletonCard />
-        ) : profile ? (
-          <TopicColumns
-            strengths={profile.strengths}
-            weaknesses={profile.weaknesses}
-            weakLinks={weakLinks}
-          />
-        ) : null}
-      </Section>
+      {!profileError && (
+        <Section title="Strengths & Gaps" icon={Compass} delay={0.16}>
+          {profileLoading ? (
+            <SkeletonCard />
+          ) : profile ? (
+            <TopicColumns
+              strengths={profile.strengths}
+              weaknesses={profile.weaknesses}
+              weakLinks={weakLinks}
+            />
+          ) : null}
+        </Section>
+      )}
 
       {/* ── Missions ── */}
       <Section title="Smart Missions" icon={Target} delay={0.19}>
@@ -266,13 +270,15 @@ export default function MentorPage() {
       </Section>
 
       {/* ── Insights + recommendations ── */}
-      <Section title="Insights & Next Steps" icon={Sparkles} delay={0.25}>
-        {profileLoading ? (
-          <SkeletonCard />
-        ) : profile ? (
-          <InsightsList insights={profile.insights} recommendations={profile.recommendations} />
-        ) : null}
-      </Section>
+      {!profileError && (
+        <Section title="Insights & Next Steps" icon={Sparkles} delay={0.25}>
+          {profileLoading ? (
+            <SkeletonCard />
+          ) : profile ? (
+            <InsightsList insights={profile.insights} recommendations={profile.recommendations} />
+          ) : null}
+        </Section>
+      )}
 
       {/* ── Project ideas → Studio ── */}
       {profile && (
@@ -294,7 +300,7 @@ export default function MentorPage() {
                           {p.skills.map((s) => (
                             <span
                               key={s}
-                              className="text-[10px] px-1.5 py-0.5 rounded bg-eduverse-raised text-eduverse-text-muted"
+                              className="text-[10px] px-1.5 py-0.5 rounded-[var(--radius-sm)] bg-eduverse-raised text-eduverse-text-muted"
                             >
                               {s}
                             </span>

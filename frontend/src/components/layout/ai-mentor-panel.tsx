@@ -47,7 +47,12 @@ export function AIMentorPanel({ onClose, context }: { onClose: () => void; conte
       onClose={onClose}
       icon={Brain}
     >
-      <div className="ai-panel-chat">
+      <div
+        className="ai-panel-chat"
+        role="log"
+        aria-live="polite"
+        aria-label="AI mentor conversation"
+      >
         {msgs.length === 0 && !loading && (
           <div className="ai-panel-empty">Ask a programming question and get guidance.</div>
         )}
@@ -61,8 +66,9 @@ export function AIMentorPanel({ onClose, context }: { onClose: () => void; conte
                   className="ai-panel-copy"
                   onClick={() => copyText(m.text)}
                   title="Copy response"
+                  aria-label="Copy response"
                 >
-                  <Copy size={12} />
+                  <Copy size={12} aria-hidden="true" />
                 </button>
               </div>
             )}

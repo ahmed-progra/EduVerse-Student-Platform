@@ -29,30 +29,35 @@ export default function AnnouncementsPage() {
   };
 
   return (
-    <div className="space-y-6 page-enter">
-      <div className="flex items-start justify-between gap-4 flex-wrap">
-        <div className="lab-hero">
-          <span className="lab-hero-icon">
-            <Megaphone size={24} aria-hidden="true" />
-          </span>
-          <div>
-            <h1 className="text-3xl font-bold font-display tracking-tight">Announcements</h1>
-            <p className="text-eduverse-text-muted mt-1">
-              Academic updates, deadlines, and reminders — pinned to the top.
-            </p>
-          </div>
+    <div className="space-y-6 max-w-6xl mx-auto page-enter">
+      <div>
+        <div className="section-label">
+          <span className="section-label-prefix">//</span> Academics
         </div>
-        <button className="glow-pill" onClick={() => setPosting((p) => !p)}>
-          {posting ? (
-            <>
-              <X size={16} aria-hidden="true" /> Cancel
-            </>
-          ) : (
-            <>
-              <Plus size={16} aria-hidden="true" /> Post
-            </>
-          )}
-        </button>
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div className="lab-hero">
+            <span className="lab-hero-icon">
+              <Megaphone size={24} aria-hidden="true" />
+            </span>
+            <div>
+              <h1 className="text-3xl font-bold font-display tracking-tight">Announcements</h1>
+              <p className="text-eduverse-text-muted mt-2">
+                Academic updates, deadlines, and reminders — pinned to the top.
+              </p>
+            </div>
+          </div>
+          <button className="glow-pill" onClick={() => setPosting((p) => !p)}>
+            {posting ? (
+              <>
+                <X size={16} aria-hidden="true" /> Cancel
+              </>
+            ) : (
+              <>
+                <Plus size={16} aria-hidden="true" /> Post
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       {posting && (

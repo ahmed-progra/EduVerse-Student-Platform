@@ -250,7 +250,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
       {/* Mobile top bar */}
       <div
-        className="lg:hidden fixed top-0 left-0 right-0 z-50 px-4 py-3 flex items-center justify-between"
+        className="mobile-topbar lg:hidden fixed top-0 left-0 right-0 z-50 px-4 py-3 flex items-center justify-between"
         style={{
           background: "oklch(13% 0.028 262 / 0.92)",
           backdropFilter: "blur(20px) saturate(160%)",
@@ -296,7 +296,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             transition={{ type: "tween", duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
             className="fixed inset-0 z-40 lg:hidden outline-none"
           >
-            <div className="absolute inset-0 bg-black/60" onClick={() => setMobileOpen(false)} />
+            <div
+              className="absolute inset-0 bg-eduverse-void/75"
+              onClick={() => setMobileOpen(false)}
+            />
             <SidebarContent
               user={user}
               pathname={pathname}

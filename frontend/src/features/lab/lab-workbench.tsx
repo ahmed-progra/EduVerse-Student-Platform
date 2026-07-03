@@ -475,7 +475,7 @@ function ControlRow({
           value={v}
           onChange={(e) => onChange(control.key, parseFloat(e.target.value))}
           style={{
-            background: `linear-gradient(to right, var(--color-eduverse-accent) ${pct}%, oklch(30% 0.03 264 / 0.7) ${pct}%)`,
+            background: `linear-gradient(to right, var(--color-eduverse-accent) ${pct}%, var(--color-eduverse-track) ${pct}%)`,
           }}
         />
       </div>

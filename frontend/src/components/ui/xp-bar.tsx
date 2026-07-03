@@ -46,15 +46,17 @@ export const XpBar = memo(function XpBar({ xp, showLabel = true, size = "md" }: 
         aria-valuemax={100}
         aria-label={`Level ${level} progress`}
       >
+        {/* Full-width fill slid into view with a GPU-composited transform —
+            translation (not width/scaleX) so the pill ends never distort. */}
         <motion.div
-          className="h-full relative overflow-hidden"
+          className="h-full w-full relative overflow-hidden"
           style={{
             borderRadius: "var(--radius-pill)",
             background:
               "linear-gradient(90deg, var(--color-eduverse-accent-strong), var(--color-eduverse-accent))",
           }}
-          initial={{ width: 0 }}
-          animate={{ width: `${progress}%` }}
+          initial={{ x: "-100%" }}
+          animate={{ x: `${progress - 100}%` }}
           transition={{ duration: 1.3, ease: [0.22, 1, 0.36, 1] }}
         >
           <div

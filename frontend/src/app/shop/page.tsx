@@ -118,7 +118,7 @@ export default function ShopPage() {
   if (loading) {
     return (
       <motion.div
-        className="space-y-8"
+        className="space-y-8 max-w-6xl mx-auto"
         initial="hidden"
         animate="visible"
         variants={staggerContainer}
@@ -132,7 +132,7 @@ export default function ShopPage() {
 
   return (
     <motion.div
-      className="space-y-8"
+      className="space-y-8 max-w-6xl mx-auto"
       initial="hidden"
       animate="visible"
       variants={staggerContainer}
@@ -257,8 +257,8 @@ export default function ShopPage() {
               const owned = ownedIds.has(item.id);
               const equipped = equippedIds.has(item.id);
               const Icon = TYPE_ICONS[item.type] || ShoppingBag;
-              const canAfford =
-                user && user.coins >= item.price && user.level >= item.levelRequired;
+              const levelOk = !!user && user.level >= item.levelRequired;
+              const canAfford = !!user && user.coins >= item.price && levelOk;
 
               return (
                 <motion.div
@@ -283,8 +283,18 @@ export default function ShopPage() {
                     <p className="text-xs text-eduverse-text-muted mb-2 leading-relaxed">
                       {item.description}
                     </p>
-                    <div className="text-[11px] text-eduverse-text-muted mb-3 font-mono">
-                      Lv.{item.levelRequired} required
+                    <div
+                      className={`text-[11px] mb-3 font-mono ${
+                        levelOk ? "text-eduverse-text-muted" : "text-eduverse-warning"
+                      }`}
+                    >
+                      {levelOk ? (
+                        <>Lv.{item.levelRequired} required</>
+                      ) : (
+                        <>
+                          Requires Lv.{item.levelRequired} — you&apos;re Lv.{user?.level ?? 1}
+                        </>
+                      )}
                     </div>
                     <div className="flex items-center justify-center gap-1 text-sm font-bold text-eduverse-warning mb-4">
                       <Coins className="w-3.5 h-3.5" aria-hidden="true" />{" "}

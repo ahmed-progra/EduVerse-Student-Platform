@@ -19,13 +19,15 @@ export default function GlobalError({
       <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5 bg-eduverse-danger/10 border border-eduverse-danger/30 text-eduverse-danger">
         <AlertTriangle size={28} aria-hidden="true" />
       </div>
-      <h2 className="text-2xl font-bold text-eduverse-text mb-2">Something went wrong</h2>
+      <h2 className="text-2xl font-bold font-display tracking-tight text-eduverse-text mb-2">
+        Something went wrong
+      </h2>
       <p className="text-eduverse-text-muted mb-6 max-w-md">
         An unexpected error occurred. Try refreshing the page.
       </p>
       <button
         onClick={reset}
-        className="px-6 py-3 rounded bg-eduverse-accent-strong text-white font-semibold text-sm hover:brightness-110 transition-[filter]"
+        className="px-6 py-3 rounded-[var(--radius-button)] bg-eduverse-accent-strong text-white font-semibold text-sm hover:brightness-110 transition-[filter]"
       >
         Try Again
       </button>

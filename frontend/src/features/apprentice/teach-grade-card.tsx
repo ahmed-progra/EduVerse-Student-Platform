@@ -72,7 +72,7 @@ export function TeachGradeCard({ grade, topic, onTeachAgain }: TeachGradeCardPro
       </div>
 
       {/* Verdict */}
-      <div className="rounded border border-eduverse-border p-3 mb-4 flex items-start gap-2">
+      <div className="rounded-[var(--radius-button)] border border-eduverse-border p-3 mb-4 flex items-start gap-2">
         <Sparkles size={15} className="text-eduverse-accent mt-0.5 shrink-0" aria-hidden="true" />
         <p className="text-sm text-eduverse-text-body">{grade.verdict}</p>
       </div>

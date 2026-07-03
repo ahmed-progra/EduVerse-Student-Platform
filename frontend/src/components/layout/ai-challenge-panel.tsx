@@ -127,8 +127,9 @@ export function ChallengePanel({ onClose }: { onClose: () => void }) {
                   )
                 }
                 title="Copy challenge"
+                aria-label="Copy challenge"
               >
-                <Copy size={12} />
+                <Copy size={12} aria-hidden="true" />
               </button>
             </div>
             <button className="ai-panel-save-btn" onClick={addToMyChallenges} disabled={saved}>

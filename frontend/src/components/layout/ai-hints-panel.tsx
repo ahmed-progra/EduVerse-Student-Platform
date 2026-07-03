@@ -56,6 +56,7 @@ export function HintsPanel({ onClose }: { onClose: () => void }) {
           value={challenge}
           onChange={(e) => setChallenge(e.target.value)}
           rows={3}
+          aria-label="Describe your challenge"
         />
         <button className="ai-panel-action-btn" onClick={generateHints} disabled={loadingHints}>
           {loadingHints ? "Generating..." : "Generate Hints"}

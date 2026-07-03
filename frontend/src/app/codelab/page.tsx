@@ -128,7 +128,7 @@ export default function CodeLabPage() {
           <button
             key={p.name}
             onClick={() => setCode(p.code)}
-            className={`text-xs px-3.5 py-1.5 rounded-full border transition-all duration-200 ${
+            className={`text-xs px-3.5 py-1.5 rounded-full border transition-all duration-200 active:scale-[0.97] ${
               code === p.code
                 ? "bg-eduverse-accent/20 border-eduverse-accent/40 text-eduverse-accent-light shadow-[0_0_8px_oklch(78%_0.14_85/0.12)]"
                 : "border-eduverse-border text-eduverse-text-muted hover:border-eduverse-accent/30 hover:text-eduverse-accent hover:bg-eduverse-accent/5"
@@ -143,14 +143,14 @@ export default function CodeLabPage() {
 
         <button
           onClick={() => setCode(PRESETS[0].code)}
-          className="text-xs px-2.5 py-1.5 rounded-full border border-eduverse-border text-eduverse-text-muted hover:border-eduverse-accent/30 hover:text-eduverse-accent hover:bg-eduverse-accent/5 flex items-center gap-1 transition-all duration-200"
+          className="text-xs px-2.5 py-1.5 rounded-full border border-eduverse-border text-eduverse-text-muted hover:border-eduverse-accent/30 hover:text-eduverse-accent hover:bg-eduverse-accent/5 flex items-center gap-1 transition-all duration-200 active:scale-[0.97]"
           title="Reset"
         >
           <RotateCcw className="w-3 h-3" />
         </button>
         <button
           onClick={injectBug}
-          className="text-xs px-3.5 py-1.5 rounded-full border border-eduverse-warning/30 text-eduverse-warning hover:bg-eduverse-warning/10 transition-all duration-200 flex items-center gap-1.5"
+          className="text-xs px-3.5 py-1.5 rounded-full border border-eduverse-warning/30 text-eduverse-warning hover:bg-eduverse-warning/10 transition-all duration-200 active:scale-[0.97] flex items-center gap-1.5"
           title="Inject a random bug for debugging"
         >
           <Bug className="w-3 h-3" /> Inject Bug

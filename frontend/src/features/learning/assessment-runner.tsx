@@ -110,7 +110,7 @@ export function AssessmentRunner({
               {topics.map((t) => (
                 <span
                   key={t}
-                  className="px-2 py-0.5 rounded text-xs font-mono"
+                  className="px-2 py-0.5 rounded-[var(--radius-sm)] text-xs font-mono"
                   style={{
                     background: "var(--color-eduverse-accent-soft)",
                     color: "var(--color-eduverse-text-muted)",
@@ -171,12 +171,13 @@ export function AssessmentRunner({
           {q.type === "code" ? "coding task" : q.type === "predict" ? "read the code" : "concept"}
         </span>
       </div>
-      <div className="h-1.5 rounded bg-eduverse-accent-soft overflow-hidden mb-5">
+      <div className="h-1.5 rounded-full bg-eduverse-accent-soft overflow-hidden mb-5">
         <motion.div
-          className="h-full rounded"
+          className="h-full w-full rounded-full"
           style={{ background: "var(--color-eduverse-accent-strong)" }}
-          animate={{ width: `${progress}%` }}
-          transition={{ duration: 0.3, ease: "easeOut" }}
+          initial={{ x: "-100%" }}
+          animate={{ x: `${progress - 100}%` }}
+          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
         />
       </div>
 
@@ -186,7 +187,7 @@ export function AssessmentRunner({
           initial={{ opacity: 0, x: 12 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -12 }}
-          transition={{ duration: 0.22, ease: "easeOut" }}
+          transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
         >
           <p className="text-sm font-semibold text-eduverse-text mb-3">{q.prompt}</p>
           {q.code && (
@@ -212,7 +213,7 @@ export function AssessmentRunner({
                   <button
                     key={oi}
                     onClick={() => setAnswers((p) => ({ ...p, [q.id]: oi }))}
-                    className="ai-choice w-full text-left text-sm px-3 py-2.5 rounded border transition-colors"
+                    className="ai-choice w-full text-left text-sm px-3 py-2.5 rounded-[var(--radius-button)] border transition-colors"
                     style={{
                       borderColor: chosen
                         ? "var(--color-eduverse-accent)"

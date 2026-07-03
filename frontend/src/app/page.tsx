@@ -603,7 +603,7 @@ export default function LandingPage() {
       )}
 
       {showWelcome && (
-        <div className="welcome-toast">
+        <div className="welcome-toast" role="status" aria-live="polite">
           <span>Welcome! Start with today&apos;s daily challenge ↗</span>
         </div>
       )}

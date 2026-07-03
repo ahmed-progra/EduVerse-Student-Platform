@@ -33,6 +33,14 @@ export function BackendStatus() {
     };
   }, []);
 
+  // Fixed overlays (mobile top bar) offset themselves below the banner via
+  // this body attribute — see `body[data-offline-banner]` rules in globals.css.
+  useEffect(() => {
+    if (offline) document.body.setAttribute("data-offline-banner", "true");
+    else document.body.removeAttribute("data-offline-banner");
+    return () => document.body.removeAttribute("data-offline-banner");
+  }, [offline]);
+
   if (!offline) return null;
 
   return (

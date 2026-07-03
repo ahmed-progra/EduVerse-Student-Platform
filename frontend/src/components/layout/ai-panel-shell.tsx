@@ -28,9 +28,9 @@ export function AIPanelShell({
           <ArrowLeft size={18} />
         </button>
         <div className="ai-panel-header-info">
-          <div className="ai-panel-title">
-            <Icon size={16} className="ai-panel-title-icon" /> {title}
-          </div>
+          <h1 className="ai-panel-title">
+            <Icon size={16} className="ai-panel-title-icon" aria-hidden="true" /> {title}
+          </h1>
           <div className="ai-panel-subtitle">{subtitle}</div>
         </div>
       </div>

@@ -146,7 +146,7 @@ function MissionCard({
 
   return (
     <div
-      className="rounded border p-3 transition-colors"
+      className="rounded-[var(--radius-button)] border p-3 transition-colors"
       style={{
         borderColor: done ? "var(--color-eduverse-success)" : "var(--color-eduverse-border)",
         background: done ? "var(--color-eduverse-accent-soft)" : "transparent",
@@ -180,9 +180,9 @@ function MissionCard({
       <div className="flex items-center gap-2 mt-2.5">
         <div className="flex-1 h-1.5 rounded-full overflow-hidden bg-eduverse-raised">
           <div
-            className="h-full rounded-full transition-[width] duration-500"
+            className="h-full w-full rounded-full transition-transform duration-300"
             style={{
-              width: `${pct}%`,
+              transform: `translateX(${pct - 100}%)`,
               background: done ? "var(--color-eduverse-success)" : "var(--color-eduverse-accent)",
             }}
           />

@@ -343,14 +343,14 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
         <div className="grid md:grid-cols-2 gap-3">
           {/* Editor */}
           <div className="visualizer-editor-area">
-            <div className="flex items-center justify-between px-4 py-2 border-b border-white/10 bg-black/20">
+            <div className="flex items-center justify-between px-4 py-2 border-b border-eduverse-border bg-eduverse-void/30">
               <div className="flex items-center gap-1.5">
                 <Code2 className="w-3.5 h-3.5 text-eduverse-text-muted" />
-                <span className="text-xs font-semibold text-eduverse-text-muted uppercase tracking-wider">
+                <span className="text-xs font-semibold font-mono text-eduverse-text-muted uppercase tracking-wider">
                   {langLabel}
                 </span>
               </div>
-              <span className="text-[10px] text-eduverse-text-muted">
+              <span className="text-[10px] font-mono text-eduverse-text-muted">
                 {code.split("\n").length} lines
               </span>
             </div>
@@ -377,14 +377,16 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
           </div>
           {/* Live preview */}
           <div className="visualizer-editor-area flex flex-col">
-            <div className="flex items-center justify-between px-4 py-2 border-b border-white/10 bg-black/20">
+            <div className="flex items-center justify-between px-4 py-2 border-b border-eduverse-border bg-eduverse-void/30">
               <div className="flex items-center gap-1.5">
                 <Eye className="w-3.5 h-3.5 text-eduverse-accent" />
-                <span className="text-xs font-semibold text-eduverse-text-muted uppercase tracking-wider">
+                <span className="text-xs font-semibold font-mono text-eduverse-text-muted uppercase tracking-wider">
                   {language.toLowerCase() === "css" ? "Live preview (demo page)" : "Live preview"}
                 </span>
               </div>
-              <span className="text-[10px] text-eduverse-text-muted">updates as you type</span>
+              <span className="text-[10px] font-mono text-eduverse-text-muted">
+                updates as you type
+              </span>
             </div>
             <iframe
               title={`${langLabel} preview`}
@@ -398,13 +400,13 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
         <div className="flex gap-2 mt-3">
           <button
             onClick={handleCopy}
-            className="px-3 py-2 rounded-xl border border-white/10 text-eduverse-text-muted hover:text-white hover:bg-white/5 transition-colors text-xs flex items-center gap-1.5"
+            className="px-3 py-2 rounded-xl border border-eduverse-border text-eduverse-text-muted hover:text-eduverse-accent hover:bg-eduverse-accent-soft transition-colors text-xs flex items-center gap-1.5"
           >
             <Copy className="w-3.5 h-3.5" /> Copy
           </button>
           <button
             onClick={handleDownload}
-            className="px-3 py-2 rounded-xl border border-white/10 text-eduverse-text-muted hover:text-white hover:bg-white/5 transition-colors text-xs flex items-center gap-1.5"
+            className="px-3 py-2 rounded-xl border border-eduverse-border text-eduverse-text-muted hover:text-eduverse-accent hover:bg-eduverse-accent-soft transition-colors text-xs flex items-center gap-1.5"
           >
             <Download className="w-3.5 h-3.5" /> Download
           </button>
@@ -413,7 +415,7 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
               setCode(initialCode);
               localStorage.removeItem(STORAGE_PREFIX + initialCode.slice(0, 32));
             }}
-            className="px-3 py-2 rounded-xl border border-white/10 text-eduverse-text-muted hover:text-white hover:bg-white/5 transition-colors text-xs flex items-center gap-1.5"
+            className="px-3 py-2 rounded-xl border border-eduverse-border text-eduverse-text-muted hover:text-eduverse-accent hover:bg-eduverse-accent-soft transition-colors text-xs flex items-center gap-1.5"
           >
             <RotateCcw className="w-3.5 h-3.5" /> Reset
           </button>
@@ -426,10 +428,10 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
     return (
       <div className="visualizer-wrap">
         <div className="visualizer-editor-area">
-          <div className="flex items-center justify-between px-4 py-2 border-b border-white/10 bg-black/20">
+          <div className="flex items-center justify-between px-4 py-2 border-b border-eduverse-border bg-eduverse-void/30">
             <div className="flex items-center gap-1.5">
               <Terminal className="w-3.5 h-3.5 text-eduverse-text-muted" />
-              <span className="text-xs font-semibold text-eduverse-text-muted uppercase tracking-wider">
+              <span className="text-xs font-semibold font-mono text-eduverse-text-muted uppercase tracking-wider">
                 {langLabel}
               </span>
             </div>
@@ -468,23 +470,27 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
           </GradientButton>
           <button
             onClick={handleCopy}
-            className="px-3 py-2 rounded-xl border border-white/10 text-eduverse-text-muted hover:text-white hover:bg-white/5 transition-colors text-xs flex items-center gap-1.5"
+            className="px-3 py-2 rounded-xl border border-eduverse-border text-eduverse-text-muted hover:text-eduverse-accent hover:bg-eduverse-accent-soft transition-colors text-xs flex items-center gap-1.5"
           >
             <Copy className="w-3.5 h-3.5" /> Copy
           </button>
           <button
             onClick={handleDownload}
-            className="px-3 py-2 rounded-xl border border-white/10 text-eduverse-text-muted hover:text-white hover:bg-white/5 transition-colors text-xs flex items-center gap-1.5"
+            className="px-3 py-2 rounded-xl border border-eduverse-border text-eduverse-text-muted hover:text-eduverse-accent hover:bg-eduverse-accent-soft transition-colors text-xs flex items-center gap-1.5"
           >
             <Download className="w-3.5 h-3.5" /> Download
           </button>
         </div>
         {output && (
-          <div className="border border-white/10 rounded-xl overflow-hidden">
-            <div className="text-[10px] uppercase tracking-wider px-3 py-1.5 border-b border-white/5 text-eduverse-text-muted bg-black/20">
+          <div
+            className="border border-eduverse-border rounded-xl overflow-hidden"
+            role="status"
+            aria-live="polite"
+          >
+            <div className="text-[10px] font-mono uppercase tracking-wider px-3 py-1.5 border-b border-eduverse-border text-eduverse-text-muted bg-eduverse-void/30">
               Output
             </div>
-            <pre className="p-3 text-xs font-mono whitespace-pre-wrap text-eduverse-text bg-black/30 min-h-[60px] max-h-[200px] overflow-auto">
+            <pre className="p-3 text-xs font-mono whitespace-pre-wrap text-eduverse-text bg-eduverse-void/40 min-h-[60px] max-h-[200px] overflow-auto">
               {output}
             </pre>
           </div>
@@ -543,6 +549,8 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
           </button>
         </div>
 
+        <div className="w-px h-5 bg-eduverse-border hidden sm:block" aria-hidden="true" />
+
         <div className="flex items-center gap-1">
           <button
             onClick={() => setShowAST((v) => !v)}
@@ -556,7 +564,7 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
           <div className="text-[10px] text-eduverse-text-muted">Step {frames.length}</div>
           {!isPreviewable && skStatus !== "ready" && (
             <span
-              className="text-[10px] font-mono px-2 py-0.5 rounded"
+              className="text-[10px] font-mono px-2 py-0.5 rounded-[var(--radius-sm)]"
               role="status"
               style={{
                 color:
@@ -573,6 +581,8 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
             </span>
           )}
         </div>
+
+        <div className="w-px h-5 bg-eduverse-border hidden sm:block" aria-hidden="true" />
 
         <div className="flex items-center gap-2">
           <Clock className="w-3 h-3 text-eduverse-text-muted" />
@@ -596,10 +606,10 @@ export function Visualizer({ initialCode = "", language = "python" }: Visualizer
 
       {/* ── Code Editor Area ── */}
       <div className="visualizer-editor-area">
-        <div className="flex items-center justify-between px-4 py-2 border-b border-white/10 bg-black/20">
+        <div className="flex items-center justify-between px-4 py-2 border-b border-eduverse-border bg-eduverse-void/30">
           <div className="flex items-center gap-1.5">
             <Terminal className="w-3.5 h-3.5 text-eduverse-text-muted" />
-            <span className="text-xs font-semibold text-eduverse-text-muted uppercase tracking-wider">
+            <span className="text-xs font-semibold font-mono text-eduverse-text-muted uppercase tracking-wider">
               {langLabel}
             </span>
           </div>

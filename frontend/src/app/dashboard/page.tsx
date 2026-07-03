@@ -11,7 +11,7 @@ import { AnnouncementsCard } from "@/features/announcements/announcements-card";
 import { useAuthStore } from "@/stores/auth-store";
 import { api } from "@/services/api-client";
 import { streakFromActivity } from "@/lib/streak";
-import { fadeUp, staggerContainer, fastEaseTransition, cardHover } from "@/lib/motion";
+import { fadeUp, staggerContainer, fastEaseTransition } from "@/lib/motion";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
@@ -121,7 +121,7 @@ export default function DashboardPage() {
 
   return (
     <motion.div
-      className="space-y-8"
+      className="space-y-8 max-w-6xl mx-auto"
       initial="hidden"
       animate="visible"
       variants={staggerContainer}
@@ -130,7 +130,7 @@ export default function DashboardPage() {
       <motion.div variants={fadeUp} transition={fastEaseTransition}>
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
-            <h1 className="text-3xl font-bold mb-1 font-display tracking-tight">
+            <h1 className="text-3xl font-bold mb-2 font-display tracking-tight">
               Welcome back, <span className="text-eduverse-accent">{user?.username}</span>
             </h1>
             <p className="text-eduverse-text-muted">Continue your quest to become a code master.</p>
@@ -179,7 +179,11 @@ export default function DashboardPage() {
           {quickActions.map((action) => (
             <motion.div key={action.label} variants={fadeUp} transition={fastEaseTransition}>
               <Link href={action.href} className="block">
-                <motion.div {...cardHover} className="app-card quick-action-card app-card-link">
+                {/* CSS .app-card-link owns the hover lift; framer owns press feedback. */}
+                <motion.div
+                  whileTap={{ scale: 0.985 }}
+                  className="app-card quick-action-card app-card-link"
+                >
                   <div className="quick-action-icon">
                     <action.icon className={`w-5 h-5 ${action.color}`} aria-hidden="true" />
                   </div>
@@ -210,7 +214,11 @@ export default function DashboardPage() {
                 key={stat.label}
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 + 0.07 * i, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                transition={{
+                  delay: Math.min(0.2 + 0.07 * i, 0.4),
+                  duration: 0.5,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
               >
                 <div className="app-card p-6 dashboard-stat-card">
                   <div className="stat-card-icon">
@@ -265,10 +273,10 @@ export default function DashboardPage() {
               message="Complete a lesson or win a battle to start your journey. Every action earns XP."
             >
               <Link
-                href="/courses"
+                href="/placement-test"
                 className="inline-flex items-center gap-2 px-5 py-3 rounded-[var(--radius-button)] text-sm font-semibold bg-eduverse-accent-strong text-white hover:brightness-110 transition-all"
               >
-                Start a course <ArrowRight className="w-4 h-4" />
+                Find your level <ArrowRight className="w-4 h-4" />
               </Link>
             </EmptyState>
           ) : (
@@ -303,7 +311,7 @@ export default function DashboardPage() {
                         </div>
                       </div>
                     </div>
-                    <span className="text-sm font-bold font-mono text-eduverse-success px-2 py-0.5 rounded bg-eduverse-success/10">
+                    <span className="text-sm font-bold font-mono text-eduverse-success px-2 py-0.5 rounded-[var(--radius-sm)] bg-eduverse-success/10">
                       +{log.amount} XP
                     </span>
                   </motion.div>

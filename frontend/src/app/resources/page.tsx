@@ -72,33 +72,38 @@ export default function ResourcesPage() {
   };
 
   return (
-    <div className="space-y-6 page-enter">
+    <div className="space-y-6 max-w-6xl mx-auto page-enter">
       {/* Header */}
-      <div className="flex items-start justify-between gap-4 flex-wrap">
-        <div className="lab-hero">
-          <span className="lab-hero-icon">
-            <Library size={24} aria-hidden="true" />
-          </span>
-          <div>
-            <h1 className="text-3xl font-bold font-display tracking-tight">
-              Resources &amp; Library
-            </h1>
-            <p className="text-eduverse-text-muted mt-1">
-              Every note, study guide, and material for every class — one place.
-            </p>
-          </div>
+      <div>
+        <div className="section-label">
+          <span className="section-label-prefix">//</span> Academics
         </div>
-        <button className="glow-pill" onClick={() => setAdding((a) => !a)}>
-          {adding ? (
-            <>
-              <X size={16} aria-hidden="true" /> Cancel
-            </>
-          ) : (
-            <>
-              <Plus size={16} aria-hidden="true" /> Add resource
-            </>
-          )}
-        </button>
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div className="lab-hero">
+            <span className="lab-hero-icon">
+              <Library size={24} aria-hidden="true" />
+            </span>
+            <div>
+              <h1 className="text-3xl font-bold font-display tracking-tight">
+                Resources &amp; Library
+              </h1>
+              <p className="text-eduverse-text-muted mt-2">
+                Every note, study guide, and material for every class — one place.
+              </p>
+            </div>
+          </div>
+          <button className="glow-pill" onClick={() => setAdding((a) => !a)}>
+            {adding ? (
+              <>
+                <X size={16} aria-hidden="true" /> Cancel
+              </>
+            ) : (
+              <>
+                <Plus size={16} aria-hidden="true" /> Add resource
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Add form */}
@@ -111,6 +116,7 @@ export default function ResourcesPage() {
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
               autoFocus
+              aria-label="Resource title"
             />
           </div>
           <div className="res-form-grid">
@@ -143,6 +149,7 @@ export default function ResourcesPage() {
               placeholder="Link (optional)"
               value={form.url}
               onChange={(e) => setForm({ ...form, url: e.target.value })}
+              aria-label="Resource link"
             />
           </div>
           <textarea
@@ -151,6 +158,7 @@ export default function ResourcesPage() {
             value={form.note}
             rows={2}
             onChange={(e) => setForm({ ...form, note: e.target.value })}
+            aria-label="Notes"
           />
           <button className="btn-primary self-start" onClick={submit} disabled={!form.title.trim()}>
             Save to library

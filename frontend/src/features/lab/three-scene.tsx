@@ -228,11 +228,7 @@ export function ThreeScene({
       style={{ width: "100%", height: "100%", position: "relative" }}
     >
       {failed && (
-        <div
-          className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-center p-6"
-          role="status"
-          style={{ color: "var(--color-eduverse-text-muted)" }}
-        >
+        <div className="lab-loading text-center" role="status">
           <span className="text-sm font-semibold" style={{ color: "var(--color-eduverse-text)" }}>
             3D unavailable
           </span>

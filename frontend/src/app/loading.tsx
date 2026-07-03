@@ -5,7 +5,7 @@ import { SkeletonCardGrid } from "@/components/ui/skeleton";
 export default function PageLoading() {
   return (
     <div
-      className="space-y-6 max-w-7xl mx-auto"
+      className="space-y-6 max-w-6xl mx-auto"
       role="status"
       aria-busy="true"
       aria-label="Loading"

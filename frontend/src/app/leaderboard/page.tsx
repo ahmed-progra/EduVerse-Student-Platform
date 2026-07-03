@@ -195,7 +195,7 @@ export default function LeaderboardPage() {
         </div>
         <GlassCard className="p-0 overflow-hidden">
           {loading ? (
-            <div className="divide-y divide-white/[0.04]" aria-hidden="true">
+            <div className="divide-y divide-eduverse-border" aria-hidden="true">
               {[1, 2, 3, 4, 5, 6].map((i) => (
                 <div key={i} className="px-4">
                   <SkeletonRow />
@@ -224,7 +224,7 @@ export default function LeaderboardPage() {
             </div>
           ) : (
             <div>
-              <div className="grid grid-cols-1 md:grid-cols-[64px_1fr_72px_100px] gap-2 md:gap-4 px-5 py-3 border-b border-white/[0.06] text-xs text-eduverse-text-muted font-mono uppercase tracking-wider">
+              <div className="grid grid-cols-1 md:grid-cols-[64px_1fr_72px_100px] gap-2 md:gap-4 px-5 py-3 border-b border-eduverse-border-mid text-xs text-eduverse-text-muted font-mono uppercase tracking-wider">
                 <div>Rank</div>
                 <div>Player</div>
                 <div>Level</div>
@@ -237,11 +237,15 @@ export default function LeaderboardPage() {
                     key={entry.userId}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: Math.min(i * 0.025, 0.4) }}
-                    className={`grid grid-cols-1 md:grid-cols-[64px_1fr_72px_100px] gap-2 md:gap-4 px-5 py-4 border-b border-white/[0.03] last:border-0 items-center transition-all ${
+                    transition={{
+                      delay: Math.min(i * 0.025, 0.4),
+                      duration: 0.3,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
+                    className={`grid grid-cols-1 md:grid-cols-[64px_1fr_72px_100px] gap-2 md:gap-4 px-5 py-4 border-b border-eduverse-border last:border-0 items-center transition-all ${
                       isMe
                         ? "bg-eduverse-accent-soft border-l-2 border-l-eduverse-accent"
-                        : "hover:bg-white/[0.02]"
+                        : "hover:bg-eduverse-accent-soft"
                     }`}
                     style={isMe ? { borderLeft: "2px solid var(--color-eduverse-accent)" } : {}}
                   >

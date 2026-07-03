@@ -37,7 +37,7 @@ export default function CoursesPage() {
 
   return (
     <motion.div
-      className="space-y-8"
+      className="space-y-8 max-w-6xl mx-auto"
       initial="hidden"
       animate="visible"
       variants={staggerContainer}

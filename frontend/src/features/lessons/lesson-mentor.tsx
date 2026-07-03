@@ -83,7 +83,7 @@ export function LessonMentor({ title, content, language }: LessonMentorProps) {
   const tabBtn = (key: "help" | "review", label: string, Icon: typeof Brain) => (
     <button
       onClick={() => setTab(key)}
-      className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-semibold transition-colors"
+      className="flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-button)] text-xs font-semibold transition-colors"
       style={{
         background: tab === key ? "var(--color-eduverse-accent-soft)" : "transparent",
         color: tab === key ? "var(--color-eduverse-accent)" : "var(--color-eduverse-text-muted)",
@@ -124,7 +124,7 @@ export function LessonMentor({ title, content, language }: LessonMentorProps) {
 
           <div className="flex gap-2 mb-3">
             <input
-              className="flex-1 px-3 py-2 rounded border border-eduverse-border bg-transparent text-sm text-eduverse-text focus:border-eduverse-accent outline-none transition-colors"
+              className="flex-1 px-3 py-2 rounded-[var(--radius-input)] border border-eduverse-border bg-transparent text-sm text-eduverse-text focus:border-eduverse-accent outline-none transition-colors"
               placeholder="Ask about this lesson, or paste an error to understand it…"
               value={custom}
               onChange={(e) => setCustom(e.target.value)}
@@ -135,7 +135,7 @@ export function LessonMentor({ title, content, language }: LessonMentorProps) {
               aria-label="Ask the mentor about this lesson"
             />
             <button
-              className="px-3 py-2 rounded bg-eduverse-accent-strong text-white text-sm font-semibold hover:brightness-110 active:scale-[0.97] transition-[filter,transform] duration-150 disabled:opacity-50 flex items-center gap-1.5"
+              className="px-3 py-2 rounded-[var(--radius-button)] bg-eduverse-accent-strong text-white text-sm font-semibold hover:brightness-110 active:scale-[0.97] transition-[filter,transform] duration-150 disabled:opacity-50 flex items-center gap-1.5"
               onClick={() => custom.trim() && ask("Your question", custom.trim())}
               disabled={!custom.trim() || loading}
             >
@@ -145,9 +145,9 @@ export function LessonMentor({ title, content, language }: LessonMentorProps) {
 
           {loading && (
             <div className="space-y-2 animate-pulse" aria-label="Mentor is responding">
-              <div className="h-3.5 w-full rounded bg-eduverse-raised" />
-              <div className="h-3.5 w-5/6 rounded bg-eduverse-raised" />
-              <div className="h-3.5 w-2/3 rounded bg-eduverse-raised" />
+              <div className="h-3.5 w-full rounded-[var(--radius-sm)] bg-eduverse-raised" />
+              <div className="h-3.5 w-5/6 rounded-[var(--radius-sm)] bg-eduverse-raised" />
+              <div className="h-3.5 w-2/3 rounded-[var(--radius-sm)] bg-eduverse-raised" />
             </div>
           )}
           {error && (
@@ -156,7 +156,7 @@ export function LessonMentor({ title, content, language }: LessonMentorProps) {
             </p>
           )}
           {answer && !loading && (
-            <div>
+            <div role="status" aria-live="polite">
               {activeAction && (
                 <div className="text-xs font-mono text-eduverse-accent mb-1.5">{activeAction}</div>
               )}
@@ -180,7 +180,7 @@ export function LessonMentor({ title, content, language }: LessonMentorProps) {
             Paste your code and get focused feedback for this lesson.
           </p>
           <textarea
-            className="w-full h-40 px-3 py-2 rounded border border-eduverse-border bg-transparent text-sm font-mono text-eduverse-text focus:border-eduverse-accent outline-none transition-colors resize-y"
+            className="w-full h-40 px-3 py-2 rounded-[var(--radius-input)] border border-eduverse-border bg-transparent text-sm font-mono text-eduverse-text focus:border-eduverse-accent outline-none transition-colors resize-y"
             placeholder={`Paste your ${language} code here…`}
             value={code}
             onChange={(e) => setCode(e.target.value)}

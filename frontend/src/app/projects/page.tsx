@@ -88,7 +88,7 @@ export default function ProjectsPage() {
 
   return (
     <motion.div
-      className="space-y-8"
+      className="space-y-8 max-w-6xl mx-auto"
       initial="hidden"
       animate="visible"
       variants={staggerContainer}
@@ -97,7 +97,7 @@ export default function ProjectsPage() {
         <div className="section-label">
           <span className="section-label-prefix">//</span> Projects
         </div>
-        <h1 className="text-3xl font-bold mb-1 font-display flex items-center gap-3 tracking-tight">
+        <h1 className="text-3xl font-bold mb-2 font-display flex items-center gap-3 tracking-tight">
           <div className="w-9 h-9 rounded-[var(--radius-button)] bg-eduverse-accent-soft border border-eduverse-border flex items-center justify-center">
             <Rocket className="w-4 h-4 text-eduverse-accent" aria-hidden="true" />
           </div>
@@ -275,44 +275,51 @@ function ProjectSection({
         {title}
         <span className="text-xs text-eduverse-text-muted ml-1 font-mono">({projects.length})</span>
       </div>
-      <div className="grid sm:grid-cols-2 gap-4">
+      <motion.div
+        className="grid sm:grid-cols-2 gap-4"
+        initial="hidden"
+        animate="visible"
+        variants={staggerContainer}
+      >
         {projects.map((p) => (
-          <Link key={p.id} href={`/projects/${p.id}`}>
-            <GlassCard className="h-full app-card-link">
-              <div className="flex items-start justify-between gap-3 mb-3">
-                <h3 className="font-semibold text-eduverse-text">{p.title}</h3>
-                {p.status === "completed" ? (
-                  <span className="flex items-center gap-1 text-xs font-bold font-mono text-eduverse-success shrink-0">
-                    <CheckCircle2 size={13} aria-hidden="true" /> {p.score}/100
-                  </span>
-                ) : (
-                  <span className="text-[11px] font-mono text-eduverse-text-muted shrink-0 px-2 py-0.5 rounded-full bg-eduverse-raised border border-white/5">
-                    in progress
-                  </span>
-                )}
-              </div>
-              <p className="text-xs text-eduverse-text-muted line-clamp-2 mb-4 leading-relaxed">
-                {p.brief}
-              </p>
-              <div className="flex items-center justify-between">
-                <div className="flex flex-wrap gap-1.5">
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-eduverse-raised text-eduverse-text-muted font-mono border border-white/5">
-                    {langLabel[p.language] || p.language}
-                  </span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-eduverse-raised text-eduverse-text-muted border border-white/5">
-                    {p.difficulty}
-                  </span>
+          <motion.div key={p.id} variants={fadeUp} transition={fastEaseTransition}>
+            <Link href={`/projects/${p.id}`} className="block h-full">
+              <GlassCard className="h-full app-card-link">
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <h3 className="font-semibold text-eduverse-text">{p.title}</h3>
+                  {p.status === "completed" ? (
+                    <span className="flex items-center gap-1 text-xs font-bold font-mono text-eduverse-success shrink-0">
+                      <CheckCircle2 size={13} aria-hidden="true" /> {p.score}/100
+                    </span>
+                  ) : (
+                    <span className="text-[11px] font-mono text-eduverse-text-muted shrink-0 px-2 py-0.5 rounded-full bg-eduverse-raised border border-eduverse-border">
+                      in progress
+                    </span>
+                  )}
                 </div>
-                <ArrowRight
-                  size={15}
-                  className="text-eduverse-text-muted shrink-0"
-                  aria-hidden="true"
-                />
-              </div>
-            </GlassCard>
-          </Link>
+                <p className="text-xs text-eduverse-text-muted line-clamp-2 mb-4 leading-relaxed">
+                  {p.brief}
+                </p>
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-wrap gap-1.5">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-eduverse-raised text-eduverse-text-muted font-mono border border-eduverse-border">
+                      {langLabel[p.language] || p.language}
+                    </span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-eduverse-raised text-eduverse-text-muted border border-eduverse-border">
+                      {p.difficulty}
+                    </span>
+                  </div>
+                  <ArrowRight
+                    size={15}
+                    className="text-eduverse-text-muted shrink-0"
+                    aria-hidden="true"
+                  />
+                </div>
+              </GlassCard>
+            </Link>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </div>
   );
 }
